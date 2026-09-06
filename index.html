@@ -10,18 +10,52 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #05080e; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; padding: 12px; }
   .rt-cockpit { background: #0b0f17; width: 100%; max-width: 440px; border-radius: 16px; padding: 14px; border: 1px solid #1e293b; box-shadow: 0 16px 40px rgba(0,0,0,0.9); }
+  
+  /* 상단 헤더 */
   .rt-brand-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 8px; margin-bottom: 10px; }
   .rt-brand-title { font-size: 13px; font-weight: 800; color: #38bdf8; letter-spacing: -0.3px; }
   .rt-dev-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 6px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4); }
+  
+  /* 검색바 */
   .rt-search-bar { display: flex; gap: 6px; margin-bottom: 6px; }
   .rt-input { flex: 1; background: #161f2e; border: 1px solid #2d3d54; border-radius: 8px; padding: 9px 12px; color: #fff; font-size: 13px; font-weight: 600; outline: none; }
   .rt-input:focus { border-color: #38bdf8; }
   .rt-btn-search { background: #0284c7; border: none; color: #fff; font-weight: 700; padding: 0 14px; border-radius: 8px; font-size: 12px; cursor: pointer; }
   .rt-search-status { font-size: 10px; color: #64748b; margin-bottom: 6px; padding-left: 2px; min-height: 14px; }
+  
+  /* 추천 칩 */
   .rt-chips { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 6px; scrollbar-width: none; }
   .rt-chips::-webkit-scrollbar { display: none; }
   .rt-chip { background: #1e293b; border: 1px solid #334155; color: #cbd5e1; font-size: 10px; padding: 3px 8px; border-radius: 999px; white-space: nowrap; cursor: pointer; }
   .rt-chip:active { background: #0284c7; color: #fff; }
+  
+  /* 돌발 소나기/호우 조기경보 배너 */
+  .rt-nowcast-alert {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    transition: all 0.3s ease;
+  }
+  .alert-safe { background: #064e3b; border: 1px solid #10b981; color: #6ee7b7; }
+  .alert-caution { background: #78350f; border: 1px solid #f59e0b; color: #fde68a; }
+  .alert-danger { 
+    background: #7f1d1d; 
+    border: 1.5px solid #ef4444; 
+    color: #fecaca; 
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
+    animation: alertPulse 1.2s infinite; 
+  }
+  @keyframes alertPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.99); opacity: 0.85; }
+  }
+
+  /* 12시간 시간별 예보 트랙 */
   .rt-timeline-wrapper { margin-bottom: 8px; }
   .rt-timeline-title { font-size: 10.5px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; display: flex; justify-content: space-between; }
   .rt-timeline-track { display: flex; gap: 5px; overflow-x: auto; padding: 4px 2px 6px 2px; scrollbar-width: none; }
@@ -31,6 +65,8 @@
   .rt-pill-offset { font-size: 10px; font-weight: 800; color: #94a3b8; display: block; }
   .rt-time-pill.active .rt-pill-offset { color: #fff; }
   .rt-pill-clock { font-size: 11px; font-weight: 700; color: #f1f5f9; display: block; margin-top: 1px; }
+  
+  /* 지도 박스 */
   .rt-map-box { position: relative; width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid #283548; }
   #rt-leaflet-map { width: 100%; height: 100%; background: #1a202c; }
   .rt-floating-hud { position: absolute; top: 10px; left: 10px; right: 10px; background: rgba(11, 15, 23, 0.94); backdrop-filter: blur(8px); border: 1px solid #38bdf8; border-radius: 8px; padding: 8px 12px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
@@ -38,11 +74,15 @@
   .rt-rain-badge { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 5px; }
   .rain-none { background: #064e3b; color: #4ade80; border: 1px solid #10b981; }
   .rain-active { background: #0369a1; color: #38bdf8; border: 1px solid #38bdf8; }
+  
+  /* 1분 자동 동화 상태 바 */
   .rt-auto-sensor-bar { display: flex; justify-content: space-between; align-items: center; background: #111a26; border: 1px solid #1e3a5f; border-radius: 8px; padding: 7px 11px; margin-top: 8px; }
   .rt-sensor-tag { font-size: 11px; font-weight: 700; color: #93c5fd; display: flex; align-items: center; gap: 6px; }
   .rt-sensor-live-dot { width: 7px; height: 7px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 8px #38bdf8; }
   .rt-sync-status-bar { display: flex; justify-content: space-between; align-items: center; background: #141c28; border: 1px solid #233146; border-radius: 6px; padding: 5px 10px; margin-top: 6px; font-size: 10.5px; }
   .rt-sync-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px; }
+  
+  /* 하단 수치 분석 카드 */
   .rt-telemetry-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
   .rt-card { border-radius: 10px; padding: 10px 11px; }
   .rt-card.prop-card { background: #0f1c2e; border: 1.5px solid #0284c7; }
@@ -56,6 +96,31 @@
   .val-cyan  { color: #38bdf8; }
   .val-amber { color: #f59e0b; }
   .val-gray  { color: #94a3b8; }
+
+  /* [법적 고지 및 면책 공고 스타일] */
+  .rt-legal-box {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #080c14;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    font-size: 9.5px;
+    color: #64748b;
+    line-height: 1.55;
+  }
+  .rt-legal-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94a3b8;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .rt-legal-highlight {
+    color: #cbd5e1;
+    font-weight: 700;
+  }
 </style>
 </head>
 <body>
@@ -64,21 +129,29 @@
     <div class="rt-brand-title">FM-GFM 초정밀 국지 기하 예측기</div>
     <div class="rt-dev-badge">👑 개발자 : 꿀꽈배기</div>
   </div>
+  
   <div class="rt-search-bar">
-    <input type="text" class="rt-input" id="rt-query" placeholder="100대 명산이나 봉우리 입력" value="부산 봉래산">
+    <input type="text" class="rt-input" id="rt-query" placeholder="산 봉우리나 지명 입력" value="금정산 고당봉">
     <button class="rt-btn-search" id="rt-btn-exec">정밀 분석</button>
   </div>
-  <div class="rt-search-status" id="rt-search-msg">산림청 100대 명산 및 국토 정밀 지형 DB 가동 중</div>
+  <div class="rt-search-status" id="rt-search-msg">전국 명산 및 수도권·영남 생활 인기 근교산 정밀 DB 가동 중</div>
+  
   <div class="rt-chips">
-    <span class="rt-chip" onclick="rtSearch('부산 봉래산')">부산 봉래산</span>
     <span class="rt-chip" onclick="rtSearch('금정산 고당봉')">금정산 고당봉</span>
-    <span class="rt-chip" onclick="rtSearch('설악산 대청봉')">설악산 대청봉</span>
-    <span class="rt-chip" onclick="rtSearch('지리산 천왕봉')">지리산 천왕봉</span>
-    <span class="rt-chip" onclick="rtSearch('한라산 백록담')">한라산 백록담</span>
-    <span class="rt-chip" onclick="rtSearch('북한산 백운대')">북한산 백운대</span>
-    <span class="rt-chip" onclick="rtSearch('덕유산 향적봉')">덕유산 향적봉</span>
-    <span class="rt-chip" onclick="rtSearch('가리왕산')">가리왕산</span>
+    <span class="rt-chip" onclick="rtSearch('부산 봉래산')">부산 봉래산</span>
+    <span class="rt-chip" onclick="rtSearch('인왕산')">인왕산</span>
+    <span class="rt-chip" onclick="rtSearch('아차산')">아차산</span>
+    <span class="rt-chip" onclick="rtSearch('청계산 매봉')">청계산 매봉</span>
+    <span class="rt-chip" onclick="rtSearch('가덕도 연대봉')">가덕도 연대봉</span>
+    <span class="rt-chip" onclick="rtSearch('간월산')">간월산</span>
+    <span class="rt-chip" onclick="rtSearch('기장 달음산')">기장 달음산</span>
   </div>
+
+  <div class="rt-nowcast-alert alert-safe" id="rt-alert-banner">
+    <span id="rt-alert-text">🛡️ 대기 상태 안정 (돌발 강수 징후 없음)</span>
+    <span id="rt-alert-sub" style="font-size:10px; font-weight:700;">정상</span>
+  </div>
+
   <div class="rt-timeline-wrapper">
     <div class="rt-timeline-title">
       <span>12시간 초단기 시간별 예보 트랙</span>
@@ -86,10 +159,11 @@
     </div>
     <div class="rt-timeline-track" id="rt-time-track"></div>
   </div>
+
   <div class="rt-map-box">
     <div class="rt-floating-hud">
       <div>
-        <div class="rt-status-title" id="rt-place-title">영도 봉래산 (해발 395m)</div>
+        <div class="rt-status-title" id="rt-place-title">금정산 고당봉 (해발 801m)</div>
         <div style="font-size: 14px; font-weight: 800; color: #fff; margin-top:2px;">
           <span id="rt-rain-label">실제 강수량:</span> <span id="rt-live-rain" style="color: #4ade80;">0.0 mm</span>
         </div>
@@ -98,6 +172,7 @@
     </div>
     <div id="rt-leaflet-map"></div>
   </div>
+
   <div class="rt-auto-sensor-bar">
     <div class="rt-sensor-tag">
       <span class="rt-sensor-live-dot"></span>
@@ -105,6 +180,7 @@
     </div>
     <div style="font-size:10.5px; font-weight:700; color:#38bdf8;" id="rt-auto-sensor-status">감지망 정상 가동</div>
   </div>
+
   <div class="rt-sync-status-bar">
     <div style="display:flex; align-items:center; color:#94a3b8;">
       <span class="rt-sync-dot"></span>
@@ -112,6 +188,7 @@
     </div>
     <div style="color:#38bdf8; font-weight:700;">다음 갱신: <span id="rt-sync-timer">60초</span></div>
   </div>
+
   <div class="rt-telemetry-box">
     <div class="rt-card prop-card">
       <div class="rt-card-head" style="color: #38bdf8;" id="rt-card-head">독자 기하 다양체 (실시간)</div>
@@ -128,136 +205,57 @@
       <div class="rt-card-row"><span class="rt-label">산악 돌풍</span><span class="rt-val val-gray">미반영</span></div>
     </div>
   </div>
+
+  <!-- [법적 고지 및 면책 공고 (완전 면책 보장)] -->
+  <div class="rt-legal-box">
+    <div class="rt-legal-title">⚖️ 법적 고지 및 면책 공고 (Disclaimer)</div>
+    <p>1. 본 시스템은 개발자 <span class="rt-legal-highlight">꿀꽈배기</span>가 비영리 학술 연구 및 등산객의 안전 산행 보조를 위해 무료로 제공하는 국지 기하 예측 모델(FM-GFM)입니다.</p>
+    <p>2. 본 화면에 표출되는 기온 감률, 능선 압축 풍속, 돌발 강우 조기경보는 공개 기상 API 및 알고리즘 기반의 <span class="rt-legal-highlight">단순 참고용 추정 수치</span>이며, 실제 기상 특보 및 법적 기상 정보는 <span class="rt-legal-highlight">대한민국 기상청(KMA) 공식 발표</span>를 최우선으로 준수해야 합니다.</p>
+    <p>3. 본 시스템의 정보 활용, 산행 계획 수립, 기상 이변, 안전사고(낙석, 실족, 저체온증, 조난 등)로 인해 발생하는 <span class="rt-legal-highlight">모든 인명·재산상의 직·간접적 손해에 대하여 개발자는 민·형사상 어떠한 법적 책임도 부담하지 않습니다.</span></p>
+    <div style="margin-top: 4px; color: #475569; font-size: 8.5px;">
+      Data sources: Open-Meteo API, OpenStreetMap contributors, Esri Topo Map
+    </div>
+  </div>
 </div>
+
 <script>
   var queryInput = document.getElementById('rt-query');
   var statusMsg = document.getElementById('rt-search-msg');
   var timerDisplay = document.getElementById('rt-sync-timer');
   var timeTrack = document.getElementById('rt-time-track');
+  var alertBanner = document.getElementById('rt-alert-banner');
+  var alertText = document.getElementById('rt-alert-text');
+  var alertSub = document.getElementById('rt-alert-sub');
   var mapInstance = null, circle5km = null, markerCenter = null, radarEchoLayer = null;
-  var currentTarget = { lat: 35.0844, lng: 129.0556, alt: 395, name: '영도 봉래산' };
+  var currentTarget = { lat: 35.2758, lng: 129.0536, alt: 801, name: '금정산 고당봉' };
   var selectedOffset = 0, cachedWeatherData = null, countdownSeconds = 60, autoSyncTimer = null;
 
-  // [산림청 지정 대한민국 100대 명산 및 주요 거점 110개소 정밀 DB]
   var locationDB = {
-    // 1. 서울/경기/인천권
-    '북한산 백운대': { lat: 37.6586, lng: 126.9778, alt: 836, name: '북한산 백운대' },
-    '북한산': { lat: 37.6586, lng: 126.9778, alt: 836, name: '북한산 백운대' },
-    '도봉산 자운봉': { lat: 37.7011, lng: 127.0161, alt: 740, name: '도봉산 자운봉' },
-    '관악산 연주대': { lat: 37.4444, lng: 126.9639, alt: 632, name: '관악산 연주대' },
-    '수락산': { lat: 37.6833, lng: 127.0833, alt: 638, name: '수락산' },
-    '청계산 매봉': { lat: 37.4453, lng: 127.0547, alt: 618, name: '청계산 매봉' },
-    '소요산': { lat: 37.9439, lng: 127.0867, alt: 587, name: '소요산 의상대' },
-    '감악산': { lat: 37.9408, lng: 126.9606, alt: 675, name: '파주 감악산' },
-    '운악산': { lat: 37.8681, lng: 127.3275, alt: 935, name: '가평 운악산' },
-    '화악산': { lat: 37.9881, lng: 127.5256, alt: 1468, name: '가평 화악산' },
-    '명지산': { lat: 37.9317, lng: 127.4667, alt: 1267, name: '가평 명지산' },
-    '유명산': { lat: 37.5956, lng: 127.4897, alt: 862, name: '양평 유명산' },
-    '용문산 가섭봉': { lat: 37.5558, lng: 127.5458, alt: 1157, name: '양평 용문산' },
-    '축령산': { lat: 37.7558, lng: 127.3283, alt: 887, name: '남양주 축령산' },
-    '천마산': { lat: 37.6719, lng: 127.2794, alt: 812, name: '남양주 천마산' },
-    '마니산': { lat: 37.6186, lng: 126.4389, alt: 472, name: '강화 마니산' },
-
-    // 2. 강원권 (태백/설악 라인)
-    '설악산 대청봉': { lat: 38.1194, lng: 128.4656, alt: 1708, name: '설악산 대청봉' },
-    '설악산': { lat: 38.1194, lng: 128.4656, alt: 1708, name: '설악산 대청봉' },
-    '오대산 비로봉': { lat: 37.7981, lng: 128.5447, alt: 1563, name: '오대산 비로봉' },
-    '치악산 비로봉': { lat: 37.3656, lng: 128.0558, alt: 1288, name: '치악산 비로봉' },
-    '태백산 장군봉': { lat: 37.0983, lng: 128.9167, alt: 1567, name: '태백산 장군봉' },
-    '대관령 정상': { lat: 37.6775, lng: 128.7183, alt: 832, name: '대관령 정상' },
-    '두타산': { lat: 37.4283, lng: 128.9833, alt: 1353, name: '동해 두타산' },
-    '청옥산': { lat: 37.4439, lng: 128.9567, alt: 1404, name: '삼척 청옥산' },
-    '가리왕산': { lat: 37.4608, lng: 128.5647, alt: 1561, name: '정선 가리왕산' },
-    '방태산 주억봉': { lat: 37.8931, lng: 128.3547, alt: 1444, name: '인제 방태산' },
-    '점봉산': { lat: 38.0478, lng: 128.4239, alt: 1424, name: '양양 점봉산' },
-    '계방산': { lat: 37.7175, lng: 128.4658, alt: 1577, name: '평창 계방산' },
-    '삼악산': { lat: 37.8483, lng: 127.6533, alt: 654, name: '춘천 삼악산' },
-    '팔봉산': { lat: 37.6978, lng: 127.6756, alt: 328, name: '홍천 팔봉산' },
-    '공작산': { lat: 37.7056, lng: 128.0167, alt: 887, name: '홍천 공작산' },
-    '응봉산': { lat: 37.0789, lng: 129.2433, alt: 999, name: '울진/삼척 응봉산' },
-    '민둥산': { lat: 37.2656, lng: 128.7758, alt: 1119, name: '정선 민둥산' },
-    '태화산': { lat: 37.1356, lng: 128.5067, alt: 1027, name: '영월 태화산' },
-    '영월 봉래산': { lat: 37.1994, lng: 128.4872, alt: 800, name: '영월 봉래산' },
-
-    // 3. 충청권
-    '계룡산 천황봉': { lat: 36.3556, lng: 127.2083, alt: 845, name: '계룡산 천황봉' },
-    '속리산 천왕봉': { lat: 36.5333, lng: 127.8333, alt: 1058, name: '속리산 천왕봉' },
-    '월악산 영봉': { lat: 36.8719, lng: 128.0967, alt: 1097, name: '월악산 영봉' },
-    '대둔산 마천대': { lat: 36.1264, lng: 127.3197, alt: 878, name: '대둔산 마천대' },
-    '칠갑산': { lat: 36.4258, lng: 126.9042, alt: 561, name: '청양 칠갑산' },
-    '가야산(예산)': { lat: 36.7028, lng: 126.6028, alt: 678, name: '예산 가야산' },
-    '서대산': { lat: 36.2306, lng: 127.5256, alt: 904, name: '금산 서대산' },
-    '민주지산': { lat: 36.0378, lng: 127.8767, alt: 1242, name: '영동 민주지산' },
-    '조령산': { lat: 36.7869, lng: 128.0467, alt: 1026, name: '괴산/문경 조령산' },
-    '희양산': { lat: 36.7119, lng: 128.0167, alt: 999, name: '문경 희양산' },
-    '금수산': { lat: 36.9856, lng: 128.2567, alt: 1016, name: '제천 금수산' },
-    '도락산': { lat: 36.8778, lng: 128.2756, alt: 964, name: '단양 도락산' },
-    '천태산': { lat: 36.1417, lng: 127.7972, alt: 715, name: '영동 천태산' },
-
-    // 4. 전라권
-    '지리산 천왕봉': { lat: 35.3370, lng: 127.7308, alt: 1915, name: '지리산 천왕봉' },
-    '지리산': { lat: 35.3370, lng: 127.7308, alt: 1915, name: '지리산 천왕봉' },
-    '지리산 노고단': { lat: 35.2933, lng: 127.5283, alt: 1507, name: '지리산 노고단' },
-    '지리산 반야봉': { lat: 35.3183, lng: 127.5558, alt: 1732, name: '지리산 반야봉' },
-    '덕유산 향적봉': { lat: 35.8608, lng: 127.7472, alt: 1614, name: '덕유산 향적봉' },
-    '내장산 신선봉': { lat: 35.4856, lng: 126.8917, alt: 763, name: '정읍 내장산' },
-    '마이산 암마이봉': { lat: 35.7608, lng: 127.4167, alt: 686, name: '진안 마이산' },
-    '모악산': { lat: 35.7067, lng: 127.0542, alt: 793, name: '김제/완주 모악산' },
-    '무등산 서석대': { lat: 35.1389, lng: 126.9917, alt: 1187, name: '광주 무등산' },
-    '월출산 천황봉': { lat: 34.7578, lng: 126.6978, alt: 809, name: '영암 월출산' },
-    '조계산': { lat: 34.9817, lng: 127.3194, alt: 884, name: '순천 조계산' },
-    '백암산': { lat: 35.4383, lng: 126.8583, alt: 741, name: '장성 백암산' },
-    '선운산': { lat: 35.4956, lng: 126.5817, alt: 336, name: '고창 선운산' },
-    '추월산': { lat: 35.3956, lng: 126.9856, alt: 731, name: '담양 추월산' },
-    '두륜산 가련봉': { lat: 34.4833, lng: 126.6167, alt: 703, name: '해남 두륜산' },
-    '천관산': { lat: 34.5458, lng: 126.9256, alt: 723, name: '장흥 천관산' },
-    '팔영산': { lat: 34.6206, lng: 127.4478, alt: 609, name: '고흥 팔영산' },
-
-    // 5. 경상권 (영남알프스 및 부산 산악 포함)
-    '팔공산 비로봉': { lat: 35.9868, lng: 128.6946, alt: 1193, name: '대구 팔공산' },
-    '비슬산 대견봉': { lat: 35.7119, lng: 128.5167, alt: 1084, name: '대구 비슬산' },
-    '주왕산': { lat: 36.4019, lng: 129.1558, alt: 721, name: '청송 주왕산' },
-    '금오산 현월봉': { lat: 36.0856, lng: 128.3042, alt: 976, name: '구미 금오산' },
-    '소백산 비로봉': { lat: 36.9575, lng: 128.5133, alt: 1439, name: '영주/단양 소백산' },
-    '가야산 칠불봉': { lat: 35.8217, lng: 128.1256, alt: 1432, name: '합천 가야산' },
-    '황매산': { lat: 35.4856, lng: 127.9717, alt: 1113, name: '합천/산청 황매산' },
-    '화왕산': { lat: 35.5417, lng: 128.5167, alt: 757, name: '창녕 화왕산' },
-    '재약산 수미봉': { lat: 35.5358, lng: 128.9817, alt: 1119, name: '밀양 재약산' },
-    '천황산 사자봉': { lat: 35.5519, lng: 128.9756, alt: 1189, name: '밀양 천황산' },
-    '신불산': { lat: 35.5322, lng: 129.0547, alt: 1159, name: '울산 신불산' },
-    '가지산': { lat: 35.6214, lng: 129.0064, alt: 1241, name: '울산 가지산' },
-    '운문산': { lat: 35.6319, lng: 128.9617, alt: 1188, name: '청도 운문산' },
-    '천성산': { lat: 35.4056, lng: 129.1306, alt: 922, name: '양산 천성산' },
-    '토함산': { lat: 35.7956, lng: 129.3556, alt: 745, name: '경주 토함산' },
-    '남산 금오봉': { lat: 35.7981, lng: 129.2258, alt: 494, name: '경주 남산' },
-    '청량산 장인봉': { lat: 36.7917, lng: 128.9167, alt: 870, name: '봉화 청량산' },
-    '미륵산': { lat: 34.8156, lng: 128.4117, alt: 461, name: '통영 미륵산' },
-    '망산': { lat: 34.7183, lng: 128.6183, alt: 397, name: '거제 망산' },
-    '연화산': { lat: 35.0519, lng: 128.2042, alt: 528, name: '고성 연화산' },
-    '문수산': { lat: 35.5183, lng: 129.2256, alt: 600, name: '울산 문수산' },
-
-    // 부산 특별 관측 산악
+    '금정산 고당봉': { lat: 35.2758, lng: 129.0536, alt: 801, name: '금정산 고당봉' },
+    '금정산': { lat: 35.2758, lng: 129.0536, alt: 801, name: '금정산 고당봉' },
     '부산 봉래산': { lat: 35.0844, lng: 129.0556, alt: 395, name: '영도 봉래산' },
     '영도 봉래산': { lat: 35.0844, lng: 129.0556, alt: 395, name: '영도 봉래산' },
     '봉래산': { lat: 35.0844, lng: 129.0556, alt: 395, name: '영도 봉래산' },
-    '금정산 고당봉': { lat: 35.2758, lng: 129.0536, alt: 801, name: '금정산 고당봉' },
-    '금정산': { lat: 35.2758, lng: 129.0536, alt: 801, name: '금정산 고당봉' },
     '황령산 봉수대': { lat: 35.1558, lng: 129.0825, alt: 427, name: '황령산 봉수대' },
     '황령산': { lat: 35.1558, lng: 129.0825, alt: 427, name: '황령산 봉수대' },
     '해운대 장산': { lat: 35.1953, lng: 129.1436, alt: 634, name: '해운대 장산' },
     '장산': { lat: 35.1953, lng: 129.1436, alt: 634, name: '해운대 장산' },
     '백양산': { lat: 35.1833, lng: 129.0278, alt: 642, name: '부산 백양산' },
     '승학산': { lat: 35.1167, lng: 128.9833, alt: 497, name: '부산 승학산' },
-    '구덕산': { lat: 35.1256, lng: 129.0069, alt: 565, name: '부산 구덕산' },
-    '엄광산': { lat: 35.1389, lng: 129.0222, alt: 504, name: '부산 엄광산' },
-    '금련산': { lat: 35.1611, lng: 129.1039, alt: 415, name: '부산 금련산' },
-    '태종대': { lat: 35.0532, lng: 129.0864, alt: 140, name: '영도 태종대' },
-
-    // 6. 제주도
-    '한라산 백록담': { lat: 33.3617, lng: 126.5332, alt: 1950, name: '한라산 백록담' },
-    '한라산': { lat: 33.3617, lng: 126.5332, alt: 1950, name: '한라산 백록담' },
-    '한라산 윗세오름': { lat: 33.3556, lng: 126.4956, alt: 1740, name: '한라산 윗세오름' },
-    '성산일출봉': { lat: 33.4583, lng: 126.9417, alt: 182, name: '제주 성산일출봉' }
+    '가덕도 연대봉': { lat: 35.0236, lng: 128.8317, alt: 459, name: '가덕도 연대봉' },
+    '기장 달음산': { lat: 35.3056, lng: 129.2319, alt: 587, name: '기장 달음산' },
+    '간월산': { lat: 35.5517, lng: 129.0383, alt: 1069, name: '울주 간월산' },
+    '신불산': { lat: 35.5322, lng: 129.0547, alt: 1159, name: '울산 신불산' },
+    '가지산': { lat: 35.6214, lng: 129.0064, alt: 1241, name: '울산 가지산' },
+    '인왕산': { lat: 37.5856, lng: 126.9606, alt: 338, name: '서울 인왕산' },
+    '아차산': { lat: 37.5519, lng: 127.0983, alt: 295, name: '서울/구리 아차산' },
+    '청계산 매봉': { lat: 37.4453, lng: 127.0547, alt: 618, name: '청계산 매봉' },
+    '북한산 백운대': { lat: 37.6586, lng: 126.9778, alt: 836, name: '북한산 백운대' },
+    '도봉산 자운봉': { lat: 37.7011, lng: 127.0161, alt: 740, name: '도봉산 자운봉' },
+    '관악산 연주대': { lat: 37.4444, lng: 126.9639, alt: 632, name: '관악산 연주대' },
+    '설악산 대청봉': { lat: 38.1194, lng: 128.4656, alt: 1708, name: '설악산 대청봉' },
+    '지리산 천왕봉': { lat: 35.3370, lng: 127.7308, alt: 1915, name: '지리산 천왕봉' },
+    '한라산 백록담': { lat: 33.3617, lng: 126.5332, alt: 1950, name: '한라산 백록담' }
   };
 
   function searchInternalDB(query) {
@@ -269,7 +267,7 @@
     }
     for (var key in locationDB) {
       var k = key.replace(/\s+/g, '');
-      if (q.indexOf(k) !== -1 || k.indexOf(q) !== -1) return locationDB[key];
+      if (q === k || q.indexOf(k) !== -1 || k.indexOf(q) !== -1) return locationDB[key];
     }
     return null;
   }
@@ -300,7 +298,9 @@
   function fetchWeather(lat, lng, alt, placeName) {
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng + 
               '&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m' +
-              '&hourly=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m&forecast_days=3&timezone=Asia%2FTokyo';
+              '&hourly=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m' +
+              '&wind_speed_unit=ms&forecast_days=3&timezone=Asia%2FTokyo';
+              
     fetch(url).then(function(r) { return r.json(); }).then(function(data) {
       cachedWeatherData = data;
       buildTimelineTrack(new Date(data.current.time).getHours());
@@ -318,45 +318,94 @@
     return 0.0;
   }
 
+  function evaluateSuddenShowerRisk(rh, code, gust, nextRain, currentRain) {
+    var isConvectiveCode = [80, 81, 82, 95, 96, 99].indexOf(code) !== -1;
+    var isImminentRain = nextRain >= 1.2 && currentRain <= 0.2;
+    var isViolentBurst = rh >= 88 && gust >= 9.0;
+
+    if (currentRain > 0.5 || isImminentRain || (isConvectiveCode && rh >= 82)) {
+      return {
+        level: 'danger',
+        msg: '⚡ [골든타임 조기경보] 15분 내 돌발 소나기·낙뢰 위험! 즉시 대피 권고',
+        sub: '긴급 경보'
+      };
+    }
+
+    if (rh >= 85 || nextRain > 0.2 || isViolentBurst || [51, 53, 61].indexOf(code) !== -1) {
+      return {
+        level: 'caution',
+        msg: '⚠️ [사전 주의] 대기 불안정 지형성 구름 급발달 징후 (소나기 대비)',
+        sub: '주의보'
+      };
+    }
+
+    return {
+      level: 'safe',
+      msg: '🛡️ 대기 상태 안정 (돌발 강수 징후 없음)',
+      sub: '정상'
+    };
+  }
+
   function renderWeatherState() {
     if (!cachedWeatherData) return;
     var cur = cachedWeatherData.current, hourly = cachedWeatherData.hourly, alt = currentTarget.alt;
-    var baseTemp, rawRain, rhVal, codeVal, baseWind;
+    var baseTemp, rawRain, rhVal, codeVal, baseWind, baseGust;
     var baseIndex = Math.max(0, hourly.time.indexOf(cur.time));
     var targetIndex = Math.min(hourly.time.length - 1, baseIndex + selectedOffset);
     var targetTimeStr = hourly.time[targetIndex].split('T')[1];
 
+    var nextHourRain = hourly.precipitation[Math.min(hourly.time.length - 1, baseIndex + 1)] || 0.0;
+
     if (selectedOffset === 0) {
-      baseTemp = cur.temperature_2m; rawRain = cur.precipitation || 0.0; rhVal = cur.relative_humidity_2m || 75;
-      codeVal = cur.weather_code || 0; baseWind = cur.wind_speed_10m;
+      baseTemp = cur.temperature_2m;
+      rawRain = cur.precipitation || 0.0;
+      rhVal = cur.relative_humidity_2m || 75;
+      codeVal = cur.weather_code || 0;
+      baseWind = cur.wind_speed_10m || 2.5;
+      baseGust = cur.wind_gusts_10m || (baseWind * 1.35);
+
       document.getElementById('rt-selected-time-desc').textContent = '현재 실황 (' + targetTimeStr + ')';
       document.getElementById('rt-rain-label').textContent = '실제 강수량:';
       document.getElementById('rt-card-head').textContent = '독자 기하 다양체 (실시간)';
     } else {
-      baseTemp = hourly.temperature_2m[targetIndex]; rawRain = hourly.precipitation[targetIndex] || 0.0;
-      rhVal = hourly.relative_humidity_2m[targetIndex] || 75; codeVal = hourly.weather_code[targetIndex] || 0;
-      baseWind = hourly.wind_speed_10m[targetIndex];
+      baseTemp = hourly.temperature_2m[targetIndex];
+      rawRain = hourly.precipitation[targetIndex] || 0.0;
+      rhVal = hourly.relative_humidity_2m[targetIndex] || 75;
+      codeVal = hourly.weather_code[targetIndex] || 0;
+      baseWind = hourly.wind_speed_10m[targetIndex] || 2.5;
+      baseGust = hourly.wind_gusts_10m[targetIndex] || (baseWind * 1.35);
+
       document.getElementById('rt-selected-time-desc').textContent = '+' + selectedOffset + '시간 뒤 (' + targetTimeStr + ' 예보)';
       document.getElementById('rt-rain-label').textContent = '+' + selectedOffset + 'h 예상 강수:';
       document.getElementById('rt-card-head').textContent = '독자 기하 다양체 (+' + selectedOffset + 'h 초단기 예보)';
     }
 
     var finalRain = calculateAutoRain(rawRain, rhVal, codeVal, alt);
+
+    var risk = evaluateSuddenShowerRisk(rhVal, codeVal, baseGust, nextHourRain, finalRain);
+    alertBanner.className = 'rt-nowcast-alert alert-' + risk.level;
+    alertText.textContent = risk.msg;
+    alertSub.textContent = risk.sub;
+
     var rainText = document.getElementById('rt-live-rain');
     var rainBadge = document.getElementById('rt-rain-badge');
     var sensorStatus = document.getElementById('rt-auto-sensor-status');
 
     if (finalRain <= 0.05) {
-      rainText.textContent = '0.0 mm'; rainText.style.color = '#4ade80';
+      rainText.textContent = '0.0 mm';
+      rainText.style.color = '#4ade80';
       rainBadge.textContent = selectedOffset === 0 ? '현재 맑음 (비 안 옴)' : '+' + selectedOffset + 'h 예상: 맑음';
       rainBadge.className = 'rt-rain-badge rain-none';
-      sensorStatus.textContent = '실시간 감지: 맑음 (0.0mm)'; sensorStatus.style.color = '#4ade80';
+      sensorStatus.textContent = '실시간 감지: 맑음 (0.0mm)';
+      sensorStatus.style.color = '#4ade80';
       if (radarEchoLayer && mapInstance) { mapInstance.removeLayer(radarEchoLayer); radarEchoLayer = null; }
     } else {
-      rainText.textContent = finalRain.toFixed(1) + ' mm'; rainText.style.color = '#38bdf8';
+      rainText.textContent = finalRain.toFixed(1) + ' mm';
+      rainText.style.color = '#38bdf8';
       rainBadge.textContent = selectedOffset === 0 ? '실시간 강수 감지 (' + finalRain.toFixed(1) + 'mm)' : '+' + selectedOffset + 'h 예상: 비 (' + finalRain.toFixed(1) + 'mm)';
       rainBadge.className = 'rt-rain-badge rain-active';
-      sensorStatus.textContent = '⚠️ 강수 포착: ' + finalRain.toFixed(1) + ' mm/h'; sensorStatus.style.color = '#38bdf8';
+      sensorStatus.textContent = '⚠️ 강수 포착: ' + finalRain.toFixed(1) + ' mm/h';
+      sensorStatus.style.color = '#38bdf8';
       if (mapInstance) {
         if (radarEchoLayer) mapInstance.removeLayer(radarEchoLayer);
         radarEchoLayer = L.circle([currentTarget.lat, currentTarget.lng], { radius: 3500, color: '#38bdf8', weight: 1.2, fillColor: '#0284c7', fillOpacity: 0.32 }).addTo(mapInstance);
@@ -364,9 +413,9 @@
     }
 
     var peakTemp = baseTemp - (alt / 100.0) * 0.65;
-    var ridgeCompression = Math.min(1.50, 1.0 + (alt / 1000.0) * 0.25);
+    var ridgeCompression = Math.min(1.45, 1.08 + (alt / 1000.0) * 0.18);
     var peakWind = baseWind * ridgeCompression;
-    var peakGust = peakWind * 1.35;
+    var peakGust = Math.max(peakWind * 1.32, baseGust * ridgeCompression);
 
     document.getElementById('rt-place-title').textContent = currentTarget.name + ' (해발 ' + alt + 'm)';
     document.getElementById('rt-l-temp').textContent = baseTemp.toFixed(1) + ' °C';
@@ -416,7 +465,7 @@
     var matched = searchInternalDB(raw);
     if (matched) {
       statusMsg.style.color = '#4ade80';
-      statusMsg.textContent = '100대 명산 정밀 지형 데이터 매칭 완료';
+      statusMsg.textContent = '정밀 산악 지형 데이터 매칭 완료';
       initMap(matched.lat, matched.lng, matched.name, matched.alt);
       return;
     }
@@ -433,7 +482,7 @@
             });
         } else {
           statusMsg.style.color = '#f87171';
-          statusMsg.textContent = '지명을 찾을 수 없어 기본 거점(영도 봉래산)을 유지합니다.';
+          statusMsg.textContent = '지명을 찾을 수 없어 기본 거점(금정산 고당봉)을 유지합니다.';
         }
       });
   }
@@ -441,7 +490,7 @@
   window.rtSearch = function(place) { queryInput.value = place; runSearch(place); };
   document.getElementById('rt-btn-exec').onclick = function() { runSearch(queryInput.value); };
   queryInput.onkeydown = function(e) { if (e.key === 'Enter') runSearch(queryInput.value); };
-  initMap(35.0844, 129.0556, '영도 봉래산', 395);
+  initMap(35.2758, 129.0536, '금정산 고당봉', 801);
 </script>
 </body>
 </html>
