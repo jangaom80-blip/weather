@@ -72,13 +72,13 @@
   .rt-floating-hud { position: absolute; top: 10px; left: 10px; right: 10px; background: rgba(11, 15, 23, 0.94); backdrop-filter: blur(8px); border: 1px solid #38bdf8; border-radius: 8px; padding: 8px 12px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
   .rt-status-title { font-size: 11px; color: #cbd5e1; font-weight: 600; }
   
-  /* [정밀 날씨 상태 배지 스타일] */
+  /* 날씨 상태 배지 */
   .rt-rain-badge { font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 6px; }
-  .badge-clear { background: #064e3b; color: #4ade80; border: 1px solid #10b981; } /* 맑음 */
-  .badge-partly { background: #1e293b; color: #93c5fd; border: 1px solid #3b82f6; } /* 구름많음 */
-  .badge-cloudy { background: #334155; color: #f1f5f9; border: 1px solid #64748b; } /* 흐림 */
-  .badge-fog { background: #312e81; color: #c7d2fe; border: 1px solid #6366f1; } /* 안개/해무 */
-  .badge-rain { background: #0369a1; color: #38bdf8; border: 1px solid #38bdf8; animation: rainPulse 1.2s infinite; } /* 비/소나기 */
+  .badge-clear { background: #064e3b; color: #4ade80; border: 1px solid #10b981; }
+  .badge-partly { background: #1e293b; color: #93c5fd; border: 1px solid #3b82f6; }
+  .badge-cloudy { background: #334155; color: #f1f5f9; border: 1px solid #64748b; }
+  .badge-fog { background: #312e81; color: #c7d2fe; border: 1px solid #6366f1; }
+  .badge-rain { background: #0369a1; color: #38bdf8; border: 1px solid #38bdf8; animation: rainPulse 1.2s infinite; }
   @keyframes rainPulse {
     0%, 100% { box-shadow: 0 0 4px #38bdf8; }
     50% { box-shadow: 0 0 12px #38bdf8; }
@@ -130,6 +130,24 @@
     color: #cbd5e1;
     font-weight: 700;
   }
+  .rt-legal-footer {
+    margin-top: 6px;
+    padding-top: 5px;
+    border-top: 1px solid #1a2333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8.5px;
+    color: #475569;
+  }
+  .rt-version-tag {
+    color: #38bdf8;
+    font-weight: 700;
+    background: #0f172a;
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid #1e293b;
+  }
 </style>
 </head>
 <body>
@@ -140,14 +158,14 @@
   </div>
   
   <div class="rt-search-bar">
-    <input type="text" class="rt-input" id="rt-query" placeholder="산 봉우리나 지명 입력" value="기장 달음산">
+    <input type="text" class="rt-input" id="rt-query" placeholder="산 봉우리나 지명 입력" value="금정산 고당봉">
     <button class="rt-btn-search" id="rt-btn-exec">정밀 분석</button>
   </div>
   <div class="rt-search-status" id="rt-search-msg">전국 명산 및 수도권·영남 생활 인기 근교산 정밀 DB 가동 중</div>
   
   <div class="rt-chips">
-    <span class="rt-chip" onclick="rtSearch('기장 달음산')">기장 달음산</span>
     <span class="rt-chip" onclick="rtSearch('금정산 고당봉')">금정산 고당봉</span>
+    <span class="rt-chip" onclick="rtSearch('기장 달음산')">기장 달음산</span>
     <span class="rt-chip" onclick="rtSearch('부산 봉래산')">부산 봉래산</span>
     <span class="rt-chip" onclick="rtSearch('가덕도 연대봉')">가덕도 연대봉</span>
     <span class="rt-chip" onclick="rtSearch('간월산')">간월산</span>
@@ -172,12 +190,12 @@
   <div class="rt-map-box">
     <div class="rt-floating-hud">
       <div>
-        <div class="rt-status-title" id="rt-place-title">기장 달음산 (해발 587m)</div>
+        <div class="rt-status-title" id="rt-place-title">금정산 고당봉 (해발 801m)</div>
         <div style="font-size: 14px; font-weight: 800; color: #fff; margin-top:2px;">
           <span id="rt-rain-label">실제 강수량:</span> <span id="rt-live-rain" style="color: #4ade80;">0.0 mm</span>
         </div>
       </div>
-      <span class="rt-rain-badge badge-cloudy" id="rt-rain-badge">현재 흐림</span>
+      <span class="rt-rain-badge badge-clear" id="rt-rain-badge">현재 맑음</span>
     </div>
     <div id="rt-leaflet-map"></div>
   </div>
@@ -207,21 +225,24 @@
       <div class="rt-card-row"><span class="rt-label">능선 순간 돌풍</span><span class="rt-val val-amber" id="rt-p-gust">-- m/s</span></div>
     </div>
     <div class="rt-card legacy-card">
-      <div class="rt-card-head" style="color: #cbd5e1;">기존 수치예보 (평지 기상청)</div>
-      <div class="rt-card-row"><span class="rt-label">지형 반영</span><span class="rt-val val-gray">10km (평활화)</span></div>
+      <div class="rt-card-head" style="color: #cbd5e1;">기존 수치예보 (도심 평지)</div>
+      <div class="rt-card-row"><span class="rt-label">지형 반영</span><span class="rt-val val-gray">해발 0~30m 평지</span></div>
       <div class="rt-card-row"><span class="rt-label">평지 기온</span><span class="rt-val val-white" id="rt-l-temp">-- °C</span></div>
       <div class="rt-card-row"><span class="rt-label">평지 풍속</span><span class="rt-val val-white" id="rt-l-wind">-- m/s</span></div>
       <div class="rt-card-row"><span class="rt-label">산악 돌풍</span><span class="rt-val val-gray">미반영</span></div>
     </div>
   </div>
 
+  <!-- [법적 고지 및 하단 버전 1.5] -->
   <div class="rt-legal-box">
     <div class="rt-legal-title">⚖️ 법적 고지 및 면책 공고 (Disclaimer)</div>
     <p>1. 본 시스템은 개발자 <span class="rt-legal-highlight">꿀꽈배기</span>가 비영리 학술 연구 및 등산객의 안전 산행 보조를 위해 무료로 제공하는 국지 기하 예측 모델(FM-GFM)입니다.</p>
     <p>2. 본 화면에 표출되는 기온 감률, 능선 압축 풍속, 돌발 강우 조기경보는 공개 기상 API 및 알고리즘 기반의 <span class="rt-legal-highlight">단순 참고용 추정 수치</span>이며, 실제 기상 특보 및 법적 기상 정보는 <span class="rt-legal-highlight">대한민국 기상청(KMA) 공식 발표</span>를 최우선으로 준수해야 합니다.</p>
     <p>3. 본 시스템의 정보 활용, 산행 계획 수립, 기상 이변, 안전사고(낙석, 실족, 저체온증, 조난 등)로 인해 발생하는 <span class="rt-legal-highlight">모든 인명·재산상의 직·간접적 손해에 대하여 개발자는 민·형사상 어떠한 법적 책임도 부담하지 않습니다.</span></p>
-    <div style="margin-top: 4px; color: #475569; font-size: 8.5px;">
-      Data sources: Open-Meteo API, OpenStreetMap contributors, Esri Topo Map
+    
+    <div class="rt-legal-footer">
+      <span>Data sources: Open-Meteo API, OpenStreetMap, Esri Topo</span>
+      <span class="rt-version-tag">버전 1.5</span>
     </div>
   </div>
 </div>
@@ -235,7 +256,7 @@
   var alertText = document.getElementById('rt-alert-text');
   var alertSub = document.getElementById('rt-alert-sub');
   var mapInstance = null, circle5km = null, markerCenter = null, radarEchoLayer = null;
-  var currentTarget = { lat: 35.3056, lng: 129.2319, alt: 587, name: '기장 달음산' };
+  var currentTarget = { lat: 35.2758, lng: 129.0536, alt: 801, name: '금정산 고당봉' };
   var selectedOffset = 0, cachedWeatherData = null, countdownSeconds = 60, autoSyncTimer = null;
 
   var locationDB = {
@@ -305,7 +326,6 @@
     renderWeatherState();
   }
 
-  // [핵심] cloud_cover(운량) 파라미터 추가
   function fetchWeather(lat, lng, alt, placeName) {
     var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng + 
               '&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_gusts_10m' +
@@ -329,11 +349,9 @@
     return 0.0;
   }
 
-  // [핵심] 운량(0~100%) 및 기상 코드를 결합한 실제 하늘 상태 판별기
   function resolveWeatherStatus(rain, cloudCover, code, isForecast, offset) {
     var pfx = isForecast ? ('+' + offset + 'h 예상: ') : '현재 ';
 
-    // 1. 강수 감지 시
     if (rain > 0.05) {
       if ([80, 81, 82].indexOf(code) !== -1) return { text: pfx + '소나기 (' + rain.toFixed(1) + 'mm)', cls: 'badge-rain' };
       if ([95, 96, 99].indexOf(code) !== -1) return { text: pfx + '뇌우/강우 (' + rain.toFixed(1) + 'mm)', cls: 'badge-rain' };
@@ -341,19 +359,9 @@
       return { text: pfx + '비 (' + rain.toFixed(1) + 'mm)', cls: 'badge-rain' };
     }
 
-    // 2. 비가 안 올 때: 운량(구름 비율)과 코드로 하늘 판별
-    if (code === 45 || code === 48) {
-      return { text: pfx + '안개/해무', cls: 'badge-fog' };
-    }
-    // 운량 80% 이상이거나 WMO Overcast(3번) 코드인 경우 -> '흐림'
-    if (code === 3 || cloudCover >= 80) {
-      return { text: pfx + '흐림', cls: 'badge-cloudy' };
-    }
-    // 운량 30~79% 또는 WMO Partly Cloudy(2번) 코드 -> '구름많음'
-    if (code === 2 || cloudCover >= 35) {
-      return { text: pfx + '구름많음', cls: 'badge-partly' };
-    }
-    // 운량 30% 미만 -> '맑음'
+    if (code === 45 || code === 48) return { text: pfx + '안개/해무', cls: 'badge-fog' };
+    if (code === 3 || cloudCover >= 80) return { text: pfx + '흐림', cls: 'badge-cloudy' };
+    if (code === 2 || cloudCover >= 35) return { text: pfx + '구름많음', cls: 'badge-partly' };
     return { text: pfx + '맑음', cls: 'badge-clear' };
   }
 
@@ -388,15 +396,16 @@
   function renderWeatherState() {
     if (!cachedWeatherData) return;
     var cur = cachedWeatherData.current, hourly = cachedWeatherData.hourly, alt = currentTarget.alt;
-    var baseTemp, rawRain, rhVal, codeVal, cloudVal, baseWind, baseGust;
+    var rawTemp, rawRain, rhVal, codeVal, cloudVal, baseWind, baseGust;
     var baseIndex = Math.max(0, hourly.time.indexOf(cur.time));
     var targetIndex = Math.min(hourly.time.length - 1, baseIndex + selectedOffset);
     var targetTimeStr = hourly.time[targetIndex].split('T')[1];
 
     var nextHourRain = hourly.precipitation[Math.min(hourly.time.length - 1, baseIndex + 1)] || 0.0;
+    var modelElevation = (cachedWeatherData.elevation !== undefined) ? cachedWeatherData.elevation : 350;
 
     if (selectedOffset === 0) {
-      baseTemp = cur.temperature_2m;
+      rawTemp = cur.temperature_2m;
       rawRain = cur.precipitation || 0.0;
       rhVal = cur.relative_humidity_2m || 75;
       codeVal = cur.weather_code || 0;
@@ -408,7 +417,7 @@
       document.getElementById('rt-rain-label').textContent = '실제 강수량:';
       document.getElementById('rt-card-head').textContent = '독자 기하 다양체 (실시간)';
     } else {
-      baseTemp = hourly.temperature_2m[targetIndex];
+      rawTemp = hourly.temperature_2m[targetIndex];
       rawRain = hourly.precipitation[targetIndex] || 0.0;
       rhVal = hourly.relative_humidity_2m[targetIndex] || 75;
       codeVal = hourly.weather_code[targetIndex] || 0;
@@ -423,13 +432,11 @@
 
     var finalRain = calculateAutoRain(rawRain, rhVal, codeVal, alt);
 
-    // 조기경보 배너 업데이트
     var risk = evaluateSuddenShowerRisk(rhVal, codeVal, baseGust, nextHourRain, finalRain);
     alertBanner.className = 'rt-nowcast-alert alert-' + risk.level;
     alertText.textContent = risk.msg;
     alertSub.textContent = risk.sub;
 
-    // [핵심] 실제 하늘 상태(흐림, 구름많음, 맑음, 비) 배지 반영
     var isForecast = selectedOffset > 0;
     var weatherStatus = resolveWeatherStatus(finalRain, cloudVal, codeVal, isForecast, selectedOffset);
     
@@ -457,13 +464,16 @@
       }
     }
 
-    var peakTemp = baseTemp - (alt / 100.0) * 0.65;
+    // 도심 평지 기온 복원 및 정상부 기온 산출
+    var trueSeaLevelTemp = rawTemp + (modelElevation / 100.0) * 0.65;
+    var peakTemp = trueSeaLevelTemp - (alt / 100.0) * 0.65;
+
     var ridgeCompression = Math.min(1.45, 1.08 + (alt / 1000.0) * 0.18);
     var peakWind = baseWind * ridgeCompression;
     var peakGust = Math.max(peakWind * 1.32, baseGust * ridgeCompression);
 
     document.getElementById('rt-place-title').textContent = currentTarget.name + ' (해발 ' + alt + 'm)';
-    document.getElementById('rt-l-temp').textContent = baseTemp.toFixed(1) + ' °C';
+    document.getElementById('rt-l-temp').textContent = trueSeaLevelTemp.toFixed(1) + ' °C';
     document.getElementById('rt-l-wind').textContent = baseWind.toFixed(1) + ' m/s';
     document.getElementById('rt-p-temp').textContent = peakTemp.toFixed(1) + ' °C';
     document.getElementById('rt-p-wind').textContent = peakWind.toFixed(1) + ' m/s';
@@ -527,7 +537,7 @@
             });
         } else {
           statusMsg.style.color = '#f87171';
-          statusMsg.textContent = '지명을 찾을 수 없어 기본 거점(기장 달음산)을 유지합니다.';
+          statusMsg.textContent = '지명을 찾을 수 없어 기본 거점(금정산 고당봉)을 유지합니다.';
         }
       });
   }
@@ -535,7 +545,7 @@
   window.rtSearch = function(place) { queryInput.value = place; runSearch(place); };
   document.getElementById('rt-btn-exec').onclick = function() { runSearch(queryInput.value); };
   queryInput.onkeydown = function(e) { if (e.key === 'Enter') runSearch(queryInput.value); };
-  initMap(35.3056, 129.2319, '기장 달음산', 587);
+  initMap(35.2758, 129.0536, '금정산 고당봉', 801);
 </script>
 </body>
 </html>
