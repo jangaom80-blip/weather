@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>FM-GFM 초정밀 국지 기하 예측기</title>
+<title>FM-GFM 초정밀 국지 기하 예측기 v1.6</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -11,25 +11,22 @@
   body { background: #05080e; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; padding: 12px; }
   .rt-cockpit { background: #0b0f17; width: 100%; max-width: 440px; border-radius: 16px; padding: 14px; border: 1px solid #1e293b; box-shadow: 0 16px 40px rgba(0,0,0,0.9); }
   
-  /* 상단 헤더 */
   .rt-brand-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 8px; margin-bottom: 10px; }
-  .rt-brand-title { font-size: 13px; font-weight: 800; color: #38bdf8; letter-spacing: -0.3px; }
+  .rt-brand-title { font-size: 13px; font-weight: 800; color: #38bdf8; letter-spacing: -0.3px; display: flex; align-items: center; gap: 5px; }
+  .rt-ver-tag { background: #0369a1; color: #e0f2fe; font-size: 9.5px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid #38bdf8; }
   .rt-dev-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 6px; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4); }
   
-  /* 검색바 */
   .rt-search-bar { display: flex; gap: 6px; margin-bottom: 6px; }
   .rt-input { flex: 1; background: #161f2e; border: 1px solid #2d3d54; border-radius: 8px; padding: 9px 12px; color: #fff; font-size: 13px; font-weight: 600; outline: none; }
   .rt-input:focus { border-color: #38bdf8; }
   .rt-btn-search { background: #0284c7; border: none; color: #fff; font-weight: 700; padding: 0 14px; border-radius: 8px; font-size: 12px; cursor: pointer; }
   .rt-search-status { font-size: 10px; color: #64748b; margin-bottom: 6px; padding-left: 2px; min-height: 14px; }
   
-  /* 추천 칩 */
   .rt-chips { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 6px; scrollbar-width: none; }
   .rt-chips::-webkit-scrollbar { display: none; }
   .rt-chip { background: #1e293b; border: 1px solid #334155; color: #cbd5e1; font-size: 10px; padding: 3px 8px; border-radius: 999px; white-space: nowrap; cursor: pointer; }
   .rt-chip:active { background: #0284c7; color: #fff; }
   
-  /* 돌발 소나기/호우 조기경보 배너 */
   .rt-nowcast-alert {
     display: flex;
     align-items: center;
@@ -55,7 +52,6 @@
     50% { transform: scale(0.99); opacity: 0.85; }
   }
 
-  /* 12시간 시간별 예보 트랙 */
   .rt-timeline-wrapper { margin-bottom: 8px; }
   .rt-timeline-title { font-size: 10.5px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; display: flex; justify-content: space-between; }
   .rt-timeline-track { display: flex; gap: 5px; overflow-x: auto; padding: 4px 2px 6px 2px; scrollbar-width: none; }
@@ -66,13 +62,11 @@
   .rt-time-pill.active .rt-pill-offset { color: #fff; }
   .rt-pill-clock { font-size: 11px; font-weight: 700; color: #f1f5f9; display: block; margin-top: 1px; }
   
-  /* 지도 박스 */
   .rt-map-box { position: relative; width: 100%; height: 350px; border-radius: 12px; overflow: hidden; border: 1px solid #283548; }
   #rt-leaflet-map { width: 100%; height: 100%; background: #1a202c; }
   .rt-floating-hud { position: absolute; top: 10px; left: 10px; right: 10px; background: rgba(11, 15, 23, 0.94); backdrop-filter: blur(8px); border: 1px solid #38bdf8; border-radius: 8px; padding: 8px 12px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
   .rt-status-title { font-size: 11px; color: #cbd5e1; font-weight: 600; }
   
-  /* 날씨 상태 배지 */
   .rt-rain-badge { font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 6px; }
   .badge-clear { background: #064e3b; color: #4ade80; border: 1px solid #10b981; }
   .badge-partly { background: #1e293b; color: #93c5fd; border: 1px solid #3b82f6; }
@@ -84,29 +78,32 @@
     50% { box-shadow: 0 0 12px #38bdf8; }
   }
 
-  /* 1분 자동 동화 상태 바 */
   .rt-auto-sensor-bar { display: flex; justify-content: space-between; align-items: center; background: #111a26; border: 1px solid #1e3a5f; border-radius: 8px; padding: 7px 11px; margin-top: 8px; }
   .rt-sensor-tag { font-size: 11px; font-weight: 700; color: #93c5fd; display: flex; align-items: center; gap: 6px; }
   .rt-sensor-live-dot { width: 7px; height: 7px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 8px #38bdf8; }
   .rt-sync-status-bar { display: flex; justify-content: space-between; align-items: center; background: #141c28; border: 1px solid #233146; border-radius: 6px; padding: 5px 10px; margin-top: 6px; font-size: 10.5px; }
   .rt-sync-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 5px; }
   
-  /* 하단 수치 분석 카드 */
   .rt-telemetry-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
   .rt-card { border-radius: 10px; padding: 10px 11px; }
   .rt-card.prop-card { background: #0f1c2e; border: 1.5px solid #0284c7; }
   .rt-card.legacy-card { background: #141a24; border: 1px solid #334155; }
   .rt-card-head { font-size: 11px; font-weight: 800; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
-  .rt-card-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .rt-label { color: #e2e8f0; font-size: 11.5px; font-weight: 600; }
-  .rt-val { font-size: 12px; font-weight: 800; }
+  .rt-card-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .rt-label { color: #e2e8f0; font-size: 11px; font-weight: 600; }
+  .rt-val { font-size: 11.5px; font-weight: 800; }
   .val-white { color: #ffffff; }
   .val-green { color: #4ade80; }
   .val-cyan  { color: #38bdf8; }
   .val-amber { color: #f59e0b; }
   .val-gray  { color: #94a3b8; }
 
-  /* 법적 고지 및 면책 공고 */
+  .rt-wind-tag { font-size: 9.5px; font-weight: 800; padding: 1px 5px; border-radius: 4px; margin-left: 4px; vertical-align: middle; }
+  .wind-calm { background: #064e3b; color: #4ade80; }
+  .wind-breeze { background: #1e3a5f; color: #38bdf8; }
+  .wind-caution { background: #78350f; color: #fde68a; }
+  .wind-danger { background: #7f1d1d; color: #fecaca; animation: alertPulse 1.2s infinite; }
+
   .rt-legal-box {
     margin-top: 10px;
     padding: 10px 12px;
@@ -130,30 +127,26 @@
     color: #cbd5e1;
     font-weight: 700;
   }
-  .rt-legal-footer {
-    margin-top: 6px;
-    padding-top: 5px;
-    border-top: 1px solid #1a2333;
+  .rt-version-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 8.5px;
-    color: #475569;
-  }
-  .rt-version-tag {
-    color: #38bdf8;
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid #1e293b;
+    font-size: 9.5px;
     font-weight: 700;
-    background: #0f172a;
-    padding: 1px 6px;
-    border-radius: 4px;
-    border: 1px solid #1e293b;
+    color: #475569;
   }
 </style>
 </head>
 <body>
 <div class="rt-cockpit">
   <div class="rt-brand-header">
-    <div class="rt-brand-title">FM-GFM 초정밀 국지 기하 예측기</div>
+    <div class="rt-brand-title">
+      <span>FM-GFM 초정밀 국지 기하 예측기</span>
+      <span class="rt-ver-tag">v1.6</span>
+    </div>
     <div class="rt-dev-badge">👑 개발자 : 꿀꽈배기</div>
   </div>
   
@@ -219,30 +212,34 @@
   <div class="rt-telemetry-box">
     <div class="rt-card prop-card">
       <div class="rt-card-head" style="color: #38bdf8;" id="rt-card-head">독자 기하 다양체 (실시간)</div>
-      <div class="rt-card-row"><span class="rt-label">지형 반영</span><span class="rt-val val-green">능선 10m급 보정</span></div>
       <div class="rt-card-row"><span class="rt-label">정상부 기온</span><span class="rt-val val-cyan" id="rt-p-temp">-- °C</span></div>
-      <div class="rt-card-row"><span class="rt-label">능선 평균 풍속</span><span class="rt-val val-white" id="rt-p-wind">-- m/s</span></div>
-      <div class="rt-card-row"><span class="rt-label">능선 순간 돌풍</span><span class="rt-val val-amber" id="rt-p-gust">-- m/s</span></div>
+      <div class="rt-card-row"><span class="rt-label">능선 체감기온</span><span class="rt-val val-white" id="rt-p-chill">-- °C</span></div>
+      <div class="rt-card-row">
+        <span class="rt-label">능선 평균풍속</span>
+        <span class="rt-val val-white"><span id="rt-p-wind">-- m/s</span><span id="rt-wind-badge" class="rt-wind-tag wind-breeze">보통</span></span>
+      </div>
+      <div class="rt-card-row"><span class="rt-label">능선 순간돌풍</span><span class="rt-val val-amber" id="rt-p-gust">-- m/s</span></div>
     </div>
+    
     <div class="rt-card legacy-card">
       <div class="rt-card-head" style="color: #cbd5e1;">기존 수치예보 (도심 평지)</div>
-      <div class="rt-card-row"><span class="rt-label">지형 반영</span><span class="rt-val val-gray">해발 0~30m 평지</span></div>
-      <div class="rt-card-row"><span class="rt-label">평지 기온</span><span class="rt-val val-white" id="rt-l-temp">-- °C</span></div>
-      <div class="rt-card-row"><span class="rt-label">평지 풍속</span><span class="rt-val val-white" id="rt-l-wind">-- m/s</span></div>
-      <div class="rt-card-row"><span class="rt-label">산악 돌풍</span><span class="rt-val val-gray">미반영</span></div>
+      <div class="rt-card-row"><span class="rt-label">도심 평지기온</span><span class="rt-val val-white" id="rt-l-temp">-- °C</span></div>
+      <div class="rt-card-row"><span class="rt-label">평지 체감기온</span><span class="rt-val val-gray" id="rt-l-chill">-- °C</span></div>
+      <div class="rt-card-row"><span class="rt-label">평지 평균풍속</span><span class="rt-val val-white" id="rt-l-wind">-- m/s</span></div>
+      <div class="rt-card-row"><span class="rt-label">평지 최대돌풍</span><span class="rt-val val-amber" id="rt-l-gust">-- m/s</span></div>
     </div>
   </div>
 
-  <!-- [법적 고지 및 하단 버전 1.5] -->
   <div class="rt-legal-box">
     <div class="rt-legal-title">⚖️ 법적 고지 및 면책 공고 (Disclaimer)</div>
     <p>1. 본 시스템은 개발자 <span class="rt-legal-highlight">꿀꽈배기</span>가 비영리 학술 연구 및 등산객의 안전 산행 보조를 위해 무료로 제공하는 국지 기하 예측 모델(FM-GFM)입니다.</p>
     <p>2. 본 화면에 표출되는 기온 감률, 능선 압축 풍속, 돌발 강우 조기경보는 공개 기상 API 및 알고리즘 기반의 <span class="rt-legal-highlight">단순 참고용 추정 수치</span>이며, 실제 기상 특보 및 법적 기상 정보는 <span class="rt-legal-highlight">대한민국 기상청(KMA) 공식 발표</span>를 최우선으로 준수해야 합니다.</p>
     <p>3. 본 시스템의 정보 활용, 산행 계획 수립, 기상 이변, 안전사고(낙석, 실족, 저체온증, 조난 등)로 인해 발생하는 <span class="rt-legal-highlight">모든 인명·재산상의 직·간접적 손해에 대하여 개발자는 민·형사상 어떠한 법적 책임도 부담하지 않습니다.</span></p>
     
-    <div class="rt-legal-footer">
-      <span>Data sources: Open-Meteo API, OpenStreetMap, Esri Topo</span>
-      <span class="rt-version-tag">버전 1.5</span>
+    <!-- [마지막 버전 1.6 공식 표기 영역] -->
+    <div class="rt-version-footer">
+      <span>Data sources: Open-Meteo, OSM, Esri Topo</span>
+      <span style="color: #38bdf8;">FM-GFM Engine v1.6 (Official)</span>
     </div>
   </div>
 </div>
@@ -365,6 +362,20 @@
     return { text: pfx + '맑음', cls: 'badge-clear' };
   }
 
+  function getWindBadge(wind, gust) {
+    if (gust >= 18.0 || wind >= 13.0) return { text: '강풍경고', cls: 'wind-danger' };
+    if (gust >= 12.0 || wind >= 8.0)  return { text: '능선주의', cls: 'wind-caution' };
+    if (gust >= 7.0 || wind >= 4.0)   return { text: '다소강함', cls: 'wind-breeze' };
+    return { text: '쾌적', cls: 'wind-calm' };
+  }
+
+  function calcWindChill(temp, windMs) {
+    var vKmh = windMs * 3.6;
+    if (vKmh <= 4.8) return temp;
+    var wc = 13.12 + (0.6215 * temp) - (11.37 * Math.pow(vKmh, 0.16)) + (0.3965 * temp * Math.pow(vKmh, 0.16));
+    return Math.min(temp, wc);
+  }
+
   function evaluateSuddenShowerRisk(rh, code, gust, nextRain, currentRain) {
     var isConvectiveCode = [80, 81, 82, 95, 96, 99].indexOf(code) !== -1;
     var isImminentRain = nextRain >= 1.2 && currentRain <= 0.2;
@@ -464,18 +475,30 @@
       }
     }
 
-    // 도심 평지 기온 복원 및 정상부 기온 산출
     var trueSeaLevelTemp = rawTemp + (modelElevation / 100.0) * 0.65;
     var peakTemp = trueSeaLevelTemp - (alt / 100.0) * 0.65;
 
-    var ridgeCompression = Math.min(1.45, 1.08 + (alt / 1000.0) * 0.18);
+    var ridgeCompression = Math.min(1.40, 1.05 + (alt / 1000.0) * 0.20);
     var peakWind = baseWind * ridgeCompression;
-    var peakGust = Math.max(peakWind * 1.32, baseGust * ridgeCompression);
+    var peakGust = Math.max(peakWind * 1.35, baseGust * Math.min(1.25, 1.0 + (alt / 1000.0) * 0.15));
+
+    var seaChill = calcWindChill(trueSeaLevelTemp, baseWind);
+    var peakChill = calcWindChill(peakTemp, peakWind);
+
+    var windTag = getWindBadge(peakWind, peakGust);
+    var windBadgeEl = document.getElementById('rt-wind-badge');
+    windBadgeEl.textContent = windTag.text;
+    windBadgeEl.className = 'rt-wind-tag ' + windTag.cls;
 
     document.getElementById('rt-place-title').textContent = currentTarget.name + ' (해발 ' + alt + 'm)';
+    
     document.getElementById('rt-l-temp').textContent = trueSeaLevelTemp.toFixed(1) + ' °C';
+    document.getElementById('rt-l-chill').textContent = seaChill.toFixed(1) + ' °C';
     document.getElementById('rt-l-wind').textContent = baseWind.toFixed(1) + ' m/s';
+    document.getElementById('rt-l-gust').textContent = baseGust.toFixed(1) + ' m/s';
+
     document.getElementById('rt-p-temp').textContent = peakTemp.toFixed(1) + ' °C';
+    document.getElementById('rt-p-chill').textContent = peakChill.toFixed(1) + ' °C';
     document.getElementById('rt-p-wind').textContent = peakWind.toFixed(1) + ' m/s';
     document.getElementById('rt-p-gust').textContent = peakGust.toFixed(1) + ' m/s';
   }
