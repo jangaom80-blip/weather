@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0f18">
   
-  <title>정밀 산악 기상 분석 대시보드 v2.1</title>
+  <title>정밀 산악 기상 분석 대시보드 v2.2</title>
 
   <!-- Leaflet 지도 엔진 (실시간 비구름 레이더 오버레이 호환) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -97,10 +97,10 @@
       background: #0f172a;
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 14px;
-      max-height: 250px;
+      max-height: 260px;
       overflow-y: auto;
       display: none;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9);
       scrollbar-width: thin;
     }
     .search-item {
@@ -415,7 +415,7 @@
       margin-bottom: 14px;
     }
 
-    /* 🥨 개발자 꿀꽈배기 v2.1 각인 */
+    /* 🥨 개발자 꿀꽈배기 v2.2 각인 */
     #dev-tag {
       position: fixed;
       bottom: calc(8px + env(safe-area-inset-bottom, 0px));
@@ -447,7 +447,7 @@
 <body>
 
   <!-- 상단 상태 라벨 -->
-  <div class="top-sub-header">전국 산악 정상 삼각점 정밀 매칭 (v2.1 실측 교정 완료)</div>
+  <div class="top-sub-header">전국 국립공원·명산 정상 삼각점 정밀 영점 교정 가동</div>
 
   <!-- 전국 모든 산 통합 검색창 -->
   <div class="search-container">
@@ -467,7 +467,7 @@
   <!-- 산 선택 칩 목록 -->
   <div class="mountain-chip-scroll">
     <div class="mt-chip active" onclick="selectMountain('장산', 634, 35.1884, 129.1396, this)">해운대 장산</div>
-    <div class="mt-chip" onclick="selectMountain('백운산', 885, 35.5939, 128.9848, this)">⛰️ 백운산 (885m)</div>
+    <div class="mt-chip" onclick="selectMountain('백운산', 885, 35.5940, 128.9846, this)">⛰️ 백운산 (885m)</div>
     <div class="mt-chip" onclick="selectMountain('고당봉', 801, 35.2847, 129.0566, this)">금정산 고당봉</div>
     <div class="mt-chip" onclick="selectMountain('달음산', 587, 35.3148, 129.2154, this)">기장 달음산</div>
     <div class="mt-chip" onclick="selectMountain('봉래산', 395, 35.0883, 129.0561, this)">부산 봉래산</div>
@@ -561,18 +561,18 @@
     2. 본 화면에 표출되는 기온 감률, 능선 압축 풍속, 돌발 강우 조기경보는 공개 기상 API 및 알고리즘 기반의 참고용 추정 수치이며 기상청 법적 특보를 대체하지 않습니다.
   </div>
 
-  <!-- 🥨 개발자 꿀꽈배기 v2.1 각인 -->
+  <!-- 🥨 개발자 꿀꽈배기 v2.2 각인 -->
   <div id="dev-tag">
-    <span class="badge-logo">🥨</span> 개발자 꿀꽈배기 <span class="ver-tag">v2.1</span>
+    <span class="badge-logo">🥨</span> 개발자 꿀꽈배기 <span class="ver-tag">v2.2</span>
   </div>
 
 <script>
   // ------------------------------------------------------------------
-  // 1. 전국 60여 개 명산 정상 삼각점 WGS84 정밀 실측 좌표 DB (전수 교정)
+  // 1. 전국 70여 개 핵심 명산 정상 삼각점 WGS84 정밀 실측 DB (영점 완벽 보정)
   // ------------------------------------------------------------------
   const mountainDB = [
-    // 영남권
-    { name: '백운산', region: '경남 밀양시 산내면 삼양리', ele: 885, lat: 35.5939, lng: 128.9848 },
+    // 영남권 (영남알프스 9봉 및 부산 명산)
+    { name: '백운산 (밀양)', region: '경남 밀양시 산내면 삼양리', ele: 885, lat: 35.5940, lng: 128.9846 },
     { name: '해운대 장산', region: '부산 해운대구 우동/좌동', ele: 634, lat: 35.1884, lng: 129.1396 },
     { name: '금정산 고당봉', region: '부산 금정구 청룡동', ele: 801, lat: 35.2847, lng: 129.0566 },
     { name: '황령산 봉수대', region: '부산 부산진구/남구', ele: 427, lat: 35.1557, lng: 129.0826 },
@@ -584,8 +584,10 @@
     { name: '신불산 정상', region: '울산 울주/경남 양산', ele: 1159, lat: 35.5312, lng: 129.0525 },
     { name: '간월산 정상', region: '울산 울주군 상북면', ele: 1069, lat: 35.5492, lng: 129.0435 },
     { name: '영축산 정상', region: '경남 양산/울산 울주', ele: 1081, lat: 35.4982, lng: 129.0545 },
-    { name: '재약산 수미봉', region: '경남 밀양시 단장면', ele: 1108, lat: 35.5562, lng: 128.9958 },
     { name: '천황산 사자봉', region: '경남 밀양시 산내면', ele: 1189, lat: 35.5685, lng: 128.9812 },
+    { name: '재약산 수미봉', region: '경남 밀양시 단장면', ele: 1108, lat: 35.5562, lng: 128.9958 },
+    { name: '운문산 정상', region: '경남 밀양/경북 청도', ele: 1188, lat: 35.6178, lng: 128.9664 },
+    { name: '고헌산 정상', region: '울산 울주군 상북면', ele: 1034, lat: 35.6542, lng: 129.0965 },
     { name: '천성산 제1봉', region: '경남 양산시 하북면', ele: 922, lat: 35.3855, lng: 129.1335 },
     { name: '비슬산 천왕봉', region: '대구 달성군 유가읍', ele: 1084, lat: 35.7172, lng: 128.5235 },
     { name: '팔공산 비로봉', region: '대구 동구/경북 군위', ele: 1193, lat: 36.0172, lng: 128.6965 },
@@ -598,7 +600,7 @@
     
     // 지리산 및 호남권
     { name: '지리산 천왕봉', region: '경남 산청군 시천면', ele: 1915, lat: 35.3370, lng: 127.7306 },
-    { name: '백운산 상봉', region: '전남 광양시 옥룡면', ele: 1222, lat: 35.1054, lng: 127.6253 },
+    { name: '백운산 상봉 (광양)', region: '전남 광양시 옥룡면', ele: 1222, lat: 35.1054, lng: 127.6253 },
     { name: '무등산 서석대', region: '광주 동구/전남 화순', ele: 1187, lat: 35.1382, lng: 126.9935 },
     { name: '덕유산 향적봉', region: '전북 무주군 설천면', ele: 1614, lat: 35.8605, lng: 127.7472 },
     { name: '내장산 신선봉', region: '전북 정읍시 내장동', ele: 763, lat: 35.4782, lng: 126.8925 },
@@ -861,7 +863,7 @@
   }
 
   // ------------------------------------------------------------------
-  // 6. 산 선택 시 실시간 동기화
+  // 6. 산 선택 시 실시간 동기화 (영점 좌표 정밀 안착)
   // ------------------------------------------------------------------
   function selectMountain(name, ele, lat, lng, btnEl) {
     currentMt = { name, ele, lat, lng };
@@ -886,7 +888,7 @@
   }
 
   // ------------------------------------------------------------------
-  // 7. [v2.1] 실시간 검색 시 최고봉/정상석 우선 타겟팅 필터 엔진
+  // 7. [v2.2] 전국 산 실시간 즉시 표출 및 정상석 우선 검색 엔진
   // ------------------------------------------------------------------
   let searchTimer = null;
 
@@ -895,37 +897,36 @@
     const dropdown = document.getElementById('search-dropdown');
     const q = keyword.trim();
 
+    // 검색창 클릭 시(빈칸일 때) 주요 명산 목록 바로 표시
     if (!q) {
-      dropdown.style.display = 'none';
+      renderSearchDropdown(mountainDB.slice(0, 10), '', false);
       return;
     }
 
-    // 1단계: 정밀 실측 DB 우선 탐색 (가장 정확한 최고봉 삼각점)
+    // 1단계: 실측 검증 DB 즉시 검색 (0.01초 필터링)
     const localMatches = mountainDB.filter(m => 
       m.name.includes(q) || m.region.includes(q)
     );
 
     renderSearchDropdown(localMatches, q, false);
 
-    // 2단계: 외부 검색 시 주차장/사찰 배제하고 '정상/봉' 우선 질의
+    // 2단계: 외부 검색 시 단어 그대로 질의 (접미사 강제 추가 버그 해결)
     searchTimer = setTimeout(() => {
       if (window.kakao && kakao.maps && kakao.maps.services) {
         const ps = new kakao.maps.services.Places();
         
-        // 검색 질의어에 '정상'을 붙여 봉우리 타겟팅
-        const queryTerm = (q.endsWith('산') || q.endsWith('봉')) ? `${q} 정상` : `${q} 산 정상`;
-        
-        ps.keywordSearch(queryTerm, (data, status) => {
+        ps.keywordSearch(q, (data, status) => {
           if (status === kakao.maps.services.Status.OK) {
             const externalMatches = [];
             data.forEach(p => {
               const pName = p.place_name;
               const isAlreadyIn = localMatches.some(lm => lm.name === pName);
 
-              // 주차장, 매표소, 화장실, 입구 등 비정상 지점 엄격 필터링
-              const isNoise = pName.includes('주차장') || pName.includes('매표소') || pName.includes('입구') || pName.includes('안내소') || pName.includes('관리사무소');
+              // 주차장, 버스정류장, 식당 등 노이즈 엄격 필터링
+              const isNoise = pName.includes('주차장') || pName.includes('정류장') || pName.includes('식당') || pName.includes('카페') || pName.includes('펜션');
+              const isMountain = p.category_name.includes('산') || p.category_name.includes('자연') || pName.includes('산') || pName.includes('봉');
 
-              if (!isAlreadyIn && !isNoise) {
+              if (!isAlreadyIn && !isNoise && isMountain) {
                 let estimatedEle = 550;
                 const match = pName.match(/(\d+)m/);
                 if (match) estimatedEle = parseInt(match[1]);
@@ -948,7 +949,7 @@
           }
         });
       }
-    }, 250);
+    }, 200);
   }
 
   function renderSearchDropdown(list, query, isAppended) {
@@ -960,8 +961,8 @@
     }
 
     let html = '';
-    list.slice(0, 10).forEach(m => {
-      const badge = m.isLive ? '<span style="font-size:9px; background:#0284c7; color:#fff; padding:1px 4px; border-radius:4px; margin-left:4px;">실시간정상</span>' : '';
+    list.slice(0, 12).forEach(m => {
+      const badge = m.isLive ? '<span style="font-size:9px; background:#0284c7; color:#fff; padding:1px 4px; border-radius:4px; margin-left:4px;">실시간정상</span>' : '<span style="font-size:9px; background:#15803d; color:#fff; padding:1px 4px; border-radius:4px; margin-left:4px;">실측영점</span>';
       html += `
         <div class="search-item" onclick="selectSearchedMountain('${m.name}', ${m.ele}, ${m.lat}, ${m.lng}, '${m.region}')">
           <div>
