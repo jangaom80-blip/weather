@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0a0f18">
+  <meta name="theme-color" content="#070b12">
   
-  <title>정밀 산악 기상 분석 대시보드 v2.7</title>
+  <title>정밀 산악 기상 분석 대시보드 v2.8</title>
 
   <style>
     * {
@@ -20,7 +20,7 @@
     }
 
     body {
-      background: #090d14;
+      background: #06090f;
       color: #f1f5f9;
       padding: env(safe-area-inset-top, 12px) 14px calc(65px + env(safe-area-inset-bottom, 16px)) 14px;
       overflow-x: hidden;
@@ -29,22 +29,23 @@
     .top-sub-header {
       font-size: 11px;
       font-weight: 800;
-      color: #22c55e;
+      color: #10b981;
       display: flex;
       align-items: center;
       gap: 6px;
       margin-bottom: 10px;
+      letter-spacing: -0.2px;
     }
     .top-sub-header::before {
       content: '';
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 8px #22c55e;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
     }
 
-    /* 전국 산 통합 검색창 */
+    /* 검색창 */
     .search-container {
       position: relative;
       margin-bottom: 12px;
@@ -52,21 +53,23 @@
     }
     .search-box {
       width: 100%;
-      background: #111827;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(18, 26, 41, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
-      padding: 11px 16px 11px 40px;
+      padding: 12px 16px 12px 42px;
       color: #fff;
       font-size: 13px;
       font-weight: 700;
       outline: none;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
-      transition: all 0.2s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
     }
     .search-box:focus {
-      border-color: #00e5ff;
-      box-shadow: 0 0 14px rgba(0, 229, 255, 0.3);
-      background: #162032;
+      border-color: #38bdf8;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+      background: rgba(22, 33, 52, 0.95);
     }
     .search-box::placeholder {
       color: #64748b;
@@ -74,10 +77,10 @@
     }
     .search-icon {
       position: absolute;
-      left: 14px;
+      left: 15px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 15px;
+      font-size: 14px;
       color: #94a3b8;
       pointer-events: none;
     }
@@ -86,21 +89,22 @@
       top: calc(100% + 6px);
       left: 0;
       right: 0;
-      background: #0f172a;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 14px;
+      background: rgba(13, 20, 32, 0.96);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 16px;
       max-height: 270px;
       overflow-y: auto;
       display: none;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.92);
       scrollbar-width: thin;
     }
     .search-item {
-      padding: 11px 16px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       cursor: pointer;
       font-size: 13px;
       font-weight: 700;
@@ -108,8 +112,8 @@
     }
     .search-item:last-child { border-bottom: none; }
     .search-item:active, .search-item:hover {
-      background: rgba(0, 229, 255, 0.15);
-      color: #00e5ff;
+      background: rgba(56, 189, 248, 0.14);
+      color: #38bdf8;
     }
     .search-item-sub {
       font-size: 11px;
@@ -130,9 +134,9 @@
     .mountain-chip-scroll::-webkit-scrollbar { display: none; }
     .mt-chip {
       flex-shrink: 0;
-      background: #131b26;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 7px 13px;
+      background: rgba(19, 28, 44, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      padding: 7px 14px;
       border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
@@ -141,15 +145,15 @@
       transition: all 0.2s;
     }
     .mt-chip.active {
-      background: #1e293b;
-      border-color: #00e5ff;
-      color: #00e5ff;
-      box-shadow: 0 2px 10px rgba(0, 229, 255, 0.25);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.4), rgba(14, 165, 233, 0.2));
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
     }
 
     .alert-banner {
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.4);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.35);
       border-radius: 14px;
       padding: 10px 14px;
       display: flex;
@@ -157,7 +161,7 @@
       justify-content: space-between;
       font-size: 12px;
       font-weight: 800;
-      color: #4ade80;
+      color: #34d399;
       margin-bottom: 12px;
     }
 
@@ -185,7 +189,7 @@
     .time-slot {
       flex-shrink: 0;
       width: 68px;
-      background: #131b26;
+      background: rgba(18, 27, 43, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       padding: 8px 4px;
@@ -206,170 +210,268 @@
     .time-slot .slot-temp { font-size: 11px; font-weight: 800; color: #38bdf8; }
     .time-slot.active .slot-temp { color: #ffffff; }
 
-    /* ★ v2.7 핵심: 실시간 정상 날씨 비주얼 시뮬레이터 카드 (지도 대체) */
+    /* ★ v2.8 핵심: 하이엔드 알파인 정상 뷰 시뮬레이터 카드 */
     .peak-weather-card {
       position: relative;
       width: 100%;
-      height: 270px;
-      border-radius: 22px;
+      height: 290px;
+      border-radius: 24px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       margin-bottom: 14px;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
-      background: linear-gradient(180deg, #0c2340 0%, #17375e 55%, #1e293b 100%);
-      transition: background 0.6s ease;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      background: linear-gradient(180deg, #091829 0%, #0d223a 50%, #08111d 100%);
+      transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* 시뮬레이터 상단 헤더 */
+    /* 카드 상단 HUD 정보 */
     .peak-card-header {
       position: absolute;
-      top: 12px;
-      left: 14px;
-      right: 14px;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      top: 14px;
+      left: 16px;
+      right: 74px; /* 우측 고도 눈금자 공간 확보 */
+      z-index: 15;
     }
     .peak-name-badge {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 900;
       color: #ffffff;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      letter-spacing: -0.3px;
       display: flex;
       align-items: center;
       gap: 6px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
     }
     .peak-ele-pill {
-      background: rgba(0, 229, 255, 0.2);
-      border: 1px solid #00e5ff;
-      color: #00e5ff;
+      background: rgba(56, 189, 248, 0.18);
+      border: 1px solid #38bdf8;
+      color: #7dd3fc;
       font-size: 11px;
       font-weight: 800;
       padding: 2px 7px;
-      border-radius: 10px;
+      border-radius: 8px;
     }
     .peak-status-pill {
-      font-size: 12px;
-      font-weight: 900;
-      padding: 5px 12px;
-      border-radius: 12px;
-      background: rgba(34, 197, 94, 0.25);
-      border: 1px solid #22c55e;
-      color: #4ade80;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #6ee7b7;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
-    /* 산 봉우리 SVG 아트 & 정상석 */
-    .mountain-art-box {
+    /* ★ 우측 고도 눈금자 (Altitude Scale Ruler) */
+    .altitude-ruler {
+      position: absolute;
+      top: 14px;
+      right: 12px;
+      bottom: 46px;
+      width: 54px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 1px dashed rgba(255, 255, 255, 0.18);
+      padding-left: 6px;
+      font-size: 9px;
+      font-weight: 800;
+      color: #64748b;
+      pointer-events: none;
+    }
+    .ruler-tick {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ruler-tick::before {
+      content: '';
+      width: 4px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.25);
+    }
+    /* 눈금자 위 움직이는 포인터 */
+    .ruler-pointer {
+      position: absolute;
+      right: 0;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 900;
+      white-space: nowrap;
+      transition: top 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .ptr-cloud {
+      background: rgba(56, 189, 248, 0.9);
+      color: #032030;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+    .ptr-summit {
+      background: rgba(16, 185, 129, 0.95);
+      color: #022013;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    }
+
+    /* 입체 산악 릿지 SVG 레이어 */
+    .mountain-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .mountain-back {
       position: absolute;
       bottom: 0;
       left: 0;
-      right: 0;
-      height: 180px;
-      pointer-events: none;
-    }
-    .mountain-art-svg {
       width: 100%;
-      height: 100%;
+      height: 190px;
+      opacity: 0.35;
+    }
+    .mountain-mid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 160px;
+      opacity: 0.75;
+    }
+    .mountain-fore {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 130px;
+      z-index: 5;
     }
 
-    /* 정상석 마커 비주얼 */
-    .summit-stone-marker {
+    /* 화강암 정상석 모뉴먼트 (Granite Obelisk) */
+    .summit-monument-anchor {
       position: absolute;
-      bottom: 48px;
-      left: 50%;
+      bottom: 60px;
+      left: 45%;
       transform: translateX(-50%);
+      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
-      z-index: 5;
     }
-    .stone-label {
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid #ffffff;
-      color: #ffffff;
-      font-size: 10px;
-      font-weight: 900;
-      padding: 3px 8px;
-      border-radius: 8px;
-      white-space: nowrap;
-      margin-bottom: 2px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-    }
-    .stone-icon {
-      font-size: 22px;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.9));
-    }
-
-    /* 구름층 (운저고도에 따라 실시간 위아래 위치 이동) */
-    .dynamic-cloud-layer {
-      position: absolute;
-      left: -10%;
-      right: -10%;
-      height: 110px;
-      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.45) 45%, rgba(255, 255, 255, 0) 75%);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: top 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
-      z-index: 4;
-      pointer-events: none;
+    .monument-stone {
+      width: 22px;
+      height: 38px;
+      background: linear-gradient(135deg, #64748b 0%, #334155 45%, #1e293b 100%);
+      border-radius: 4px 4px 1px 1px;
+      box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.3), 0 8px 18px rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
-    .cloud-elevation-tag {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #38bdf8;
-      color: #38bdf8;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 8px;
-      border-radius: 10px;
-      position: absolute;
-      top: 10px;
-      right: 20%;
+    .monument-stone::after {
+      content: '頂上';
+      font-size: 8px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: -1px;
+      writing-mode: vertical-rl;
     }
-
-    /* 실시간 바람/돌풍 애니메이션 선 */
-    .wind-streak {
-      position: absolute;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    .monument-plinth {
+      width: 32px;
+      height: 6px;
+      background: #1e293b;
       border-radius: 2px;
-      animation: windBlow 2.2s infinite linear;
-      z-index: 3;
+      margin-top: 1px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    @keyframes windBlow {
-      0% { transform: translateX(-120px); opacity: 0; }
-      40% { opacity: 0.8; }
-      100% { transform: translateX(340px); opacity: 0; }
+    .monument-callout {
+      background: rgba(10, 15, 25, 0.9);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 900;
+      color: #e0f2fe;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
     }
 
-    /* 날씨 텍스트 브리핑 (카드 하단) */
+    /* 실시간 구름층 (운저고도 높이에 따라 위아래 슬라이딩) */
+    .dynamic-cloud-deck {
+      position: absolute;
+      left: -15%;
+      right: -15%;
+      height: 120px;
+      background: radial-gradient(ellipse at 50% 50%, rgba(224, 242, 254, 0.7) 0%, rgba(186, 230, 253, 0.35) 45%, transparent 75%);
+      filter: blur(12px);
+      -webkit-filter: blur(12px);
+      transition: top 0.8s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.6s ease;
+      z-index: 8;
+      pointer-events: none;
+    }
+    .cloud-deck-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 30%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.8), transparent);
+      box-shadow: 0 0 12px #38bdf8;
+    }
+
+    /* 능선 바람 스트림 애니메이션 */
+    .aero-stream {
+      position: absolute;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
+      border-radius: 2px;
+      animation: streamFlow 2.4s infinite linear;
+      z-index: 6;
+      opacity: 0;
+    }
+    @keyframes streamFlow {
+      0% { transform: translateX(-80px); opacity: 0; }
+      30% { opacity: 0.7; }
+      100% { transform: translateX(360px); opacity: 0; }
+    }
+
+    /* 카드 하단 글래스 브리핑 바 */
     .peak-weather-briefing {
       position: absolute;
       bottom: 10px;
       left: 14px;
       right: 14px;
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 1fr;
       align-items: center;
+      text-align: center;
       font-size: 11px;
       font-weight: 800;
       color: #cbd5e1;
-      z-index: 10;
-      background: rgba(13, 17, 23, 0.75);
-      backdrop-filter: blur(6px);
-      padding: 5px 12px;
-      border-radius: 12px;
+      z-index: 15;
+      background: rgba(10, 15, 26, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 7px 10px;
+      border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     }
+    .brief-col { display: flex; flex-direction: column; gap: 1px; }
+    .brief-label { font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+    .brief-val { font-size: 12px; font-weight: 900; color: #f8fafc; }
 
-    /* 운저고도 분석 위젯 */
+    /* 운저고도 수치 비교 카드 */
     .cloudbase-card {
-      background: linear-gradient(145deg, #111b2b, #0c1420);
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: linear-gradient(145deg, rgba(17, 27, 43, 0.8), rgba(12, 20, 32, 0.9));
+      border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 18px;
       padding: 14px 16px;
       margin-bottom: 12px;
@@ -394,13 +496,13 @@
       font-weight: 800;
       padding: 3px 9px;
       border-radius: 12px;
-      background: rgba(34, 197, 94, 0.2);
-      color: #4ade80;
-      border: 1px solid #22c55e;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid #10b981;
     }
     .cloudbase-compare-bar {
       position: relative;
-      height: 28px;
+      height: 26px;
       background: #1e293b;
       border-radius: 8px;
       overflow: hidden;
@@ -411,7 +513,7 @@
     }
     .cb-fill-mountain {
       height: 100%;
-      background: linear-gradient(90deg, #15803d, #22c55e);
+      background: linear-gradient(90deg, #059669, #10b981);
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -438,7 +540,7 @@
     }
 
     .aws-sensor-strip {
-      background: #0f172a;
+      background: rgba(15, 23, 42, 0.8);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       padding: 9px 14px;
@@ -457,7 +559,7 @@
       margin-bottom: 14px;
     }
     .comp-card {
-      background: #111827;
+      background: rgba(17, 24, 39, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
       padding: 12px 14px;
@@ -482,7 +584,7 @@
     .data-val { font-weight: 900; color: #fff; }
 
     .disclaimer-box {
-      background: #0d131d;
+      background: rgba(13, 19, 29, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 12px;
       padding: 12px 14px;
@@ -500,19 +602,19 @@
       font-size: 11px;
       font-weight: 800;
       color: #cbd5e1;
-      background: rgba(13, 17, 23, 0.9);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(10, 15, 26, 0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       padding: 4px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       box-shadow: 0 4px 14px rgba(0,0,0,0.6);
       pointer-events: none;
     }
     #dev-tag span.badge-logo { color: #ffb703; margin-right: 3px; }
     #dev-tag span.ver-tag {
-      background: rgba(0, 229, 255, 0.25);
-      color: #00e5ff;
+      background: rgba(56, 189, 248, 0.22);
+      color: #38bdf8;
       padding: 1px 6px;
       border-radius: 6px;
       margin-left: 4px;
@@ -522,9 +624,9 @@
 </head>
 <body>
 
-  <div class="top-sub-header">산악 정상 날씨 & 운저고도 정밀 비주얼 시뮬레이터 (v2.7)</div>
+  <div class="top-sub-header">정밀 산악 국지 기상 모델 (FM-GFM v2.8)</div>
 
-  <!-- 전국 모든 산 통합 검색창 -->
+  <!-- 전국 산 통합 검색창 -->
   <div class="search-container">
     <span class="search-icon">🔍</span>
     <input
@@ -562,55 +664,87 @@
   </div>
   <div id="forecast-track" class="forecast-track"></div>
 
-  <!-- ★ v2.7 핵심: 지도 대신 탑재된 실시간 정상 날씨 비주얼 시뮬레이터 카드 -->
+  <!-- ★ v2.8 하이엔드 알파인 정상 뷰 시뮬레이터 카드 -->
   <div id="peak-weather-card" class="peak-weather-card">
+    
+    <!-- 카드 상단 헤더 HUD -->
     <div class="peak-card-header">
-      <div>
-        <div id="card-peak-title" class="peak-name-badge">
-          <span>⛰️ 해운대 장산</span>
-          <span id="card-peak-ele" class="peak-ele-pill">해발 634m</span>
-        </div>
-        <div id="card-view-summary" style="font-size:11px; color:#94a3b8; margin-top:3px; font-weight:700;">
-          정상 조망 시야 100% 쾌청 (구름 위 맑음)
-        </div>
+      <div id="card-peak-title" class="peak-name-badge">
+        <span>해운대 장산</span>
+        <span id="card-peak-ele" class="peak-ele-pill">634m</span>
       </div>
-      <div id="card-status-pill" class="peak-status-pill">쾌청 맑음 ☀️</div>
+      <div id="card-status-pill" class="peak-status-pill">
+        <span>●</span> <span id="status-pill-txt">시야 100% 쾌청</span>
+      </div>
     </div>
 
-    <!-- 실시간 운저고도 구름층 (위아래로 움직임) -->
-    <div id="dynamic-cloud" class="dynamic-cloud-layer" style="top: -20px;">
-      <span id="cloud-ele-tag" class="cloud-elevation-tag">구름 밑바닥 1,750m</span>
+    <!-- 우측 고도 눈금자 (Altitude Scale Ruler) -->
+    <div class="altitude-ruler">
+      <div class="ruler-tick">2,000</div>
+      <div class="ruler-tick">1,500</div>
+      <div class="ruler-tick">1,000</div>
+      <div class="ruler-tick">500</div>
+      <div class="ruler-tick">해수면</div>
+      <!-- 실시간 구름/정상 포인터 -->
+      <div id="ptr-cloud-tag" class="ruler-pointer ptr-cloud" style="top: 30%;">☁️ 1,750m</div>
+      <div id="ptr-summit-tag" class="ruler-pointer ptr-summit" style="top: 68%;">⛰️ 634m</div>
     </div>
 
-    <!-- 능선 돌풍 시각화 스트릭 -->
-    <div class="wind-streak" style="top: 80px; width: 80px; animation-duration: 1.8s;"></div>
-    <div class="wind-streak" style="top: 120px; width: 110px; animation-duration: 2.4s; animation-delay: 0.5s;"></div>
+    <!-- 동적 구름 데크 (운저고도에 따라 실시간 승강) -->
+    <div id="dynamic-cloud" class="dynamic-cloud-deck" style="top: 15px;">
+      <div class="cloud-deck-line"></div>
+    </div>
 
-    <!-- 웅장한 산 봉우리 아트 & 정상석 -->
-    <div class="mountain-art-box">
-      <svg class="mountain-art-svg" viewBox="0 0 400 180" preserveAspectRatio="none">
-        <!-- 배경 산맥 -->
-        <polygon points="0,180 90,70 170,140 280,50 400,180" fill="#1e293b" opacity="0.6"/>
-        <!-- 주봉 릿지 -->
-        <polygon points="0,180 80,110 200,35 320,120 400,180" fill="#0f172a" opacity="0.95"/>
-        <polyline points="0,180 80,110 200,35 320,120 400,180" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" fill="none"/>
+    <!-- 능선 기류 스트림 -->
+    <div class="aero-stream" style="top: 90px; width: 90px; animation-duration: 2.1s;"></div>
+    <div class="aero-stream" style="top: 135px; width: 130px; animation-duration: 2.6s; animation-delay: 0.6s;"></div>
+
+    <!-- 입체 산악 릿지 그래픽 -->
+    <div class="mountain-stage">
+      <!-- 1. 원경 능선 -->
+      <svg class="mountain-back" viewBox="0 0 400 190" preserveAspectRatio="none">
+        <polygon points="0,190 70,85 150,140 250,55 350,130 400,190" fill="#1e293b"/>
+      </svg>
+      <!-- 2. 중경 암릉 -->
+      <svg class="mountain-mid" viewBox="0 0 400 160" preserveAspectRatio="none">
+        <polygon points="0,160 90,90 180,45 280,110 400,160" fill="#0f172a"/>
+        <polyline points="0,160 90,90 180,45 280,110 400,160" stroke="rgba(255,255,255,0.12)" stroke-width="1.2" fill="none"/>
+      </svg>
+      <!-- 3. 전경 주봉 릿지 -->
+      <svg class="mountain-fore" viewBox="0 0 400 130" preserveAspectRatio="none">
+        <polygon points="0,130 80,80 180,25 290,95 400,130" fill="#080e1a"/>
+        <!-- 릿지 엣지 하이라이트 -->
+        <line x1="180" y1="25" x2="80" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <line x1="180" y1="25" x2="290" y2="95" stroke="rgba(0,0,0,0.6)" stroke-width="2"/>
       </svg>
     </div>
 
-    <!-- 정상석 표식 -->
-    <div class="summit-stone-marker">
-      <div id="stone-label-text" class="stone-label">장산 634m 頂上</div>
-      <div class="stone-icon">🗿</div>
+    <!-- 화강암 정상석 모뉴먼트 -->
+    <div class="summit-monument-anchor">
+      <div id="monument-callout-txt" class="monument-callout">정상 634m</div>
+      <div class="monument-stone"></div>
+      <div class="monument-plinth"></div>
     </div>
 
+    <!-- 카드 하단 브리핑 그리드 -->
     <div class="peak-weather-briefing">
-      <span id="brief-temp">정상 기온: 22.5°C</span>
-      <span id="brief-wind" style="color:#fbbf24;">능선 바람: 3.6 m/s (순간 13.0)</span>
-      <span id="brief-rain" style="color:#38bdf8;">강수: 0.0mm</span>
+      <div class="brief-col">
+        <span class="brief-label">정상 기온</span>
+        <span id="brief-temp" class="brief-val">22.5°C</span>
+      </div>
+      <div class="brief-col" style="border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08);">
+        <span class="brief-label">능선 순간돌풍</span>
+        <span id="brief-wind" class="brief-val" style="color:#fbbf24;">13.0 m/s</span>
+      </div>
+      <div class="brief-col">
+        <span class="brief-label">예상 강수</span>
+        <span id="brief-rain" class="brief-val" style="color:#38bdf8;">0.0 mm</span>
+      </div>
     </div>
+
   </div>
 
-  <!-- 운저고도 수치 비교 위젯 -->
+  <!-- 운저고도 수치 비교 카드 -->
   <div class="cloudbase-card">
     <div class="cloudbase-title-row">
       <div class="cloudbase-title">
@@ -628,13 +762,13 @@
 
     <div id="cb-desc-text" class="cloudbase-desc">
       선택 시간대 구름 밑바닥이 산 정상보다 훨씬 위에 위치합니다.<br>
-      평지 예보에 비가 잡혀도 실제 산 정상은 구름 아래에 머물러 비가 오지 않고 조망이 쾌청합니다.
+      평지 예보에 비 표시가 있어도 실제 산 정상은 구름 아래에 머물러 비가 오지 않고 조망이 쾌청합니다.
     </div>
   </div>
 
   <div class="aws-sensor-strip">
     <span style="color:#94a3b8;">● 기상청 AWS 1분 강수 센서 전자동 감시</span>
-    <span id="aws-status-text" style="color:#4ade80;">실시간 강수 감지 없음 (0.0mm)</span>
+    <span id="aws-status-text" style="color:#34d399;">실시간 강수 감지 없음 (0.0mm)</span>
   </div>
 
   <div class="comparison-grid">
@@ -659,17 +793,17 @@
 
   <div class="disclaimer-box">
     <strong>⚖️ 법적 고지 및 면책 공고 (Disclaimer)</strong><br>
-    1. 본 시스템은 개발자 꿀꽈배기가 비영리 학술 연구 및 등산객의 안전 산행 보조를 위해 개발한 산악 국지 기하 예측 모델(FM-GFM)입니다.<br>
+    1. 본 시스템은 비영리 학술 연구 및 등산객의 안전 산행 보조를 위해 개발된 산악 국지 기하 예측 모델(FM-GFM)입니다.<br>
     2. 본 화면에 표출되는 기온 감률, 능선 압축 풍속, 정상 운저고도 시야 예측은 기상 센서 및 지형 알고리즘 기반의 실시간 시뮬레이션입니다.
   </div>
 
   <div id="dev-tag">
-    <span class="badge-logo">🥨</span> 개발자 꿀꽈배기 <span class="ver-tag">v2.7</span>
+    <span class="badge-logo">🥨</span> 개발자 꿀꽈배기 <span class="ver-tag">v2.8</span>
   </div>
 
 <script>
   // ------------------------------------------------------------------
-  // 1. 전국 70여 개 핵심 명산 & 대피소 DB
+  // 1. 전국 70여 개 명산 & 대피소 DB
   // ------------------------------------------------------------------
   const mountainDB = [
     { name: '해운대 장산', type: 'peak', region: '부산 해운대구', ele: 634 },
@@ -705,7 +839,6 @@
     { name: '관악산 연주대', type: 'peak', region: '서울 관악구', ele: 629 },
     { name: '설악산 대청봉', type: 'peak', region: '강원 양양군', ele: 1708 },
     { name: '설악산 중청대피소', type: 'shelter', region: '강원 양양군', ele: 1665 },
-    { name: '설악산 희운각대피소', type: 'shelter', region: '강원 속초시', ele: 1050 },
     { name: '치악산 비로봉', type: 'peak', region: '강원 원주시', ele: 1288 },
     { name: '소백산 비로봉', type: 'peak', region: '충북 단양/경북 영주', ele: 1439 },
     { name: '월악산 영봉', type: 'peak', region: '충북 제천시', ele: 1097 },
@@ -716,72 +849,82 @@
   let selectedHourOffset = 0;
 
   // ------------------------------------------------------------------
-  // 2. [v2.7] 정상 날씨 비주얼 시뮬레이터 렌더링 엔진
+  // 2. [v2.8] 하이엔드 알파인 뷰 렌더러
   // ------------------------------------------------------------------
   function updatePeakVisualCard(mtEle, summitTemp, dewPoint, hourStr, isNight, pop, rainMm) {
     const card = document.getElementById('peak-weather-card');
-    const cloudLayer = document.getElementById('dynamic-cloud');
-    const cloudTag = document.getElementById('cloud-ele-tag');
+    const cloudDeck = document.getElementById('dynamic-cloud');
     const statusPill = document.getElementById('card-status-pill');
-    const summaryText = document.getElementById('card-view-summary');
+    const statusPillTxt = document.getElementById('status-pill-txt');
+    const ptrCloud = document.getElementById('ptr-cloud-tag');
+    const ptrSummit = document.getElementById('ptr-summit-tag');
 
-    // 운저고도 공식: H_cb = (기온 - 이슬점) * 125
+    // 운저고도 계산: H_cb = (기온 - 이슬점) * 125
     const cloudBaseM = Math.round((summitTemp - dewPoint) * 125);
     const clearance = cloudBaseM - mtEle;
 
-    cloudTag.innerText = `구름 밑바닥 ${cloudBaseM.toLocaleString()}m`;
+    // 우측 눈금자 포인터 위치 계산 (0m = 88%, 2000m = 12%)
+    const maxScale = 2200;
+    const calcRulerTop = (alt) => {
+      const clamped = Math.max(0, Math.min(maxScale, alt));
+      return (85 - (clamped / maxScale) * 72).toFixed(1);
+    };
 
-    // 1. 배경 하늘 색상 결정 (주간/야간/비)
+    ptrCloud.style.top = `${calcRulerTop(cloudBaseM)}%`;
+    ptrCloud.innerText = `☁️ ${cloudBaseM.toLocaleString()}m`;
+
+    ptrSummit.style.top = `${calcRulerTop(mtEle)}%`;
+    ptrSummit.innerText = `⛰️ ${mtEle}m`;
+
+    // 1. 대기 환경별 카드 배경 톤
     if (rainMm > 0) {
-      // 비/우천
-      card.style.background = 'linear-gradient(180deg, #1e293b 0%, #334155 60%, #0f172a 100%)';
-      statusPill.style.background = 'rgba(239, 68, 68, 0.3)';
+      card.style.background = 'linear-gradient(180deg, #111827 0%, #1e293b 55%, #0b0f17 100%)';
+      statusPill.style.background = 'rgba(239, 68, 68, 0.25)';
       statusPill.style.borderColor = '#ef4444';
       statusPill.style.color = '#f87171';
-      statusPill.innerText = '우천/비구름 🌧️';
+      statusPillTxt.innerText = '우천 강우 (비구름)';
     } else if (isNight) {
-      // 야간
-      card.style.background = 'linear-gradient(180deg, #050b14 0%, #0c1a2e 55%, #111827 100%)';
+      card.style.background = 'linear-gradient(180deg, #030712 0%, #0c1527 50%, #070c16 100%)';
       statusPill.style.background = 'rgba(148, 163, 184, 0.2)';
       statusPill.style.borderColor = '#94a3b8';
       statusPill.style.color = '#cbd5e1';
-      statusPill.innerText = '야간 쾌청 🌙';
+      statusPillTxt.innerText = '야간 쾌청 (별빛)';
     } else {
-      // 주간 맑음
-      card.style.background = 'linear-gradient(180deg, #0284c7 0%, #38bdf8 45%, #1e293b 100%)';
-      statusPill.style.background = 'rgba(34, 197, 94, 0.25)';
-      statusPill.style.borderColor = '#22c55e';
-      statusPill.style.color = '#4ade80';
-      statusPill.innerText = '쾌청 맑음 ☀️';
+      card.style.background = 'linear-gradient(180deg, #0369a1 0%, #0284c7 35%, #082f49 75%, #061524 100%)';
+      statusPill.style.background = 'rgba(16, 185, 129, 0.25)';
+      statusPill.style.borderColor = '#10b981';
+      statusPill.style.color = '#6ee7b7';
+      statusPillTxt.innerText = '정상 쾌청 (조망 트임)';
     }
 
-    // 2. 구름층의 높낮이 애니메이션 (정상 대비 높이 시각화)
+    // 2. 구름 데크 승강 애니메이션
     if (clearance > 300) {
-      // 구름이 정상보다 훨씬 위에 있음 (정상 시야 100% 쾌청)
-      cloudLayer.style.top = '-35px';
-      cloudLayer.style.opacity = '0.7';
-      summaryText.innerHTML = `정상(${mtEle}m)보다 구름이 <strong style="color:#4ade80;">${clearance}m 높음</strong> ➔ 조망 탁 트임!`;
+      // 구름이 정상보다 위에 떠 있음 (조망 탁 트임)
+      cloudDeck.style.top = '-20px';
+      cloudDeck.style.opacity = '0.75';
     } else if (clearance >= -100 && clearance <= 300) {
-      // 구름이 정상석을 직접 감싸고 있음 (곰탕 뷰/안개)
-      cloudLayer.style.top = '105px';
-      cloudLayer.style.opacity = '0.92';
-      statusPill.style.background = 'rgba(251, 191, 36, 0.3)';
-      statusPill.style.borderColor = '#fbbf24';
-      statusPill.style.color = '#fbbf24';
-      statusPill.innerText = '운무/곰탕 뷰 🌫️';
-      summaryText.innerHTML = `구름 밑바닥(${cloudBaseM}m)이 정상에 걸침 ➔ <strong style="color:#fbbf24;">조망 제한 (곰탕 뷰)</strong>`;
+      // 구름이 정상석을 직접 감싸고 있음 (운무 곰탕)
+      cloudDeck.style.top = '120px';
+      cloudDeck.style.opacity = '0.92';
+      statusPill.style.background = 'rgba(245, 158, 11, 0.25)';
+      statusPill.style.borderColor = '#f59e0b';
+      statusPill.style.color = '#fcd34d';
+      statusPillTxt.innerText = '운무/안개 (곰탕 뷰)';
     } else {
-      // 정상이 짙은 비구름 안쪽에 완전히 갇힘
-      cloudLayer.style.top = '125px';
-      cloudLayer.style.opacity = '0.98';
-      summaryText.innerHTML = `정상이 구름 속 <strong style="color:#f87171;">${Math.abs(clearance)}m 깊이</strong>에 갇힘 ➔ 시야 불량`;
+      // 정상이 구름 깊숙이 갇힘
+      cloudDeck.style.top = '145px';
+      cloudDeck.style.opacity = '0.96';
+      statusPill.style.background = 'rgba(239, 68, 68, 0.25)';
+      statusPill.style.borderColor = '#ef4444';
+      statusPill.style.color = '#f87171';
+      statusPillTxt.innerText = '구름 속 갇힘 (시야 불량)';
     }
 
-    // 카드 하단 브리핑 동기화
-    document.getElementById('card-peak-title').innerHTML = `<span>⛰️ ${currentMt.name}</span><span class="peak-ele-pill">해발 ${mtEle}m</span>`;
-    document.getElementById('stone-label-text').innerText = `${currentMt.name} ${mtEle}m 頂上`;
-    document.getElementById('brief-temp').innerText = `정상 기온: ${summitTemp}°C`;
-    document.getElementById('brief-rain').innerText = `강수: ${rainMm}mm`;
+    // 카드 헤더 및 모뉴먼트 텍스트 갱신
+    document.getElementById('card-peak-title').innerHTML = `<span>${currentMt.name}</span><span class="peak-ele-pill">${mtEle}m</span>`;
+    document.getElementById('monument-callout-txt').innerText = `${currentMt.name} ${mtEle}m`;
+    document.getElementById('brief-temp').innerText = `${summitTemp}°C`;
+    document.getElementById('brief-rain').innerText = `${rainMm} mm`;
   }
 
   // ------------------------------------------------------------------
@@ -842,7 +985,7 @@
 
     document.getElementById('summit-wind').innerText = `${windSpeed} m/s`;
     document.getElementById('summit-gust').innerText = `${gustSpeed} m/s`;
-    document.getElementById('brief-wind').innerText = `능선 바람: ${windSpeed} m/s (순간 ${gustSpeed})`;
+    document.getElementById('brief-wind').innerText = `${gustSpeed} m/s`;
 
     const pop = (offset === 4 || offset === 5) ? 45 : 20;
     const rainMm = (pop > 40) ? 0.2 : 0.0;
@@ -851,10 +994,10 @@
 
     const isNight = (targetHour >= 19 || targetHour <= 5);
 
-    // 실시간 정상 날씨 비주얼 시뮬레이터 갱신
+    // 비주얼 시뮬레이터 카드 갱신
     updatePeakVisualCard(currentMt.ele, summitTemp, dewPoint, hourStr, isNight, pop, rainMm);
 
-    // 운저고도 게이지 갱신
+    // 운저고도 수치 분석 갱신
     updateCloudBaseAnalysis(currentMt.ele, summitTemp, dewPoint, hourStr);
   }
 
@@ -881,20 +1024,20 @@
     const bannerText = document.getElementById('alert-banner-text');
 
     if (clearance > 300) {
-      pill.style.background = 'rgba(34, 197, 94, 0.2)';
-      pill.style.color = '#4ade80';
-      pill.style.borderColor = '#22c55e';
+      pill.style.background = 'rgba(16, 185, 129, 0.2)';
+      pill.style.color = '#34d399';
+      pill.style.borderColor = '#10b981';
       pill.innerText = `[${hourStr}] 시야 100% 쾌청`;
 
       desc.innerHTML = `
-        <strong>${hourStr} 기준:</strong> 구름 밑바닥(<strong style="color:#38bdf8;">${cloudBaseM.toLocaleString()}m</strong>)이 산 정상(${mtEle}m)보다 <strong style="color:#4ade80;">${clearance.toLocaleString()}m 위에 위치</strong>합니다.<br>
+        <strong>${hourStr} 기준:</strong> 구름 밑바닥(<strong style="color:#38bdf8;">${cloudBaseM.toLocaleString()}m</strong>)이 산 정상(${mtEle}m)보다 <strong style="color:#34d399;">${clearance.toLocaleString()}m 위에 위치</strong>합니다.<br>
         평지 예보에 비 표시가 있어도 실제 산 정상은 구름 아래에 머물러 비가 오지 않고 조망이 쾌청합니다.
       `;
 
-      banner.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+      banner.style.borderColor = 'rgba(16, 185, 129, 0.35)';
       bannerText.innerText = `🛡️ ${hourStr}: 대기 상태 안정 (돌발 강수 징후 없음)`;
     } else if (clearance >= -100 && clearance <= 300) {
-      pill.style.background = 'rgba(251, 191, 36, 0.2)';
+      pill.style.background = 'rgba(245, 158, 11, 0.2)';
       pill.style.color = '#fbbf24';
       pill.style.borderColor = '#f59e0b';
       pill.innerText = `[${hourStr}] 운무/안개 통과`;
@@ -904,7 +1047,7 @@
         조망이 구름에 가려 곰탕 뷰가 될 수 있으므로 방풍 재킷을 준비하세요.
       `;
 
-      banner.style.borderColor = 'rgba(251, 191, 36, 0.4)';
+      banner.style.borderColor = 'rgba(245, 158, 11, 0.4)';
       bannerText.innerText = `⚠️ ${hourStr}: 정상 부근 운무 유입 주의`;
     } else {
       pill.style.background = 'rgba(239, 68, 68, 0.2)';
@@ -923,7 +1066,7 @@
   }
 
   // ------------------------------------------------------------------
-  // 5. 산 선택 시 실시간 동기화
+  // 5. 산 선택 시 동기화
   // ------------------------------------------------------------------
   function selectMountain(name, ele, btnEl) {
     currentMt = { name, ele };
@@ -970,14 +1113,14 @@
 
     let html = '';
     list.slice(0, 12).forEach(m => {
-      let badge = m.type === 'shelter' ? '<span style="font-size:9px; background:#e11d48; color:#fff; padding:1px 5px; border-radius:4px; margin-left:4px;">대피소</span>' : '<span style="font-size:9px; background:#15803d; color:#fff; padding:1px 5px; border-radius:4px; margin-left:4px;">정상석</span>';
+      let badge = m.type === 'shelter' ? '<span style="font-size:9px; background:#e11d48; color:#fff; padding:1px 5px; border-radius:4px; margin-left:4px;">대피소</span>' : '<span style="font-size:9px; background:#10b981; color:#fff; padding:1px 5px; border-radius:4px; margin-left:4px;">정상석</span>';
       html += `
         <div class="search-item" onclick="selectSearchedMountain('${m.name}', ${m.ele})">
           <div>
             <span>⛰️ ${m.name}</span>${badge}
             <div class="search-item-sub">${m.region}</div>
           </div>
-          <span style="color:#00e5ff; font-weight:800;">${m.ele}m</span>
+          <span style="color:#38bdf8; font-weight:800;">${m.ele}m</span>
         </div>
       `;
     });
