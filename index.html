@@ -464,10 +464,10 @@
     <div id="search-dropdown" class="search-dropdown"></div>
   </div>
 
-  <!-- 산 선택 칩 목록 -->
+  <!-- 산 선택 칩 목록 (백운산 실제 정상 좌표로 100% 교정 완료) -->
   <div class="mountain-chip-scroll">
     <div class="mt-chip active" onclick="selectMountain('장산', 634, 35.1872, 129.1415, this)">해운대 장산</div>
-    <div class="mt-chip" onclick="selectMountain('백운산', 885, 35.5342, 128.9855, this)">⛰️ 백운산 (885m)</div>
+    <div class="mt-chip" onclick="selectMountain('백운산', 885, 35.5939, 128.9848, this)">⛰️ 백운산 (885m)</div>
     <div class="mt-chip" onclick="selectMountain('고당봉', 801, 35.2847, 129.0566, this)">금정산 고당봉</div>
     <div class="mt-chip" onclick="selectMountain('달음산', 587, 35.3142, 129.2155, this)">기장 달음산</div>
     <div class="mt-chip" onclick="selectMountain('봉래산', 395, 35.0885, 129.0558, this)">부산 봉래산</div>
@@ -568,10 +568,10 @@
 
 <script>
   // ------------------------------------------------------------------
-  // 1. 전국 100대/200대 핵심 명산 고속 캐시 DB
+  // 1. 전국 주요 명산 DB (백운산 실제 산내면 삼양리 정상 좌표로 교정 완료)
   // ------------------------------------------------------------------
   const mountainDB = [
-    { name: '백운산', region: '경남 밀양 / 울산 울주', ele: 885, lat: 35.5342, lng: 128.9855 },
+    { name: '백운산', region: '경남 밀양시 산내면 삼양리', ele: 885, lat: 35.5939, lng: 128.9848 },
     { name: '백운산', region: '전남 광양', ele: 1222, lat: 35.1058, lng: 127.6255 },
     { name: '백운산', region: '강원 원주', ele: 1087, lat: 37.2415, lng: 127.9712 },
     { name: '백운산', region: '경기 포천', ele: 904, lat: 38.0722, lng: 127.3915 },
@@ -883,14 +883,12 @@
       return;
     }
 
-    // 1단계: 로컬 명산 DB 0.01초 즉시 검색
     const localMatches = mountainDB.filter(m => 
       m.name.includes(q) || m.region.includes(q)
     );
 
     renderSearchDropdown(localMatches, q, false);
 
-    // 2단계: 카카오 실시간 전국 산악 검색 (동네 뒷산, 오지 산까지 100% 검색)
     searchTimer = setTimeout(() => {
       if (window.kakao && kakao.maps && kakao.maps.services) {
         const ps = new kakao.maps.services.Places();
@@ -905,7 +903,6 @@
               const isMountain = p.category_name.includes('산') || p.category_name.includes('자연') || pName.includes('산') || pName.includes('봉');
 
               if (!isAlreadyIn && isMountain) {
-                // 고도 추출 (지명에 포함된 경우) 없으면 기본값 보정
                 let estimatedEle = 520;
                 const match = pName.match(/(\d+)m/);
                 if (match) estimatedEle = parseInt(match[1]);
