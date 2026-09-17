@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#070b12">
   
-  <title>정밀 산악 기상 분석 대시보드 v3.6</title>
+  <title>정밀 산악 기상 분석 대시보드 v3.7</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -48,7 +48,6 @@
       box-shadow: 0 0 10px #10b981;
     }
 
-    /* 검색창 */
     .search-container {
       position: relative;
       margin-bottom: 12px;
@@ -125,7 +124,6 @@
       margin-left: 4px;
     }
 
-    /* 산 선택 칩 */
     .mountain-chip-scroll {
       display: flex;
       gap: 7px;
@@ -168,7 +166,6 @@
       margin-bottom: 12px;
     }
 
-    /* 1시간 단위 예보 트랙 */
     .section-title-row {
       display: flex;
       justify-content: space-between;
@@ -213,7 +210,6 @@
     .time-slot .slot-temp { font-size: 11px; font-weight: 800; color: #38bdf8; }
     .time-slot.active .slot-temp { color: #ffffff; }
 
-    /* 하이엔드 알파인 정상 뷰 시뮬레이터 카드 */
     .peak-weather-card {
       position: relative;
       width: 100%;
@@ -268,7 +264,6 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
-    /* 우측 고도 눈금자 */
     .altitude-ruler {
       position: absolute;
       top: 14px;
@@ -318,7 +313,6 @@
       box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
     }
 
-    /* 입체 산악 릿지 레이어 */
     .mountain-stage {
       position: absolute;
       inset: 0;
@@ -350,7 +344,6 @@
       z-index: 5;
     }
 
-    /* 포인트 모뉴먼트 앵커 */
     .summit-monument-anchor {
       position: absolute;
       bottom: 60px;
@@ -396,7 +389,6 @@
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
     }
 
-    /* 동적 구름층 */
     .dynamic-cloud-deck {
       position: absolute;
       left: -15%;
@@ -434,7 +426,6 @@
       100% { transform: translateX(360px); opacity: 0; }
     }
 
-    /* 카드 하단 브리핑 바 */
     .peak-weather-briefing {
       position: absolute;
       bottom: 10px;
@@ -460,7 +451,6 @@
     .brief-label { font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase; }
     .brief-val { font-size: 12px; font-weight: 900; color: #f8fafc; }
 
-    /* 운저고도 수치 비교 카드 */
     .cloudbase-card {
       background: linear-gradient(145deg, rgba(17, 27, 43, 0.8), rgba(12, 20, 32, 0.9));
       border: 1px solid rgba(56, 189, 248, 0.25);
@@ -616,9 +606,8 @@
 </head>
 <body>
 
-  <div class="top-sub-header">산악 5대 물리 법칙 통합 기상 엔진 가동 (v3.6)</div>
+  <div class="top-sub-header">산악 5대 물리 법칙 통합 기상 엔진 가동 (v3.7)</div>
 
-  <!-- 전국 산 통합 검색창 -->
   <div class="search-container">
     <span class="search-icon">🔍</span>
     <input
@@ -633,7 +622,6 @@
     <div id="search-dropdown" class="search-dropdown"></div>
   </div>
 
-  <!-- 산 선택 칩 -->
   <div class="mountain-chip-scroll">
     <div class="mt-chip active" onclick="selectMountain('금정산 고당봉', 801, this, 'peak', 35.2846, 129.0565)">금정산 고당봉</div>
     <div class="mt-chip" onclick="selectMountain('금정산 장군봉', 650, this, 'peak', 35.3125, 129.0528)">금정산 장군봉</div>
@@ -650,14 +638,12 @@
     <span id="alert-banner-tag">정상</span>
   </div>
 
-  <!-- 1시간 단위 예보 트랙 -->
   <div class="section-title-row">
     <div class="section-title">12시간 초단기 시간별 예보 트랙 (터치하여 시간별 조회)</div>
     <div id="clock-live" style="font-size:11px; color:#38bdf8; font-weight:800;">실시간 관측 수신 중</div>
   </div>
   <div id="forecast-track" class="forecast-track"></div>
 
-  <!-- 하이엔드 알파인 정상 뷰 시뮬레이터 카드 -->
   <div id="peak-weather-card" class="peak-weather-card">
     
     <div class="peak-card-header">
@@ -670,7 +656,6 @@
       </div>
     </div>
 
-    <!-- 우측 고도 눈금자 -->
     <div class="altitude-ruler">
       <div class="ruler-tick">3,000</div>
       <div class="ruler-tick">2,000</div>
@@ -680,16 +665,13 @@
       <div id="ptr-summit-tag" class="ruler-pointer ptr-summit" style="top: 65%;">⛰️ 801m</div>
     </div>
 
-    <!-- 동적 구름 데크 -->
     <div id="dynamic-cloud" class="dynamic-cloud-deck" style="top: -25px;">
       <div class="cloud-deck-line"></div>
     </div>
 
-    <!-- 능선 기류 스트림 -->
     <div class="aero-stream" style="top: 90px; width: 90px; animation-duration: 2.1s;"></div>
     <div class="aero-stream" style="top: 135px; width: 130px; animation-duration: 2.6s; animation-delay: 0.6s;"></div>
 
-    <!-- 입체 산악 릿지 그래픽 -->
     <div class="mountain-stage">
       <svg class="mountain-back" viewBox="0 0 400 190" preserveAspectRatio="none">
         <polygon points="0,190 70,85 150,140 250,55 350,130 400,190" fill="#1e293b"/>
@@ -705,14 +687,12 @@
       </svg>
     </div>
 
-    <!-- 포인트 모뉴먼트 앵커 -->
     <div class="summit-monument-anchor">
       <div id="monument-callout-txt" class="monument-callout">금정산 고당봉 801m</div>
       <div id="monument-stone-body" class="monument-stone">頂</div>
       <div class="monument-plinth"></div>
     </div>
 
-    <!-- 카드 하단 브리핑 그리드 -->
     <div class="peak-weather-briefing">
       <div class="brief-col">
         <span class="brief-label">실시간 기온</span>
@@ -730,7 +710,6 @@
 
   </div>
 
-  <!-- 운저고도 수치 비교 카드 -->
   <div class="cloudbase-card">
     <div class="cloudbase-title-row">
       <div class="cloudbase-title">
@@ -778,18 +757,15 @@
 
   <div class="disclaimer-box">
     <strong>⚖️ 법적 고지 및 면책 공고 (Disclaimer)</strong><br>
-    1. 본 시스템은 글로벌 실시간 위성 데이터(Open-Meteo)와 산악 5대 대기 물리 모델(Lapse Rate, Magnus, Orographic LCL, Venturi, AVCI Matrix v3.6)을 연동한 실시간 시뮬레이터입니다.<br>
+    1. 본 시스템은 글로벌 실시간 위성 데이터(Open-Meteo)와 산악 5대 대기 물리 모델을 연동한 실시간 시뮬레이터입니다.<br>
     2. 본 화면에 표출되는 수치는 국지성 산악 지형에 맞춰 계산된 정밀 추정치이며 기상청 법적 특보를 대체하지 않습니다.
   </div>
 
   <div id="dev-tag">
-    <span class="badge-logo">🥨</span> 개발자 꿀꽈배기 <span class="ver-tag">v3.6</span>
+    <span class="badge-logo">🥨</span> 개발자 꿀꽈배기 <span class="ver-tag">v3.7</span>
   </div>
 
 <script>
-  // ------------------------------------------------------------------
-  // 1. 전국 100여 개 핵심 명산·대피소 정밀 좌표 DB
-  // ------------------------------------------------------------------
   const mountainDB = [
     { name: '금정산 고당봉', type: 'peak', region: '부산 금정구 청룡동', ele: 801, lat: 35.2846, lng: 129.0565 },
     { name: '금정산 장군봉', type: 'peak', region: '부산 금정구/경남 양산', ele: 650, lat: 35.3125, lng: 129.0528 },
@@ -819,6 +795,7 @@
   let currentMt = { name: '금정산 고당봉', ele: 801, type: 'peak', lat: 35.2846, lng: 129.0565 };
   let selectedHourOffset = 0;
   let liveWeatherData = null;
+  let liveCurrentCalculatedRes = null; // 현재 실황 결과 캐시
 
   function decodeWmoCode(code, isNight = false) {
     if (code === 0) return { text: '쾌청 맑음', icon: isNight ? '🌙' : '☀️', state: 'clear' };
@@ -833,10 +810,10 @@
     return { text: '맑음', icon: '☀️', state: 'clear' };
   }
 
-  // ★ Open-Meteo 전운량(cloud_cover), 중층운(cloud_cover_mid) 포함 쿼리
+  // 48시간(forecast_days=2) 예보 요청 (야간 시점 다음날 시간 연동 보장)
   async function fetchLiveMountainWeather(lat, lng, ele) {
     try {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&elevation=${ele}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&timezone=Asia%2FTokyo&forecast_days=1`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&elevation=${ele}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&timezone=Asia%2FTokyo&forecast_days=2`;
       const res = await fetch(url);
       if (!res.ok) throw new Error('API Error');
       return await res.json();
@@ -846,8 +823,25 @@
     }
   }
 
+  // 현재 시간과 가장 일치하는 hourly 인덱스 탐색기
+  function findCurrentHourIndex(hourly) {
+    if (!hourly || !hourly.time || hourly.time.length === 0) return 0;
+    const now = new Date();
+    let bestIdx = 0;
+    let minDiff = Infinity;
+    for (let i = 0; i < hourly.time.length; i++) {
+      const t = new Date(hourly.time[i]);
+      const diff = Math.abs(t.getTime() - now.getTime());
+      if (diff < minDiff) {
+        minDiff = diff;
+        bestIdx = i;
+      }
+    }
+    return bestIdx;
+  }
+
   // ------------------------------------------------------------------
-  // 2. [v3.6 핵심] 전운량·중층먹구름·국지성 미세빗방울 통합 물리 엔진
+  // 2. [v3.7 정밀] 산악 5대 물리 방정식 연산 엔진
   // ------------------------------------------------------------------
   function compute5PhysicsMountainWeather(params) {
     const { mtEle, rawTemp, rawRH, rawWind, rawGust, rawRain, rawCode, totalCloud, lowCloud, midCloud, visibility, rawDew, pointType } = params;
@@ -901,32 +895,24 @@
     }
     summitFeel = parseFloat(summitFeel.toFixed(1));
 
-    // [공식 5] ★ [v3.6 전면 교정] AVCI 4중 교차 검증 매트릭스
+    // [공식 5] AVCI 4중 교차 검증 매트릭스
     const wmoInfo = decodeWmoCode(rawCode);
-
-    // 정상부 기온-이슬점 격차 (Depression: 작을수록 공기 포화, 결로 발생)
     const dewDepression = Math.max(0, summitTemp - Td);
 
-    // ★ 국지성 먹구름 & 미세 빗방울(Drizzle) 판정
-    // 전운량이 55% 이상이거나 중층운이 50% 이상인 먹구름 상태에서, 정상부가 포화에 근접하거나 빗방울이 감지될 때
     const isDarkCloud = (totalCloud >= 55) || (midCloud >= 50);
     const isDrizzling = (rawRain > 0) || (wmoInfo.state === 'drizzle') || (isDarkCloud && dewDepression <= 3.8 && rawRH >= 80);
 
-    // 진짜 곰탕 (산 전체가 짙은 안개/구름에 잠김)
     const isRealFog = (visibility < 2000) || 
                       (wmoInfo.state === 'fog') || 
                       (lowCloud >= 70 && baseCloudAsl <= mtEle + 80) || 
                       (rawRH >= 92 && lowCloud >= 50);
 
-    // 순수 쾌청 판정: 먹구름이 없고, 전운량이 35% 미만이며 시정이 10km 이상일 때만 허용!
     const isCrystalClear = (!isDarkCloud) && (totalCloud <= 35) && (visibility >= 10000) && (!isDrizzling) && (!isRealFog);
 
-    // 유효 운저고도 산출 (인위적 2,400m 오버라이드 제거)
     let effectiveCloudBase;
     if (isCrystalClear) {
       effectiveCloudBase = Math.max(mtEle + 900, baseCloudAsl);
     } else if (isDarkCloud) {
-      // 먹구름이 꼈을 때는 LCL과 중층운 밑바닥을 복합 반영
       effectiveCloudBase = Math.min(Math.max(300, baseCloudAsl), mtEle + 400);
     } else {
       effectiveCloudBase = baseCloudAsl;
@@ -974,7 +960,6 @@
 
     const { summitTemp, summitFeel, summitHumidity, summitWind, summitGust, rainMm, effectiveCloudBase, clearance, isCrystalClear, isDarkCloud, isDrizzling, isRealFog, totalCloud, lowCloud, midCloud, visibility, surfaceTemp, surfaceRH, wmoInfo } = res;
 
-    // 우측 눈금자 포인터 위치
     const maxScale = 3000;
     const calcRulerTop = (alt) => {
       const clamped = Math.max(0, Math.min(maxScale, alt));
@@ -982,7 +967,7 @@
     };
 
     ptrCloud.style.top = `${calcRulerTop(effectiveCloudBase)}%`;
-    ptrCloud.innerText = `☁️ ${effectiveCloudBase.toLocaleString()}m`;
+    ptrCloud.innerText = isCrystalClear ? `☁️ ${effectiveCloudBase.toLocaleString()}m(상공)` : `☁️ ${effectiveCloudBase.toLocaleString()}m`;
 
     ptrSummit.style.top = `${calcRulerTop(currentMt.ele)}%`;
     ptrSummit.innerText = `${currentMt.ele}m`;
@@ -992,11 +977,7 @@
     else if (pointType === 'ridge') monumentStone.innerText = '🌾';
     else monumentStone.innerText = '頂';
 
-    // ----------------------------------------------------
-    // [v3.6] 비주얼 테마 및 상태 라벨 출력
-    // ----------------------------------------------------
     if (rainMm > 0 || wmoInfo.state === 'rain' || wmoInfo.state === 'storm') {
-      // 1. 공식 강우
       card.style.background = 'linear-gradient(180deg, #111827 0%, #1e293b 55%, #0b0f17 100%)';
       statusPill.style.background = 'rgba(239, 68, 68, 0.25)';
       statusPill.style.borderColor = '#ef4444';
@@ -1007,7 +988,6 @@
       banner.style.borderColor = 'rgba(239, 68, 68, 0.4)';
       bannerText.innerText = `🚨 [${hourStr}] 현지 비구름대 통과 (우천 대비 필수)`;
     } else if (isDrizzling) {
-      // 2. ★ [현재 고당봉 상태!] 먹구름 + 국지성 미세 빗방울
       card.style.background = 'linear-gradient(180deg, #1f2937 0%, #374151 50%, #111827 100%)';
       statusPill.style.background = 'rgba(56, 189, 248, 0.25)';
       statusPill.style.borderColor = '#38bdf8';
@@ -1018,7 +998,6 @@
       banner.style.borderColor = 'rgba(56, 189, 248, 0.4)';
       bannerText.innerText = `⚠️ [${hourStr}] 먹구름 유입 및 국지성 빗방울 감지 (방풍·방수 착용)`;
     } else if (isRealFog) {
-      // 3. 곰탕 뷰
       card.style.background = 'linear-gradient(180deg, #334155 0%, #475569 50%, #1e293b 100%)';
       statusPill.style.background = 'rgba(245, 158, 11, 0.3)';
       statusPill.style.borderColor = '#f59e0b';
@@ -1029,7 +1008,6 @@
       banner.style.borderColor = 'rgba(245, 158, 11, 0.4)';
       bannerText.innerText = `⚠️ [${hourStr}] 정상 구름 속 갇힘 (시야 불량 / 곰탕 뷰)`;
     } else if (isDarkCloud) {
-      // 4. 비는 안 오지만 하늘 전체가 먹구름
       card.style.background = 'linear-gradient(180deg, #1e293b 0%, #334155 50%, #0f172a 100%)';
       statusPill.style.background = 'rgba(148, 163, 184, 0.25)';
       statusPill.style.borderColor = '#94a3b8';
@@ -1040,7 +1018,6 @@
       banner.style.borderColor = 'rgba(148, 163, 184, 0.35)';
       bannerText.innerText = `☁️ [${hourStr}] 짙은 먹구름 형성 (일조 차단 / 돌발 비 주의)`;
     } else if (isNight) {
-      // 5. 야간
       card.style.background = 'linear-gradient(180deg, #030712 0%, #0c1527 50%, #070c16 100%)';
       statusPill.style.background = 'rgba(148, 163, 184, 0.2)';
       statusPill.style.borderColor = '#94a3b8';
@@ -1051,7 +1028,6 @@
       banner.style.borderColor = 'rgba(16, 185, 129, 0.35)';
       bannerText.innerText = `🛡️ [${hourStr}] 대기 상태 안정 (야간 시야 양호)`;
     } else {
-      // 6. 진짜 맑음
       card.style.background = 'linear-gradient(180deg, #0369a1 0%, #0284c7 35%, #082f49 75%, #061524 100%)';
       statusPill.style.background = 'rgba(16, 185, 129, 0.25)';
       statusPill.style.borderColor = '#10b981';
@@ -1085,7 +1061,6 @@
     else if (isRealFog) descTxt = '짙은 안개/운무';
     document.getElementById('city-weather-desc').innerText = descTxt;
 
-    // 운저고도 바 게이지 (0 ~ 3000m)
     const cbPercent = Math.min(98, Math.max(8, Math.round((effectiveCloudBase / 3000) * 100)));
     const mtPercent = Math.min(90, Math.max(10, Math.round((currentMt.ele / 3000) * 100)));
 
@@ -1139,15 +1114,23 @@
     }
   }
 
+  // ------------------------------------------------------------------
+  // 4. [v3.7 핵심] 현재 시간 인덱스 동기화 트랙 렌더러
+  // ------------------------------------------------------------------
   function renderLiveForecastTrack(hourly) {
     const track = document.getElementById('forecast-track');
     track.innerHTML = '';
 
+    const startIdx = findCurrentHourIndex(hourly);
     const now = new Date();
-    const currentHour = now.getHours();
 
     for (let offset = 0; offset < 12; offset++) {
-      const targetHour = (currentHour + offset) % 24;
+      const dataIdx = startIdx + offset;
+      const targetTime = (hourly && hourly.time && hourly.time[dataIdx]) 
+        ? new Date(hourly.time[dataIdx]) 
+        : new Date(now.getTime() + offset * 3600000);
+      
+      const targetHour = targetTime.getHours();
       const hourStr = `${targetHour < 10 ? '0' : ''}${targetHour}:00`;
       const label = (offset === 0) ? '현재' : `+${offset}h`;
 
@@ -1156,17 +1139,16 @@
       let totalC = 0;
       let midC = 0;
 
-      if (hourly && hourly.temperature_2m && hourly.temperature_2m[offset] !== undefined) {
-        temp = hourly.temperature_2m[offset].toFixed(1);
-        wmoCode = hourly.weather_code[offset];
-        totalC = hourly.cloud_cover ? hourly.cloud_cover[offset] : 0;
-        midC = hourly.cloud_cover_mid ? hourly.cloud_cover_mid[offset] : 0;
+      if (hourly && hourly.temperature_2m && hourly.temperature_2m[dataIdx] !== undefined) {
+        temp = hourly.temperature_2m[dataIdx].toFixed(1);
+        wmoCode = hourly.weather_code[dataIdx];
+        totalC = hourly.cloud_cover ? hourly.cloud_cover[dataIdx] : 0;
+        midC = hourly.cloud_cover_mid ? hourly.cloud_cover_mid[dataIdx] : 0;
       }
 
       const isNight = (targetHour >= 19 || targetHour <= 5);
       let wmoInfo = decodeWmoCode(wmoCode, isNight);
 
-      // 먹구름/비 징후 아이콘 보정
       let icon = wmoInfo.icon;
       if (totalC >= 65 || midC >= 55) {
         icon = (wmoCode >= 51) ? '🌧️' : '☁️';
@@ -1181,43 +1163,51 @@
         <div class="slot-temp">${temp}°</div>
       `;
 
-      slot.onclick = () => selectForecastHour(offset, targetHour, hourStr);
+      slot.onclick = () => selectForecastHour(offset, dataIdx, targetHour, hourStr);
       track.appendChild(slot);
     }
   }
 
-  function selectForecastHour(offset, targetHour, hourStr) {
+  function selectForecastHour(offset, dataIdx, targetHour, hourStr) {
     selectedHourOffset = offset;
 
     const slots = document.querySelectorAll('.time-slot');
     slots.forEach((s, idx) => s.classList.toggle('active', idx === offset));
 
-    const clockLabel = (offset === 0) ? `현재 실황 (${hourStr})` : `예보 모드: ${offset}시간 뒤 (${hourStr})`;
+    const isNight = (targetHour >= 19 || targetHour <= 5);
+
+    // ★ [핵심] offset === 0 (현재 버튼) 터치 시, 시작할 때 계산된 실시간 실황과 100% 동일하게 복원
+    if (offset === 0 && liveCurrentCalculatedRes) {
+      document.getElementById('clock-live').innerText = `현재 실황 (${hourStr})`;
+      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, currentMt.type || 'peak');
+      return;
+    }
+
+    const clockLabel = `예보 모드: ${offset}시간 뒤 (${hourStr})`;
     document.getElementById('clock-live').innerText = clockLabel;
 
-    if (!liveWeatherData) return;
+    if (!liveWeatherData || !liveWeatherData.hourly) return;
 
     const h = liveWeatherData.hourly;
-    const isNight = (targetHour >= 19 || targetHour <= 5);
 
     const physicsParams = {
       mtEle: currentMt.ele,
-      rawTemp: h.temperature_2m[offset],
-      rawRH: h.relative_humidity_2m[offset],
-      rawWind: h.wind_speed_10m[offset] * 0.2777,
-      rawGust: h.wind_gusts_10m[offset] * 0.2777,
-      rawRain: h.precipitation[offset],
-      rawCode: h.weather_code[offset],
-      totalCloud: h.cloud_cover ? h.cloud_cover[offset] : 0,
-      lowCloud: h.cloud_cover_low ? h.cloud_cover_low[offset] : 0,
-      midCloud: h.cloud_cover_mid ? h.cloud_cover_mid[offset] : 0,
-      visibility: h.visibility ? h.visibility[offset] : 15000,
-      rawDew: h.dew_point_2m ? h.dew_point_2m[offset] : null,
+      rawTemp: h.temperature_2m[dataIdx] ?? 15.0,
+      rawRH: h.relative_humidity_2m[dataIdx] ?? 70,
+      rawWind: (h.wind_speed_10m[dataIdx] ?? 3.5) * 0.2777,
+      rawGust: (h.wind_gusts_10m[dataIdx] ?? 10.0) * 0.2777,
+      rawRain: h.precipitation[dataIdx] ?? 0.0,
+      rawCode: h.weather_code[dataIdx] ?? 0,
+      totalCloud: h.cloud_cover ? (h.cloud_cover[dataIdx] ?? 0) : 0,
+      lowCloud: h.cloud_cover_low ? (h.cloud_cover_low[dataIdx] ?? 0) : 0,
+      midCloud: h.cloud_cover_mid ? (h.cloud_cover_mid[dataIdx] ?? 0) : 0,
+      visibility: h.visibility ? (h.visibility[dataIdx] ?? 15000) : 15000,
+      rawDew: h.dew_point_2m ? h.dew_point_2m[dataIdx] : null,
       pointType: currentMt.type || 'peak'
     };
 
     const res = compute5PhysicsMountainWeather(physicsParams);
-    const pop = h.precipitation_probability ? (h.precipitation_probability[offset] || 0) : 0;
+    const pop = h.precipitation_probability ? (h.precipitation_probability[dataIdx] || 0) : 0;
     document.getElementById('city-pop').innerText = `${pop} %`;
 
     updateAlpineWeatherHUD(res, hourStr, isNight, currentMt.type || 'peak');
@@ -1225,6 +1215,7 @@
 
   async function selectMountain(name, ele, btnEl, type = 'peak', lat = 35.2846, lng = 129.0565) {
     currentMt = { name, ele, type, lat, lng };
+    selectedHourOffset = 0;
 
     document.querySelectorAll('.mt-chip').forEach(c => c.classList.remove('active'));
     if (btnEl) btnEl.classList.add('active');
@@ -1256,10 +1247,10 @@
         pointType: type
       };
 
-      const res = compute5PhysicsMountainWeather(physicsParams);
+      liveCurrentCalculatedRes = compute5PhysicsMountainWeather(physicsParams);
 
       renderLiveForecastTrack(liveWeatherData.hourly);
-      updateAlpineWeatherHUD(res, '현재', isNight, type);
+      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, type);
 
       document.getElementById('clock-live').innerText = `실시간 실측 동기화 (${hourStr})`;
     } else {
@@ -1278,8 +1269,8 @@
         rawDew: 14.0,
         pointType: type
       };
-      const res = compute5PhysicsMountainWeather(fallbackParams);
-      updateAlpineWeatherHUD(res, '현재', false, type);
+      liveCurrentCalculatedRes = compute5PhysicsMountainWeather(fallbackParams);
+      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', false, type);
       document.getElementById('clock-live').innerText = '실시간 통신 대기 (기본값)';
     }
   }
@@ -1312,7 +1303,6 @@
               const isAlreadyIn = localMatches.some(lm => lm.name === pName);
 
               const isNoise = /아파트|apt|빌라|맨션|타운|오피스텔|원룸|주택|부동산|중개|공인|마을|단지|초등|중학|고등|대학|학교|어린이집|유치원|교회|성당|사찰|병원|의원|약국|마트|센터|빌딩|타워|상가|공원|지하철|전철|\d+호선|역$|정류장|주차장|식당|카페|펜션|모텔|호텔|골프|리조트|두산|포스코|현대/i.test(pName);
-
               const category = p.category_name || '';
               const isForbiddenCategory = /부동산|주거|교통|금융|쇼핑|음식점|카페|의료|교육/i.test(category);
 
