@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v4.0</title>
+  <title>STATLAB 산악 기상 분석 v4.1</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -15,11 +15,11 @@
   <style>
     :root {
       --bg: #000000;
-      --card-bg: rgba(28, 28, 30, 0.65);
-      --card-border: rgba(255, 255, 255, 0.1);
+      --card-bg: rgba(28, 28, 30, 0.72);
+      --card-border: rgba(255, 255, 255, 0.12);
       --text-primary: #FFFFFF;
-      --text-secondary: rgba(235, 235, 245, 0.6);
-      --text-tertiary: rgba(235, 235, 245, 0.38);
+      --text-secondary: rgba(235, 235, 245, 0.65);
+      --text-tertiary: rgba(235, 235, 245, 0.4);
       --accent-blue: #0A84FF;
       --accent-cyan: #64D2FF;
       --accent-green: #30D158;
@@ -44,7 +44,6 @@
       overflow-x: hidden;
     }
 
-    /* 상단 브랜드 헤더 */
     .brand-header {
       display: flex;
       justify-content: space-between;
@@ -75,7 +74,6 @@
       color: var(--text-tertiary);
     }
 
-    /* 검색창 */
     .search-container {
       position: relative;
       margin-bottom: 12px;
@@ -147,7 +145,6 @@
       margin-top: 2px;
     }
 
-    /* 산 선택 세그먼트 */
     .mountain-chip-scroll {
       display: flex;
       gap: 6px;
@@ -175,7 +172,6 @@
       color: #FFFFFF;
     }
 
-    /* 알림 배너 */
     .alert-banner {
       background: rgba(255, 255, 255, 0.04);
       border: 0.5px solid rgba(255, 255, 255, 0.1);
@@ -190,7 +186,6 @@
       margin-bottom: 12px;
     }
 
-    /* 시간별 예보 트랙 */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -243,19 +238,132 @@
     .slot-icon { font-size: 16px; margin: 4px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* 메인 히어로 카드 */
+    /* ★ 메인 히어로 카드 & 앰비언트 대기 레이어 */
     .hero-weather-card {
       position: relative;
       width: 100%;
-      background: linear-gradient(180deg, rgba(28, 28, 30, 0.7) 0%, rgba(18, 18, 20, 0.85) 100%);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
+      background: rgba(24, 24, 27, 0.7);
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
       border: 0.5px solid var(--card-border);
       border-radius: 22px;
       padding: 18px 16px;
       margin-bottom: 12px;
       overflow: hidden;
     }
+
+    /* 뒷배경 앰비언트 애니메이션 캔버스 (글자 뒤편에 위치) */
+    .ambient-weather-stage {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 22px;
+      opacity: 0.85;
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 구름 덩어리 공통 애니메이션 */
+    .ambient-cloud {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(28px);
+      -webkit-filter: blur(28px);
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    /* 1. 먹구름 / 빗방울 상태 */
+    .theme-drizzle .cloud-1 {
+      width: 240px; height: 160px;
+      top: -30px; left: -20px;
+      background: radial-gradient(circle, rgba(51, 65, 85, 0.75) 0%, rgba(30, 41, 59, 0) 70%);
+      opacity: 0.85;
+      animation: cloudDriftSlow 16s infinite alternate ease-in-out;
+    }
+    .theme-drizzle .cloud-2 {
+      width: 280px; height: 180px;
+      bottom: -40px; right: -40px;
+      background: radial-gradient(circle, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0) 70%);
+      opacity: 0.9;
+      animation: cloudDriftFast 20s infinite alternate ease-in-out;
+    }
+
+    /* 미세 빗줄기 연출 */
+    .ambient-rain-container {
+      position: absolute;
+      inset: 0;
+      display: none;
+    }
+    .theme-drizzle .ambient-rain-container, .theme-rain .ambient-rain-container {
+      display: block;
+    }
+    .rain-streak {
+      position: absolute;
+      width: 1px;
+      height: 28px;
+      background: linear-gradient(180deg, transparent, rgba(100, 210, 255, 0.5), transparent);
+      transform: rotate(-16deg);
+      animation: rainFall 1.4s infinite linear;
+    }
+
+    /* 2. 곰탕 / 안개 상태 */
+    .theme-fog .cloud-1 {
+      width: 320px; height: 220px;
+      top: 10px; left: 10%;
+      background: radial-gradient(circle, rgba(226, 232, 240, 0.35) 0%, rgba(148, 163, 184, 0.1) 60%, transparent 80%);
+      opacity: 0.95;
+      animation: fogBreath 8s infinite alternate ease-in-out;
+    }
+
+    /* 3. 일반 흐림 / 중층운 */
+    .theme-cloudy .cloud-1 {
+      width: 260px; height: 160px;
+      top: -20px; right: -20px;
+      background: radial-gradient(circle, rgba(148, 163, 184, 0.35) 0%, transparent 70%);
+      opacity: 0.6;
+      animation: cloudDriftSlow 18s infinite alternate ease-in-out;
+    }
+
+    /* 4. 쾌청 맑음 상태 */
+    .theme-clear .cloud-1 {
+      width: 220px; height: 220px;
+      top: -60px; right: -40px;
+      background: radial-gradient(circle, rgba(10, 132, 255, 0.28) 0%, rgba(100, 210, 255, 0.08) 60%, transparent 80%);
+      opacity: 0.8;
+      animation: sunGlow 6s infinite alternate ease-in-out;
+    }
+
+    /* 애니메이션 키프레임 */
+    @keyframes cloudDriftSlow {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(45px, 20px, 0) scale(1.1); }
+    }
+    @keyframes cloudDriftFast {
+      0% { transform: translate3d(0, 0, 0) scale(1.05); }
+      100% { transform: translate3d(-40px, -25px, 0) scale(0.95); }
+    }
+    @keyframes fogBreath {
+      0% { transform: scale(0.95); opacity: 0.65; }
+      100% { transform: scale(1.08); opacity: 0.95; }
+    }
+    @keyframes sunGlow {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.15); opacity: 0.85; }
+    }
+    @keyframes rainFall {
+      0% { transform: translateY(-40px) rotate(-16deg); opacity: 0; }
+      30% { opacity: 0.6; }
+      100% { transform: translateY(290px) rotate(-16deg); opacity: 0; }
+    }
+
+    /* 전면 텍스트 콘텐츠 (z-index: 2 로 최상단 고정 보장) */
+    .hero-content-front {
+      position: relative;
+      z-index: 2;
+    }
+
     .hero-top-row {
       display: flex;
       justify-content: space-between;
@@ -271,6 +379,7 @@
       font-weight: 800;
       color: #FFFFFF;
       letter-spacing: -0.5px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
     }
     .hero-mt-sub {
       font-size: 12px;
@@ -287,6 +396,7 @@
       color: #FFFFFF;
       line-height: 1;
       letter-spacing: -1px;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
     }
     .hero-status-tag {
       display: inline-block;
@@ -298,13 +408,16 @@
       background: rgba(48, 209, 88, 0.15);
       color: var(--accent-green);
       border: 0.5px solid rgba(48, 209, 88, 0.3);
+      backdrop-filter: blur(10px);
     }
 
-    /* 고도 인디케이터 바 */
+    /* 정밀 고도 계측기 바 */
     .altitude-meter-box {
       position: relative;
-      background: rgba(0, 0, 0, 0.35);
-      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 0.5px solid rgba(255, 255, 255, 0.09);
       border-radius: 14px;
       padding: 12px 14px;
       margin-bottom: 14px;
@@ -316,7 +429,7 @@
       position: relative;
       flex-grow: 1;
       height: 6px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       border-radius: 3px;
       margin: 0 12px;
     }
@@ -447,7 +560,6 @@
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
-    /* 법적 고지 */
     .disclaimer-card {
       background: transparent;
       border: 0.5px solid rgba(255, 255, 255, 0.05);
@@ -459,7 +571,6 @@
       margin-bottom: 14px;
     }
 
-    /* STATLAB v4.0 플로팅 배지 */
     #statlab-badge {
       position: fixed;
       bottom: calc(10px + env(safe-area-inset-bottom, 0px));
@@ -490,7 +601,6 @@
 </head>
 <body>
 
-  <!-- 상단 브랜드 라벨 -->
   <div class="brand-header">
     <div class="brand-title">
       <span class="brand-dot"></span>
@@ -499,7 +609,6 @@
     <div id="clock-live" class="brand-status">실시간 동기화 중</div>
   </div>
 
-  <!-- 검색창 -->
   <div class="search-container">
     <span class="search-icon">🔍</span>
     <input
@@ -514,7 +623,6 @@
     <div id="search-dropdown" class="search-dropdown"></div>
   </div>
 
-  <!-- 즐겨찾는 산 세그먼트 -->
   <div class="mountain-chip-scroll">
     <div class="mt-chip active" onclick="selectMountain('금정산 고당봉', 801, this, 'peak', 35.2846, 129.0565)">금정산 고당봉</div>
     <div class="mt-chip" onclick="selectMountain('금정산 장군봉', 650, this, 'peak', 35.3125, 129.0528)">금정산 장군봉</div>
@@ -526,60 +634,73 @@
     <div class="mt-chip" onclick="selectMountain('지리산 장터목', 1653, this, 'shelter', 35.3323, 127.7231)">장터목대피소</div>
   </div>
 
-  <!-- 대기 상태 간이 배너 -->
   <div id="alert-banner" class="alert-banner">
     <span id="alert-banner-text">대기 안정 · 돌발 기상 징후 없음</span>
     <span style="color: var(--accent-green);">정상</span>
   </div>
 
-  <!-- 12시간 시간별 예보 트랙 -->
   <div class="section-header">
     <div class="section-title">12시간 초단기 예보</div>
     <div id="section-sub-label" class="section-sub">1시간 간격 정밀 분석</div>
   </div>
   <div id="forecast-track" class="forecast-track"></div>
 
-  <!-- 메인 히어로 카드 -->
+  <!-- ★ 애플 감성 메인 히어로 카드 (앰비언트 대기 애니메이션 탑재) -->
   <div id="hero-card" class="hero-weather-card">
-    <div class="hero-top-row">
-      <div class="hero-location-wrap">
-        <div id="card-peak-title" class="hero-mt-name">금정산 고당봉</div>
-        <div id="card-peak-ele" class="hero-mt-sub">해발 801m · 정상부 분석</div>
-      </div>
-      <div class="hero-temp-wrap">
-        <div id="brief-temp" class="hero-temp">--°</div>
-        <div id="card-status-pill" class="hero-status-tag">시야 분석 중</div>
+    
+    <!-- 뒷배경 반투명 대기 애니메이션 레이어 (글자 뒤편) -->
+    <div id="ambient-stage" class="ambient-weather-stage theme-clear">
+      <div class="ambient-cloud cloud-1"></div>
+      <div class="ambient-cloud cloud-2"></div>
+      <div class="ambient-rain-container">
+        <div class="rain-streak" style="left: 18%; animation-delay: 0.1s;"></div>
+        <div class="rain-streak" style="left: 36%; animation-delay: 0.7s;"></div>
+        <div class="rain-streak" style="left: 54%; animation-delay: 0.3s;"></div>
+        <div class="rain-streak" style="left: 72%; animation-delay: 0.9s;"></div>
+        <div class="rain-streak" style="left: 88%; animation-delay: 0.4s;"></div>
       </div>
     </div>
 
-    <!-- 정밀 고도 계측기 바 -->
-    <div class="altitude-meter-box">
-      <div id="meter-mt-label" class="meter-label-left">정상 801m</div>
-      <div class="meter-visual-track">
-        <div id="meter-fill" class="meter-fill-summit" style="width: 27%;"></div>
-        <div id="meter-cloud-line" class="meter-marker-cloud" style="left: 70%;" title="구름 밑바닥"></div>
+    <!-- 전면 텍스트 콘텐츠 -->
+    <div class="hero-content-front">
+      <div class="hero-top-row">
+        <div class="hero-location-wrap">
+          <div id="card-peak-title" class="hero-mt-name">금정산 고당봉</div>
+          <div id="card-peak-ele" class="hero-mt-sub">해발 801m · 정상부 분석</div>
+        </div>
+        <div class="hero-temp-wrap">
+          <div id="brief-temp" class="hero-temp">--°</div>
+          <div id="card-status-pill" class="hero-status-tag">시야 분석 중</div>
+        </div>
       </div>
-      <div id="meter-cloud-label" class="meter-label-right">운저 계산 중</div>
+
+      <div class="altitude-meter-box">
+        <div id="meter-mt-label" class="meter-label-left">정상 801m</div>
+        <div class="meter-visual-track">
+          <div id="meter-fill" class="meter-fill-summit" style="width: 27%;"></div>
+          <div id="meter-cloud-line" class="meter-marker-cloud" style="left: 70%;" title="구름 밑바닥"></div>
+        </div>
+        <div id="meter-cloud-label" class="meter-label-right">운저 계산 중</div>
+      </div>
+
+      <div class="hero-specs-grid">
+        <div class="spec-item">
+          <span class="spec-label">능선 체감</span>
+          <span id="summit-feel" class="spec-val">--°</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">능선 바람 (평균 / 돌풍)</span>
+          <span id="brief-wind" class="spec-val" style="color: var(--accent-amber);">-- / -- m/s</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">강수량</span>
+          <span id="brief-rain" class="spec-val" style="color: var(--accent-cyan);">0.0 mm</span>
+        </div>
+      </div>
     </div>
 
-    <!-- 3단 스펙 그리드 -->
-    <div class="hero-specs-grid">
-      <div class="spec-item">
-        <span class="spec-label">능선 체감</span>
-        <span id="summit-feel" class="spec-val">--°</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-label">능선 바람 (평균 / 돌풍)</span>
-        <span id="brief-wind" class="spec-val" style="color: var(--accent-amber);">-- / -- m/s</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-label">강수량</span>
-        <span id="brief-rain" class="spec-val" style="color: var(--accent-cyan);">0.0 mm</span>
-      </div>
-    </div>
   </div>
 
-  <!-- 운저고도 정밀 분석 카드 -->
   <div class="cloudbase-summary-card">
     <div class="cb-card-header">
       <span class="cb-card-title">산악 운저고도 (LCL 분석)</span>
@@ -590,7 +711,6 @@
     </div>
   </div>
 
-  <!-- 2열 모듈형 비교 타일 그리드 -->
   <div class="modular-grid">
     <div class="grid-tile">
       <div class="tile-title">산악 현지 관측 (정상부)</div>
@@ -611,15 +731,13 @@
     </div>
   </div>
 
-  <!-- 법적 고지 -->
   <div class="disclaimer-card">
     <strong>STATLAB Alpine Disclaimer:</strong> 본 서비스는 글로벌 실시간 기상 위성 API와 산악 5대 물리 방정식(Lapse Rate, Magnus, Orographic LCL, Venturi, AVCI)을 기반으로 다운스케일링한 참고용 산악 기상 모델입니다.
   </div>
 
-  <!-- STATLAB v4.0 플로팅 배지 -->
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v4.0
+    STATLAB v4.1
   </div>
 
 <script>
@@ -792,6 +910,26 @@
     };
   }
 
+  // ★ 대기 애니메이션 테마 전환 함수
+  function updateAmbientAtmosphereTheme(res, isNight) {
+    const stage = document.getElementById('ambient-stage');
+    stage.className = 'ambient-weather-stage'; // 초기화
+
+    const { rainMm, isDrizzling, isRealFog, isDarkCloud, isCrystalClear, wmoInfo } = res;
+
+    if (rainMm > 0 || wmoInfo.state === 'rain' || wmoInfo.state === 'storm') {
+      stage.classList.add('theme-rain');
+    } else if (isDrizzling) {
+      stage.classList.add('theme-drizzle');
+    } else if (isRealFog) {
+      stage.classList.add('theme-fog');
+    } else if (isDarkCloud) {
+      stage.classList.add('theme-cloudy');
+    } else {
+      stage.classList.add('theme-clear');
+    }
+  }
+
   // UI 렌더링 동기화
   function updateAlpineWeatherHUD(res, hourStr, isNight, pointType) {
     const statusPill = document.getElementById('card-status-pill');
@@ -799,6 +937,9 @@
     const bannerText = document.getElementById('alert-banner-text');
 
     const { summitTemp, summitFeel, summitHumidity, summitWind, summitGust, rainMm, effectiveCloudBase, clearance, isCrystalClear, isDarkCloud, isDrizzling, isRealFog, totalCloud, lowCloud, midCloud, visibility, surfaceTemp, surfaceRH, wmoInfo } = res;
+
+    // 대기 애니메이션 전환
+    updateAmbientAtmosphereTheme(res, isNight);
 
     document.getElementById('card-peak-title').innerText = currentMt.name;
     document.getElementById('card-peak-ele').innerText = `해발 ${currentMt.ele}m · 정상부 분석`;
@@ -854,12 +995,12 @@
     } else if (isDarkCloud) {
       statusPill.style.background = 'rgba(255, 255, 255, 0.12)';
       statusPill.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-      statusPill.style.color = 'rgba(235, 235, 245, 0.6)';
+      statusPill.style.color = 'rgba(235, 235, 245, 0.65)';
       statusPill.innerText = `흐림 (전운 ${totalCloud}%)`;
       banner.style.borderColor = 'rgba(255, 255, 255, 0.15)';
       bannerText.innerText = `[${hourStr}] 전운량 ${totalCloud}% · 짙은 먹구름 형성`;
 
-      cbPill.style.color = 'rgba(235, 235, 245, 0.6)';
+      cbPill.style.color = 'rgba(235, 235, 245, 0.65)';
       cbPill.innerText = '흐림';
       cbDesc.innerHTML = `<strong>${hourStr}:</strong> 구름이 해를 가려 일조가 차단되며 원거리 조망이 어둡게 제한됩니다.`;
     } else {
@@ -993,7 +1134,6 @@
     document.getElementById('card-peak-ele').innerText = `해발 ${ele}m · 정상부 분석`;
     document.getElementById('clock-live').innerText = 'STATLAB 연산 중...';
 
-    // 트랙 선제 렌더링 (공백 방지)
     renderLiveForecastTrack(null);
 
     liveWeatherData = await fetchLiveMountainWeather(lat, lng, ele);
