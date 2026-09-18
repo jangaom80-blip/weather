@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v3.9</title>
+  <title>STATLAB 산악 기상 분석 v4.0</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -75,7 +75,7 @@
       color: var(--text-tertiary);
     }
 
-    /* 검색창 (Apple Spotlight Style) */
+    /* 검색창 */
     .search-container {
       position: relative;
       margin-bottom: 12px;
@@ -147,7 +147,7 @@
       margin-top: 2px;
     }
 
-    /* 산 선택 세그먼트 (Apple Filter Pills) */
+    /* 산 선택 세그먼트 */
     .mountain-chip-scroll {
       display: flex;
       gap: 6px;
@@ -175,7 +175,7 @@
       color: #FFFFFF;
     }
 
-    /* 상태 경보 배너 (미니멀 알림 스트립) */
+    /* 알림 배너 */
     .alert-banner {
       background: rgba(255, 255, 255, 0.04);
       border: 0.5px solid rgba(255, 255, 255, 0.1);
@@ -190,7 +190,7 @@
       margin-bottom: 12px;
     }
 
-    /* 시간별 예보 트랙 (iOS Weather Hourly Cards) */
+    /* 시간별 예보 트랙 */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -217,6 +217,7 @@
       padding-bottom: 10px;
       margin-bottom: 12px;
       scrollbar-width: none;
+      min-height: 76px;
     }
     .forecast-track::-webkit-scrollbar { display: none; }
     .time-slot {
@@ -242,7 +243,7 @@
     .slot-icon { font-size: 16px; margin: 4px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* ★ 애플 감성 메인 히어로 카드 (Main Visual HUD) */
+    /* 메인 히어로 카드 */
     .hero-weather-card {
       position: relative;
       width: 100%;
@@ -255,8 +256,6 @@
       margin-bottom: 12px;
       overflow: hidden;
     }
-
-    /* 카드 상단: 산 이름, 고도, 대형 기온, 시야 상태 */
     .hero-top-row {
       display: flex;
       justify-content: space-between;
@@ -301,7 +300,7 @@
       border: 0.5px solid rgba(48, 209, 88, 0.3);
     }
 
-    /* 애플 스타일 고도 인디케이터 (Precision Altitude Ruler) */
+    /* 고도 인디케이터 바 */
     .altitude-meter-box {
       position: relative;
       background: rgba(0, 0, 0, 0.35);
@@ -347,7 +346,7 @@
       white-space: nowrap;
     }
 
-    /* 카드 하단 3단 스펙 바 */
+    /* 3단 스펙 바 */
     .hero-specs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -410,7 +409,7 @@
       line-height: 1.5;
     }
 
-    /* 2열 대칭 모듈형 그리드 (Apple Modular Tiles) */
+    /* 2열 모듈형 비교 타일 그리드 */
     .modular-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -460,7 +459,7 @@
       margin-bottom: 14px;
     }
 
-    /* STATLAB v3.9 플로팅 배지 */
+    /* STATLAB v4.0 플로팅 배지 */
     #statlab-badge {
       position: fixed;
       bottom: calc(10px + env(safe-area-inset-bottom, 0px));
@@ -502,7 +501,7 @@
 
   <!-- 검색창 -->
   <div class="search-container">
-    <span class="search-icon">􀊫</span>
+    <span class="search-icon">🔍</span>
     <input
       type="text"
       id="mt-search-input"
@@ -515,7 +514,7 @@
     <div id="search-dropdown" class="search-dropdown"></div>
   </div>
 
-  <!-- 즐겨찾는 산 세그먼트 (금정산 고당봉 기본) -->
+  <!-- 즐겨찾는 산 세그먼트 -->
   <div class="mountain-chip-scroll">
     <div class="mt-chip active" onclick="selectMountain('금정산 고당봉', 801, this, 'peak', 35.2846, 129.0565)">금정산 고당봉</div>
     <div class="mt-chip" onclick="selectMountain('금정산 장군봉', 650, this, 'peak', 35.3125, 129.0528)">금정산 장군봉</div>
@@ -540,12 +539,12 @@
   </div>
   <div id="forecast-track" class="forecast-track"></div>
 
-  <!-- ★ 애플 날씨 감성 메인 히어로 카드 -->
+  <!-- 메인 히어로 카드 -->
   <div id="hero-card" class="hero-weather-card">
     <div class="hero-top-row">
       <div class="hero-location-wrap">
         <div id="card-peak-title" class="hero-mt-name">금정산 고당봉</div>
-        <div id="card-peak-ele" class="hero-mt-sub">해발 801m · 정상부 관측</div>
+        <div id="card-peak-ele" class="hero-mt-sub">해발 801m · 정상부 분석</div>
       </div>
       <div class="hero-temp-wrap">
         <div id="brief-temp" class="hero-temp">--°</div>
@@ -560,7 +559,7 @@
         <div id="meter-fill" class="meter-fill-summit" style="width: 27%;"></div>
         <div id="meter-cloud-line" class="meter-marker-cloud" style="left: 70%;" title="구름 밑바닥"></div>
       </div>
-      <div id="meter-cloud-label" class="meter-label-right">구름 2,100m</div>
+      <div id="meter-cloud-label" class="meter-label-right">운저 계산 중</div>
     </div>
 
     <!-- 3단 스펙 그리드 -->
@@ -584,17 +583,15 @@
   <div class="cloudbase-summary-card">
     <div class="cb-card-header">
       <span class="cb-card-title">산악 운저고도 (LCL 분석)</span>
-      <span id="cb-status-pill" class="cb-card-tag">시야 100% 쾌청</span>
+      <span id="cb-status-pill" class="cb-card-tag">분석 중</span>
     </div>
     <div id="cb-desc-text" class="cb-card-desc">
       5대 물리 공식 기반 실시간 대기 연산 중...
     </div>
   </div>
 
-  <!-- 애플 스타일 모듈형 2열 비교 타일 그리드 -->
+  <!-- 2열 모듈형 비교 타일 그리드 -->
   <div class="modular-grid">
-    
-    <!-- 타일 1: 산악 현지 관측 (정상부) -->
     <div class="grid-tile">
       <div class="tile-title">산악 현지 관측 (정상부)</div>
       <div class="tile-data-row"><span class="tile-label">정상 실측기온</span><span id="summit-temp" class="tile-value">--.- °C</span></div>
@@ -604,7 +601,6 @@
       <div class="tile-data-row"><span class="tile-label">해발 운저고도</span><span id="summit-cloudbase" class="tile-value cyan">--.- m</span></div>
     </div>
 
-    <!-- 타일 2: 기저 평지 관측 (도심 비교) -->
     <div class="grid-tile">
       <div class="tile-title">기저 평지 예보 (참고용)</div>
       <div class="tile-data-row"><span class="tile-label">도심 평지기온</span><span id="city-temp" class="tile-value">--.- °C</span></div>
@@ -613,7 +609,6 @@
       <div class="tile-data-row"><span class="tile-label">평지 평균풍속</span><span id="city-wind" class="tile-value">--.- m/s</span></div>
       <div class="tile-data-row"><span class="tile-label">평지 강수확률</span><span id="city-pop" class="tile-value amber">-- %</span></div>
     </div>
-
   </div>
 
   <!-- 법적 고지 -->
@@ -621,16 +616,13 @@
     <strong>STATLAB Alpine Disclaimer:</strong> 본 서비스는 글로벌 실시간 기상 위성 API와 산악 5대 물리 방정식(Lapse Rate, Magnus, Orographic LCL, Venturi, AVCI)을 기반으로 다운스케일링한 참고용 산악 기상 모델입니다.
   </div>
 
-  <!-- ★ 스탯랩 v3.9 플로팅 뱃지 -->
+  <!-- STATLAB v4.0 플로팅 배지 -->
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v3.9
+    STATLAB v4.0
   </div>
 
 <script>
-  // ------------------------------------------------------------------
-  // 1. 전국 100여 개 핵심 명산·대피소 정밀 좌표 DB
-  // ------------------------------------------------------------------
   const mountainDB = [
     { name: '금정산 고당봉', type: 'peak', region: '부산 금정구 청룡동', ele: 801, lat: 35.2846, lng: 129.0565 },
     { name: '금정산 장군봉', type: 'peak', region: '부산 금정구/경남 양산', ele: 650, lat: 35.3125, lng: 129.0528 },
@@ -703,9 +695,7 @@
     return bestIdx;
   }
 
-  // ------------------------------------------------------------------
-  // 2. 산악 5대 물리 방정식 연산 엔진
-  // ------------------------------------------------------------------
+  // 5대 물리 공식 연산 엔진
   function compute5PhysicsMountainWeather(params) {
     const { mtEle, rawTemp, rawRH, rawWind, rawGust, rawRain, rawCode, totalCloud, lowCloud, midCloud, visibility, rawDew, pointType } = params;
 
@@ -802,9 +792,7 @@
     };
   }
 
-  // ------------------------------------------------------------------
-  // 3. UI 렌더링 동기화
-  // ------------------------------------------------------------------
+  // UI 렌더링 동기화
   function updateAlpineWeatherHUD(res, hourStr, isNight, pointType) {
     const statusPill = document.getElementById('card-status-pill');
     const banner = document.getElementById('alert-banner');
@@ -812,7 +800,6 @@
 
     const { summitTemp, summitFeel, summitHumidity, summitWind, summitGust, rainMm, effectiveCloudBase, clearance, isCrystalClear, isDarkCloud, isDrizzling, isRealFog, totalCloud, lowCloud, midCloud, visibility, surfaceTemp, surfaceRH, wmoInfo } = res;
 
-    // 히어로 카드 값 반영
     document.getElementById('card-peak-title').innerText = currentMt.name;
     document.getElementById('card-peak-ele').innerText = `해발 ${currentMt.ele}m · 정상부 분석`;
     document.getElementById('brief-temp').innerText = `${Math.round(summitTemp)}°`;
@@ -820,7 +807,6 @@
     document.getElementById('brief-wind').innerText = `${summitWind} / ${summitGust} m/s`;
     document.getElementById('brief-rain').innerText = isDrizzling && rainMm === 0 ? '미세 빗방울' : `${rainMm} mm`;
 
-    // 정밀 고도 계측기 바 반영 (0 ~ 3000m)
     const mtPercent = Math.min(95, Math.max(10, Math.round((currentMt.ele / 3000) * 100)));
     const cbPercent = Math.min(98, Math.max(5, Math.round((effectiveCloudBase / 3000) * 100)));
 
@@ -829,7 +815,6 @@
     document.getElementById('meter-cloud-line').style.left = `${cbPercent}%`;
     document.getElementById('meter-cloud-label').innerText = `운저 ${effectiveCloudBase.toLocaleString()}m`;
 
-    // 상태 배지 및 브리핑
     const cbPill = document.getElementById('cb-status-pill');
     const cbDesc = document.getElementById('cb-desc-text');
 
@@ -869,12 +854,12 @@
     } else if (isDarkCloud) {
       statusPill.style.background = 'rgba(255, 255, 255, 0.12)';
       statusPill.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-      statusPill.style.color = var(--text-secondary);
+      statusPill.style.color = 'rgba(235, 235, 245, 0.6)';
       statusPill.innerText = `흐림 (전운 ${totalCloud}%)`;
       banner.style.borderColor = 'rgba(255, 255, 255, 0.15)';
       bannerText.innerText = `[${hourStr}] 전운량 ${totalCloud}% · 짙은 먹구름 형성`;
 
-      cbPill.style.color = var(--text-secondary);
+      cbPill.style.color = 'rgba(235, 235, 245, 0.6)';
       cbPill.innerText = '흐림';
       cbDesc.innerHTML = `<strong>${hourStr}:</strong> 구름이 해를 가려 일조가 차단되며 원거리 조망이 어둡게 제한됩니다.`;
     } else {
@@ -890,7 +875,6 @@
       cbDesc.innerHTML = `<strong>${hourStr}:</strong> 대기 시정이 <strong>${(visibility/1000).toFixed(1)}km</strong>로 깨끗하며, 구름 방해 없이 원거리 조망이 탁 트입니다.`;
     }
 
-    // 2열 타일 수치 대칭 반영
     document.getElementById('summit-temp').innerText = `${summitTemp} °C`;
     document.getElementById('summit-humidity').innerText = `${summitHumidity} %`;
     document.getElementById('summit-wind').innerText = `${summitWind} m/s`;
@@ -903,14 +887,12 @@
     document.getElementById('city-wind').innerText = `${(summitWind * 0.6).toFixed(1)} m/s`;
   }
 
-  // ------------------------------------------------------------------
-  // 4. 예보 트랙 렌더러
-  // ------------------------------------------------------------------
+  // 예보 트랙 렌더러
   function renderLiveForecastTrack(hourly) {
     const track = document.getElementById('forecast-track');
     track.innerHTML = '';
 
-    const startIdx = findCurrentHourIndex(hourly);
+    const startIdx = hourly ? findCurrentHourIndex(hourly) : 0;
     const now = new Date();
 
     for (let offset = 0; offset < 12; offset++) {
@@ -923,7 +905,7 @@
       const hourStr = `${targetHour < 10 ? '0' : ''}${targetHour}:00`;
       const label = (offset === 0) ? '현재' : `+${offset}h`;
 
-      let temp = 15.0;
+      let temp = 16;
       let wmoCode = 0;
       let totalC = 0;
       let midC = 0;
@@ -1011,6 +993,9 @@
     document.getElementById('card-peak-ele').innerText = `해발 ${ele}m · 정상부 분석`;
     document.getElementById('clock-live').innerText = 'STATLAB 연산 중...';
 
+    // 트랙 선제 렌더링 (공백 방지)
+    renderLiveForecastTrack(null);
+
     liveWeatherData = await fetchLiveMountainWeather(lat, lng, ele);
 
     if (liveWeatherData && liveWeatherData.current) {
@@ -1040,21 +1025,21 @@
       renderLiveForecastTrack(liveWeatherData.hourly);
       updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, type);
 
-      document.getElementById('clock-live').innerText = `실시간 실측 동기화 (${hourStr})`;
+      document.getElementById('clock-live').innerText = `실시간 동기화 (${hourStr})`;
     } else {
       const fallbackParams = {
         mtEle: ele,
-        rawTemp: 18.0,
+        rawTemp: 16.0,
         rawRH: 75,
         rawWind: 3.5,
-        rawGust: 11.0,
+        rawGust: 10.0,
         rawRain: 0.0,
         rawCode: 3,
-        totalCloud: 65,
+        totalCloud: 60,
         lowCloud: 20,
-        midCloud: 55,
+        midCloud: 50,
         visibility: 15000,
-        rawDew: 14.0,
+        rawDew: 12.0,
         pointType: type
       };
       liveCurrentCalculatedRes = compute5PhysicsMountainWeather(fallbackParams);
