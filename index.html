@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v4.7</title>
+  <title>STATLAB 산악 기상 분석 v4.8</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -475,13 +475,13 @@
     }
 
     /* ==================================================================
-       ★ [v4.7 신규] 운해(雲海) 파노라마 예측 카드
+       ★ [v4.8 리파인] 애플 프로페셔널 운해(雲海) 파노라마 계측 카드
        ================================================================== */
     .cloudsea-card {
-      background: linear-gradient(135deg, rgba(30, 27, 46, 0.78) 0%, rgba(20, 24, 38, 0.85) 100%);
+      background: linear-gradient(135deg, rgba(28, 24, 40, 0.8) 0%, rgba(18, 20, 32, 0.88) 100%);
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
-      border: 0.5px solid rgba(191, 90, 242, 0.35);
+      border: 0.5px solid rgba(191, 90, 242, 0.3);
       border-radius: 18px;
       padding: 14px 16px;
       margin-bottom: 12px;
@@ -494,21 +494,29 @@
       margin-bottom: 10px;
     }
     .cs-title {
-      font-size: 13px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 700;
       color: #FFFFFF;
       display: flex;
       align-items: center;
       gap: 6px;
-      letter-spacing: -0.2px;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+    .cs-dot-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-purple);
+      box-shadow: 0 0 8px var(--accent-purple);
     }
     .cs-prob-pill {
       font-size: 11px;
-      font-weight: 800;
-      padding: 3px 9px;
+      font-weight: 700;
+      padding: 3px 10px;
       border-radius: 10px;
-      background: rgba(191, 90, 242, 0.2);
-      border: 0.5px solid var(--accent-purple);
+      background: rgba(191, 90, 242, 0.18);
+      border: 0.5px solid rgba(191, 90, 242, 0.45);
       color: #E5B8FF;
     }
     .cs-meter-wrap {
@@ -516,16 +524,16 @@
     }
     .cs-meter-bar {
       width: 100%;
-      height: 7px;
+      height: 6px;
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
+      border-radius: 3px;
       overflow: hidden;
       margin-bottom: 6px;
     }
     .cs-meter-fill {
       height: 100%;
-      border-radius: 4px;
-      background: linear-gradient(90deg, #64D2FF 0%, #BF5AF2 50%, #FF9F0A 100%);
+      border-radius: 3px;
+      background: linear-gradient(90deg, #64D2FF 0%, #BF5AF2 60%, #FF9F0A 100%);
       transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .cs-sub-row {
@@ -540,7 +548,7 @@
       font-weight: 500;
       color: var(--text-primary);
       line-height: 1.5;
-      padding-top: 4px;
+      padding-top: 6px;
       border-top: 0.5px solid rgba(255, 255, 255, 0.08);
     }
 
@@ -770,12 +778,12 @@
 
   </div>
 
-  <!-- ★ [v4.7 킬러 기능] 운해(雲海) 파노라마 예측 카드 -->
+  <!-- ★ [v4.8 리파인] 운해(雲海) 파노라마 계측 카드 (파도 이모지 완전 제거) -->
   <div class="cloudsea-card">
     <div class="cs-header">
       <div class="cs-title">
-        <span>🌊</span>
-        <span>운해(雲海) 파노라마 예측 지수</span>
+        <span class="cs-dot-indicator"></span>
+        <span>운해(雲海) 파노라마 지수 · SEA OF CLOUDS</span>
       </div>
       <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
     </div>
@@ -832,7 +840,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v4.7
+    STATLAB v4.8
   </div>
 
 <script>
@@ -971,61 +979,49 @@
     return bestIdx;
   }
 
-  // ------------------------------------------------------------------
-  // ★ [v4.7 핵심] 운해(雲海) 파노라마 예측 엔진
-  // ------------------------------------------------------------------
-  function calculateCloudSeaProbability(mtEle, summitRH, surfaceRH, summitWind, midCloud, totalCloud, effectiveCloudBase, targetHour) {
+  function calculateCloudSeaProbability(mtEle, summitHumidity, surfaceRH, summitWind, midCloud, totalCloud, effectiveCloudBase, targetHour) {
     let score = 0;
 
-    // 1. 구름층 고도 적합도 (구름이 정상보다 아래에 발아래로 깔려야 함)
     const clearance = effectiveCloudBase - mtEle;
     if (clearance < -50 && clearance > -700) {
-      score += 35; // 구름 밑바닥이 산 정상 50m~700m 아래에 위치 (완벽한 구름바다 높이)
+      score += 35;
     } else if (clearance <= -700) {
-      score += 20; // 구름이 아주 낮게 계곡 바닥에만 깔림
+      score += 20;
     } else if (clearance >= -50 && clearance <= 80) {
-      score += 15; // 정상 바로 언저리에 걸침 (운무와 경계)
-    } else {
-      score += 0;  // 구름이 산 정상보다 한참 높거나 없음
+      score += 15;
     }
 
-    // 2. 수증기/습도 역전층 (골짜기 습도 포화 + 정상부 건조/쾌청)
-    if (surfaceRH >= 85 && summitRH <= 75) {
-      score += 30; // 이상적인 역전층 형성
+    if (surfaceRH >= 85 && summitHumidity <= 75) {
+      score += 30;
     } else if (surfaceRH >= 80) {
       score += 20;
     } else if (surfaceRH >= 70) {
       score += 10;
     }
 
-    // 3. 능선 풍속 안정도 (바람이 세면 운해가 부서짐)
     if (summitWind <= 2.2) {
-      score += 20; // 거울처럼 잔잔한 대기
+      score += 20;
     } else if (summitWind <= 3.8) {
       score += 12;
     } else if (summitWind <= 5.5) {
       score += 5;
     } else {
-      score -= 10; // 강풍으로 운해 소산
+      score -= 10;
     }
 
-    // 4. 상공 시야 개방도 (중/상층 먹구름이 없어야 운해 위로 햇살이 비침)
     if (midCloud <= 25 && totalCloud <= 45) {
-      score += 15; // 푸른 하늘 위에서 내려다보는 운해
+      score += 15;
     } else if (midCloud <= 45) {
       score += 8;
     }
 
-    // 5. 복사냉각 골든타임 보정 (05시~08시 사이 최대 보너스)
     if (targetHour >= 5 && targetHour <= 8) {
       score += 10;
     } else if (targetHour >= 4 && targetHour <= 9) {
       score += 5;
     }
 
-    // 강수 시 운해 무효화
-    const finalProb = Math.min(99, Math.max(5, Math.round(score)));
-    return finalProb;
+    return Math.min(99, Math.max(5, Math.round(score)));
   }
 
   function compute5PhysicsMountainWeather(params) {
@@ -1105,8 +1101,6 @@
     }
 
     const clearance = effectiveCloudBase - mtEle;
-
-    // ★ 운해 발생 지수 연산
     const cloudSeaProb = calculateCloudSeaProbability(mtEle, rawRH, surfaceRH, summitWind, midCloud, totalCloud, effectiveCloudBase, targetHour);
 
     return {
@@ -1160,6 +1154,7 @@
     }
   }
 
+  // ★ UI 렌더링 동기화 (변수 불일치 오류 교정 및 파도 이모지 제거)
   function updateAlpineWeatherHUD(res, hourStr, isNight, pointType, isOffline = false, distanceKm = null) {
     const statusPill = document.getElementById('card-status-pill');
     const banner = document.getElementById('alert-banner');
@@ -1191,7 +1186,7 @@
     document.getElementById('meter-cloud-label').innerText = `운저 ${effectiveCloudBase.toLocaleString()}m`;
 
     // ----------------------------------------------------
-    // ★ [v4.7 신규] 운해(雲海) 예측 카드 렌더링
+    // ★ [v4.8] 운해 카드 정밀 렌더링 (파도 이모지 🌊 제거 및 변수명 수정)
     // ----------------------------------------------------
     const csBadge = document.getElementById('cs-prob-badge');
     const csFill = document.getElementById('cs-meter-fill');
@@ -1201,17 +1196,23 @@
     const csDesc = document.getElementById('cs-brief-desc');
 
     csFill.style.width = `${cloudSeaProb}%`;
-    csBadge.innerText = `${cloudSeaProb}% ${cloudSeaProb >= 75 ? '특급 유력 🌊' : (cloudSeaProb >= 50 ? '형성 가능' : '형성 희박')}`;
+    
+    // 파도 이모지 대신 애플 스타일의 정제된 등급 표기
+    let csGradeTxt = '조건 미달 (Low)';
+    if (cloudSeaProb >= 75) csGradeTxt = '최적 발달 (Optimal)';
+    else if (cloudSeaProb >= 50) csGradeTxt = '형성 가능 (Moderate)';
+    csBadge.innerText = `${cloudSeaProb}% ${csGradeTxt}`;
 
-    const invStrong = (surfaceRH - summitRH) >= 10;
+    // ★ 버그 원인이었던 변수명 summitRH -> summitHumidity 로 완벽 교정
+    const invStrong = (surfaceRH - summitHumidity) >= 10;
     csInversion.innerText = `역전층: ${invStrong ? '강함 (포화)' : '보통'}`;
     csWind.innerText = `풍속: ${summitWind <= 3.0 ? '안정' : '강함'} (${summitWind}m/s)`;
     csSky.innerText = `상공: ${midCloud <= 30 ? '개방' : '구름'}`;
 
     if (cloudSeaProb >= 75) {
-      csDesc.innerHTML = `<strong>[${hourStr} 운해 골든타임]:</strong> 골짜기 수증기 포화와 안정된 기류로 정상(${currentMt.ele}m) 발아래 <strong>출렁이는 구름바다 파노라마</strong>가 펼쳐질 확률이 극히 높습니다.`;
+      csDesc.innerHTML = `<strong>[${hourStr} 운해 최적 조건]:</strong> 골짜기 수증기 포화와 안정된 기류로 정상(${currentMt.ele}m) 발아래 <strong>출렁이는 구름바다 파노라마</strong>가 펼쳐질 확률이 극히 높습니다.`;
     } else if (cloudSeaProb >= 50) {
-      csDesc.innerHTML = `<strong>[${hourStr} 운해 형성 가능]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해 띠가 형성될 수 있습니다.`;
+      csDesc.innerHTML = `<strong>[${hourStr} 운해 부분 형성]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해 띠가 형성될 수 있습니다.`;
     } else {
       csDesc.innerHTML = `<strong>[${hourStr} 운해 조건 미달]:</strong> 대기 혼합이 활발하거나 수증기량이 부족하여 운해 형성 가능성이 낮습니다.`;
     }
@@ -1303,6 +1304,7 @@
       cbDesc.innerHTML = `<strong>${hourStr}:</strong> 가시광선 투과율 <strong style="color:var(--accent-green);">${opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
     }
 
+    // ★ 하단 6개 타일 수치 100% 렌더링 복원
     document.getElementById('summit-temp').innerText = `${summitTemp} °C`;
     document.getElementById('summit-humidity').innerText = `${summitHumidity} %`;
     document.getElementById('summit-wind').innerText = `${summitWind} m/s`;
