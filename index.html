@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v4.5</title>
+  <title>STATLAB 산악 기상 분석 v4.7</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -25,6 +25,7 @@
       --accent-green: #30D158;
       --accent-amber: #FF9F0A;
       --accent-red: #FF453A;
+      --accent-purple: #BF5AF2;
     }
 
     * {
@@ -69,6 +70,11 @@
       box-shadow: 0 0 10px var(--accent-green);
       animation: livePulse 2s infinite ease-in-out;
     }
+    .brand-dot.offline {
+      background: var(--accent-amber);
+      box-shadow: 0 0 10px var(--accent-amber);
+      animation: none;
+    }
     @keyframes livePulse {
       0% { transform: scale(1); opacity: 0.8; }
       50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px var(--accent-green); }
@@ -78,11 +84,19 @@
       font-size: 11px;
       font-weight: 600;
       color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
+    .search-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
     .search-container {
       position: relative;
-      margin-bottom: 12px;
+      flex-grow: 1;
       z-index: 1500;
     }
     .search-box {
@@ -114,6 +128,26 @@
       color: var(--text-secondary);
       pointer-events: none;
     }
+    .gps-btn {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 0.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .gps-btn:active {
+      transform: scale(0.94);
+      background: rgba(10, 132, 255, 0.25);
+    }
+
     .search-dropdown {
       position: absolute;
       top: calc(100% + 6px);
@@ -141,9 +175,7 @@
       color: var(--text-primary);
     }
     .search-item:last-child { border-bottom: none; }
-    .search-item:active {
-      background: rgba(255, 255, 255, 0.08);
-    }
+    .search-item:active { background: rgba(255, 255, 255, 0.08); }
     .search-item-sub {
       font-size: 11px;
       color: var(--text-secondary);
@@ -244,9 +276,7 @@
     .slot-icon { font-size: 16px; margin: 4px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* ==================================================================
-       ★ 메인 히어로 카드 & 다이내믹 날씨 일러스트 앰비언트 엔진
-       ================================================================== */
+    /* 메인 히어로 카드 */
     .hero-weather-card {
       position: relative;
       width: 100%;
@@ -256,12 +286,11 @@
       border: 0.5px solid var(--card-border);
       border-radius: 22px;
       padding: 18px 16px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       overflow: hidden;
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
     }
 
-    /* 뒷배경 대기 일러스트 애니메이션 스테이지 */
     .weather-scene-stage {
       position: absolute;
       inset: 0;
@@ -272,143 +301,30 @@
       transition: all 0.8s ease;
     }
 
-    /* 1. 태양 & 광배 (맑음 주간) */
-    .sun-orb-wrap {
-      position: absolute;
-      top: -30px;
-      right: 15px;
-      width: 140px;
-      height: 140px;
-      display: none;
-    }
-    .sun-glow {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 179, 0, 0.45) 0%, rgba(255, 149, 0, 0.15) 50%, transparent 75%);
-      filter: blur(12px);
-      animation: sunPulse 5s infinite alternate ease-in-out;
-    }
-    .sun-core {
-      position: absolute;
-      top: 35px;
-      right: 35px;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #FFE600 0%, #FF9500 100%);
-      box-shadow: 0 0 25px rgba(255, 184, 0, 0.6);
-    }
+    .sun-orb-wrap { position: absolute; top: -30px; right: 15px; width: 140px; height: 140px; display: none; }
+    .sun-glow { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(255, 179, 0, 0.45) 0%, rgba(255, 149, 0, 0.15) 50%, transparent 75%); filter: blur(12px); animation: sunPulse 5s infinite alternate ease-in-out; }
+    .sun-core { position: absolute; top: 35px; right: 35px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FFE600 0%, #FF9500 100%); box-shadow: 0 0 25px rgba(255, 184, 0, 0.6); }
 
-    /* 2. 달 & 별빛 (맑음 야간) */
-    .moon-star-wrap {
-      position: absolute;
-      top: 10px;
-      right: 25px;
-      width: 120px;
-      height: 100px;
-      display: none;
-    }
-    .crescent-moon {
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      box-shadow: 8px 6px 0 0 #FFD60A;
-      filter: drop-shadow(0 0 14px rgba(255, 214, 10, 0.7));
-      transform: rotate(-15deg);
-      animation: moonGlow 6s infinite alternate ease-in-out;
-    }
-    .twinkle-star {
-      position: absolute;
-      background: #FFFFFF;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #FFFFFF;
-      animation: starTwinkle 3s infinite ease-in-out;
-    }
+    .moon-star-wrap { position: absolute; top: 10px; right: 25px; width: 120px; height: 100px; display: none; }
+    .crescent-moon { position: absolute; top: 5px; right: 10px; width: 44px; height: 44px; border-radius: 50%; box-shadow: 8px 6px 0 0 #FFD60A; filter: drop-shadow(0 0 14px rgba(255, 214, 10, 0.7)); transform: rotate(-15deg); animation: moonGlow 6s infinite alternate ease-in-out; }
+    .twinkle-star { position: absolute; background: #FFFFFF; border-radius: 50%; box-shadow: 0 0 6px #FFFFFF; animation: starTwinkle 3s infinite ease-in-out; }
 
-    /* 3. 짙은 운무 & 곰탕 (산 정상 파묻힘) */
-    .fog-cloud-layer {
-      position: absolute;
-      inset: -20px;
-      display: none;
-      opacity: 0.85;
-    }
-    .fog-wave {
-      position: absolute;
-      bottom: 0;
-      left: -50%;
-      width: 200%;
-      height: 130px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(203, 213, 225, 0.4) 0%, rgba(148, 163, 184, 0.15) 50%, transparent 80%);
-      filter: blur(16px);
-      animation: fogDrift 14s infinite alternate ease-in-out;
-    }
-    .fog-wave-2 {
-      height: 90px;
-      background: radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.3) 0%, rgba(203, 213, 225, 0.1) 60%, transparent 80%);
-      filter: blur(20px);
-      animation: fogDriftReverse 18s infinite alternate ease-in-out;
-    }
+    .fog-cloud-layer { position: absolute; inset: -20px; display: none; opacity: 0.85; }
+    .fog-wave { position: absolute; bottom: 0; left: -50%; width: 200%; height: 130px; background: radial-gradient(ellipse at 50% 100%, rgba(203, 213, 225, 0.4) 0%, rgba(148, 163, 184, 0.15) 50%, transparent 80%); filter: blur(16px); animation: fogDrift 14s infinite alternate ease-in-out; }
+    .fog-wave-2 { height: 90px; background: radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.3) 0%, rgba(203, 213, 225, 0.1) 60%, transparent 80%); filter: blur(20px); animation: fogDriftReverse 18s infinite alternate ease-in-out; }
 
-    /* 4. 다층 구름 & 먹구름 (흐림/소나기 구름) */
-    .cloud-cluster-wrap {
-      position: absolute;
-      top: -10px;
-      right: -20px;
-      width: 240px;
-      height: 150px;
-      display: none;
-    }
-    .storm-cloud-puff {
-      position: absolute;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(71, 85, 105, 0.6) 0%, rgba(30, 41, 59, 0.3) 60%, transparent 80%);
-      filter: blur(14px);
-    }
+    .cloud-cluster-wrap { position: absolute; top: -10px; right: -20px; width: 240px; height: 150px; display: none; }
+    .storm-cloud-puff { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(71, 85, 105, 0.6) 0%, rgba(30, 41, 59, 0.3) 60%, transparent 80%); filter: blur(14px); }
     .puff-1 { width: 130px; height: 90px; top: 10px; right: 40px; animation: puffSway 10s infinite alternate ease-in-out; }
     .puff-2 { width: 150px; height: 100px; top: 30px; right: 0px; animation: puffSway 12s infinite alternate ease-in-out 1s; }
 
-    /* 5. 빗줄기 및 뇌우 섬광 */
-    .rain-scene-wrap {
-      position: absolute;
-      inset: 0;
-      display: none;
-    }
-    .rain-drop {
-      position: absolute;
-      width: 1.5px;
-      height: 22px;
-      background: linear-gradient(180deg, transparent, rgba(100, 210, 255, 0.6), transparent);
-      transform: rotate(-18deg);
-      animation: rainDropFall 1.2s infinite linear;
-    }
-    .thunder-flash {
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.22);
-      opacity: 0;
-      display: none;
-      animation: flashPulse 8s infinite;
-    }
+    .rain-scene-wrap { position: absolute; inset: 0; display: none; }
+    .rain-drop { position: absolute; width: 1.5px; height: 22px; background: linear-gradient(180deg, transparent, rgba(100, 210, 255, 0.6), transparent); transform: rotate(-18deg); animation: rainDropFall 1.2s infinite linear; }
+    .thunder-flash { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.22); opacity: 0; display: none; animation: flashPulse 8s infinite; }
 
-    /* 6. 눈송이 (강설) */
-    .snow-scene-wrap {
-      position: absolute;
-      inset: 0;
-      display: none;
-    }
-    .snow-flake {
-      position: absolute;
-      background: #FFFFFF;
-      border-radius: 50%;
-      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-      animation: snowFall 4s infinite linear;
-    }
+    .snow-scene-wrap { position: absolute; inset: 0; display: none; }
+    .snow-flake { position: absolute; background: #FFFFFF; border-radius: 50%; box-shadow: 0 0 6px rgba(255, 255, 255, 0.8); animation: snowFall 4s infinite linear; }
 
-    /* 테마별 디스플레이 토글 */
     .scene-clear-day .sun-orb-wrap { display: block; }
     .scene-clear-night .moon-star-wrap { display: block; }
     .scene-fog .fog-cloud-layer { display: block; }
@@ -418,30 +334,16 @@
     .scene-storm .cloud-cluster-wrap, .scene-storm .rain-scene-wrap, .scene-storm .thunder-flash { display: block; }
     .scene-snow .cloud-cluster-wrap, .scene-snow .snow-scene-wrap { display: block; }
 
-    /* 애니메이션 키프레임 */
     @keyframes sunPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.18); opacity: 1; } }
     @keyframes moonGlow { 0% { filter: drop-shadow(0 0 10px rgba(255, 214, 10, 0.5)); } 100% { filter: drop-shadow(0 0 20px rgba(255, 214, 10, 0.85)); } }
     @keyframes starTwinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.3); } }
     @keyframes fogDrift { 0% { transform: translateX(0) scaleY(1); } 100% { transform: translateX(40px) scaleY(1.15); } }
     @keyframes fogDriftReverse { 0% { transform: translateX(0); } 100% { transform: translateX(-35px); } }
     @keyframes puffSway { 0% { transform: translate(0, 0); } 100% { transform: translate(-15px, 8px); } }
-    @keyframes rainDropFall {
-      0% { transform: translateY(-30px) rotate(-18deg); opacity: 0; }
-      40% { opacity: 0.7; }
-      100% { transform: translateY(280px) rotate(-18deg); opacity: 0; }
-    }
-    @keyframes flashPulse {
-      0%, 93%, 97%, 100% { opacity: 0; }
-      94% { opacity: 0.45; }
-      96% { opacity: 0.7; }
-    }
-    @keyframes snowFall {
-      0% { transform: translateY(-20px) translateX(0); opacity: 0; }
-      30% { opacity: 0.8; }
-      100% { transform: translateY(280px) translateX(25px); opacity: 0; }
-    }
+    @keyframes rainDropFall { 0% { transform: translateY(-30px) rotate(-18deg); opacity: 0; } 40% { opacity: 0.7; } 100% { transform: translateY(280px) rotate(-18deg); opacity: 0; } }
+    @keyframes flashPulse { 0%, 93%, 97%, 100% { opacity: 0; } 94% { opacity: 0.45; } 96% { opacity: 0.7; } }
+    @keyframes snowFall { 0% { transform: translateY(-20px) translateX(0); opacity: 0; } 30% { opacity: 0.8; } 100% { transform: translateY(280px) translateX(25px); opacity: 0; } }
 
-    /* 전면 텍스트 콘텐츠 (가독성 100% 보장) */
     .hero-content-front {
       position: relative;
       z-index: 3;
@@ -572,6 +474,76 @@
       color: #FFFFFF;
     }
 
+    /* ==================================================================
+       ★ [v4.7 신규] 운해(雲海) 파노라마 예측 카드
+       ================================================================== */
+    .cloudsea-card {
+      background: linear-gradient(135deg, rgba(30, 27, 46, 0.78) 0%, rgba(20, 24, 38, 0.85) 100%);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 0.5px solid rgba(191, 90, 242, 0.35);
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+    .cs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .cs-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: -0.2px;
+    }
+    .cs-prob-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 10px;
+      background: rgba(191, 90, 242, 0.2);
+      border: 0.5px solid var(--accent-purple);
+      color: #E5B8FF;
+    }
+    .cs-meter-wrap {
+      margin-bottom: 8px;
+    }
+    .cs-meter-bar {
+      width: 100%;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .cs-meter-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #64D2FF 0%, #BF5AF2 50%, #FF9F0A 100%);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cs-sub-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .cs-desc {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding-top: 4px;
+      border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+    }
+
     .cloudbase-summary-card {
       background: var(--card-bg);
       backdrop-filter: blur(25px);
@@ -677,7 +649,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--accent-cyan);
+      background: var(--accent-purple);
     }
   </style>
 </head>
@@ -685,24 +657,27 @@
 
   <div class="brand-header">
     <div class="brand-title">
-      <span class="brand-dot"></span>
+      <span id="brand-live-dot" class="brand-dot"></span>
       STATLAB ALPINE WEATHER
     </div>
     <div id="clock-live" class="brand-status">실시간 동기화 중...</div>
   </div>
 
-  <div class="search-container">
-    <span class="search-icon">🔍</span>
-    <input
-      type="text"
-      id="mt-search-input"
-      class="search-box"
-      placeholder="전국 산·봉우리·대피소 검색"
-      autocomplete="off"
-      oninput="handleMountainSearch(this.value)"
-      onfocus="handleMountainSearch(this.value)"
-    />
-    <div id="search-dropdown" class="search-dropdown"></div>
+  <div class="search-row">
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        id="mt-search-input"
+        class="search-box"
+        placeholder="전국 산·봉우리·대피소 검색"
+        autocomplete="off"
+        oninput="handleMountainSearch(this.value)"
+        onfocus="handleMountainSearch(this.value)"
+      />
+      <div id="search-dropdown" class="search-dropdown"></div>
+    </div>
+    <button class="gps-btn" onclick="triggerGPSMatching()" title="내 위치 기준 산 찾기">📍</button>
   </div>
 
   <div class="mountain-chip-scroll">
@@ -718,7 +693,7 @@
 
   <div id="alert-banner" class="alert-banner">
     <span id="alert-banner-text">대기 안정 · 돌발 기상 징후 없음</span>
-    <span style="color: var(--accent-green);">정상</span>
+    <span id="alert-banner-tag" style="color: var(--accent-green);">정상</span>
   </div>
 
   <div class="section-header">
@@ -727,38 +702,19 @@
   </div>
   <div id="forecast-track" class="forecast-track"></div>
 
-  <!-- ★ 메인 히어로 카드 (날씨별 애니메이션 아트 씬) -->
+  <!-- 메인 히어로 카드 -->
   <div id="hero-card" class="hero-weather-card">
     
-    <!-- 뒷배경 날씨 애니메이션 스테이지 -->
     <div id="weather-stage" class="weather-scene-stage scene-clear-day">
-      <!-- 1. 태양 (주간 맑음) -->
-      <div class="sun-orb-wrap">
-        <div class="sun-glow"></div>
-        <div class="sun-core"></div>
-      </div>
-
-      <!-- 2. 달과 별빛 (야간 맑음) -->
+      <div class="sun-orb-wrap"><div class="sun-glow"></div><div class="sun-core"></div></div>
       <div class="moon-star-wrap">
         <div class="crescent-moon"></div>
         <div class="twinkle-star" style="top: 15px; left: 15px; width: 2px; height: 2px; animation-delay: 0.2s;"></div>
         <div class="twinkle-star" style="top: 50px; left: 35px; width: 3px; height: 3px; animation-delay: 1.1s;"></div>
         <div class="twinkle-star" style="top: 25px; left: 60px; width: 2px; height: 2px; animation-delay: 2s;"></div>
       </div>
-
-      <!-- 3. 운무 / 곰탕 (산 정상 잠김) -->
-      <div class="fog-cloud-layer">
-        <div class="fog-wave"></div>
-        <div class="fog-wave fog-wave-2"></div>
-      </div>
-
-      <!-- 4. 먹구름 / 흐림 층 -->
-      <div class="cloud-cluster-wrap">
-        <div class="storm-cloud-puff puff-1"></div>
-        <div class="storm-cloud-puff puff-2"></div>
-      </div>
-
-      <!-- 5. 빗줄기 및 뇌우 섬광 -->
+      <div class="fog-cloud-layer"><div class="fog-wave"></div><div class="fog-wave fog-wave-2"></div></div>
+      <div class="cloud-cluster-wrap"><div class="storm-cloud-puff puff-1"></div><div class="storm-cloud-puff puff-2"></div></div>
       <div class="rain-scene-wrap">
         <div class="rain-drop" style="left: 15%; animation-delay: 0.1s;"></div>
         <div class="rain-drop" style="left: 32%; animation-delay: 0.6s;"></div>
@@ -767,8 +723,6 @@
         <div class="rain-drop" style="left: 85%; animation-delay: 0.4s;"></div>
       </div>
       <div class="thunder-flash"></div>
-
-      <!-- 6. 눈송이 (강설) -->
       <div class="snow-scene-wrap">
         <div class="snow-flake" style="left: 20%; top: 0; width: 4px; height: 4px; animation-delay: 0.3s;"></div>
         <div class="snow-flake" style="left: 45%; top: 0; width: 6px; height: 6px; animation-delay: 1.2s;"></div>
@@ -777,7 +731,6 @@
       </div>
     </div>
 
-    <!-- 전면 텍스트 콘텐츠 -->
     <div class="hero-content-front">
       <div class="hero-top-row">
         <div class="hero-location-wrap">
@@ -815,6 +768,30 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- ★ [v4.7 킬러 기능] 운해(雲海) 파노라마 예측 카드 -->
+  <div class="cloudsea-card">
+    <div class="cs-header">
+      <div class="cs-title">
+        <span>🌊</span>
+        <span>운해(雲海) 파노라마 예측 지수</span>
+      </div>
+      <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
+    </div>
+    <div class="cs-meter-wrap">
+      <div class="cs-meter-bar">
+        <div id="cs-meter-fill" class="cs-meter-fill" style="width: 0%;"></div>
+      </div>
+      <div class="cs-sub-row">
+        <span id="cs-inversion-txt">역전층: 분석 중</span>
+        <span id="cs-wind-txt">풍속 안정도: --</span>
+        <span id="cs-sky-txt">상공: --</span>
+      </div>
+    </div>
+    <div id="cs-brief-desc" class="cs-desc">
+      정상과 골짜기 수증기 역전층 및 대기 안정도를 분석하고 있습니다...
+    </div>
   </div>
 
   <div class="cloudbase-summary-card">
@@ -855,7 +832,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v4.5
+    STATLAB v4.7
   </div>
 
 <script>
@@ -890,6 +867,69 @@
   let liveWeatherData = null;
   let liveCurrentCalculatedRes = null;
 
+  function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  function findNearestMountain(uLat, uLng) {
+    let nearest = mountainDB[0];
+    let minDist = Infinity;
+    mountainDB.forEach(m => {
+      const dist = calculateDistanceKm(uLat, uLng, m.lat, m.lng);
+      if (dist < minDist) {
+        minDist = dist;
+        nearest = { ...m, distanceKm: dist.toFixed(1) };
+      }
+    });
+    return nearest;
+  }
+
+  function triggerGPSMatching() {
+    document.getElementById('clock-live').innerText = 'GPS 위치 수신 중...';
+    if (!navigator.geolocation) {
+      selectMountain('금정산 고당봉', 801, null, 'peak', 35.2846, 129.0565);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const uLat = pos.coords.latitude;
+        const uLng = pos.coords.longitude;
+        const target = findNearestMountain(uLat, uLng);
+        selectMountain(target.name, target.ele, null, target.type, target.lat, target.lng, target.distanceKm);
+      },
+      (err) => {
+        console.warn("GPS 획득 실패:", err.message);
+        selectMountain('금정산 고당봉', 801, null, 'peak', 35.2846, 129.0565);
+      },
+      { timeout: 5000, enableHighAccuracy: true }
+    );
+  }
+
+  const CACHE_PREFIX = 'STATLAB_CACHE_v4_';
+
+  function saveMountainCache(name, rawHourly, rawCurrent, computedRes) {
+    try {
+      const payload = { name, rawHourly, rawCurrent, computedRes, timestamp: Date.now() };
+      localStorage.setItem(CACHE_PREFIX + name, JSON.stringify(payload));
+    } catch(e) { console.warn("캐시 저장 실패:", e); }
+  }
+
+  function getMountainCache(name) {
+    try {
+      const raw = localStorage.getItem(CACHE_PREFIX + name);
+      if (raw) return JSON.parse(raw);
+    } catch(e) { console.warn("캐시 로드 실패:", e); }
+    return null;
+  }
+
   function decodeWmoCode(code, isNight = false) {
     if (code === 0) return { text: '쾌청 맑음', icon: isNight ? '🌙' : '☀️', state: 'clear' };
     if (code <= 3) return { text: code === 1 ? '대체로 맑음' : (code === 2 ? '구름 조금' : '구름 많음'), icon: code === 3 ? '☁️' : (isNight ? '🌙' : '⛅'), state: 'cloudy' };
@@ -910,7 +950,7 @@
       if (!res.ok) throw new Error('API Error');
       return await res.json();
     } catch(e) {
-      console.warn("API 연동 대기:", e);
+      console.warn("API 연동 대기:", e.message);
       return null;
     }
   }
@@ -931,8 +971,65 @@
     return bestIdx;
   }
 
+  // ------------------------------------------------------------------
+  // ★ [v4.7 핵심] 운해(雲海) 파노라마 예측 엔진
+  // ------------------------------------------------------------------
+  function calculateCloudSeaProbability(mtEle, summitRH, surfaceRH, summitWind, midCloud, totalCloud, effectiveCloudBase, targetHour) {
+    let score = 0;
+
+    // 1. 구름층 고도 적합도 (구름이 정상보다 아래에 발아래로 깔려야 함)
+    const clearance = effectiveCloudBase - mtEle;
+    if (clearance < -50 && clearance > -700) {
+      score += 35; // 구름 밑바닥이 산 정상 50m~700m 아래에 위치 (완벽한 구름바다 높이)
+    } else if (clearance <= -700) {
+      score += 20; // 구름이 아주 낮게 계곡 바닥에만 깔림
+    } else if (clearance >= -50 && clearance <= 80) {
+      score += 15; // 정상 바로 언저리에 걸침 (운무와 경계)
+    } else {
+      score += 0;  // 구름이 산 정상보다 한참 높거나 없음
+    }
+
+    // 2. 수증기/습도 역전층 (골짜기 습도 포화 + 정상부 건조/쾌청)
+    if (surfaceRH >= 85 && summitRH <= 75) {
+      score += 30; // 이상적인 역전층 형성
+    } else if (surfaceRH >= 80) {
+      score += 20;
+    } else if (surfaceRH >= 70) {
+      score += 10;
+    }
+
+    // 3. 능선 풍속 안정도 (바람이 세면 운해가 부서짐)
+    if (summitWind <= 2.2) {
+      score += 20; // 거울처럼 잔잔한 대기
+    } else if (summitWind <= 3.8) {
+      score += 12;
+    } else if (summitWind <= 5.5) {
+      score += 5;
+    } else {
+      score -= 10; // 강풍으로 운해 소산
+    }
+
+    // 4. 상공 시야 개방도 (중/상층 먹구름이 없어야 운해 위로 햇살이 비침)
+    if (midCloud <= 25 && totalCloud <= 45) {
+      score += 15; // 푸른 하늘 위에서 내려다보는 운해
+    } else if (midCloud <= 45) {
+      score += 8;
+    }
+
+    // 5. 복사냉각 골든타임 보정 (05시~08시 사이 최대 보너스)
+    if (targetHour >= 5 && targetHour <= 8) {
+      score += 10;
+    } else if (targetHour >= 4 && targetHour <= 9) {
+      score += 5;
+    }
+
+    // 강수 시 운해 무효화
+    const finalProb = Math.min(99, Math.max(5, Math.round(score)));
+    return finalProb;
+  }
+
   function compute5PhysicsMountainWeather(params) {
-    const { mtEle, rawTemp, rawRH, rawWind, rawGust, rawRain, rawCode, totalCloud, lowCloud, midCloud, visibility, rawDew, pointType } = params;
+    const { mtEle, rawTemp, rawRH, rawWind, rawGust, rawRain, rawCode, totalCloud, lowCloud, midCloud, visibility, rawDew, pointType, targetHour } = params;
 
     const a = 17.67, b = 243.5;
     let Td;
@@ -1009,6 +1106,9 @@
 
     const clearance = effectiveCloudBase - mtEle;
 
+    // ★ 운해 발생 지수 연산
+    const cloudSeaProb = calculateCloudSeaProbability(mtEle, rawRH, surfaceRH, summitWind, midCloud, totalCloud, effectiveCloudBase, targetHour);
+
     return {
       summitTemp,
       summitFeel,
@@ -1032,16 +1132,16 @@
       wmoInfo,
       betaExt,
       opticalTrans,
-      satRatio
+      satRatio,
+      cloudSeaProb
     };
   }
 
-  // ★ [v4.5 핵심] 8가지 세부 날씨 테마 애니메이션 클래스 스위처
   function updateWeatherArtworkScene(res, isNight) {
     const stage = document.getElementById('weather-stage');
     stage.className = 'weather-scene-stage';
 
-    const { rainMm, isDrizzling, isRealFog, isDarkCloud, isCrystalClear, wmoInfo } = res;
+    const { rainMm, isDrizzling, isRealFog, isDarkCloud, wmoInfo } = res;
 
     if (wmoInfo.state === 'storm') {
       stage.classList.add('scene-storm');
@@ -1060,18 +1160,23 @@
     }
   }
 
-  function updateAlpineWeatherHUD(res, hourStr, isNight, pointType) {
+  function updateAlpineWeatherHUD(res, hourStr, isNight, pointType, isOffline = false, distanceKm = null) {
     const statusPill = document.getElementById('card-status-pill');
     const banner = document.getElementById('alert-banner');
     const bannerText = document.getElementById('alert-banner-text');
+    const bannerTag = document.getElementById('alert-banner-tag');
+    const liveDot = document.getElementById('brand-live-dot');
 
-    const { summitTemp, summitFeel, summitHumidity, summitWind, summitGust, rainMm, effectiveCloudBase, clearance, isCrystalClear, isDarkCloud, isDrizzling, isRealFog, totalCloud, lowCloud, midCloud, visibility, surfaceTemp, surfaceRH, wmoInfo, betaExt, opticalTrans } = res;
+    const { summitTemp, summitFeel, summitHumidity, summitWind, summitGust, rainMm, effectiveCloudBase, clearance, isCrystalClear, isDarkCloud, isDrizzling, isRealFog, totalCloud, lowCloud, midCloud, visibility, surfaceTemp, surfaceRH, wmoInfo, betaExt, opticalTrans, cloudSeaProb } = res;
 
-    // 날씨 배경 아트 애니메이션 갱신
     updateWeatherArtworkScene(res, isNight);
 
     document.getElementById('card-peak-title').innerText = currentMt.name;
-    document.getElementById('card-peak-ele').innerText = `해발 ${currentMt.ele}m · 정상부 분석`;
+    
+    let subInfo = `해발 ${currentMt.ele}m · 정상부 분석`;
+    if (distanceKm) subInfo = `해발 ${currentMt.ele}m · 내 위치에서 ${distanceKm}km`;
+    document.getElementById('card-peak-ele').innerText = subInfo;
+
     document.getElementById('brief-temp').innerText = `${Math.round(summitTemp)}°`;
     document.getElementById('summit-feel').innerText = `${summitFeel}°`;
     document.getElementById('brief-wind').innerText = `${summitWind} / ${summitGust} m/s`;
@@ -1085,86 +1190,117 @@
     document.getElementById('meter-cloud-line').style.left = `${cbPercent}%`;
     document.getElementById('meter-cloud-label').innerText = `운저 ${effectiveCloudBase.toLocaleString()}m`;
 
+    // ----------------------------------------------------
+    // ★ [v4.7 신규] 운해(雲海) 예측 카드 렌더링
+    // ----------------------------------------------------
+    const csBadge = document.getElementById('cs-prob-badge');
+    const csFill = document.getElementById('cs-meter-fill');
+    const csInversion = document.getElementById('cs-inversion-txt');
+    const csWind = document.getElementById('cs-wind-txt');
+    const csSky = document.getElementById('cs-sky-txt');
+    const csDesc = document.getElementById('cs-brief-desc');
+
+    csFill.style.width = `${cloudSeaProb}%`;
+    csBadge.innerText = `${cloudSeaProb}% ${cloudSeaProb >= 75 ? '특급 유력 🌊' : (cloudSeaProb >= 50 ? '형성 가능' : '형성 희박')}`;
+
+    const invStrong = (surfaceRH - summitRH) >= 10;
+    csInversion.innerText = `역전층: ${invStrong ? '강함 (포화)' : '보통'}`;
+    csWind.innerText = `풍속: ${summitWind <= 3.0 ? '안정' : '강함'} (${summitWind}m/s)`;
+    csSky.innerText = `상공: ${midCloud <= 30 ? '개방' : '구름'}`;
+
+    if (cloudSeaProb >= 75) {
+      csDesc.innerHTML = `<strong>[${hourStr} 운해 골든타임]:</strong> 골짜기 수증기 포화와 안정된 기류로 정상(${currentMt.ele}m) 발아래 <strong>출렁이는 구름바다 파노라마</strong>가 펼쳐질 확률이 극히 높습니다.`;
+    } else if (cloudSeaProb >= 50) {
+      csDesc.innerHTML = `<strong>[${hourStr} 운해 형성 가능]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해 띠가 형성될 수 있습니다.`;
+    } else {
+      csDesc.innerHTML = `<strong>[${hourStr} 운해 조건 미달]:</strong> 대기 혼합이 활발하거나 수증기량이 부족하여 운해 형성 가능성이 낮습니다.`;
+    }
+
     const cbPill = document.getElementById('cb-status-pill');
     const cbDesc = document.getElementById('cb-desc-text');
+
+    if (isOffline) {
+      liveDot.classList.add('offline');
+      banner.style.borderColor = 'rgba(255, 159, 10, 0.4)';
+      bannerText.innerText = `⚠️ 통신 음영지역 (기기 캐시 예보 유지 중)`;
+      bannerTag.innerText = '캐시';
+      bannerTag.style.color = 'var(--accent-amber)';
+    } else {
+      liveDot.classList.remove('offline');
+      bannerTag.innerText = '정상';
+      bannerTag.style.color = 'var(--accent-green)';
+    }
 
     if (wmoInfo.state === 'storm') {
       statusPill.style.background = 'rgba(255, 69, 58, 0.25)';
       statusPill.style.borderColor = 'rgba(255, 69, 58, 0.5)';
       statusPill.style.color = 'var(--accent-red)';
       statusPill.innerText = `낙뢰/뇌우 위험`;
-      banner.style.borderColor = 'rgba(255, 69, 58, 0.5)';
-      bannerText.innerText = `[${hourStr}] 정상 부근 낙뢰 및 돌발 뇌우 위험 (대피 필요)`;
+      if (!isOffline) bannerText.innerText = `[${hourStr}] 정상 부근 낙뢰 및 돌발 뇌우 위험 (대피 필요)`;
 
       cbPill.style.color = 'var(--accent-red)';
       cbPill.innerText = `뇌우 구름대 (투과율 ${opticalTrans}%)`;
-      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 강한 대류성 뇌우 구름대가 형성되었습니다. 즉시 능선을 벗어나 안전한 지대로 이동하세요.`;
+      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 강한 대류성 뇌우 구름대가 형성되었습니다. 즉시 안전한 지대로 이동하세요.`;
     } else if (wmoInfo.state === 'snow') {
       statusPill.style.background = 'rgba(100, 210, 255, 0.25)';
       statusPill.style.borderColor = 'rgba(100, 210, 255, 0.5)';
       statusPill.style.color = 'var(--accent-cyan)';
       statusPill.innerText = `산악 강설`;
-      banner.style.borderColor = 'rgba(100, 210, 255, 0.5)';
-      bannerText.innerText = `[${hourStr}] 산악 강설 및 결빙 주의 (아이젠 준비)`;
+      if (!isOffline) bannerText.innerText = `[${hourStr}] 산악 강설 및 결빙 주의 (아이젠 준비)`;
 
       cbPill.style.color = 'var(--accent-cyan)';
       cbPill.innerText = `설운 통과 (투과율 ${opticalTrans}%)`;
-      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 정상 기온이 낮아 눈송이가 날리는 상태입니다. 체온 유지와 결빙에 유의하세요.`;
+      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 정상 기온이 낮아 눈송이가 날리는 상태입니다. 체온 유지에 유의하세요.`;
     } else if (rainMm > 0 || wmoInfo.state === 'rain') {
       statusPill.style.background = 'rgba(255, 69, 58, 0.2)';
       statusPill.style.borderColor = 'rgba(255, 69, 58, 0.4)';
       statusPill.style.color = 'var(--accent-red)';
       statusPill.innerText = `강우 (${rainMm}mm)`;
-      banner.style.borderColor = 'rgba(255, 69, 58, 0.4)';
-      bannerText.innerText = `[${hourStr}] 현지 비구름대 통과 · 우천 대비 필수`;
+      if (!isOffline) bannerText.innerText = `[${hourStr}] 현지 비구름대 통과 · 우천 대비 필수`;
 
       cbPill.style.color = 'var(--accent-red)';
       cbPill.innerText = `강우 구름대 (투과율 ${opticalTrans}%)`;
-      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방풍/방수 재킷을 착용하세요.`;
+      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방수 장비를 착용하세요.`;
     } else if (isDrizzling) {
       statusPill.style.background = 'rgba(100, 210, 255, 0.18)';
       statusPill.style.borderColor = 'rgba(100, 210, 255, 0.35)';
       statusPill.style.color = 'var(--accent-cyan)';
       statusPill.innerText = '먹구름 · 미세 빗방울';
-      banner.style.borderColor = 'rgba(100, 210, 255, 0.35)';
-      bannerText.innerText = `[${hourStr}] 먹구름 유입 및 국지성 미세 빗방울 감지`;
+      if (!isOffline) bannerText.innerText = `[${hourStr}] 먹구름 유입 및 국지성 미세 빗방울 감지`;
 
       cbPill.style.color = 'var(--accent-cyan)';
       cbPill.innerText = `미세 수적 응결 (투과율 ${opticalTrans}%)`;
-      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 전운량 <strong>${totalCloud}%</strong>의 먹구름이 덮여 있으며, 미세 빗방울이 흩뿌릴 수 있습니다.`;
+      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 전운량 <strong>${totalCloud}%</strong>의 먹구름이 덮여 있으며 미세 빗방울이 흩뿌릴 수 있습니다.`;
     } else if (isRealFog) {
       statusPill.style.background = 'rgba(255, 159, 10, 0.2)';
       statusPill.style.borderColor = 'rgba(255, 159, 10, 0.4)';
       statusPill.style.color = 'var(--accent-amber)';
       statusPill.innerText = '운무 갇힘 (곰탕 뷰)';
-      banner.style.borderColor = 'rgba(255, 159, 10, 0.4)';
-      bannerText.innerText = `[${hourStr}] 정상 구름 속 갇힘 · 광학 시야 차단`;
+      if (!isOffline) bannerText.innerText = `[${hourStr}] 정상 구름 속 갇힘 · 광학 시야 차단`;
 
       cbPill.style.color = 'var(--accent-amber)';
       cbPill.innerText = `구름 속 갇힘 (투과율 ${opticalTrans}%)`;
-      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 구름층 밑바닥이 산 정상을 덮어 시야가 완전히 차단된 <strong>곰탕 뷰</strong>입니다.`;
+      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 구름층 밑바닥이 산 정상을 덮어 시야가 차단된 <strong>곰탕 뷰</strong>입니다.`;
     } else if (isDarkCloud) {
       statusPill.style.background = 'rgba(255, 255, 255, 0.14)';
       statusPill.style.borderColor = 'rgba(255, 255, 255, 0.25)';
       statusPill.style.color = 'rgba(235, 235, 245, 0.8)';
       statusPill.innerText = `흐림 (전운 ${totalCloud}%)`;
-      banner.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-      bannerText.innerText = `[${hourStr}] 전운량 ${totalCloud}% · 짙은 먹구름 형성`;
+      if (!isOffline) bannerText.innerText = `[${hourStr}] 전운량 ${totalCloud}% · 짙은 먹구름 형성`;
 
       cbPill.style.color = 'rgba(235, 235, 245, 0.8)';
       cbPill.innerText = `흐림 (투과율 ${opticalTrans}%)`;
-      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 구름이 해를 가려 일조가 차단되며 원거리 조망이 어둡게 제한됩니다.`;
+      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 구름이 해를 가려 일조가 차단되며 조망이 어둡게 제한됩니다.`;
     } else {
       statusPill.style.background = 'rgba(48, 209, 88, 0.2)';
       statusPill.style.borderColor = 'rgba(48, 209, 88, 0.35)';
       statusPill.style.color = 'var(--accent-green)';
       statusPill.innerText = `시야 100% 쾌청`;
-      banner.style.borderColor = 'rgba(48, 209, 88, 0.35)';
-      bannerText.innerText = `[${hourStr}] 대기 극도로 투명 · 조망 100% 쾌청`;
+      if (!isOffline) bannerText.innerText = `[${hourStr}] 대기 극도로 투명 · 조망 100% 쾌청`;
 
       cbPill.style.color = 'var(--accent-green)';
       cbPill.innerText = `조망 특급 (투과율 ${opticalTrans}%)`;
-      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 대기 시정이 <strong>${(visibility/1000).toFixed(1)}km</strong>, 가시광선 투과율이 <strong style="color:var(--accent-green);">${opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
+      cbDesc.innerHTML = `<strong>${hourStr}:</strong> 가시광선 투과율 <strong style="color:var(--accent-green);">${opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
     }
 
     document.getElementById('summit-temp').innerText = `${summitTemp} °C`;
@@ -1241,11 +1377,8 @@
     const isNight = (targetHour >= 19 || targetHour <= 5);
 
     if (offset === 0 && liveCurrentCalculatedRes) {
-      const now = new Date();
-      const mStr = now.getMinutes() < 10 ? '0' + now.getMinutes() : now.getMinutes();
-      const hStr = now.getHours() < 10 ? '0' + now.getHours() : now.getHours();
-      document.getElementById('clock-live').innerText = `${hStr}:${mStr} 실시간 동기화 완료`;
-      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, currentMt.type || 'peak');
+      const isOff = !navigator.onLine;
+      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, currentMt.type || 'peak', isOff, currentMt.distanceKm);
       return;
     }
 
@@ -1268,25 +1401,25 @@
       midCloud: h.cloud_cover_mid ? (h.cloud_cover_mid[dataIdx] ?? 0) : 0,
       visibility: h.visibility ? (h.visibility[dataIdx] ?? 15000) : 15000,
       rawDew: h.dew_point_2m ? h.dew_point_2m[dataIdx] : null,
-      pointType: currentMt.type || 'peak'
+      pointType: currentMt.type || 'peak',
+      targetHour: targetHour
     };
 
     const res = compute5PhysicsMountainWeather(physicsParams);
     const pop = h.precipitation_probability ? (h.precipitation_probability[dataIdx] || 0) : 0;
     document.getElementById('city-pop').innerText = `${pop} %`;
 
-    updateAlpineWeatherHUD(res, hourStr, isNight, currentMt.type || 'peak');
+    updateAlpineWeatherHUD(res, hourStr, isNight, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
   }
 
-  async function selectMountain(name, ele, btnEl, type = 'peak', lat = 35.2846, lng = 129.0565) {
-    currentMt = { name, ele, type, lat, lng };
+  async function selectMountain(name, ele, btnEl, type = 'peak', lat = 35.2846, lng = 129.0565, distanceKm = null) {
+    currentMt = { name, ele, type, lat, lng, distanceKm };
     selectedHourOffset = 0;
 
     document.querySelectorAll('.mt-chip').forEach(c => c.classList.remove('active'));
     if (btnEl) btnEl.classList.add('active');
 
     document.getElementById('card-peak-title').innerText = name;
-    document.getElementById('card-peak-ele').innerText = `해발 ${ele}m · 정상부 분석`;
     document.getElementById('clock-live').innerText = 'STATLAB 미시 역학 연산 중...';
 
     renderLiveForecastTrack(null);
@@ -1313,34 +1446,52 @@
         midCloud: cur.cloud_cover_mid || 0,
         visibility: cur.visibility || 15000,
         rawDew: cur.dew_point_2m || null,
-        pointType: type
+        pointType: type,
+        targetHour: now.getHours()
       };
 
       liveCurrentCalculatedRes = compute5PhysicsMountainWeather(physicsParams);
+      saveMountainCache(name, liveWeatherData.hourly, cur, liveCurrentCalculatedRes);
 
       renderLiveForecastTrack(liveWeatherData.hourly);
-      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, type);
+      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, type, false, distanceKm);
 
       document.getElementById('clock-live').innerText = `${hStr}:${mStr} 실시간 동기화 완료`;
     } else {
-      const fallbackParams = {
-        mtEle: ele,
-        rawTemp: 16.0,
-        rawRH: 75,
-        rawWind: 3.5,
-        rawGust: 10.0,
-        rawRain: 0.0,
-        rawCode: 3,
-        totalCloud: 60,
-        lowCloud: 20,
-        midCloud: 50,
-        visibility: 15000,
-        rawDew: 12.0,
-        pointType: type
-      };
-      liveCurrentCalculatedRes = compute5PhysicsMountainWeather(fallbackParams);
-      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', false, type);
-      document.getElementById('clock-live').innerText = '오프라인 기본 모델';
+      const cached = getMountainCache(name);
+      if (cached) {
+        const cDate = new Date(cached.timestamp);
+        const cMStr = cDate.getMinutes() < 10 ? '0' + cDate.getMinutes() : cDate.getMinutes();
+        const cHStr = cDate.getHours() < 10 ? '0' + cDate.getHours() : cDate.getHours();
+
+        liveWeatherData = { hourly: cached.rawHourly };
+        liveCurrentCalculatedRes = cached.computedRes;
+
+        renderLiveForecastTrack(cached.rawHourly);
+        updateAlpineWeatherHUD(liveCurrentCalculatedRes, '캐시', false, type, true, distanceKm);
+
+        document.getElementById('clock-live').innerText = `오프라인 캐시 (${cHStr}:${cMStr} 저장됨)`;
+      } else {
+        const fallbackParams = {
+          mtEle: ele,
+          rawTemp: 16.0,
+          rawRH: 75,
+          rawWind: 3.5,
+          rawGust: 10.0,
+          rawRain: 0.0,
+          rawCode: 3,
+          totalCloud: 60,
+          lowCloud: 20,
+          midCloud: 50,
+          visibility: 15000,
+          rawDew: 12.0,
+          pointType: type,
+          targetHour: 12
+        };
+        liveCurrentCalculatedRes = compute5PhysicsMountainWeather(fallbackParams);
+        updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', false, type, true, distanceKm);
+        document.getElementById('clock-live').innerText = '오프라인 기본 모델';
+      }
     }
   }
 
@@ -1456,10 +1607,26 @@
     }
   });
 
+  window.addEventListener('offline', () => {
+    document.getElementById('brand-live-dot').classList.add('offline');
+    document.getElementById('clock-live').innerText = '오프라인 캐시 모드 전환';
+    document.getElementById('alert-banner-text').innerText = '⚠️ 통신 음영지역 (기기 로컬 캐시 유지 중)';
+    document.getElementById('alert-banner-tag').innerText = '캐시';
+    document.getElementById('alert-banner-tag').style.color = 'var(--accent-amber)';
+  });
+
+  window.addEventListener('online', () => {
+    document.getElementById('brand-live-dot').classList.remove('offline');
+    document.getElementById('clock-live').innerText = '온라인 재연결됨';
+    selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
+  });
+
   window.onload = () => {
-    selectMountain('금정산 고당봉', 801, null, 'peak', 35.2846, 129.0565);
+    triggerGPSMatching();
     setInterval(() => {
-      selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng);
+      if (navigator.onLine) {
+        selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
+      }
     }, 600000);
   };
 </script>
