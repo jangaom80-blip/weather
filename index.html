@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v4.9</title>
+  <title>STATLAB 산악 기상 분석 v5.0</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -26,6 +26,7 @@
       --accent-amber: #FF9F0A;
       --accent-red: #FF453A;
       --accent-purple: #BF5AF2;
+      --accent-gold: #FFD60A;
     }
 
     * {
@@ -183,6 +184,7 @@
       margin-top: 2px;
     }
 
+    /* 즐겨찾기 칩 바 */
     .mountain-chip-scroll {
       display: flex;
       gap: 6px;
@@ -203,6 +205,9 @@
       color: var(--text-secondary);
       cursor: pointer;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .mt-chip.active {
       background: rgba(255, 255, 255, 0.22);
@@ -359,12 +364,31 @@
       display: flex;
       flex-direction: column;
     }
+    .hero-title-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .hero-mt-name {
       font-size: 22px;
       font-weight: 800;
       color: #FFFFFF;
       letter-spacing: -0.5px;
       text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+    }
+    /* 즐겨찾기 별표 버튼 */
+    .fav-star-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      padding: 0 2px;
+      transition: all 0.2s ease;
+    }
+    .fav-star-btn.active {
+      color: var(--accent-gold);
+      filter: drop-shadow(0 0 6px rgba(255, 214, 10, 0.6));
     }
     .hero-mt-sub {
       font-size: 12px;
@@ -474,7 +498,93 @@
       color: #FFFFFF;
     }
 
-    /* 운해(雲海) 파노라마 계측 카드 */
+    /* ==================================================================
+       ★ [v5.0 신규] 일출·일몰 & 안전 하산 인디케이터 카드
+       ================================================================== */
+    .sun-safety-card {
+      background: linear-gradient(135deg, rgba(35, 28, 20, 0.78) 0%, rgba(20, 24, 32, 0.88) 100%);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 0.5px solid rgba(255, 159, 10, 0.35);
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+    .sun-safety-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .sun-safety-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+    .sun-dot-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-amber);
+      box-shadow: 0 0 8px var(--accent-amber);
+    }
+    .sun-safety-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 10px;
+      background: rgba(255, 159, 10, 0.18);
+      border: 0.5px solid rgba(255, 159, 10, 0.45);
+      color: #FFE299;
+    }
+    .sun-track-container {
+      margin-bottom: 8px;
+    }
+    .sun-track-bar {
+      position: relative;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin: 10px 0 8px 0;
+    }
+    .sun-track-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #FF9F0A 0%, #FFD60A 50%, #0A84FF 100%);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sun-track-orb {
+      position: absolute;
+      top: -9px;
+      transform: translateX(-50%);
+      font-size: 14px;
+      filter: drop-shadow(0 0 8px rgba(255, 214, 10, 0.8));
+      transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sun-time-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .sun-safety-desc {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding-top: 6px;
+      border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* 운해 파노라마 계측 카드 */
     .cloudsea-card {
       background: linear-gradient(135deg, rgba(28, 24, 40, 0.8) 0%, rgba(18, 20, 32, 0.88) 100%);
       backdrop-filter: blur(25px);
@@ -620,9 +730,6 @@
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
-    /* ==================================================================
-       ★ [v4.9 법적 고지 및 면책 카드 + 모달 시트 스타일]
-       ================================================================== */
     .legal-summary-card {
       background: rgba(255, 255, 255, 0.03);
       border: 0.5px solid rgba(255, 255, 255, 0.08);
@@ -774,7 +881,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--accent-purple);
+      background: var(--accent-gold);
     }
   </style>
 </head>
@@ -805,16 +912,8 @@
     <button class="gps-btn" onclick="triggerGPSMatching()" title="내 위치 기준 산 찾기">📍</button>
   </div>
 
-  <div class="mountain-chip-scroll">
-    <div class="mt-chip active" onclick="selectMountain('금정산 고당봉', 801, this, 'peak', 35.2846, 129.0565)">금정산 고당봉</div>
-    <div class="mt-chip" onclick="selectMountain('금정산 장군봉', 650, this, 'peak', 35.3125, 129.0528)">금정산 장군봉</div>
-    <div class="mt-chip" onclick="selectMountain('한라산 백록담', 1947, this, 'peak', 33.3617, 126.5332)">한라산 백록담</div>
-    <div class="mt-chip" onclick="selectMountain('한라산 윗세오름', 1700, this, 'shelter', 33.3595, 126.5055)">한라산 윗세오름</div>
-    <div class="mt-chip" onclick="selectMountain('해운대 장산', 634, this, 'peak', 35.1942, 129.1444)">해운대 장산</div>
-    <div class="mt-chip" onclick="selectMountain('설악산 울산바위', 873, this, 'rock', 38.2092, 128.4725)">울산바위</div>
-    <div class="mt-chip" onclick="selectMountain('백운산 (밀양)', 885, this, 'peak', 35.5940, 128.9846)">밀양 백운산</div>
-    <div class="mt-chip" onclick="selectMountain('지리산 장터목', 1653, this, 'shelter', 35.3323, 127.7231)">장터목대피소</div>
-  </div>
+  <!-- 나만의 산 즐겨찾기 칩 바 (동적 렌더링) -->
+  <div id="mountain-chip-scroll" class="mountain-chip-scroll"></div>
 
   <div id="alert-banner" class="alert-banner">
     <span id="alert-banner-text">대기 안정 · 돌발 기상 징후 없음</span>
@@ -859,7 +958,11 @@
     <div class="hero-content-front">
       <div class="hero-top-row">
         <div class="hero-location-wrap">
-          <div id="card-peak-title" class="hero-mt-name">금정산 고당봉</div>
+          <div class="hero-title-line">
+            <div id="card-peak-title" class="hero-mt-name">금정산 고당봉</div>
+            <!-- 즐겨찾기 별표 토글 버튼 -->
+            <button id="fav-toggle-btn" class="fav-star-btn active" onclick="toggleCurrentFavorite()" title="즐겨찾기 토글">★</button>
+          </div>
           <div id="card-peak-ele" class="hero-mt-sub">해발 801m · 정상부 분석</div>
         </div>
         <div class="hero-temp-wrap">
@@ -893,6 +996,31 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- ★ [v5.0 신규] 일출·일몰 & 안전 하산 골든타임 카드 -->
+  <div class="sun-safety-card">
+    <div class="sun-safety-header">
+      <div class="sun-safety-title">
+        <span class="sun-dot-indicator"></span>
+        <span>일출 · 일몰 & 안전 하산 인디케이터</span>
+      </div>
+      <span id="sun-safety-badge" class="sun-safety-pill">일조 분석 중</span>
+    </div>
+    <div class="sun-track-container">
+      <div class="sun-track-bar">
+        <div id="sun-track-fill" class="sun-track-fill" style="width: 50%;"></div>
+        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️</div>
+      </div>
+      <div class="sun-time-labels">
+        <span id="label-sunrise">일출 --:--</span>
+        <span id="label-solar-state">태양 궤적</span>
+        <span id="label-sunset">일몰 --:--</span>
+      </div>
+    </div>
+    <div id="sun-safety-desc" class="sun-safety-desc">
+      일출·일몰 시각 및 잔여 안전 하산 시간을 계산하고 있습니다...
+    </div>
   </div>
 
   <!-- 운해 파노라마 계측 카드 -->
@@ -951,7 +1079,6 @@
     </div>
   </div>
 
-  <!-- ★ [v4.9] 애플 스타일 법적 고지 및 면책 카드 -->
   <div class="legal-summary-card">
     <div class="legal-top-line">
       <span class="legal-title">STATLAB Legal & Disclaimer</span>
@@ -962,7 +1089,7 @@
     </div>
   </div>
 
-  <!-- ★ iOS 스타일 바텀 시트 법적 모달 -->
+  <!-- iOS 스타일 바텀 시트 법적 모달 -->
   <div id="legal-modal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -973,11 +1100,11 @@
       <div class="sheet-content">
         <div class="sheet-clause">
           <div class="clause-title">1. 기상 데이터 성격 및 시뮬레이션 한계</div>
-          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델(Open-Meteo/ECMWF) 원천 데이터에 자체 산악 대기 물리 알고리즘(Lapse Rate, Magnus, Orographic LCL, Venturi, Mie Extinction)을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다. 국지성 산악 기후의 돌발적 급변으로 인해 실제 현장 상황과 오차가 발생할 수 있습니다.
+          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델(Open-Meteo/ECMWF) 원천 데이터에 자체 산악 대기 물리 알고리즘을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다. 국지성 산악 기후의 돌발적 급변으로 인해 실제 현장 상황과 오차가 발생할 수 있습니다.
         </div>
         <div class="sheet-clause">
           <div class="clause-title">2. 법적 기상특보 대체 불가 (기상법 제17조 준수)</div>
-          본 서비스는 대한민국 기상청의 공식 기상예보 및 법적 기상특보(호우·대설·강풍 경보 등)를 대체하지 않습니다. 산행 전 및 산행 중에는 반드시 대한민국 기상청 공식 발표와 국립공원공단 입산 통제 정보를 확인하시기 바랍니다.
+          본 서비스는 대한민국 기상청의 공식 기상예보 및 법적 기상특보를 대체하지 않습니다. 산행 전 및 산행 중에는 반드시 대한민국 기상청 공식 발표와 국립공원공단 입산 통제 정보를 확인하시기 바랍니다.
         </div>
         <div class="sheet-clause">
           <div class="clause-title">3. 안전사고에 대한 개발자 완전 면책</div>
@@ -997,7 +1124,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v4.9
+    STATLAB v5.0
   </div>
 
 <script>
@@ -1027,12 +1154,93 @@
     { name: '덕유산 향적봉', type: 'peak', region: '전북 무주군 설천면', ele: 1614, lat: 35.8605, lng: 127.7472 }
   ];
 
+  // ------------------------------------------------------------------
+  // ★ [v5.0 즐겨찾기 시스템 (LocalStorage 영구 보관)]
+  // ------------------------------------------------------------------
+  const FAVORITES_KEY = 'STATLAB_USER_FAVORITES_v5';
+  const defaultFavorites = [
+    { name: '금정산 고당봉', ele: 801, type: 'peak', lat: 35.2846, lng: 129.0565 },
+    { name: '금정산 장군봉', ele: 650, type: 'peak', lat: 35.3125, lng: 129.0528 },
+    { name: '한라산 백록담', ele: 1947, type: 'peak', lat: 33.3617, lng: 126.5332 },
+    { name: '한라산 윗세오름', ele: 1700, type: 'shelter', lat: 33.3595, lng: 126.5055 },
+    { name: '해운대 장산', ele: 634, type: 'peak', lat: 35.1942, lng: 129.1444 },
+    { name: '설악산 울산바위', ele: 873, type: 'rock', lat: 38.2092, lng: 128.4725 },
+    { name: '백운산 (밀양)', ele: 885, type: 'peak', lat: 35.5940, lng: 128.9846 },
+    { name: '지리산 장터목', ele: 1653, type: 'shelter', lat: 35.3323, lng: 127.7231 }
+  ];
+
+  function getFavorites() {
+    try {
+      const data = localStorage.getItem(FAVORITES_KEY);
+      if (data) return JSON.parse(data);
+    } catch(e) { console.warn("즐겨찾기 로드 실패:", e); }
+    return defaultFavorites;
+  }
+
+  function saveFavorites(list) {
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(list));
+    } catch(e) { console.warn("즐겨찾기 저장 실패:", e); }
+  }
+
+  function renderFavoritesChips() {
+    const container = document.getElementById('mountain-chip-scroll');
+    const favorites = getFavorites();
+    container.innerHTML = '';
+
+    favorites.forEach(m => {
+      const chip = document.createElement('div');
+      const isActive = (m.name === currentMt.name);
+      chip.className = `mt-chip ${isActive ? 'active' : ''}`;
+      chip.innerHTML = `<span>${m.name}</span>`;
+      chip.onclick = () => selectMountain(m.name, m.ele, chip, m.type || 'peak', m.lat, m.lng);
+      container.appendChild(chip);
+    });
+  }
+
+  function isCurrentFavorite() {
+    const favorites = getFavorites();
+    return favorites.some(m => m.name === currentMt.name);
+  }
+
+  function toggleCurrentFavorite() {
+    let favorites = getFavorites();
+    const btn = document.getElementById('fav-toggle-btn');
+    if (isCurrentFavorite()) {
+      favorites = favorites.filter(m => m.name !== currentMt.name);
+      btn.classList.remove('active');
+      btn.innerText = '☆';
+    } else {
+      favorites.push({
+        name: currentMt.name,
+        ele: currentMt.ele,
+        type: currentMt.type || 'peak',
+        lat: currentMt.lat,
+        lng: currentMt.lng
+      });
+      btn.classList.add('active');
+      btn.innerText = '★';
+    }
+    saveFavorites(favorites);
+    renderFavoritesChips();
+  }
+
+  function updateFavoriteBtnState() {
+    const btn = document.getElementById('fav-toggle-btn');
+    if (isCurrentFavorite()) {
+      btn.classList.add('active');
+      btn.innerText = '★';
+    } else {
+      btn.classList.remove('active');
+      btn.innerText = '☆';
+    }
+  }
+
   let currentMt = { name: '금정산 고당봉', ele: 801, type: 'peak', lat: 35.2846, lng: 129.0565 };
   let selectedHourOffset = 0;
   let liveWeatherData = null;
   let liveCurrentCalculatedRes = null;
 
-  // 법적 모달 제어 함수
   function openLegalModal() {
     const modal = document.getElementById('legal-modal');
     modal.classList.add('active');
@@ -1097,11 +1305,11 @@
     );
   }
 
-  const CACHE_PREFIX = 'STATLAB_CACHE_v4_';
+  const CACHE_PREFIX = 'STATLAB_CACHE_v5_';
 
-  function saveMountainCache(name, rawHourly, rawCurrent, computedRes) {
+  function saveMountainCache(name, rawHourly, rawCurrent, computedRes, rawDaily) {
     try {
-      const payload = { name, rawHourly, rawCurrent, computedRes, timestamp: Date.now() };
+      const payload = { name, rawHourly, rawCurrent, computedRes, rawDaily, timestamp: Date.now() };
       localStorage.setItem(CACHE_PREFIX + name, JSON.stringify(payload));
     } catch(e) { console.warn("캐시 저장 실패:", e); }
   }
@@ -1127,9 +1335,10 @@
     return { text: '맑음', icon: '☀️', state: 'clear' };
   }
 
+  // ★ daily=sunrise,sunset 추가 연동
   async function fetchLiveMountainWeather(lat, lng, ele) {
     try {
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&elevation=${ele}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&timezone=Asia%2FTokyo&forecast_days=2`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&elevation=${ele}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&daily=sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=2`;
       const res = await fetch(url);
       if (!res.ok) throw new Error('API Error');
       return await res.json();
@@ -1155,53 +1364,105 @@
     return bestIdx;
   }
 
+  // ------------------------------------------------------------------
+  // ★ [v5.0 신규] 일출·일몰 및 안전 하산 골든타임 계산기
+  // ------------------------------------------------------------------
+  function computeSunAndTrailSafety(daily, targetHourTime = null) {
+    const now = targetHourTime ? new Date(targetHourTime) : new Date();
+    let sunrise = new Date();
+    sunrise.setHours(6, 14, 0, 0);
+    let sunset = new Date();
+    sunset.setHours(18, 32, 0, 0);
+
+    if (daily && daily.sunrise && daily.sunrise[0]) {
+      sunrise = new Date(daily.sunrise[0]);
+    }
+    if (daily && daily.sunset && daily.sunset[0]) {
+      sunset = new Date(daily.sunset[0]);
+    }
+
+    const srH = sunrise.getHours().toString().padStart(2, '0');
+    const srM = sunrise.getMinutes().toString().padStart(2, '0');
+    const ssH = sunset.getHours().toString().padStart(2, '0');
+    const ssM = sunset.getMinutes().toString().padStart(2, '0');
+    const srStr = `${srH}:${srM}`;
+    const ssStr = `${ssH}:${ssM}`;
+
+    let sunProgress = 0;
+    let badgeText = '일조 양호';
+    let badgeColor = 'var(--accent-green)';
+    let descText = '';
+
+    const msToSunset = sunset.getTime() - now.getTime();
+    const minToSunset = Math.floor(msToSunset / 60000);
+
+    if (now < sunrise) {
+      sunProgress = 0;
+      const msToSunrise = sunrise.getTime() - now.getTime();
+      const minToSr = Math.floor(msToSunrise / 60000);
+      const hSr = Math.floor(minToSr / 60);
+      const mSr = minToSr % 60;
+      badgeText = '일출 전 (여명)';
+      badgeColor = 'var(--accent-amber)';
+      descText = `<strong>[일출 ${hSr > 0 ? hSr + '시간 ' : ''}${mSr}분 전]:</strong> 일출 시각은 <strong>${srStr}</strong>입니다. 능선 운해 조망을 위한 새벽 산행 시 방한 의류를 준비하세요.`;
+    } else if (now >= sunrise && now < sunset) {
+      const totalDayMs = sunset.getTime() - sunrise.getTime();
+      const passedMs = now.getTime() - sunrise.getTime();
+      sunProgress = Math.min(100, Math.max(0, Math.round((passedMs / totalDayMs) * 100)));
+
+      const hRem = Math.floor(minToSunset / 60);
+      const mRem = minToSunset % 60;
+
+      if (minToSunset <= 60) {
+        badgeText = '🚨 하산 완료 필수';
+        badgeColor = 'var(--accent-red)';
+        descText = `<strong>🚨 [일몰 ${minToSunset}분 전]:</strong> 곧 주변이 어두워집니다. 즉시 하산을 완료하고 헤드랜턴을 점등하세요.`;
+      } else if (minToSunset <= 120) {
+        badgeText = '⚠️ 하산 코스 진입';
+        badgeColor = 'var(--accent-amber)';
+        descText = `<strong>⚠️ [일몰 ${hRem}시간 ${mRem}분 전]:</strong> 일몰 시각(<strong>${ssStr}</strong>) 전에 하산로에 진입해야 안전합니다. 잔여 일조 시간에 유의하세요.`;
+      } else {
+        badgeText = `일몰까지 ${hRem}시간 ${mRem}분`;
+        badgeColor = 'var(--accent-green)';
+        descText = `<strong>[안전 일조 확보]:</strong> 일몰 시각은 <strong>${ssStr}</strong>입니다. 넉넉한 일조량으로 안전한 주간 산행이 가능합니다.`;
+      }
+    } else {
+      sunProgress = 100;
+      badgeText = '일몰 완료 (야간)';
+      badgeColor = 'var(--accent-purple)';
+      descText = `<strong>🌙 [일몰 완료 (${ssStr})]:</strong> 야간 산행 구간입니다. 능선 기온 급강하 및 시야 차단에 대비해 보온과 조명 장비를 반드시 확인하세요.`;
+    }
+
+    return { srStr, ssStr, sunProgress, badgeText, badgeColor, descText };
+  }
+
   function calculateCloudSeaProbability(mtEle, summitHumidity, surfaceRH, summitWind, midCloud, totalCloud, effectiveCloudBase, targetHour) {
     let score = 0;
-
     const clearance = effectiveCloudBase - mtEle;
-    if (clearance < -50 && clearance > -700) {
-      score += 35;
-    } else if (clearance <= -700) {
-      score += 20;
-    } else if (clearance >= -50 && clearance <= 80) {
-      score += 15;
-    }
+    if (clearance < -50 && clearance > -700) score += 35;
+    else if (clearance <= -700) score += 20;
+    else if (clearance >= -50 && clearance <= 80) score += 15;
 
-    if (surfaceRH >= 85 && summitHumidity <= 75) {
-      score += 30;
-    } else if (surfaceRH >= 80) {
-      score += 20;
-    } else if (surfaceRH >= 70) {
-      score += 10;
-    }
+    if (surfaceRH >= 85 && summitHumidity <= 75) score += 30;
+    else if (surfaceRH >= 80) score += 20;
+    else if (surfaceRH >= 70) score += 10;
 
-    if (summitWind <= 2.2) {
-      score += 20;
-    } else if (summitWind <= 3.8) {
-      score += 12;
-    } else if (summitWind <= 5.5) {
-      score += 5;
-    } else {
-      score -= 10;
-    }
+    if (summitWind <= 2.2) score += 20;
+    else if (summitWind <= 3.8) score += 12;
+    else if (summitWind <= 5.5) score += 5;
+    else score -= 10;
 
-    if (midCloud <= 25 && totalCloud <= 45) {
-      score += 15;
-    } else if (midCloud <= 45) {
-      score += 8;
-    }
+    if (midCloud <= 25 && totalCloud <= 45) score += 15;
+    else if (midCloud <= 45) score += 8;
 
-    if (targetHour >= 5 && targetHour <= 8) {
-      score += 10;
-    } else if (targetHour >= 4 && targetHour <= 9) {
-      score += 5;
-    }
+    if (targetHour >= 5 && targetHour <= 8) score += 10;
+    else if (targetHour >= 4 && targetHour <= 9) score += 5;
 
     return Math.min(99, Math.max(5, Math.round(score)));
   }
 
   function compute5PhysicsMountainWeather(params) {
-    const { mtEle, rawTemp, rawRH, rawWind, rawGust, rawRain, rawCode, totalCloud, lowCloud, midCloud, visibility, rawDew, pointType, targetHour } = params;
+    const { mtEle, rawTemp, rawRH, rawWind, rawGust, rawRain, rawCode, totalCloud, lowCloud, midCloud, visibility, rawDew, pointType, targetHour, daily, targetHourTime } = params;
 
     const a = 17.67, b = 243.5;
     let Td;
@@ -1278,6 +1539,7 @@
 
     const clearance = effectiveCloudBase - mtEle;
     const cloudSeaProb = calculateCloudSeaProbability(mtEle, rawRH, surfaceRH, summitWind, midCloud, totalCloud, effectiveCloudBase, targetHour);
+    const sunSafety = computeSunAndTrailSafety(daily, targetHourTime);
 
     return {
       summitTemp,
@@ -1303,7 +1565,8 @@
       betaExt,
       opticalTrans,
       satRatio,
-      cloudSeaProb
+      cloudSeaProb,
+      sunSafety
     };
   }
 
@@ -1337,9 +1600,10 @@
     const bannerTag = document.getElementById('alert-banner-tag');
     const liveDot = document.getElementById('brand-live-dot');
 
-    const { summitTemp, summitFeel, summitHumidity, summitWind, summitGust, rainMm, effectiveCloudBase, clearance, isCrystalClear, isDarkCloud, isDrizzling, isRealFog, totalCloud, lowCloud, midCloud, visibility, surfaceTemp, surfaceRH, wmoInfo, betaExt, opticalTrans, cloudSeaProb } = res;
+    const { summitTemp, summitFeel, summitHumidity, summitWind, summitGust, rainMm, effectiveCloudBase, clearance, isCrystalClear, isDarkCloud, isDrizzling, isRealFog, totalCloud, lowCloud, midCloud, visibility, surfaceTemp, surfaceRH, wmoInfo, betaExt, opticalTrans, cloudSeaProb, sunSafety } = res;
 
     updateWeatherArtworkScene(res, isNight);
+    updateFavoriteBtnState();
 
     document.getElementById('card-peak-title').innerText = currentMt.name;
     
@@ -1360,6 +1624,22 @@
     document.getElementById('meter-cloud-line').style.left = `${cbPercent}%`;
     document.getElementById('meter-cloud-label').innerText = `운저 ${effectiveCloudBase.toLocaleString()}m`;
 
+    // ----------------------------------------------------
+    // ★ [v5.0 신규] 일출·일몰 & 안전 하산 카드 렌더링
+    // ----------------------------------------------------
+    if (sunSafety) {
+      document.getElementById('label-sunrise').innerText = `일출 ${sunSafety.srStr}`;
+      document.getElementById('label-sunset').innerText = `일몰 ${sunSafety.ssStr}`;
+      document.getElementById('sun-track-fill').style.width = `${sunSafety.sunProgress}%`;
+      document.getElementById('sun-track-orb').style.left = `${sunSafety.sunProgress}%`;
+      const sBadge = document.getElementById('sun-safety-badge');
+      sBadge.innerText = sunSafety.badgeText;
+      sBadge.style.color = sunSafety.badgeColor;
+      sBadge.style.borderColor = sunSafety.badgeColor;
+      document.getElementById('sun-safety-desc').innerHTML = sunSafety.descText;
+    }
+
+    // 운해 카드 렌더링
     const csBadge = document.getElementById('cs-prob-badge');
     const csFill = document.getElementById('cs-meter-fill');
     const csInversion = document.getElementById('cs-inversion-txt');
@@ -1368,7 +1648,6 @@
     const csDesc = document.getElementById('cs-brief-desc');
 
     csFill.style.width = `${cloudSeaProb}%`;
-    
     let csGradeTxt = '조건 미달 (Low)';
     if (cloudSeaProb >= 75) csGradeTxt = '최적 발달 (Optimal)';
     else if (cloudSeaProb >= 50) csGradeTxt = '형성 가능 (Moderate)';
@@ -1534,12 +1813,12 @@
         <div class="slot-temp">${temp}°</div>
       `;
 
-      slot.onclick = () => selectForecastHour(offset, dataIdx, targetHour, hourStr);
+      slot.onclick = () => selectForecastHour(offset, dataIdx, targetHour, hourStr, targetTime);
       track.appendChild(slot);
     }
   }
 
-  function selectForecastHour(offset, dataIdx, targetHour, hourStr) {
+  function selectForecastHour(offset, dataIdx, targetHour, hourStr, targetTime = null) {
     selectedHourOffset = offset;
 
     const slots = document.querySelectorAll('.time-slot');
@@ -1573,7 +1852,9 @@
       visibility: h.visibility ? (h.visibility[dataIdx] ?? 15000) : 15000,
       rawDew: h.dew_point_2m ? h.dew_point_2m[dataIdx] : null,
       pointType: currentMt.type || 'peak',
-      targetHour: targetHour
+      targetHour: targetHour,
+      daily: liveWeatherData.daily || null,
+      targetHourTime: targetTime
     };
 
     const res = compute5PhysicsMountainWeather(physicsParams);
@@ -1587,8 +1868,7 @@
     currentMt = { name, ele, type, lat, lng, distanceKm };
     selectedHourOffset = 0;
 
-    document.querySelectorAll('.mt-chip').forEach(c => c.classList.remove('active'));
-    if (btnEl) btnEl.classList.add('active');
+    renderFavoritesChips();
 
     document.getElementById('card-peak-title').innerText = name;
     document.getElementById('clock-live').innerText = 'STATLAB 미시 역학 연산 중...';
@@ -1618,11 +1898,13 @@
         visibility: cur.visibility || 15000,
         rawDew: cur.dew_point_2m || null,
         pointType: type,
-        targetHour: now.getHours()
+        targetHour: now.getHours(),
+        daily: liveWeatherData.daily || null,
+        targetHourTime: now
       };
 
       liveCurrentCalculatedRes = compute5PhysicsMountainWeather(physicsParams);
-      saveMountainCache(name, liveWeatherData.hourly, cur, liveCurrentCalculatedRes);
+      saveMountainCache(name, liveWeatherData.hourly, cur, liveCurrentCalculatedRes, liveWeatherData.daily);
 
       renderLiveForecastTrack(liveWeatherData.hourly);
       updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', isNight, type, false, distanceKm);
@@ -1635,7 +1917,7 @@
         const cMStr = cDate.getMinutes() < 10 ? '0' + cDate.getMinutes() : cDate.getMinutes();
         const cHStr = cDate.getHours() < 10 ? '0' + cDate.getHours() : cDate.getHours();
 
-        liveWeatherData = { hourly: cached.rawHourly };
+        liveWeatherData = { hourly: cached.rawHourly, daily: cached.rawDaily || null };
         liveCurrentCalculatedRes = cached.computedRes;
 
         renderLiveForecastTrack(cached.rawHourly);
@@ -1657,7 +1939,9 @@
           visibility: 15000,
           rawDew: 12.0,
           pointType: type,
-          targetHour: 12
+          targetHour: 12,
+          daily: null,
+          targetHourTime: null
         };
         liveCurrentCalculatedRes = compute5PhysicsMountainWeather(fallbackParams);
         updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', false, type, true, distanceKm);
@@ -1793,6 +2077,7 @@
   });
 
   window.onload = () => {
+    renderFavoritesChips();
     triggerGPSMatching();
     setInterval(() => {
       if (navigator.onLine) {
