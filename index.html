@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v5.5</title>
+  <title>STATLAB 산악 기상 분석 v5.6</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -37,7 +37,7 @@
       -webkit-user-select: none;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Pretendard", sans-serif;
       letter-spacing: -0.3px;
-      font-variant-numeric: tabular-nums; /* 숫자 폭 고정: 드래그 시 떨림 방지 */
+      font-variant-numeric: tabular-nums;
     }
 
     body {
@@ -281,7 +281,7 @@
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* 메인 히어로 카드 (뷰포트 최적화 압축) */
+    /* 메인 히어로 카드 */
     .hero-weather-card {
       position: relative;
       width: 100%;
@@ -803,42 +803,50 @@
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
+    /* ==================================================================
+       ★ [v5.6 신규] 부산 대연동 '대한초밥' 프리미엄 스폰서 배너
+       ================================================================== */
     .ad-banner-container {
-      background: rgba(255, 255, 255, 0.04);
-      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, rgba(38, 28, 24, 0.75) 0%, rgba(26, 26, 30, 0.85) 100%);
+      border: 0.5px solid rgba(255, 159, 10, 0.35);
       border-radius: 16px;
-      padding: 11px 14px;
+      padding: 12px 14px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
       transition: all 0.2s ease;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
     }
     .ad-banner-container:active {
       transform: scale(0.98);
-      background: rgba(255, 255, 255, 0.07);
+      background: rgba(255, 159, 10, 0.12);
     }
     .ad-left-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      overflow: hidden;
     }
     .ad-icon-box {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(10, 132, 255, 0.15);
-      border: 0.5px solid rgba(10, 132, 255, 0.3);
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255, 69, 58, 0.22) 0%, rgba(255, 159, 10, 0.22) 100%);
+      border: 0.5px solid rgba(255, 159, 10, 0.45);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 17px;
+      font-size: 22px;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
     }
     .ad-text-box {
       display: flex;
       flex-direction: column;
       gap: 2px;
+      min-width: 0;
     }
     .ad-tag-line {
       display: flex;
@@ -847,32 +855,50 @@
     }
     .ad-badge {
       font-size: 9px;
-      font-weight: 700;
-      color: var(--text-tertiary);
-      border: 0.5px solid rgba(255, 255, 255, 0.2);
-      padding: 1px 4px;
+      font-weight: 800;
+      color: #FFD60A;
+      background: rgba(255, 214, 10, 0.15);
+      border: 0.5px solid rgba(255, 214, 10, 0.4);
+      padding: 1px 5px;
       border-radius: 4px;
-      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .ad-rating-pill {
+      font-size: 10px;
+      font-weight: 700;
+      color: #FF9F0A;
+      display: flex;
+      align-items: center;
+      gap: 2px;
     }
     .ad-title {
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
       color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .ad-sub {
       font-size: 11px;
       color: var(--text-secondary);
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .ad-action-btn {
+      flex-shrink: 0;
       font-size: 11px;
       font-weight: 700;
-      color: var(--accent-cyan);
-      background: rgba(100, 210, 255, 0.12);
-      border: 0.5px solid rgba(100, 210, 255, 0.3);
-      padding: 5px 10px;
+      color: #FFFFFF;
+      background: linear-gradient(135deg, #FF9F0A 0%, #FF453A 100%);
+      border: none;
+      padding: 6px 11px;
       border-radius: 10px;
       white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(255, 159, 10, 0.35);
+      margin-left: 8px;
     }
 
     .legal-summary-card {
@@ -1244,18 +1270,21 @@
     </div>
   </div>
 
+  <!-- ★ [v5.6 신규] 부산 대연동 '대한초밥' 프리미엄 스폰서 배너 -->
   <div class="ad-banner-container" onclick="handleAdClick()">
     <div class="ad-left-wrap">
-      <div class="ad-icon-box">🏔️</div>
+      <div class="ad-icon-box">🍣</div>
       <div class="ad-text-box">
         <div class="ad-tag-line">
           <span class="ad-badge">SPONSORED</span>
-          <span class="ad-title">산악 안전 필수 장비</span>
+          <span class="ad-rating-pill">★ 5.0</span>
+          <span style="font-size:10px; color:var(--text-tertiary);">대연역 6번출구</span>
         </div>
-        <span class="ad-sub">초경량 헤드랜턴 & 방풍 쉘 기획전</span>
+        <span class="ad-title">대한초밥 · 대연동 본점</span>
+        <span class="ad-sub">붉은 홍국쌀 신선초밥 · 1인 오마카세급 미식</span>
       </div>
     </div>
-    <div class="ad-action-btn">보기</div>
+    <div class="ad-action-btn">플레이스</div>
   </div>
 
   <div class="legal-summary-card">
@@ -1302,7 +1331,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v5.5
+    STATLAB v5.6
   </div>
 
 <script>
@@ -1325,8 +1354,9 @@ window.openLegalModal=function(){document.getElementById('legal-modal').classLis
 window.closeLegalModal=function(){document.getElementById('legal-modal').classList.remove('active');document.body.style.overflow='auto';};
 window.handleModalOverlayClick=function(e){if(e.target.id==='legal-modal')closeLegalModal();};
 
+// ★ [v5.6] 대한초밥 네이버 플레이스 연동
 window.handleAdClick=function(){
-  window.open('https://m.search.naver.com/search.naver?query=등산+안전+장비+기획전', '_blank');
+  window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥', '_blank');
 };
 
 function calculateDistanceKm(l1,o1,l2,o2){const R=6371,dL=(l2-l1)*Math.PI/180,dO=(o2-o1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dO/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
@@ -1350,17 +1380,13 @@ function calculateCloudSeaProbability(e,sH,sR,sW,mC,tC,eB,tH){let s=0;const c=eB
 
 function compute5PhysicsMountainWeather(P){const _K1=17.67,_K2=243.5,T=P.rawTemp,R=P.rawRH,W=P.rawWind,G=P.rawGust,eS=6.112*Math.exp((_K1*T)/(_K2+T)),E=eS*(R/100);const Td=(P.rawDew!==null&&P.rawDew!==undefined)?P.rawDew:(_K2*Math.log(E/6.112))/(_K1-Math.log(E/6.112));const vK=Math.max(0.05,P.visibility/1000),bX=parseFloat((3.912/vK).toFixed(3)),oT=parseFloat((Math.min(99.9,Math.max(0.5,Math.exp(-bX*0.5)*100))).toFixed(1));const dH=Math.max(0,P.mtEle-50),sT=T+(dH/100)*0.65,sD=Td+(dH/100)*0.17,sRH=Math.min(100,Math.max(25,R+4));const bL=125*Math.max(0,sT-sD);let smT=P.mtEle<=bL?sT-(0.0098*dH):(sT-(0.0098*(bL-50)+0.0055*(P.mtEle-bL)));smT=parseFloat(smT.toFixed(1));const oB=Math.min(250,Math.round(W*14)),bC=Math.max(150,Math.round(50+bL-oB));let al=P.pointType==='rock'?0.7:P.pointType==='ridge'?0.6:P.pointType==='shelter'?0.35:0.5;const sW=parseFloat((W*(1+al*(P.mtEle/1000))).toFixed(1)),sG=parseFloat((Math.max(G,sW*2.8)).toFixed(1));const vH=sW*3.6;let sF=smT;if(vH>4.8)sF=13.12+(0.6215*smT)-(11.37*Math.pow(vH,0.16))+(0.3965*smT*Math.pow(vH,0.16));sF=parseFloat(sF.toFixed(1));const wI=decodeWmoCode(P.rawCode),dD=Math.max(0,smT-Td),iDC=(P.totalCloud>=55)||(P.midCloud>=50),iDr=(P.rawRain>0)||(wI.state==='drizzle')||(iDC&&dD<=3.8&&R>=80),iF=(P.visibility<2000)||(oT<45)||(wI.state==='fog')||(P.lowCloud>=70&&bC<=P.mtEle+80)||(R>=92&&P.lowCloud>=50),iC=(!iDC)&&(P.totalCloud<=35)&&(oT>=85)&&(!iDr)&&(!iF);let eCB=iC?Math.max(P.mtEle+900,bC):iDC?Math.min(Math.max(300,bC),P.mtEle+400):bC;const cS=calculateCloudSeaProbability(P.mtEle,R,sRH,sW,P.midCloud,P.totalCloud,eCB,P.targetHour),sS=computeSunAndTrailSafety(P.daily,P.targetHourTime);return{summitTemp:smT,summitFeel:sF,summitHumidity:R,summitWind:sW,summitGust:sG,rainMm:P.rawRain,weatherCode:P.rawCode,effectiveCloudBase:eCB,clearance:eCB-P.mtEle,isCrystalClear:iC,isDarkCloud:iDC,isDrizzling:iDr,isRealFog:iF,totalCloud:P.totalCloud,lowCloud:P.lowCloud,midCloud:P.midCloud,visibility:P.visibility,surfaceTemp:parseFloat(sT.toFixed(1)),surfaceRH:sRH,wmoInfo:wI,betaExt:bX,opticalTrans:oT,cloudSeaProb:cS,sunSafety:sS,_rawParams:P,_baseLclM:bL};}
 
-// ★ [마감 패치] 햅틱 피드백(navigator.vibrate) + 숫자 떨림 방지 스크러버
 window.handleAltitudeScrub=function(z){
   if(!liveCurrentCalculatedRes)return;
   const tZ=parseInt(z),r=liveCurrentCalculatedRes,p=r._rawParams,bL=r._baseLclM;
 
-  // 20m 단위 기계식 다이얼 틱 햅틱
   if(Math.abs(tZ - _lastHapticZ) >= 20){
     _lastHapticZ = tZ;
-    if(window.navigator && navigator.vibrate) {
-      navigator.vibrate(6);
-    }
+    if(window.navigator && navigator.vibrate) navigator.vibrate(6);
   }
 
   let sT=tZ<=bL?r.surfaceTemp-(0.0098*Math.max(0,tZ-50)):r.surfaceTemp-(0.0098*Math.max(0,bL-50)+0.0055*(tZ-bL));
