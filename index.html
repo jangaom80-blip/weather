@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v5.3</title>
+  <title>STATLAB 산악 기상 분석 v5.4</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -802,6 +802,81 @@
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
+    /* ==================================================================
+       ★ [v5.4 신규] 애플 감성 미니멀 스폰서 배너 슬롯
+       ================================================================== */
+    .ad-banner-container {
+      background: rgba(255, 255, 255, 0.04);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .ad-banner-container:active {
+      transform: scale(0.98);
+      background: rgba(255, 255, 255, 0.07);
+    }
+    .ad-left-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ad-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(10, 132, 255, 0.15);
+      border: 0.5px solid rgba(10, 132, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .ad-text-box {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .ad-tag-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ad-badge {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      border: 0.5px solid rgba(255, 255, 255, 0.2);
+      padding: 1px 4px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .ad-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+    .ad-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .ad-action-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(100, 210, 255, 0.12);
+      border: 0.5px solid rgba(100, 210, 255, 0.3);
+      padding: 5px 10px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
     .legal-summary-card {
       background: rgba(255, 255, 255, 0.03);
       border: 0.5px solid rgba(255, 255, 255, 0.08);
@@ -1139,7 +1214,6 @@
     </div>
   </div>
 
-  <!-- ★ 복원 대상: 산악 운저고도 & 광학 시야 분석 카드 -->
   <div class="cloudbase-summary-card">
     <div class="cb-card-header">
       <span class="cb-card-title">산악 운저고도 & 광학 시야 분석</span>
@@ -1170,6 +1244,21 @@
       <div class="tile-data-row"><span class="tile-label">평지 강수확률</span><span id="city-pop" class="tile-value amber">-- %</span></div>
       <div class="tile-data-row"><span class="tile-label">광학 소멸계수</span><span id="city-beta" class="tile-value">--.- /km</span></div>
     </div>
+  </div>
+
+  <!-- ★ [v5.4 신규] 애플 감성 미니멀 스폰서 배너 슬롯 -->
+  <div class="ad-banner-container" onclick="handleAdClick()">
+    <div class="ad-left-wrap">
+      <div class="ad-icon-box">🏔️</div>
+      <div class="ad-text-box">
+        <div class="ad-tag-line">
+          <span class="ad-badge">SPONSORED</span>
+          <span class="ad-title">산악 안전 필수 장비</span>
+        </div>
+        <span class="ad-sub">초경량 헤드랜턴 & 방풍 쉘 기획전</span>
+      </div>
+    </div>
+    <div class="ad-action-btn">보기</div>
   </div>
 
   <div class="legal-summary-card">
@@ -1216,7 +1305,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v5.3
+    STATLAB v5.4
   </div>
 
 <script>
@@ -1237,6 +1326,12 @@ let selectedHourOffset=0,liveWeatherData=null,liveCurrentCalculatedRes=null;
 window.openLegalModal=function(){document.getElementById('legal-modal').classList.add('active');document.body.style.overflow='hidden';};
 window.closeLegalModal=function(){document.getElementById('legal-modal').classList.remove('active');document.body.style.overflow='auto';};
 window.handleModalOverlayClick=function(e){if(e.target.id==='legal-modal')closeLegalModal();};
+
+// 배너 클릭 이벤트 핸들러
+window.handleAdClick=function(){
+  // 실제 제휴 링크나 광고 랜딩 URL로 연결 (예: 쿠팡 파트너스 기획전 등)
+  window.open('https://m.search.naver.com/search.naver?query=등산+안전+장비+기획전', '_blank');
+};
 
 function calculateDistanceKm(l1,o1,l2,o2){const R=6371,dL=(l2-l1)*Math.PI/180,dO=(o2-o1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dO/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
 function findNearestMountain(uL,uO){let n=mountainDB[0],mD=Infinity;mountainDB.forEach(m=>{const d=calculateDistanceKm(uL,uO,m.lat,m.lng);if(d<mD){mD=d;n={...m,distanceKm:d.toFixed(1)};}});return n;}
@@ -1267,7 +1362,6 @@ function updateWeatherArtworkScene(r,n){const s=document.getElementById('weather
 
 function updateAlpineWeatherHUD(r,hS,iN,pT,iO=false,dK=null){const sP=document.getElementById('card-status-pill'),b=document.getElementById('alert-banner'),bT=document.getElementById('alert-banner-text'),bTg=document.getElementById('alert-banner-tag'),lD=document.getElementById('brand-live-dot');updateWeatherArtworkScene(r,iN);updateFavoriteBtnState();document.getElementById('card-peak-title').innerText=currentMt.name;document.getElementById('card-peak-ele').innerText=dK?`해발 ${currentMt.ele}m · 내 위치에서 ${dK}km`:`해발 ${currentMt.ele}m · 정상부 분석`;document.getElementById('brief-temp').innerText=`${Math.round(r.summitTemp)}°`;document.getElementById('summit-feel').innerText=`${r.summitFeel}°`;document.getElementById('brief-wind').innerText=`${r.summitWind} / ${r.summitGust} m/s`;document.getElementById('brief-rain').innerText=r.isDrizzling&&r.rainMm===0?'미세 빗방울':`${r.rainMm} mm`;document.getElementById('meter-mt-label').innerText=`정상 ${currentMt.ele}m`;document.getElementById('meter-fill').style.width=`${Math.min(95,Math.max(10,Math.round((currentMt.ele/3000)*100)))}%`;document.getElementById('meter-cloud-line').style.left=`${Math.min(98,Math.max(5,Math.round((r.effectiveCloudBase/3000)*100)))}%`;document.getElementById('meter-cloud-label').innerText=`운저 ${r.effectiveCloudBase.toLocaleString()}m`;const sl=document.getElementById('altitude-slider');if(sl){sl.max=currentMt.ele;sl.value=currentMt.ele;}document.getElementById('scrubber-current-label').innerText=`${currentMt.ele}m (정상)`;document.getElementById('scrubber-mid-tick').innerText=`중턱 ${Math.round(currentMt.ele/2)}m`;document.getElementById('scrubber-summit-tick').innerText=`정상 ${currentMt.ele}m`;if(r.sunSafety){document.getElementById('label-sunrise').innerText=`일출 ${r.sunSafety.srStr}`;document.getElementById('label-sunset').innerText=`일몰 ${r.sunSafety.ssStr}`;document.getElementById('sun-track-fill').style.width=`${r.sunSafety.sunProgress}%`;document.getElementById('sun-track-orb').style.left=`${r.sunSafety.sunProgress}%`;const sb=document.getElementById('sun-safety-badge');sb.innerText=r.sunSafety.badgeText;sb.style.color=r.sunSafety.badgeColor;sb.style.borderColor=r.sunSafety.badgeColor;document.getElementById('sun-safety-desc').innerHTML=r.sunSafety.descText;}const csB=document.getElementById('cs-prob-badge'),csF=document.getElementById('cs-meter-fill');csF.style.width=`${r.cloudSeaProb}%`;csB.innerText=`${r.cloudSeaProb}% ${r.cloudSeaProb>=75?'최적 발달 (Optimal)':r.cloudSeaProb>=50?'형성 가능 (Moderate)':'조건 미달 (Low)'}`;document.getElementById('cs-inversion-txt').innerText=`역전층: ${(r.surfaceRH-r.summitHumidity)>=10?'강함 (포화)':'보통'}`;document.getElementById('cs-wind-txt').innerText=`풍속: ${r.summitWind<=3.0?'안정':'강함'} (${r.summitWind}m/s)`;document.getElementById('cs-sky-txt').innerText=`상공: ${r.midCloud<=30?'개방':'구름'}`;document.getElementById('cs-brief-desc').innerHTML=r.cloudSeaProb>=75?`<strong>[${hS} 운해 최적 조건]:</strong> 골짜기 수증기 포화로 발아래 <strong>출렁이는 구름바다</strong>가 펼쳐질 확률이 극히 높습니다.`:r.cloudSeaProb>=50?`<strong>[${hS} 운해 부분 형성]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해가 형성될 수 있습니다.`:`<strong>[${hS} 운해 조건 미달]:</strong> 대기 혼합으로 운해 형성 가능성이 낮습니다.`;
 
-// ★ [v5.3 완벽 복원] 산악 운저고도 & 광학 시야 분석 카드 브리핑 연동
 const cbP=document.getElementById('cb-status-pill'),cbD=document.getElementById('cb-desc-text');
 if(cbP&&cbD){
   if(r.wmoInfo.state==='storm'){
