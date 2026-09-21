@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v5.4</title>
+  <title>STATLAB 산악 기상 분석 v5.5</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -37,12 +37,13 @@
       -webkit-user-select: none;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Pretendard", sans-serif;
       letter-spacing: -0.3px;
+      font-variant-numeric: tabular-nums; /* 숫자 폭 고정: 드래그 시 떨림 방지 */
     }
 
     body {
       background: var(--bg);
       color: var(--text-primary);
-      padding: env(safe-area-inset-top, 14px) 16px calc(65px + env(safe-area-inset-bottom, 16px)) 16px;
+      padding: env(safe-area-inset-top, 12px) 14px calc(65px + env(safe-area-inset-bottom, 16px)) 14px;
       overflow-x: hidden;
     }
 
@@ -50,7 +51,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       padding: 0 2px;
     }
     .brand-title {
@@ -93,7 +94,7 @@
     .search-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .search-container {
       position: relative;
@@ -105,7 +106,7 @@
       background: rgba(118, 118, 128, 0.24);
       border: 0.5px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      padding: 10px 14px 10px 38px;
+      padding: 9px 14px 9px 38px;
       color: #fff;
       font-size: 14px;
       font-weight: 500;
@@ -131,8 +132,8 @@
     }
     .gps-btn {
       flex-shrink: 0;
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       background: rgba(255, 255, 255, 0.08);
       border: 0.5px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
@@ -188,8 +189,8 @@
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
       scrollbar-width: none;
     }
     .mountain-chip-scroll::-webkit-scrollbar { display: none; }
@@ -197,7 +198,7 @@
       flex-shrink: 0;
       background: rgba(255, 255, 255, 0.08);
       border: 0.5px solid rgba(255, 255, 255, 0.08);
-      padding: 6px 12px;
+      padding: 5px 12px;
       border-radius: 18px;
       font-size: 12px;
       font-weight: 600;
@@ -218,25 +219,25 @@
       background: rgba(255, 255, 255, 0.04);
       border: 0.5px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
-      padding: 9px 12px;
+      padding: 8px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       color: var(--text-secondary);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       padding: 0 2px;
     }
     .section-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       color: var(--text-secondary);
       text-transform: uppercase;
@@ -251,21 +252,21 @@
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
       scrollbar-width: none;
-      min-height: 76px;
+      min-height: 72px;
     }
     .forecast-track::-webkit-scrollbar { display: none; }
     .time-slot {
       flex-shrink: 0;
-      width: 62px;
+      width: 60px;
       background: var(--card-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 0.5px solid var(--card-border);
-      border-radius: 16px;
-      padding: 10px 4px;
+      border-radius: 14px;
+      padding: 8px 4px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -276,11 +277,11 @@
       border-color: rgba(255, 255, 255, 0.35);
     }
     .slot-label { font-size: 10px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 500; }
-    .slot-time { font-size: 12px; font-weight: 700; color: #FFFFFF; }
-    .slot-icon { font-size: 16px; margin: 4px 0; }
+    .slot-time { font-size: 11px; font-weight: 700; color: #FFFFFF; }
+    .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* 메인 히어로 카드 */
+    /* 메인 히어로 카드 (뷰포트 최적화 압축) */
     .hero-weather-card {
       position: relative;
       width: 100%;
@@ -288,11 +289,11 @@
       backdrop-filter: blur(35px);
       -webkit-backdrop-filter: blur(35px);
       border: 0.5px solid var(--card-border);
-      border-radius: 22px;
-      padding: 18px 16px;
+      border-radius: 20px;
+      padding: 15px 14px;
       margin-bottom: 10px;
       overflow: hidden;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.6);
     }
 
     .weather-scene-stage {
@@ -301,7 +302,7 @@
       pointer-events: none;
       z-index: 1;
       overflow: hidden;
-      border-radius: 22px;
+      border-radius: 20px;
       transition: all 0.8s ease;
     }
 
@@ -357,7 +358,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
     .hero-location-wrap {
       display: flex;
@@ -369,7 +370,7 @@
       gap: 6px;
     }
     .hero-mt-name {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 800;
       color: #FFFFFF;
       letter-spacing: -0.5px;
@@ -389,7 +390,7 @@
       filter: drop-shadow(0 0 6px rgba(255, 214, 10, 0.6));
     }
     .hero-mt-sub {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-secondary);
       font-weight: 500;
       margin-top: 2px;
@@ -399,7 +400,7 @@
       text-align: right;
     }
     .hero-temp {
-      font-size: 38px;
+      font-size: 36px;
       font-weight: 800;
       color: #FFFFFF;
       line-height: 1;
@@ -408,11 +409,11 @@
     }
     .hero-status-tag {
       display: inline-block;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       padding: 3px 8px;
       border-radius: 8px;
-      margin-top: 6px;
+      margin-top: 5px;
       background: rgba(48, 209, 88, 0.2);
       color: var(--accent-green);
       border: 0.5px solid rgba(48, 209, 88, 0.4);
@@ -426,9 +427,9 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 0.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -440,7 +441,7 @@
       height: 6px;
       background: rgba(255, 255, 255, 0.15);
       border-radius: 3px;
-      margin: 0 12px;
+      margin: 0 10px;
     }
     .meter-fill-summit {
       position: absolute;
@@ -473,7 +474,7 @@
       border: 0.5px solid rgba(255, 255, 255, 0.09);
       border-radius: 14px;
       padding: 10px 12px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .scrubber-header {
       display: flex;
@@ -526,8 +527,8 @@
     .altitude-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: #FFFFFF;
       border: 2px solid var(--accent-blue);
@@ -536,7 +537,7 @@
       transition: transform 0.1s ease;
     }
     .altitude-slider::-webkit-slider-thumb:active {
-      transform: scale(1.2);
+      transform: scale(1.25);
     }
     .scrubber-ticks {
       display: flex;
@@ -550,7 +551,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       border-top: 0.5px solid rgba(255, 255, 255, 0.1);
-      padding-top: 12px;
+      padding-top: 10px;
       text-align: center;
     }
     .spec-item {
@@ -580,15 +581,15 @@
       -webkit-backdrop-filter: blur(25px);
       border: 0.5px solid rgba(255, 159, 10, 0.35);
       border-radius: 18px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     }
     .sun-safety-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .sun-safety-title {
       font-size: 12px;
@@ -617,7 +618,7 @@
       color: #FFE299;
     }
     .sun-track-container {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .sun-track-bar {
       position: relative;
@@ -625,7 +626,7 @@
       height: 6px;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 3px;
-      margin: 10px 0 8px 0;
+      margin: 8px 0 6px 0;
     }
     .sun-track-fill {
       height: 100%;
@@ -663,15 +664,15 @@
       -webkit-backdrop-filter: blur(25px);
       border: 0.5px solid rgba(191, 90, 242, 0.3);
       border-radius: 18px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     }
     .cs-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .cs-title {
       font-size: 12px;
@@ -700,7 +701,7 @@
       color: #E5B8FF;
     }
     .cs-meter-wrap {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .cs-meter-bar {
       width: 100%;
@@ -738,14 +739,14 @@
       -webkit-backdrop-filter: blur(25px);
       border: 0.5px solid var(--card-border);
       border-radius: 18px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
     }
     .cb-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .cb-card-title {
       font-size: 12px;
@@ -769,15 +770,15 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .grid-tile {
       background: var(--card-bg);
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
       border: 0.5px solid var(--card-border);
-      border-radius: 18px;
-      padding: 14px;
+      border-radius: 16px;
+      padding: 13px 12px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -787,13 +788,13 @@
       font-weight: 600;
       color: var(--text-secondary);
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .tile-data-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       font-size: 11px;
     }
     .tile-data-row:last-child { margin-bottom: 0; }
@@ -802,14 +803,11 @@
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
-    /* ==================================================================
-       ★ [v5.4 신규] 애플 감성 미니멀 스폰서 배너 슬롯
-       ================================================================== */
     .ad-banner-container {
       background: rgba(255, 255, 255, 0.04);
       border: 0.5px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
-      padding: 12px 14px;
+      padding: 11px 14px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
@@ -827,15 +825,15 @@
       gap: 10px;
     }
     .ad-icon-box {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 10px;
       background: rgba(10, 132, 255, 0.15);
       border: 0.5px solid rgba(10, 132, 255, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 17px;
     }
     .ad-text-box {
       display: flex;
@@ -881,11 +879,11 @@
       background: rgba(255, 255, 255, 0.03);
       border: 0.5px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
-      padding: 14px 16px;
+      padding: 13px 14px;
       margin-bottom: 24px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
     .legal-top-line {
       display: flex;
@@ -903,7 +901,7 @@
       background: rgba(255, 255, 255, 0.08);
       border: 0.5px solid rgba(255, 255, 255, 0.15);
       border-radius: 8px;
-      padding: 4px 9px;
+      padding: 4px 8px;
       font-size: 11px;
       font-weight: 600;
       color: var(--accent-cyan);
@@ -1006,7 +1004,7 @@
     #statlab-badge {
       position: fixed;
       bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-      right: 16px;
+      right: 14px;
       z-index: 2000;
       font-size: 11px;
       font-weight: 700;
@@ -1246,7 +1244,6 @@
     </div>
   </div>
 
-  <!-- ★ [v5.4 신규] 애플 감성 미니멀 스폰서 배너 슬롯 -->
   <div class="ad-banner-container" onclick="handleAdClick()">
     <div class="ad-left-wrap">
       <div class="ad-icon-box">🏔️</div>
@@ -1305,7 +1302,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v5.4
+    STATLAB v5.5
   </div>
 
 <script>
@@ -1322,14 +1319,13 @@ function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-bt
 
 let currentMt={name:'금정산 고당봉',ele:801,type:'peak',lat:35.2846,lng:129.0565};
 let selectedHourOffset=0,liveWeatherData=null,liveCurrentCalculatedRes=null;
+let _lastHapticZ=0;
 
 window.openLegalModal=function(){document.getElementById('legal-modal').classList.add('active');document.body.style.overflow='hidden';};
 window.closeLegalModal=function(){document.getElementById('legal-modal').classList.remove('active');document.body.style.overflow='auto';};
 window.handleModalOverlayClick=function(e){if(e.target.id==='legal-modal')closeLegalModal();};
 
-// 배너 클릭 이벤트 핸들러
 window.handleAdClick=function(){
-  // 실제 제휴 링크나 광고 랜딩 URL로 연결 (예: 쿠팡 파트너스 기획전 등)
   window.open('https://m.search.naver.com/search.naver?query=등산+안전+장비+기획전', '_blank');
 };
 
@@ -1354,48 +1350,155 @@ function calculateCloudSeaProbability(e,sH,sR,sW,mC,tC,eB,tH){let s=0;const c=eB
 
 function compute5PhysicsMountainWeather(P){const _K1=17.67,_K2=243.5,T=P.rawTemp,R=P.rawRH,W=P.rawWind,G=P.rawGust,eS=6.112*Math.exp((_K1*T)/(_K2+T)),E=eS*(R/100);const Td=(P.rawDew!==null&&P.rawDew!==undefined)?P.rawDew:(_K2*Math.log(E/6.112))/(_K1-Math.log(E/6.112));const vK=Math.max(0.05,P.visibility/1000),bX=parseFloat((3.912/vK).toFixed(3)),oT=parseFloat((Math.min(99.9,Math.max(0.5,Math.exp(-bX*0.5)*100))).toFixed(1));const dH=Math.max(0,P.mtEle-50),sT=T+(dH/100)*0.65,sD=Td+(dH/100)*0.17,sRH=Math.min(100,Math.max(25,R+4));const bL=125*Math.max(0,sT-sD);let smT=P.mtEle<=bL?sT-(0.0098*dH):(sT-(0.0098*(bL-50)+0.0055*(P.mtEle-bL)));smT=parseFloat(smT.toFixed(1));const oB=Math.min(250,Math.round(W*14)),bC=Math.max(150,Math.round(50+bL-oB));let al=P.pointType==='rock'?0.7:P.pointType==='ridge'?0.6:P.pointType==='shelter'?0.35:0.5;const sW=parseFloat((W*(1+al*(P.mtEle/1000))).toFixed(1)),sG=parseFloat((Math.max(G,sW*2.8)).toFixed(1));const vH=sW*3.6;let sF=smT;if(vH>4.8)sF=13.12+(0.6215*smT)-(11.37*Math.pow(vH,0.16))+(0.3965*smT*Math.pow(vH,0.16));sF=parseFloat(sF.toFixed(1));const wI=decodeWmoCode(P.rawCode),dD=Math.max(0,smT-Td),iDC=(P.totalCloud>=55)||(P.midCloud>=50),iDr=(P.rawRain>0)||(wI.state==='drizzle')||(iDC&&dD<=3.8&&R>=80),iF=(P.visibility<2000)||(oT<45)||(wI.state==='fog')||(P.lowCloud>=70&&bC<=P.mtEle+80)||(R>=92&&P.lowCloud>=50),iC=(!iDC)&&(P.totalCloud<=35)&&(oT>=85)&&(!iDr)&&(!iF);let eCB=iC?Math.max(P.mtEle+900,bC):iDC?Math.min(Math.max(300,bC),P.mtEle+400):bC;const cS=calculateCloudSeaProbability(P.mtEle,R,sRH,sW,P.midCloud,P.totalCloud,eCB,P.targetHour),sS=computeSunAndTrailSafety(P.daily,P.targetHourTime);return{summitTemp:smT,summitFeel:sF,summitHumidity:R,summitWind:sW,summitGust:sG,rainMm:P.rawRain,weatherCode:P.rawCode,effectiveCloudBase:eCB,clearance:eCB-P.mtEle,isCrystalClear:iC,isDarkCloud:iDC,isDrizzling:iDr,isRealFog:iF,totalCloud:P.totalCloud,lowCloud:P.lowCloud,midCloud:P.midCloud,visibility:P.visibility,surfaceTemp:parseFloat(sT.toFixed(1)),surfaceRH:sRH,wmoInfo:wI,betaExt:bX,opticalTrans:oT,cloudSeaProb:cS,sunSafety:sS,_rawParams:P,_baseLclM:bL};}
 
-window.handleAltitudeScrub=function(z){if(!liveCurrentCalculatedRes)return;const tZ=parseInt(z),r=liveCurrentCalculatedRes,p=r._rawParams,bL=r._baseLclM;let sT=tZ<=bL?r.surfaceTemp-(0.0098*Math.max(0,tZ-50)):r.surfaceTemp-(0.0098*Math.max(0,bL-50)+0.0055*(tZ-bL));sT=parseFloat(sT.toFixed(1));const sW=parseFloat((p.rawWind*(1+0.5*(tZ/1000))).toFixed(1)),sG=parseFloat((Math.max(p.rawGust,sW*2.8)).toFixed(1));const v=sW*3.6;let sF=sT;if(v>4.8)sF=13.12+(0.6215*sT)-(11.37*Math.pow(v,0.16))+(0.3965*sT*Math.pow(v,0.16));sF=parseFloat(sF.toFixed(1));const iC=(tZ>=r.effectiveCloudBase);document.getElementById('scrubber-current-label').innerText=`${tZ}m (${tZ===currentMt.ele?'정상':(tZ<=150?'들머리':'중턱')})`;document.getElementById('card-peak-ele').innerText=`해발 ${tZ}m · ${tZ===currentMt.ele?'정상부':(tZ<=150?'들머리':'중턱 능선')} 분석`;document.getElementById('brief-temp').innerText=`${Math.round(sT)}°`;document.getElementById('summit-feel').innerText=`${sF}°`;document.getElementById('brief-wind').innerText=`${sW} / ${sG} m/s`;const sP=document.getElementById('card-status-pill');if(r.rainMm>0)sP.innerText=`강우 (${r.rainMm}mm)`;else if(iC){sP.style.background='rgba(255,159,10,0.25)';sP.style.borderColor='rgba(255,159,10,0.45)';sP.style.color='var(--accent-amber)';sP.innerText='구름 진입 (운무 🌫️)';}else{sP.style.background='rgba(48,209,88,0.2)';sP.style.borderColor='rgba(48,209,88,0.35)';sP.style.color='var(--accent-green)';sP.innerText='구름 아래 (시야 확보)';}document.getElementById('meter-mt-label').innerText=`${tZ}m`;document.getElementById('meter-fill').style.width=`${Math.min(95,Math.max(5,Math.round((tZ/3000)*100)))}%`;};
+// ★ [마감 패치] 햅틱 피드백(navigator.vibrate) + 숫자 떨림 방지 스크러버
+window.handleAltitudeScrub=function(z){
+  if(!liveCurrentCalculatedRes)return;
+  const tZ=parseInt(z),r=liveCurrentCalculatedRes,p=r._rawParams,bL=r._baseLclM;
 
-window.resetAltitudeToSummit=function(){const s=document.getElementById('altitude-slider');if(!s)return;s.value=currentMt.ele;handleAltitudeScrub(currentMt.ele);if(liveCurrentCalculatedRes)updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',false,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);};
+  // 20m 단위 기계식 다이얼 틱 햅틱
+  if(Math.abs(tZ - _lastHapticZ) >= 20){
+    _lastHapticZ = tZ;
+    if(window.navigator && navigator.vibrate) {
+      navigator.vibrate(6);
+    }
+  }
+
+  let sT=tZ<=bL?r.surfaceTemp-(0.0098*Math.max(0,tZ-50)):r.surfaceTemp-(0.0098*Math.max(0,bL-50)+0.0055*(tZ-bL));
+  sT=parseFloat(sT.toFixed(1));
+  const sW=parseFloat((p.rawWind*(1+0.5*(tZ/1000))).toFixed(1)),sG=parseFloat((Math.max(p.rawGust,sW*2.8)).toFixed(1));
+  const v=sW*3.6;
+  let sF=sT;
+  if(v>4.8)sF=13.12+(0.6215*sT)-(11.37*Math.pow(v,0.16))+(0.3965*sT*Math.pow(v,0.16));
+  sF=parseFloat(sF.toFixed(1));
+  const iC=(tZ>=r.effectiveCloudBase);
+
+  document.getElementById('scrubber-current-label').innerText=`${tZ}m (${tZ===currentMt.ele?'정상':(tZ<=150?'들머리':'중턱')})`;
+  document.getElementById('card-peak-ele').innerText=`해발 ${tZ}m · ${tZ===currentMt.ele?'정상부':(tZ<=150?'들머리':'중턱 능선')} 분석`;
+  document.getElementById('brief-temp').innerText=`${Math.round(sT)}°`;
+  document.getElementById('summit-feel').innerText=`${sF}°`;
+  document.getElementById('brief-wind').innerText=`${sW} / ${sG} m/s`;
+  
+  const sP=document.getElementById('card-status-pill');
+  if(r.rainMm>0)sP.innerText=`강우 (${r.rainMm}mm)`;
+  else if(iC){
+    sP.style.background='rgba(255,159,10,0.25)';
+    sP.style.borderColor='rgba(255,159,10,0.45)';
+    sP.style.color='var(--accent-amber)';
+    sP.innerText='구름 진입 (운무 🌫️)';
+  }else{
+    sP.style.background='rgba(48,209,88,0.2)';
+    sP.style.borderColor='rgba(48,209,88,0.35)';
+    sP.style.color='var(--accent-green)';
+    sP.innerText='구름 아래 (시야 확보)';
+  }
+  document.getElementById('meter-mt-label').innerText=`${tZ}m`;
+  document.getElementById('meter-fill').style.width=`${Math.min(95,Math.max(5,Math.round((tZ/3000)*100)))}%`;
+};
+
+window.resetAltitudeToSummit=function(){
+  const s=document.getElementById('altitude-slider');
+  if(!s)return;
+  s.value=currentMt.ele;
+  handleAltitudeScrub(currentMt.ele);
+  if(window.navigator && navigator.vibrate) navigator.vibrate(10);
+  if(liveCurrentCalculatedRes)updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',false,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);
+};
 
 function updateWeatherArtworkScene(r,n){const s=document.getElementById('weather-stage');if(!s)return;s.className='weather-scene-stage';if(r.wmoInfo.state==='storm')s.classList.add('scene-storm');else if(r.wmoInfo.state==='snow')s.classList.add('scene-snow');else if(r.rainMm>0||r.wmoInfo.state==='rain')s.classList.add('scene-rain');else if(r.isDrizzling)s.classList.add('scene-drizzle');else if(r.isRealFog)s.classList.add('scene-fog');else if(r.isDarkCloud||r.wmoInfo.state==='cloudy')s.classList.add('scene-cloudy');else s.classList.add(n?'scene-clear-night':'scene-clear-day');}
 
-function updateAlpineWeatherHUD(r,hS,iN,pT,iO=false,dK=null){const sP=document.getElementById('card-status-pill'),b=document.getElementById('alert-banner'),bT=document.getElementById('alert-banner-text'),bTg=document.getElementById('alert-banner-tag'),lD=document.getElementById('brand-live-dot');updateWeatherArtworkScene(r,iN);updateFavoriteBtnState();document.getElementById('card-peak-title').innerText=currentMt.name;document.getElementById('card-peak-ele').innerText=dK?`해발 ${currentMt.ele}m · 내 위치에서 ${dK}km`:`해발 ${currentMt.ele}m · 정상부 분석`;document.getElementById('brief-temp').innerText=`${Math.round(r.summitTemp)}°`;document.getElementById('summit-feel').innerText=`${r.summitFeel}°`;document.getElementById('brief-wind').innerText=`${r.summitWind} / ${r.summitGust} m/s`;document.getElementById('brief-rain').innerText=r.isDrizzling&&r.rainMm===0?'미세 빗방울':`${r.rainMm} mm`;document.getElementById('meter-mt-label').innerText=`정상 ${currentMt.ele}m`;document.getElementById('meter-fill').style.width=`${Math.min(95,Math.max(10,Math.round((currentMt.ele/3000)*100)))}%`;document.getElementById('meter-cloud-line').style.left=`${Math.min(98,Math.max(5,Math.round((r.effectiveCloudBase/3000)*100)))}%`;document.getElementById('meter-cloud-label').innerText=`운저 ${r.effectiveCloudBase.toLocaleString()}m`;const sl=document.getElementById('altitude-slider');if(sl){sl.max=currentMt.ele;sl.value=currentMt.ele;}document.getElementById('scrubber-current-label').innerText=`${currentMt.ele}m (정상)`;document.getElementById('scrubber-mid-tick').innerText=`중턱 ${Math.round(currentMt.ele/2)}m`;document.getElementById('scrubber-summit-tick').innerText=`정상 ${currentMt.ele}m`;if(r.sunSafety){document.getElementById('label-sunrise').innerText=`일출 ${r.sunSafety.srStr}`;document.getElementById('label-sunset').innerText=`일몰 ${r.sunSafety.ssStr}`;document.getElementById('sun-track-fill').style.width=`${r.sunSafety.sunProgress}%`;document.getElementById('sun-track-orb').style.left=`${r.sunSafety.sunProgress}%`;const sb=document.getElementById('sun-safety-badge');sb.innerText=r.sunSafety.badgeText;sb.style.color=r.sunSafety.badgeColor;sb.style.borderColor=r.sunSafety.badgeColor;document.getElementById('sun-safety-desc').innerHTML=r.sunSafety.descText;}const csB=document.getElementById('cs-prob-badge'),csF=document.getElementById('cs-meter-fill');csF.style.width=`${r.cloudSeaProb}%`;csB.innerText=`${r.cloudSeaProb}% ${r.cloudSeaProb>=75?'최적 발달 (Optimal)':r.cloudSeaProb>=50?'형성 가능 (Moderate)':'조건 미달 (Low)'}`;document.getElementById('cs-inversion-txt').innerText=`역전층: ${(r.surfaceRH-r.summitHumidity)>=10?'강함 (포화)':'보통'}`;document.getElementById('cs-wind-txt').innerText=`풍속: ${r.summitWind<=3.0?'안정':'강함'} (${r.summitWind}m/s)`;document.getElementById('cs-sky-txt').innerText=`상공: ${r.midCloud<=30?'개방':'구름'}`;document.getElementById('cs-brief-desc').innerHTML=r.cloudSeaProb>=75?`<strong>[${hS} 운해 최적 조건]:</strong> 골짜기 수증기 포화로 발아래 <strong>출렁이는 구름바다</strong>가 펼쳐질 확률이 극히 높습니다.`:r.cloudSeaProb>=50?`<strong>[${hS} 운해 부분 형성]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해가 형성될 수 있습니다.`:`<strong>[${hS} 운해 조건 미달]:</strong> 대기 혼합으로 운해 형성 가능성이 낮습니다.`;
-
-const cbP=document.getElementById('cb-status-pill'),cbD=document.getElementById('cb-desc-text');
-if(cbP&&cbD){
-  if(r.wmoInfo.state==='storm'){
-    cbP.style.color='var(--accent-red)';
-    cbP.innerText=`뇌우 구름대 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML=`<strong>${hS}:</strong> 강한 대류성 뇌우 구름대가 형성되었습니다. 즉시 안전한 지대로 이동하세요.`;
-  }else if(r.wmoInfo.state==='snow'){
-    cbP.style.color='var(--accent-cyan)';
-    cbP.innerText=`설운 통과 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML=`<strong>${hS}:</strong> 정상 기온이 낮아 눈송이가 날리는 상태입니다. 체온 유지에 유의하세요.`;
-  }else if(r.rainMm>0||r.wmoInfo.state==='rain'){
-    cbP.style.color='var(--accent-red)';
-    cbP.innerText=`강우 구름대 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML=`<strong>${hS}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방수 장비를 착용하세요.`;
-  }else if(r.isDrizzling){
-    cbP.style.color='var(--accent-cyan)';
-    cbP.innerText=`미세 수적 응결 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML=`<strong>${hS}:</strong> 전운량 <strong>${r.totalCloud}%</strong>의 먹구름이 덮여 있으며 미세 빗방울이 흩뿌릴 수 있습니다.`;
-  }else if(r.isRealFog){
-    cbP.style.color='var(--accent-amber)';
-    cbP.innerText=`구름 속 갇힘 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML=`<strong>${hS}:</strong> 구름층 밑바닥(${r.effectiveCloudBase.toLocaleString()}m)이 산 정상을 덮어 시야가 차단된 <strong>곰탕 뷰</strong>입니다.`;
-  }else if(r.isDarkCloud){
-    cbP.style.color='rgba(235, 235, 245, 0.8)';
-    cbP.innerText=`흐림 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML=`<strong>${hS}:</strong> 전운량 ${r.totalCloud}%로 일조가 차단되며 조망이 어둡게 제한됩니다.`;
-  }else{
-    cbP.style.color='var(--accent-green)';
-    cbP.innerText=`조망 특급 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML=`<strong>${hS}:</strong> 구름층(${r.effectiveCloudBase.toLocaleString()}m)이 정상 상공에 위치하며 광학 투과율 <strong style="color:var(--accent-green);">${r.opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
+function updateAlpineWeatherHUD(r,hS,iN,pT,iO=false,dK=null){
+  const sP=document.getElementById('card-status-pill'),b=document.getElementById('alert-banner'),bT=document.getElementById('alert-banner-text'),bTg=document.getElementById('alert-banner-tag'),lD=document.getElementById('brand-live-dot');
+  updateWeatherArtworkScene(r,iN);
+  updateFavoriteBtnState();
+  document.getElementById('card-peak-title').innerText=currentMt.name;
+  document.getElementById('card-peak-ele').innerText=dK?`해발 ${currentMt.ele}m · 내 위치에서 ${dK}km`:`해발 ${currentMt.ele}m · 정상부 분석`;
+  document.getElementById('brief-temp').innerText=`${Math.round(r.summitTemp)}°`;
+  document.getElementById('summit-feel').innerText=`${r.summitFeel}°`;
+  document.getElementById('brief-wind').innerText=`${r.summitWind} / ${r.summitGust} m/s`;
+  document.getElementById('brief-rain').innerText=r.isDrizzling&&r.rainMm===0?'미세 빗방울':`${r.rainMm} mm`;
+  document.getElementById('meter-mt-label').innerText=`정상 ${currentMt.ele}m`;
+  document.getElementById('meter-fill').style.width=`${Math.min(95,Math.max(10,Math.round((currentMt.ele/3000)*100)))}%`;
+  document.getElementById('meter-cloud-line').style.left=`${Math.min(98,Math.max(5,Math.round((r.effectiveCloudBase/3000)*100)))}%`;
+  document.getElementById('meter-cloud-label').innerText=`운저 ${r.effectiveCloudBase.toLocaleString()}m`;
+  const sl=document.getElementById('altitude-slider');
+  if(sl){sl.max=currentMt.ele;sl.value=currentMt.ele;}
+  _lastHapticZ=currentMt.ele;
+  document.getElementById('scrubber-current-label').innerText=`${currentMt.ele}m (정상)`;
+  document.getElementById('scrubber-mid-tick').innerText=`중턱 ${Math.round(currentMt.ele/2)}m`;
+  document.getElementById('scrubber-summit-tick').innerText=`정상 ${currentMt.ele}m`;
+  
+  if(r.sunSafety){
+    document.getElementById('label-sunrise').innerText=`일출 ${r.sunSafety.srStr}`;
+    document.getElementById('label-sunset').innerText=`일몰 ${r.sunSafety.ssStr}`;
+    document.getElementById('sun-track-fill').style.width=`${r.sunSafety.sunProgress}%`;
+    document.getElementById('sun-track-orb').style.left=`${r.sunSafety.sunProgress}%`;
+    const sb=document.getElementById('sun-safety-badge');
+    sb.innerText=r.sunSafety.badgeText;
+    sb.style.color=r.sunSafety.badgeColor;
+    sb.style.borderColor=r.sunSafety.badgeColor;
+    document.getElementById('sun-safety-desc').innerHTML=r.sunSafety.descText;
   }
-}
+  
+  const csB=document.getElementById('cs-prob-badge'),csF=document.getElementById('cs-meter-fill');
+  csF.style.width=`${r.cloudSeaProb}%`;
+  csB.innerText=`${r.cloudSeaProb}% ${r.cloudSeaProb>=75?'최적 발달 (Optimal)':r.cloudSeaProb>=50?'형성 가능 (Moderate)':'조건 미달 (Low)'}`;
+  document.getElementById('cs-inversion-txt').innerText=`역전층: ${(r.surfaceRH-r.summitHumidity)>=10?'강함 (포화)':'보통'}`;
+  document.getElementById('cs-wind-txt').innerText=`풍속: ${r.summitWind<=3.0?'안정':'강함'} (${r.summitWind}m/s)`;
+  document.getElementById('cs-sky-txt').innerText=`상공: ${r.midCloud<=30?'개방':'구름'}`;
+  document.getElementById('cs-brief-desc').innerHTML=r.cloudSeaProb>=75?`<strong>[${hS} 운해 최적 조건]:</strong> 골짜기 수증기 포화로 발아래 <strong>출렁이는 구름바다</strong>가 펼쳐질 확률이 극히 높습니다.`:r.cloudSeaProb>=50?`<strong>[${hS} 운해 부분 형성]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해가 형성될 수 있습니다.`:`<strong>[${hS} 운해 조건 미달]:</strong> 대기 혼합으로 운해 형성 가능성이 낮습니다.`;
 
-if(iO){lD.classList.add('offline');b.style.borderColor='rgba(255,159,10,0.4)';bT.innerText='⚠️ 통신 음영지역 (기기 캐시 유지 중)';bTg.innerText='캐시';bTg.style.color='var(--accent-amber)';}else{lD.classList.remove('offline');bTg.innerText='정상';bTg.style.color='var(--accent-green)';}if(r.wmoInfo.state==='storm'){sP.innerText='낙뢰/뇌우 위험';sP.style.color='var(--accent-red)';}else if(r.rainMm>0){sP.innerText=`강우 (${r.rainMm}mm)`;sP.style.color='var(--accent-red)';}else if(r.isRealFog){sP.innerText='운무 갇힘 (곰탕 뷰)';sP.style.color='var(--accent-amber)';}else if(r.isDarkCloud){sP.innerText=`흐림 (전운 ${r.totalCloud}%)`;sP.style.color='rgba(235,235,245,0.8)';}else{sP.innerText='시야 100% 쾌청';sP.style.color='var(--accent-green)';}document.getElementById('summit-temp').innerText=`${r.summitTemp} °C`;document.getElementById('summit-humidity').innerText=`${r.summitHumidity} %`;document.getElementById('summit-wind').innerText=`${r.summitWind} m/s`;document.getElementById('summit-gust').innerText=`${r.summitGust} m/s`;document.getElementById('summit-cloudbase').innerText=`${r.effectiveCloudBase.toLocaleString()} m`;document.getElementById('summit-optical').innerText=`${r.opticalTrans} %`;document.getElementById('city-temp').innerText=`${r.surfaceTemp} °C`;document.getElementById('city-feel').innerText=`${(r.surfaceTemp-0.5).toFixed(1)} °C`;document.getElementById('city-humidity').innerText=`${r.surfaceRH} %`;document.getElementById('city-wind').innerText=`${(r.summitWind*0.6).toFixed(1)} m/s`;document.getElementById('city-beta').innerText=`${r.betaExt} /km`;}
+  const cbP=document.getElementById('cb-status-pill'),cbD=document.getElementById('cb-desc-text');
+  if(cbP&&cbD){
+    if(r.wmoInfo.state==='storm'){
+      cbP.style.color='var(--accent-red)';
+      cbP.innerText=`뇌우 구름대 (투과율 ${r.opticalTrans}%)`;
+      cbD.innerHTML=`<strong>${hS}:</strong> 강한 대류성 뇌우 구름대가 형성되었습니다. 즉시 안전한 지대로 이동하세요.`;
+    }else if(r.wmoInfo.state==='snow'){
+      cbP.style.color='var(--accent-cyan)';
+      cbP.innerText=`설운 통과 (투과율 ${r.opticalTrans}%)`;
+      cbD.innerHTML=`<strong>${hS}:</strong> 정상 기온이 낮아 눈송이가 날리는 상태입니다. 체온 유지에 유의하세요.`;
+    }else if(r.rainMm>0||r.wmoInfo.state==='rain'){
+      cbP.style.color='var(--accent-red)';
+      cbP.innerText=`강우 구름대 (투과율 ${r.opticalTrans}%)`;
+      cbD.innerHTML=`<strong>${hS}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방수 장비를 착용하세요.`;
+    }else if(r.isDrizzling){
+      cbP.style.color='var(--accent-cyan)';
+      cbP.innerText=`미세 수적 응결 (투과율 ${r.opticalTrans}%)`;
+      cbD.innerHTML=`<strong>${hS}:</strong> 전운량 <strong>${r.totalCloud}%</strong>의 먹구름이 덮여 있으며 미세 빗방울이 흩뿌릴 수 있습니다.`;
+    }else if(r.isRealFog){
+      cbP.style.color='var(--accent-amber)';
+      cbP.innerText=`구름 속 갇힘 (투과율 ${r.opticalTrans}%)`;
+      cbD.innerHTML=`<strong>${hS}:</strong> 구름층 밑바닥(${r.effectiveCloudBase.toLocaleString()}m)이 산 정상을 덮어 시야가 차단된 <strong>곰탕 뷰</strong>입니다.`;
+    }else if(r.isDarkCloud){
+      cbP.style.color='rgba(235, 235, 245, 0.8)';
+      cbP.innerText=`흐림 (투과율 ${r.opticalTrans}%)`;
+      cbD.innerHTML=`<strong>${hS}:</strong> 전운량 ${r.totalCloud}%로 일조가 차단되며 조망이 어둡게 제한됩니다.`;
+    }else{
+      cbP.style.color='var(--accent-green)';
+      cbP.innerText=`조망 특급 (투과율 ${r.opticalTrans}%)`;
+      cbD.innerHTML=`<strong>${hS}:</strong> 구름층(${r.effectiveCloudBase.toLocaleString()}m)이 정상 상공에 위치하며 광학 투과율 <strong style="color:var(--accent-green);">${r.opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
+    }
+  }
+
+  if(iO){lD.classList.add('offline');b.style.borderColor='rgba(255,159,10,0.4)';bT.innerText='⚠️ 통신 음영지역 (기기 캐시 유지 중)';bTg.innerText='캐시';bTg.style.color='var(--accent-amber)';}else{lD.classList.remove('offline');bTg.innerText='정상';bTg.style.color='var(--accent-green)';}
+  if(r.wmoInfo.state==='storm'){sP.innerText='낙뢰/뇌우 위험';sP.style.color='var(--accent-red)';}
+  else if(r.rainMm>0){sP.innerText=`강우 (${r.rainMm}mm)`;sP.style.color='var(--accent-red)';}
+  else if(r.isRealFog){sP.innerText='운무 갇힘 (곰탕 뷰)';sP.style.color='var(--accent-amber)';}
+  else if(r.isDarkCloud){sP.innerText=`흐림 (전운 ${r.totalCloud}%)`;sP.style.color='rgba(235,235,245,0.8)';}
+  else{sP.innerText='시야 100% 쾌청';sP.style.color='var(--accent-green)';}
+
+  document.getElementById('summit-temp').innerText=`${r.summitTemp} °C`;
+  document.getElementById('summit-humidity').innerText=`${r.summitHumidity} %`;
+  document.getElementById('summit-wind').innerText=`${r.summitWind} m/s`;
+  document.getElementById('summit-gust').innerText=`${r.summitGust} m/s`;
+  document.getElementById('summit-cloudbase').innerText=`${r.effectiveCloudBase.toLocaleString()} m`;
+  document.getElementById('summit-optical').innerText=`${r.opticalTrans} %`;
+  document.getElementById('city-temp').innerText=`${r.surfaceTemp} °C`;
+  document.getElementById('city-feel').innerText=`${(r.surfaceTemp-0.5).toFixed(1)} °C`;
+  document.getElementById('city-humidity').innerText=`${r.surfaceRH} %`;
+  document.getElementById('city-wind').innerText=`${(r.summitWind*0.6).toFixed(1)} m/s`;
+  document.getElementById('city-beta').innerText=`${r.betaExt} /km`;
+}
 
 function renderLiveForecastTrack(h){const t=document.getElementById('forecast-track');if(!t)return;t.innerHTML='';const sI=h?findCurrentHourIndex(h):0,nw=new Date();for(let o=0;o<12;o++){const dI=sI+o,tT=(h&&h.time&&h.time[dI])?new Date(h.time[dI]):new Date(nw.getTime()+o*3600000),tH=tT.getHours(),hS=`${tH<10?'0':''}${tH}:00`,lb=(o===0)?'현재':`+${o}h`;let tm=16,wC=0,tC=0,mC=0;if(h&&h.temperature_2m&&h.temperature_2m[dI]!==undefined){tm=Math.round(h.temperature_2m[dI]);wC=h.weather_code[dI];tC=h.cloud_cover?h.cloud_cover[dI]:0;mC=h.cloud_cover_mid?h.cloud_cover_mid[dI]:0;}const iN=(tH>=19||tH<=5);let wI=decodeWmoCode(wC,iN),ic=wI.icon;if(tC>=65||mC>=55)ic=(wC>=51)?'🌧️':'☁️';const sl=document.createElement('div');sl.className=`time-slot ${o===selectedHourOffset?'active':''}`;sl.innerHTML=`<div class="slot-label">${lb}</div><div class="slot-time">${hS}</div><div class="slot-icon">${ic}</div><div class="slot-temp">${tm}°</div>`;sl.onclick=()=>selectForecastHour(o,dI,tH,hS,tT);t.appendChild(sl);}}
 
