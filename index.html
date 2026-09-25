@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v6.9</title>
+  <title>STATLAB 산악 기상 분석 v7.0</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -28,6 +28,7 @@
       --accent-red: #FF453A;
       --accent-purple: #BF5AF2;
       --accent-gold: #FFD60A;
+      --accent-ice: #AEE8FF;
     }
 
     * {
@@ -594,6 +595,84 @@
       font-size: 13px;
       font-weight: 700;
       color: #FFFFFF;
+    }
+
+    /* ★ [v7.0 신규] 똑똑하게 점등되는 동절기 결빙/적설 안전 카드 */
+    .winter-safety-card {
+      background: linear-gradient(135deg, rgba(16, 28, 45, 0.88) 0%, rgba(10, 18, 30, 0.95) 100%);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 0.5px solid rgba(174, 232, 255, 0.45);
+      border-radius: 18px;
+      padding: 13px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 16px rgba(100, 210, 255, 0.15);
+      animation: fadeInAlert 0.3s ease-out;
+    }
+    @keyframes fadeInAlert {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .winter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .winter-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+    .winter-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+    .winter-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+    .winter-data-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+    .winter-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .winter-label {
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .winter-val {
+      font-size: 13px;
+      color: #FFFFFF;
+      font-weight: 800;
+    }
+    .winter-desc {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.5;
+      padding-top: 6px;
+      border-top: 0.5px solid rgba(255, 255, 255, 0.08);
     }
 
     .sun-safety-card {
@@ -1240,6 +1319,32 @@
 
   </div>
 
+  <!-- ★ [v7.0 신규] 똑똑하게 점등되는 동절기 결빙/적설 안전 카드 (평소엔 숨김) -->
+  <div id="winter-safety-card" class="winter-safety-card" style="display:none;">
+    <div class="winter-header">
+      <div class="winter-title">
+        <span id="winter-dot" class="winter-dot"></span>
+        <span id="winter-main-title">동절기 등산로 결빙 & 적설 안전</span>
+      </div>
+      <span id="winter-badge" class="winter-pill" style="background: rgba(100,210,255,0.2); color: var(--accent-cyan); border: 0.5px solid var(--accent-cyan);">
+        분석 중
+      </span>
+    </div>
+    <div class="winter-data-grid">
+      <div class="winter-col">
+        <span class="winter-label">결빙 위험도</span>
+        <span id="winter-ice-risk" class="winter-val">안전</span>
+      </div>
+      <div class="winter-col">
+        <span class="winter-label">예상 적설 / 신적설</span>
+        <span id="winter-snow-val" class="winter-val">0 cm</span>
+      </div>
+    </div>
+    <div id="winter-desc" class="winter-desc">
+      영하권 및 빙점 기온을 추적하고 있습니다...
+    </div>
+  </div>
+
   <div id="sun-safety-card" class="sun-safety-card">
     <div class="sun-safety-header">
       <div class="sun-safety-title">
@@ -1331,7 +1436,6 @@
     </div>
   </div>
 
-  <!-- [대한초밥 프리미엄 스폰서 배너] -->
   <div class="ad-banner-container" onclick="handleAdClick()">
     <div class="ad-left-wrap">
       <div class="ad-icon-box">🍣</div>
@@ -1392,7 +1496,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v6.9 (VERIFIED)
+    STATLAB v7.0
   </div>
 
 <script>
@@ -1492,7 +1596,7 @@ window.triggerGPSMatching=function(){
 
 function fallbackToDb(lt,lg){const t=findNearestMountainFromDb(lt,lg);selectMountain(t.name,t.ele,null,t.type,t.lat,t.lng,t.distanceKm);}
 
-const CACHE_PREFIX='STATLAB_CACHE_v6_';
+const CACHE_PREFIX='STATLAB_CACHE_v7_';
 function saveMountainCache(n,rH,rC,cR,rD){try{localStorage.setItem(CACHE_PREFIX+n,JSON.stringify({name:n,rawHourly:rH,rawCurrent:rC,computedRes:cR,rawDaily:rD,timestamp:Date.now()}));}catch(e){}}
 function getMountainCache(n){try{const d=localStorage.getItem(CACHE_PREFIX+n);if(d)return JSON.parse(d);}catch(e){}return null;}
 
@@ -1512,7 +1616,8 @@ function decodeWmoCode(c,n=false){
 async function fetchLiveMountainWeather(lt,lg,el){
   try{
     const eq=(el&&el>0)?`&elevation=${el}`:'';
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&daily=sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=2`;
+    // snowfall 및 snow_depth 변수 추가
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall,snow_depth&daily=sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=2`;
     const r=await fetch(u);if(!r.ok)throw new Error('API');return await r.json();
   }catch(e){return null;}
 }
@@ -1709,7 +1814,66 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   };
 }
 
-// ★ [v6.9 정밀 강수 공식] 과민 반응(마른 흐림 시 빗방울 오판) 완전 제거
+// ★ [v7.0 신규] 똑똑하게 점등되는 동절기 결빙/적설 평가 함수
+function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snowfall=0, snowDepth=0){
+  const isFreezing = (temp <= 0.0);
+  const isNearZero = (temp > 0.0 && temp <= 3.0);
+  const isSnowCode = (weatherCode >= 71 && weatherCode <= 77) || (weatherCode >= 85 && weatherCode <= 86);
+  const hasSnow = (snowfall > 0.1 || snowDepth > 0.5 || isSnowCode);
+
+  // 조건 1: 영상 3°C 초과 & 눈 없음 -> 완전 숨김
+  if(!isFreezing && !isNearZero && !hasSnow){
+    return { shouldShow: false };
+  }
+
+  // 조건 2: 적설 / 폭설 경보
+  if(snowfall >= 2.0 || snowDepth >= 3.0){
+    return {
+      shouldShow: true,
+      badgeText: '⚠️ 스패츠 & 아이젠 필수',
+      badgeStyle: 'background: rgba(255,69,58,0.22); color: var(--accent-red); border: 0.5px solid var(--accent-red);',
+      iceRiskText: '심설 러셀 구간',
+      snowValText: `${Math.max(snowDepth, snowfall * 1.5).toFixed(1)} cm`,
+      descHtml: `<strong>🌨️ [심설 및 신적설 경보]:</strong> 등산로에 눈이 깊게 쌓여 러셀 및 미끄러짐 위험이 매우 큽니다. 방한 스패츠와 12발 체인아이젠을 반드시 착용하세요.`
+    };
+  }
+
+  // 조건 3: 영하권 등산로 빙판 결빙
+  if(isFreezing){
+    const snowCm = snowDepth > 0 ? `${snowDepth.toFixed(1)} cm` : (snowfall > 0 ? `${snowfall.toFixed(1)} cm` : '0 cm');
+    return {
+      shouldShow: true,
+      badgeText: '🧊 아이젠 착용 권장',
+      badgeStyle: 'background: rgba(100,210,255,0.2); color: var(--accent-cyan); border: 0.5px solid var(--accent-cyan);',
+      iceRiskText: '영하권 결빙 (빙판)',
+      snowValText: snowCm,
+      descHtml: `<strong>❄️ [영하 ${Math.abs(temp)}°C 결빙 주의]:</strong> 등산로 그늘진 사면과 바위 틈새가 얼어붙어 있습니다. 미끄럼 방지용 아이젠 및 스틱을 준비하세요.`
+    };
+  }
+
+  // 조건 4: 0~3°C 암릉 블랙아이스(살얼음)
+  if(isNearZero && (humidity >= 80 || rainMm > 0)){
+    return {
+      shouldShow: true,
+      badgeText: '⚠️ 블랙아이스 주의',
+      badgeStyle: 'background: rgba(255,159,10,0.2); color: var(--accent-amber); border: 0.5px solid var(--accent-amber);',
+      iceRiskText: '암릉 살얼음 위험',
+      snowValText: '0 cm',
+      descHtml: `<strong>⚠️ [투명 살얼음 주의]:</strong> 영상 0~3°C 저온 다습 구간으로 바위 암릉 표면에 투명한 살얼음(블랙아이스)이 낄 수 있습니다. 디딤발 접지력에 유의하세요.`
+    };
+  }
+
+  // 조건 5: 0~3°C 건조 저온
+  return {
+    shouldShow: true,
+    badgeText: '방한 장비 권장',
+    badgeStyle: 'background: rgba(255,255,255,0.08); color: var(--text-secondary); border: 0.5px solid rgba(255,255,255,0.18);',
+    iceRiskText: '저온 한랭',
+    snowValText: '0 cm',
+    descHtml: `<strong>[능선 저온 주의]:</strong> 정상부 기온이 ${temp}°C까지 떨어집니다. 능선 정체 시 저체온증에 대비해 방풍 보온 자켓을 챙기세요.`
+  };
+}
+
 function compute5PhysicsMountainWeather(P){
   const _K1 = 17.67, _K2 = 243.5, T = P.rawTemp, R = P.rawRH, W = P.rawWind, G = P.rawGust;
   const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (R / 100);
@@ -1728,8 +1892,6 @@ function compute5PhysicsMountainWeather(P){
   if(!iDC && P.totalCloud <= 35 && oT >= 85 && P.rawRain <= 0) eCB = Math.max(P.mtEle + 900, bC);
   else if(iDC) eCB = Math.min(Math.max(300, bC), P.mtEle + 400);
 
-  // ★ [핵심 필터] 
-  // 산이 운저(비구름) 내부로 직접 진입했고 + 상대습도 95% 이상 + 이슬점 차이 0.8°C 이하일 때만 극단적 미세수적 응결 인정
   const isMountainInCloud = (P.mtEle >= eCB);
   const isExtremeSaturation = (R >= 95 && dD <= 0.8 && isMountainInCloud);
   const isDrizzlingWmo = (wI.state === 'drizzle');
@@ -1759,6 +1921,9 @@ function compute5PhysicsMountainWeather(P){
   sF = parseFloat(sF.toFixed(1));
 
   const sS = computeSunAndTrailSafety(P.daily, P.targetHourTime);
+
+  // 동절기 결빙 평가
+  const winterCond = evaluateWinterTrailConditions(smT, R, summitRain, P.rawCode, P.rawSnowfall || 0, P.rawSnowDepth || 0);
 
   return {
     summitTemp: smT,
@@ -1790,11 +1955,13 @@ function compute5PhysicsMountainWeather(P){
     cloudSeaTimerText: cS_data.timerText,
     cloudSeaBadgeStyle: cS_data.badgeStyle,
     sunSafety: sS,
+    winterSafety: winterCond,
     _rawParams: P,
     _baseLclM: bL
   };
 }
 
+// ★ [v7.0 슬라이더 연동] 고도 변경 시 기온에 따른 동절기 카드 동적 점등/숨김
 window.handleAltitudeScrub=function(z){
   const r = activeForecastRes || baseLiveCurrentRes;
   if(!r) return;
@@ -1825,7 +1992,6 @@ window.handleAltitudeScrub=function(z){
   const scrubRain = calculateOrographicPrecipitation(p.rawRain, tZ, r.effectiveCloudBase);
   const isSummit = (tZ === currentMt.ele);
 
-  // ★ 정밀 슬라이더 강수 상태 판단
   const inCloudAtZ = (tZ >= r.effectiveCloudBase);
   const isDrizzleAtZ = (p.rawRain > 0) || (r.wmoInfo.state === 'drizzle') || (inCloudAtZ && (sT - (p.rawDew || sT)) <= 0.8 && p.rawRH >= 95);
 
@@ -1878,6 +2044,10 @@ window.handleAltitudeScrub=function(z){
 
   document.getElementById('meter-mt-label').innerText = `${tZ}m`;
   document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(5, Math.round((tZ / 3000) * 100)))}%`;
+
+  // ★ 슬라이더 고도에 따른 동절기 카드 실시간 팝업 업데이트
+  const winterAlt = evaluateWinterTrailConditions(sT, p.rawRH, scrubRain, p.rawCode, p.rawSnowfall || 0, p.rawSnowDepth || 0);
+  renderWinterCardUI(winterAlt);
 };
 
 window.resetAltitudeToSummit=function(){
@@ -1887,6 +2057,22 @@ window.resetAltitudeToSummit=function(){
   handleAltitudeScrub(currentMt.ele);
   if(window.navigator && navigator.vibrate) navigator.vibrate(10);
 };
+
+function renderWinterCardUI(w){
+  const card = document.getElementById('winter-safety-card');
+  if(!card) return;
+  if(!w || !w.shouldShow){
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  const badge = document.getElementById('winter-badge');
+  badge.innerText = w.badgeText;
+  badge.style.cssText = w.badgeStyle;
+  document.getElementById('winter-ice-risk').innerText = w.iceRiskText;
+  document.getElementById('winter-snow-val').innerText = w.snowValText;
+  document.getElementById('winter-desc').innerHTML = w.descHtml;
+}
 
 function updateWeatherArtworkScene(r, n){
   const s = document.getElementById('weather-stage');
@@ -1921,7 +2107,6 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
   document.getElementById('summit-feel').innerText = `${r.summitFeel}°`;
   document.getElementById('brief-wind').innerText = `${r.summitWind} / ${r.summitGust} m/s`;
   
-  // ★ [v6.9] 정확한 강수량 및 미세 빗방울 분기 표기
   if(r.rainMm > 0){
     document.getElementById('brief-rain').innerText = `${r.rainMm} mm`;
   } else if(r.isDrizzling){
@@ -1942,6 +2127,9 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
   document.getElementById('scrubber-mid-tick').innerText = `중턱 ${Math.round(currentMt.ele / 2)}m`;
   document.getElementById('scrubber-summit-tick').innerText = `정상 ${currentMt.ele}m`;
   
+  // ★ 동절기 카드 렌더링
+  renderWinterCardUI(r.winterSafety);
+
   if(r.sunSafety){
     document.getElementById('label-sunrise').innerText = r.sunSafety.leftLabel;
     document.getElementById('label-solar-state').innerText = r.sunSafety.midLabel;
@@ -2100,6 +2288,8 @@ function selectForecastHour(o, dI, tH, hS, tT = null){
     rawGust: (h.wind_gusts_10m[dI] ?? 6.0) * 0.2777,
     rawRain: h.precipitation[dI] ?? 0.0,
     rawCode: h.weather_code[dI] ?? 0,
+    rawSnowfall: h.snowfall ? h.snowfall[dI] : 0.0,
+    rawSnowDepth: h.snow_depth ? h.snow_depth[dI] : 0.0,
     totalCloud: h.cloud_cover ? h.cloud_cover[dI] : 0,
     lowCloud: h.cloud_cover_low ? h.cloud_cover_low[dI] : 0,
     midCloud: h.cloud_cover_mid ? h.cloud_cover_mid[dI] : 0,
@@ -2128,7 +2318,26 @@ window.selectMountain=async function(n,e,bE,t='peak',lt=35.2846,lg=129.0565,dK=n
     if((!e||e<=0)&&liveWeatherData.elevation){e=Math.max(50,Math.round(liveWeatherData.elevation));currentMt.ele=e;}
     else if(!e||e<=0){e=801;currentMt.ele=e;}
     const cur=liveWeatherData.current,nw=new Date(),iN=(nw.getHours()>=19||nw.getHours()<=5);
-    baseLiveCurrentRes=compute5PhysicsMountainWeather({mtEle:e,rawTemp:cur.temperature_2m,rawRH:cur.relative_humidity_2m,rawWind:cur.wind_speed_10m*0.2777,rawGust:cur.wind_gusts_10m*0.2777,rawRain:cur.precipitation,rawCode:cur.weather_code,totalCloud:cur.cloud_cover||0,lowCloud:cur.cloud_cover_low||0,midCloud:cur.cloud_cover_mid||0,visibility:cur.visibility||15000,rawDew:cur.dew_point_2m||null,pointType:t,targetHour:nw.getHours(),daily:liveWeatherData.daily||null,targetHourTime:nw});
+    baseLiveCurrentRes=compute5PhysicsMountainWeather({
+      mtEle:e,
+      rawTemp:cur.temperature_2m,
+      rawRH:cur.relative_humidity_2m,
+      rawWind:cur.wind_speed_10m*0.2777,
+      rawGust:cur.wind_gusts_10m*0.2777,
+      rawRain:cur.precipitation,
+      rawCode:cur.weather_code,
+      rawSnowfall:cur.snowfall || 0.0,
+      rawSnowDepth:0.0,
+      totalCloud:cur.cloud_cover||0,
+      lowCloud:cur.cloud_cover_low||0,
+      midCloud:cur.cloud_cover_mid||0,
+      visibility:cur.visibility||15000,
+      rawDew:cur.dew_point_2m||null,
+      pointType:t,
+      targetHour:nw.getHours(),
+      daily:liveWeatherData.daily||null,
+      targetHourTime:nw
+    });
     activeForecastRes=baseLiveCurrentRes;
     saveMountainCache(n,liveWeatherData.hourly,cur,baseLiveCurrentRes,liveWeatherData.daily);
     renderLiveForecastTrack(liveWeatherData.hourly);
