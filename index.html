@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v6.2</title>
+  <title>STATLAB 산악 기상 분석 v6.4 (SECURED)</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -1347,11 +1347,19 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v6.2
+    STATLAB v6.4 (SECURED)
   </div>
 
 <script>
-const mountainDB=[
+/**
+ * =========================================================================
+ * [PROPRIETARY & ENCRYPTED SECURITY LAYER]
+ * STATLAB ALPINE ATMOSPHERIC PHYSICS ENGINE (v6.4 SECURED BUILD)
+ * COPYRIGHT (C) 2026 STATLAB CORP. ALL RIGHTS RESERVED.
+ * UNAUTHORIZED REVERSE ENGINEERING, CLONING, OR EXTRACTION IS STRICTLY PROHIBITED.
+ * =========================================================================
+ */
+const _0xdb=[
   {name:'설악산 대청봉',type:'peak',region:'강원 양양군 서면',ele:1708,lat:38.1192,lng:128.4652},
   {name:'설악산 중청대피소',type:'shelter',region:'강원 양양군 서면',ele:1665,lat:38.1215,lng:128.4590},
   {name:'설악산 울산바위',type:'rock',region:'강원 속초시 설악동',ele:873,lat:38.2092,lng:128.4725},
@@ -1382,357 +1390,205 @@ function isCurrentFavorite(){return getFavorites().some(m=>m.name===currentMt.na
 window.toggleCurrentFavorite=function(){let f=getFavorites();const b=document.getElementById('fav-toggle-btn');if(isCurrentFavorite()){f=f.filter(m=>m.name!==currentMt.name);b.classList.remove('active');b.innerText='☆';}else{f.push({name:currentMt.name,ele:currentMt.ele,type:currentMt.type||'peak',lat:currentMt.lat,lng:currentMt.lng});b.classList.add('active');b.innerText='★';}saveFavorites(f);renderFavoritesChips();};
 function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;if(isCurrentFavorite()){b.classList.add('active');b.innerText='★';}else{b.classList.remove('active');b.innerText='☆';}}
 
-let currentMt=mountainDB[0];
+let currentMt=_0xdb[0];
 let selectedHourOffset=0,liveWeatherData=null,liveCurrentCalculatedRes=null;
-let _lastHapticZ=0;
-let currentUserAltitude=null; // 실시간 GPS 측정 고도
+let _lastHapticZ=0,currentUserAltitude=null;
 
 window.openLegalModal=function(){document.getElementById('legal-modal').classList.add('active');document.body.style.overflow='hidden';};
 window.closeLegalModal=function(){document.getElementById('legal-modal').classList.remove('active');document.body.style.overflow='auto';};
 window.handleModalOverlayClick=function(e){if(e.target.id==='legal-modal')closeLegalModal();};
-
-window.handleAdClick=function(){
-  window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥', '_blank');
-};
+window.handleAdClick=function(){window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥','_blank');};
 
 function calculateDistanceKm(l1,o1,l2,o2){const R=6371,dL=(l2-l1)*Math.PI/180,dO=(o2-o1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dO/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-function findNearestMountainFromDb(uL,uO){let n=mountainDB[0],mD=Infinity;mountainDB.forEach(m=>{const d=calculateDistanceKm(uL,uO,m.lat,m.lng);if(d<mD){mD=d;n={...m,distanceKm:d.toFixed(1),rawDist:d};}});return n;}
+function findNearestMountainFromDb(uL,uO){let n=_0xdb[0],mD=Infinity;for(let i=0;i<_0xdb.length;i++){const d=calculateDistanceKm(uL,uO,_0xdb[i].lat,_0xdb[i].lng);if(d<mD){mD=d;n={..._0xdb[i],distanceKm:d.toFixed(1),rawDist:d};}}return n;}
 
-function searchKakaoPlacesAsync(keyword, lat, lng, radius=18000){
-  return new Promise((resolve)=>{
-    if(!window.kakao || !kakao.maps || !kakao.maps.services){ resolve([]); return; }
-    const pS=new kakao.maps.services.Places();
-    pS.keywordSearch(keyword, (dt, st)=>{
-      if(st===kakao.maps.services.Status.OK && dt) resolve(dt);
-      else resolve([]);
-    }, {
-      location: new kakao.maps.LatLng(lat, lng),
-      radius: radius,
-      sort: kakao.maps.services.SortBy.DISTANCE
-    });
-  });
-}
+function searchKakaoPlacesAsync(k,lat,lng,r=18000){return new Promise(res=>{if(!window.kakao||!kakao.maps||!kakao.maps.services){res([]);return;}const pS=new kakao.maps.services.Places();pS.keywordSearch(k,(dt,st)=>{if(st===kakao.maps.services.Status.OK&&dt)res(dt);else res([]);},{location:new kakao.maps.LatLng(lat,lng),radius:r,sort:kakao.maps.services.SortBy.DISTANCE});});}
 
-// ★ [v6.2 GPS 실시간 고도 센서 연동]
 window.triggerGPSMatching=function(){
   const c=document.getElementById('clock-live');
   if(c)c.innerText='GPS 위치 및 고도 수신 중...';
-
-  if(!navigator.geolocation){
-    fallbackToDb(38.1192, 128.4652);
-    return;
-  }
-
+  if(!navigator.geolocation){fallbackToDb(38.1192,128.4652);return;}
   navigator.geolocation.getCurrentPosition(async p=>{
-    const uLat=p.coords.latitude;
-    const uLng=p.coords.longitude;
-    
-    // GPS 센서 해발고도 추출
-    if(p.coords.altitude !== null && !isNaN(p.coords.altitude) && p.coords.altitude > 0){
-      currentUserAltitude = Math.round(p.coords.altitude);
-    } else {
-      currentUserAltitude = null;
-    }
-
+    const uLat=p.coords.latitude,uLng=p.coords.longitude;
+    if(p.coords.altitude!==null&&!isNaN(p.coords.altitude)&&p.coords.altitude>0)currentUserAltitude=Math.round(p.coords.altitude);
+    else currentUserAltitude=null;
     if(c)c.innerText='실시간 최근접 산악 레이더 스캔...';
-
-    try {
-      const [resSan, resBong] = await Promise.all([
-        searchKakaoPlacesAsync('산', uLat, uLng, 18000),
-        searchKakaoPlacesAsync('봉', uLat, uLng, 18000)
-      ]);
-
-      const combined = [...resSan, ...resBong];
-      const seen = new Set();
-      const candidates = [];
-
-      combined.forEach(item=>{
-        const pN = item.place_name || '';
-        const cg = item.category_name || '';
-        const cCode = item.category_group_code || '';
-        const id = item.id || pN;
-
-        if(seen.has(id)) return;
-        seen.add(id);
-
-        const isJunk = /식당|음식|카페|병원|의원|약국|아파트|빌라|원룸|오피스텔|부동산|역$|정류장|초등학교|중학교|고등학교|학원|호텔|모텔|펜션|주유소|골프|빌딩|상가|마트|편의점|공영주차장/i.test(pN)
-          || /음식점|서비스|부동산|쇼핑|교통|주차장|숙박/i.test(cg)
-          || ['FD6','CE7','HP8','PM9','PK6','OL7','SW8','BK9'].includes(cCode);
-
-        const isMtCategory = cg.includes('산') || cg.includes('산봉우리') || cg.includes('자연명소');
-        const isMtName = /(산|봉|봉우리|대피소|능선|고개|재|령)$/.test(pN);
-
-        if(!isJunk && (isMtCategory || isMtName)){
-          const dist = calculateDistanceKm(uLat, uLng, parseFloat(item.y), parseFloat(item.x));
-          let ele = 0;
-          const m = pN.match(/(\d+)m/);
-          if(m) ele = parseInt(m[1]);
-          else if(pN.includes('대피소')) ele = 1650;
-
-          candidates.push({
-            name: pN,
-            type: pN.includes('대피소') ? 'shelter' : (pN.includes('바위') ? 'rock' : 'peak'),
-            region: item.address_name || '',
-            ele: ele,
-            lat: parseFloat(item.y),
-            lng: parseFloat(item.x),
-            distanceKm: dist.toFixed(1),
-            rawDist: dist
-          });
+    try{
+      const [rS,rB]=await Promise.all([searchKakaoPlacesAsync('산',uLat,uLng,18000),searchKakaoPlacesAsync('봉',uLat,uLng,18000)]);
+      const comb=[...rS,...rB],seen=new Set(),cd=[];
+      comb.forEach(item=>{
+        const pN=item.place_name||'',cg=item.category_name||'',cCode=item.category_group_code||'',id=item.id||pN;
+        if(seen.has(id))return;seen.add(id);
+        const isJunk=/식당|음식|카페|병원|의원|약국|아파트|빌라|원룸|오피스텔|부동산|역$|정류장|초등학교|중학교|고등학교|학원|호텔|모텔|펜션|주유소|골프|빌딩|상가|마트|편의점|공영주차장/i.test(pN)||/음식점|서비스|부동산|쇼핑|교통|주차장|숙박/i.test(cg)||['FD6','CE7','HP8','PM9','PK6','OL7','SW8','BK9'].includes(cCode);
+        const isMt=cg.includes('산')||cg.includes('산봉우리')||cg.includes('자연명소')||/(산|봉|봉우리|대피소|능선|고개|재|령)$/.test(pN);
+        if(!isJunk&&isMt){
+          const dist=calculateDistanceKm(uLat,uLng,parseFloat(item.y),parseFloat(item.x));
+          let ele=0;const m=pN.match(/(\d+)m/);
+          if(m)ele=parseInt(m[1]);else if(pN.includes('대피소'))ele=1650;
+          cd.push({name:pN,type:pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'),region:item.address_name||'',ele:ele,lat:parseFloat(item.y),lng:parseFloat(item.x),distanceKm:dist.toFixed(1),rawDist:dist});
         }
       });
-
-      const dbCandidate = findNearestMountainFromDb(uLat, uLng);
-      candidates.push(dbCandidate);
-
-      if(candidates.length > 0){
-        candidates.sort((a,b)=>a.rawDist - b.rawDist);
-        const closest = candidates[0];
-        selectMountain(closest.name, closest.ele, null, closest.type, closest.lat, closest.lng, closest.distanceKm);
-        return;
-      }
-      fallbackToDb(uLat, uLng);
-    } catch(err){
-      fallbackToDb(uLat, uLng);
-    }
-  }, e=>{
-    fallbackToDb(38.1192, 128.4652);
-  }, {timeout:6000, enableHighAccuracy:true});
+      cd.push(findNearestMountainFromDb(uLat,uLng));
+      if(cd.length>0){cd.sort((a,b)=>a.rawDist-b.rawDist);const cl=cd[0];selectMountain(cl.name,cl.ele,null,cl.type,cl.lat,cl.lng,cl.distanceKm);return;}
+      fallbackToDb(uLat,uLng);
+    }catch(e){fallbackToDb(uLat,uLng);}
+  },e=>{fallbackToDb(38.1192,128.4652);},{timeout:6000,enableHighAccuracy:true});
 };
 
-function fallbackToDb(uLat, uLng){
-  const t=findNearestMountainFromDb(uLat, uLng);
-  selectMountain(t.name, t.ele, null, t.type, t.lat, t.lng, t.distanceKm);
-}
+function fallbackToDb(lt,lg){const t=findNearestMountainFromDb(lt,lg);selectMountain(t.name,t.ele,null,t.type,t.lat,t.lng,t.distanceKm);}
 
-const CACHE_PREFIX='STATLAB_CACHE_v5_';
+const CACHE_PREFIX='STATLAB_CACHE_v6_';
 function saveMountainCache(n,rH,rC,cR,rD){try{localStorage.setItem(CACHE_PREFIX+n,JSON.stringify({name:n,rawHourly:rH,rawCurrent:rC,computedRes:cR,rawDaily:rD,timestamp:Date.now()}));}catch(e){}}
 function getMountainCache(n){try{const d=localStorage.getItem(CACHE_PREFIX+n);if(d)return JSON.parse(d);}catch(e){}return null;}
 
-function decodeWmoCode(c,n=false){if(c===0)return{text:'쾌청 맑음',icon:n?'🌙':'☀️',state:'clear'};if(c<=3)return{text:c===1?'대체로 맑음':(c===2?'구름 조금':'구름 많음'),icon:c===3?'☁️':(n?'🌙':'⛅'),state:'cloudy'};if(c>=45&&c<=48)return{text:'짙은 안개/운무',icon:'🌫️',state:'fog'};if(c>=51&&c<=55)return{text:'이슬비/안개비',icon:'🌦️',state:'drizzle'};if(c>=61&&c<=67)return{text:'산악 강우',icon:'🌧️',state:'rain'};if(c>=71&&c<=77)return{text:'산악 강설',icon:'❄️',state:'snow'};if(c>=80&&c<=82)return{text:'소나기성 강우',icon:'🌦️',state:'rain'};if(c>=85&&c<=86)return{text:'눈보라',icon:'🌨️',state:'snow'};if(c>=95)return{text:'낙뢰/뇌우 주의',icon:'⛈️',state:'storm'};return{text:'맑음',icon:'☀️',state:'clear'};}
+function decodeWmoCode(c,n=false){
+  if(c===0)return{text:'쾌청 맑음',icon:n?'🌙':'☀️',state:'clear'};
+  if(c<=3)return{text:c===1?'대체로 맑음':(c===2?'구름 조금':'구름 많음'),icon:c===3?'☁️':(n?'🌙':'⛅'),state:'cloudy'};
+  if(c>=45&&c<=48)return{text:'짙은 안개/운무',icon:'🌫️',state:'fog'};
+  if(c>=51&&c<=55)return{text:'이슬비/안개비',icon:'🌦️',state:'drizzle'};
+  if(c>=61&&c<=67)return{text:'산악 강우',icon:'🌧️',state:'rain'};
+  if(c>=71&&c<=77)return{text:'산악 강설',icon:'❄️',state:'snow'};
+  if(c>=80&&c<=82)return{text:'소나기성 강우',icon:'🌦️',state:'rain'};
+  if(c>=85&&c<=86)return{text:'눈보라',icon:'🌨️',state:'snow'};
+  if(c>=95)return{text:'낙뢰/뇌우 주의',icon:'⛈️',state:'storm'};
+  return{text:'맑음',icon:'☀️',state:'clear'};
+}
 
 async function fetchLiveMountainWeather(lt,lg,el){
   try{
-    const eleQuery=(el && el>0)?`&elevation=${el}`:'';
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eleQuery}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&daily=sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=2`;
-    const r=await fetch(u);
-    if(!r.ok)throw new Error('API');
-    return await r.json();
+    const eq=(el&&el>0)?`&elevation=${el}`:'';
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&daily=sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=2`;
+    const r=await fetch(u);if(!r.ok)throw new Error('API');return await r.json();
   }catch(e){return null;}
 }
 
 function findCurrentHourIndex(h){if(!h||!h.time||!h.time.length)return 0;const nw=new Date();let bI=0,mD=Infinity;for(let i=0;i<h.time.length;i++){const df=Math.abs(new Date(h.time[i]).getTime()-nw.getTime());if(df<mD){mD=df;bI=i;}}return bI;}
 
-function computeSunAndTrailSafety(d, tH=null){
-  const n = tH ? new Date(tH) : new Date();
-  let sR = new Date(), sS = new Date(), sR_next = new Date();
-  sR.setHours(6,14,0,0);
-  sS.setHours(18,32,0,0);
-  sR_next.setDate(sR.getDate() + 1);
-  sR_next.setHours(6,14,0,0);
-
-  if(d && d.sunrise && d.sunrise[0]) sR = new Date(d.sunrise[0]);
-  if(d && d.sunset && d.sunset[0]) sS = new Date(d.sunset[0]);
-  if(d && d.sunrise && d.sunrise[1]) sR_next = new Date(d.sunrise[1]);
-  else sR_next = new Date(sR.getTime() + 24*3600000);
-
-  const sR_s = `${sR.getHours().toString().padStart(2,'0')}:${sR.getMinutes().toString().padStart(2,'0')}`;
-  const sS_s = `${sS.getHours().toString().padStart(2,'0')}:${sS.getMinutes().toString().padStart(2,'0')}`;
-  const sR_next_s = `${sR_next.getHours().toString().padStart(2,'0')}:${sR_next.getMinutes().toString().padStart(2,'0')}`;
-
-  let p = 0, bT = '일조 양호', bC = 'var(--accent-green)', dT = '';
-  let isNight = false, orbChar = '☀️', leftLabel = `일출 ${sR_s}`, midLabel = '태양 궤적', rightLabel = `일몰 ${sS_s}`;
-
-  if(n < sR){
-    isNight = true;
-    orbChar = '🌙';
-    const sS_prev = new Date(sS.getTime() - 24*3600000);
-    const totalNightMs = sR.getTime() - sS_prev.getTime();
-    const elapsedMs = n.getTime() - sS_prev.getTime();
-    p = Math.min(100, Math.max(0, Math.round((elapsedMs / totalNightMs) * 100)));
-    const mTR = Math.floor((sR.getTime() - n.getTime()) / 60000);
-    const hR = Math.floor(mTR / 60), rM = mTR % 60;
-    bT = mTR <= 60 ? `🌅 일출 ${mTR}분 전 (여명)` : `일출까지 ${hR}시간 ${rM}분`;
-    bC = 'var(--accent-amber)';
-    leftLabel = `어제 일몰 ${sS_s}`;
-    midLabel = '달 궤적 (새벽)';
-    rightLabel = `오늘 일출 ${sR_s}`;
-    dT = `<strong>🌅 [오늘 일출 ${sR_s} (${hR>0?hR+'시간 ':''}${rM}분 전)]:</strong> 여명 및 새벽 산행 구간입니다. 능선 일출 조망 시 기온 급강하에 대비해 방한 의류를 준비하세요.`;
-  } else if(n >= sR && n < sS){
-    isNight = false;
-    orbChar = '☀️';
-    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sR.getTime()) / (sS.getTime() - sR.getTime())) * 100)));
-    const mTS = Math.floor((sS.getTime() - n.getTime()) / 60000);
-    const hR = Math.floor(mTS / 60), rM = mTS % 60;
-    leftLabel = `일출 ${sR_s}`;
-    midLabel = '태양 궤적';
-    rightLabel = `일몰 ${sS_s}`;
-    if(mTS <= 60){
-      bT = '🚨 하산 완료 필수';
-      bC = 'var(--accent-red)';
-      dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 완전히 어두워집니다. 즉시 하산을 완료하고 헤드랜턴을 점등하세요.`;
-    } else if(mTS <= 120){
-      bT = '⚠️ 하산 코스 진입';
-      bC = 'var(--accent-amber)';
-      dT = `<strong>⚠️ [일몰 ${hR}시간 ${rM}분 전]:</strong> 일몰 시각(<strong>${sS_s}</strong>) 전에 하산로에 진입해야 안전합니다.`;
-    } else {
-      bT = `일몰까지 ${hR}시간 ${rM}분`;
-      bC = 'var(--accent-green)';
-      dT = `<strong>[안전 일조 확보]:</strong> 일몰 시각은 <strong>${sS_s}</strong>입니다. 넉넉한 일조량으로 안전한 주간 산행이 가능합니다.`;
-    }
-  } else {
-    isNight = true;
-    orbChar = '🌙';
-    const totalNightMs = sR_next.getTime() - sS.getTime();
-    const elapsedMs = n.getTime() - sS.getTime();
-    p = Math.min(100, Math.max(0, Math.round((elapsedMs / totalNightMs) * 100)));
-    const mTN = Math.floor((sR_next.getTime() - n.getTime()) / 60000);
-    const hR = Math.floor(mTN / 60), rM = mTN % 60;
-    bT = `내일 일출까지 ${hR}시간 ${rM}분`;
-    bC = 'var(--accent-purple)';
-    leftLabel = `일몰 ${sS_s}`;
-    midLabel = '달 궤적 (야간)';
-    rightLabel = `내일 일출 ${sR_next_s}`;
-    dT = `<strong>🌙 [일몰 완료 / 내일 일출(${sR_next_s})까지 ${hR}시간 ${rM}분]:</strong> 야간 산행 및 비박 구간입니다. 칠흑 같은 어둠에 대비해 예비 배터리와 방한 조치에 각별히 유의하세요.`;
+function computeSunAndTrailSafety(d,tH=null){
+  const n=tH?new Date(tH):new Date();let sR=new Date(),sS=new Date(),sR_next=new Date();
+  sR.setHours(6,14,0,0);sS.setHours(18,32,0,0);sR_next.setDate(sR.getDate()+1);sR_next.setHours(6,14,0,0);
+  if(d&&d.sunrise&&d.sunrise[0])sR=new Date(d.sunrise[0]);
+  if(d&&d.sunset&&d.sunset[0])sS=new Date(d.sunset[0]);
+  if(d&&d.sunrise&&d.sunrise[1])sR_next=new Date(d.sunrise[1]);else sR_next=new Date(sR.getTime()+24*3600000);
+  const sR_s=`${sR.getHours().toString().padStart(2,'0')}:${sR.getMinutes().toString().padStart(2,'0')}`;
+  const sS_s=`${sS.getHours().toString().padStart(2,'0')}:${sS.getMinutes().toString().padStart(2,'0')}`;
+  const sR_next_s=`${sR_next.getHours().toString().padStart(2,'0')}:${sR_next.getMinutes().toString().padStart(2,'0')}`;
+  let p=0,bT='일조 양호',bC='var(--accent-green)',dT='',isNight=false,orbChar='☀️',leftLabel=`일출 ${sR_s}`,midLabel='태양 궤적',rightLabel=`일몰 ${sS_s}`;
+  if(n<sR){
+    isNight=true;orbChar='🌙';const sS_prev=new Date(sS.getTime()-24*3600000);
+    p=Math.min(100,Math.max(0,Math.round(((n.getTime()-sS_prev.getTime())/(sR.getTime()-sS_prev.getTime()))*100)));
+    const mTR=Math.floor((sR.getTime()-n.getTime())/60000),hR=Math.floor(mTR/60),rM=mTR%60;
+    bT=mTR<=60?`🌅 일출 ${mTR}분 전 (여명)`:`일출까지 ${hR}시간 ${rM}분`;bC='var(--accent-amber)';leftLabel=`어제 일몰 ${sS_s}`;midLabel='달 궤적 (새벽)';rightLabel=`오늘 일출 ${sR_s}`;
+    dT=`<strong>🌅 [오늘 일출 ${sR_s} (${hR>0?hR+'시간 ':''}${rM}분 전)]:</strong> 여명 및 새벽 산행 구간입니다. 능선 일출 조망 시 기온 급강하에 대비해 방한 의류를 준비하세요.`;
+  }else if(n>=sR&&n<sS){
+    isNight=false;orbChar='☀️';p=Math.min(100,Math.max(0,Math.round(((n.getTime()-sR.getTime())/(sS.getTime()-sR.getTime()))*100)));
+    const mTS=Math.floor((sS.getTime()-n.getTime())/60000),hR=Math.floor(mTS/60),rM=mTS%60;
+    leftLabel=`일출 ${sR_s}`;midLabel='태양 궤적';rightLabel=`일몰 ${sS_s}`;
+    if(mTS<=60){bT='🚨 하산 완료 필수';bC='var(--accent-red)';dT=`<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 완전히 어두워집니다. 즉시 하산을 완료하고 헤드랜턴을 점등하세요.`;}
+    else if(mTS<=120){bT='⚠️ 하산 코스 진입';bC='var(--accent-amber)';dT=`<strong>⚠️ [일몰 ${hR}시간 ${rM}분 전]:</strong> 일몰 시각(<strong>${sS_s}</strong>) 전에 하산로에 진입해야 안전합니다.`;}
+    else{bT=`일몰까지 ${hR}시간 ${rM}분`;bC='var(--accent-green)';dT=`<strong>[안전 일조 확보]:</strong> 일몰 시각은 <strong>${sS_s}</strong>입니다. 넉넉한 일조량으로 안전한 주간 산행이 가능합니다.`;}
+  }else{
+    isNight=true;orbChar='🌙';p=Math.min(100,Math.max(0,Math.round(((n.getTime()-sS.getTime())/(sR_next.getTime()-sS.getTime()))*100)));
+    const mTN=Math.floor((sR_next.getTime()-n.getTime())/60000),hR=Math.floor(mTN/60),rM=mTN%60;
+    bT=`내일 일출까지 ${hR}시간 ${rM}분`;bC='var(--accent-purple)';leftLabel=`일몰 ${sS_s}`;midLabel='달 궤적 (야간)';rightLabel=`내일 일출 ${sR_next_s}`;
+    dT=`<strong>🌙 [일몰 완료 / 내일 일출(${sR_next_s})까지 ${hR}시간 ${rM}분]:</strong> 야간 산행 및 비박 구간입니다. 칠흑 같은 어둠에 대비해 예비 배터리와 방한 조치에 각별히 유의하세요.`;
   }
-
-  return {
-    srStr: sR_s,
-    ssStr: sS_s,
-    sunProgress: p,
-    badgeText: bT,
-    badgeColor: bC,
-    descText: dT,
-    isNight: isNight,
-    orbChar: orbChar,
-    leftLabel: leftLabel,
-    midLabel: midLabel,
-    rightLabel: rightLabel
-  };
+  return{srStr:sR_s,ssStr:sS_s,sunProgress:p,badgeText:bT,badgeColor:bC,descText:dT,isNight:isNight,orbChar:orbChar,leftLabel:leftLabel,midLabel:midLabel,rightLabel:rightLabel};
 }
 
-function calculateCloudSeaProbability(e,sH,sR,sW,mC,tC,eB,tH){let s=0;const c=eB-e;if(c<-50&&c>-700)s+=35;else if(c<=-700)s+=20;else if(c>=-50&&c<=80)s+=15;if(sR>=85&&sH<=75)s+=30;else if(sR>=80)s+=20;else if(sR>=70)s+=10;if(sW<=2.2)s+=20;else if(sW<=3.8)s+=12;else if(sW<=5.5)s+=5;else s-=10;if(mC<=25&&tC<=45)s+=15;else if(mC<=45)s+=8;if(tH>=5&&tH<=8)s+=10;else if(tH>=4&&tH<=9)s+=5;return Math.min(99,Math.max(5,Math.round(s)));}
-
-// ★ [v6.2 핵심 개선] 운해 위(운상 돌출) 판별 및 풍속/돌풍 보정 물리 엔진
-function compute5PhysicsMountainWeather(P){
-  const _K1=17.67, _K2=243.5, T=P.rawTemp, R=P.rawRH, W=P.rawWind, G=P.rawGust;
-  const eS=6.112*Math.exp((_K1*T)/(_K2+T)), E=eS*(R/100);
-  const Td=(P.rawDew!==null&&P.rawDew!==undefined)?P.rawDew:(_K2*Math.log(E/6.112))/(_K1-Math.log(E/6.112));
-  const vK=Math.max(0.05,P.visibility/1000), bX=parseFloat((3.912/vK).toFixed(3)), oT=parseFloat((Math.min(99.9,Math.max(0.5,Math.exp(-bX*0.5)*100))).toFixed(1));
-  const dH=Math.max(0,P.mtEle-50), sT=T+(dH/100)*0.65, sD=Td+(dH/100)*0.17, sRH=Math.min(100,Math.max(25,R+4));
-  const bL=125*Math.max(0,sT-sD);
-  let smT=P.mtEle<=bL?sT-(0.0098*dH):(sT-(0.0098*(bL-50)+0.0055*(P.mtEle-bL)));
-  smT=parseFloat(smT.toFixed(1));
-
-  const oB=Math.min(250,Math.round(W*14)), bC=Math.max(150,Math.round(50+bL-oB));
-  const wI=decodeWmoCode(P.rawCode), dD=Math.max(0,smT-Td);
-  const iDC=(P.totalCloud>=55)||(P.midCloud>=50);
-  const iDr=(P.rawRain>0)||(wI.state==='drizzle')||(iDC&&dD<=3.8&&R>=80);
-
-  let eCB=bC;
-  if(!iDC && P.totalCloud<=35 && oT>=85 && !iDr) eCB=Math.max(P.mtEle+900,bC);
-  else if(iDC) eCB=Math.min(Math.max(300,bC),P.mtEle+400);
-
-  // 운해 형성 지수 계산
-  const cS=calculateCloudSeaProbability(P.mtEle,R,sRH,W,P.midCloud,P.totalCloud,eCB,P.targetHour);
-
-  // ★ [핵심 1: 운해 위 돌출(운상 쾌청) 완벽 판별]
-  // 정상이 운저보다 높더라도, 운해 지수가 높고 상공(중·고층) 구름이 맑으면 정상이 구름 밖으로 솟아오른 "운해 파노라마" 상태임!
-  const isAboveCloudSea = (cS >= 55) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 55) && !iDr;
-
-  // 진성 곰탕 뷰 (안개 갇힘): 운해 위 돌출이 아닐 때만 정상이 구름에 갇힌 것으로 판정
-  const iF = !isAboveCloudSea && ((P.visibility < 2000) || (oT < 45) || (wI.state==='fog') || (P.lowCloud>=70 && bC <= P.mtEle + 80) || (R>=92 && P.lowCloud>=50));
-
-  const iC = isAboveCloudSea || ((!iDC) && (P.totalCloud<=35) && (oT>=80) && (!iDr) && (!iF));
-
-  // ★ [핵심 2: 대기 안정도 및 운해 시 풍속/돌풍 과대계산 보정]
-  // 운해가 생기는 날은 대기가 역전되어 매우 안정적이므로 고도 바람 가속이 대폭 감쇠됨
-  const stabilityDamping = isAboveCloudSea ? 0.45 : (cS >= 50 ? 0.65 : 1.0);
-  let al = P.pointType==='rock'?0.45 : P.pointType==='ridge'?0.4 : P.pointType==='shelter'?0.25 : 0.35;
-  const sW = parseFloat((W * (1 + al * (P.mtEle / 1000) * stabilityDamping)).toFixed(1));
-
-  // 순간돌풍 계수 현실화: 2.8배 뻥튀기 방지 (안정 시 1.4~1.6배, 강풍 시 최대 2.0배)
-  const gustMultiplier = (sW <= 3.5) ? 1.45 : (sW <= 6.5 ? 1.65 : 2.0);
-  const sG = parseFloat((Math.max(G * 0.9, sW * gustMultiplier)).toFixed(1));
-
-  const vH=sW*3.6;
-  let sF=smT;
-  if(vH>4.8)sF=13.12+(0.6215*smT)-(11.37*Math.pow(vH,0.16))+(0.3965*smT*Math.pow(vH,0.16));
-  sF=parseFloat(sF.toFixed(1));
-
-  const sS=computeSunAndTrailSafety(P.daily,P.targetHourTime);
-
-  return {
-    summitTemp:smT,
-    summitFeel:sF,
-    summitHumidity:R,
-    summitWind:sW,
-    summitGust:sG,
-    rainMm:P.rawRain,
-    weatherCode:P.rawCode,
-    effectiveCloudBase:eCB,
-    clearance:eCB-P.mtEle,
-    isCrystalClear:iC,
-    isAboveCloudSea:isAboveCloudSea,
-    isDarkCloud:iDC,
-    isDrizzling:iDr,
-    isRealFog:iF,
-    totalCloud:P.totalCloud,
-    lowCloud:P.lowCloud,
-    midCloud:P.midCloud,
-    visibility:P.visibility,
-    surfaceTemp:parseFloat(sT.toFixed(1)),
-    surfaceRH:sRH,
-    wmoInfo:wI,
-    betaExt:bX,
-    opticalTrans:oT,
-    cloudSeaProb:cS,
-    sunSafety:sS,
-    _rawParams:P,
-    _baseLclM:bL
-  };
-}
+/**
+ * =========================================================================
+ * [OBFUSCATED CORE ATMOSPHERIC ENGINE]
+ * CANOPY FRICTION & SOLAR BURN-OFF PHYSICS
+ * =========================================================================
+ */
+const _0xSEC={
+  _c:function(_0x1,_0x2){
+    const _0x3=Math.min(1.0,Math.max(0.0,(_0x1-50)/Math.max(1,_0x2-50)));
+    return (_0x3<0.65)?(0.40+0.35*(_0x3/0.65)):(0.75+0.25*((_0x3-0.65)/0.35));
+  },
+  _b:function(_0xa,_0xb,_0xc,_0xd,_0xe,_0xf,_0x10,_0x11,_0x12,_0x13){
+    let _s=0;const _c=_0x10-_0xa;
+    if(_c<-50&&_c>-700)_s+=35;else if(_c<=-700)_s+=20;else if(_c>=-50&&_c<=80)_s+=15;
+    if(_0xc>=85&&_0xb<=75)_s+=30;else if(_0xc>=80)_s+=20;else if(_0xc>=70)_s+=10;
+    if(_0xd<=2.2)_s+=20;else if(_0xd<=3.8)_s+=12;else if(_0xd<=5.5)_s+=5;else _s-=10;
+    if(_0xe<=25&&_0xf<=45)_s+=15;else if(_0xe<=45)_s+=8;
+    if(_0x11>=5&&_0x11<=8)_s+=10;else if(_0x11>=4&&_0x11<=9)_s+=5;
+    let _bp=Math.min(99,Math.max(5,Math.round(_s))),_bf=1.0,_p='dawn';
+    if(_0x12&&_0x12.sunrise&&_0x12.sunrise[0]&&_0x13){
+      const _sr=new Date(_0x12.sunrise[0]);
+      const _df=Math.round((_0x13.getTime()-_sr.getTime())/60000);
+      if(_df>=-60&&_df<=60){_bf=1.0;_p='golden';}
+      else if(_df>60&&_df<=120){_bf=0.85;_p='warming';}
+      else if(_df>120&&_df<=180){_bf=0.55;_p='evaporating';}
+      else if(_df>180&&_df<=600){_bf=0.25;_p='dispersed';}
+    }
+    return{prob:Math.min(99,Math.max(5,Math.round(_bp*_bf))),phase:_p,factor:_bf};
+  },
+  _run:function(P){
+    const _K1=0x11.aba9e754e38,_K2=0xf3.8,T=P.rawTemp,R=P.rawRH,W=P.rawWind,G=P.rawGust;
+    const eS=6.112*Math.exp((_K1*T)/(_K2+T)),E=eS*(R/100);
+    const Td=(P.rawDew!==null&&P.rawDew!==undefined)?P.rawDew:(_K2*Math.log(E/6.112))/(_K1-Math.log(E/6.112));
+    const vK=Math.max(0.05,P.visibility/1000),bX=parseFloat((3.912/vK).toFixed(3)),oT=parseFloat((Math.min(99.9,Math.max(0.5,Math.exp(-bX*0.5)*100))).toFixed(1));
+    const dH=Math.max(0,P.mtEle-50),sT=T+(dH/100)*0.65,sD=Td+(dH/100)*0.17,sRH=Math.min(100,Math.max(25,R+4));
+    const bL=125*Math.max(0,sT-sD);
+    let smT=P.mtEle<=bL?sT-(0.0098*dH):(sT-(0.0098*(bL-50)+0.0055*(P.mtEle-bL)));
+    smT=parseFloat(smT.toFixed(1));
+    const oB=Math.min(250,Math.round(W*14)),bC=Math.max(150,Math.round(50+bL-oB));
+    const wI=decodeWmoCode(P.rawCode),dD=Math.max(0,smT-Td);
+    const iDC=(P.totalCloud>=55)||(P.midCloud>=50);
+    const iDr=(P.rawRain>0)||(wI.state==='drizzle')||(iDC&&dD<=3.8&&R>=80);
+    let eCB=bC;
+    if(!iDC&&P.totalCloud<=35&&oT>=85&&!iDr)eCB=Math.max(P.mtEle+900,bC);
+    else if(iDC)eCB=Math.min(Math.max(300,bC),P.mtEle+400);
+    const cS_d=_0xSEC._b(P.mtEle,R,sRH,W,P.midCloud,P.totalCloud,eCB,P.targetHour,P.daily,P.targetHourTime);
+    const cS=cS_d.prob;
+    const isAboveCloudSea=(cS>=50)&&(P.mtEle>eCB)&&(P.midCloud<=35)&&(P.totalCloud<=55)&&!iDr;
+    const iF=!isAboveCloudSea&&((P.visibility<2000)||(oT<45)||(wI.state==='fog')||(P.lowCloud>=70&&bC<=P.mtEle+80)||(R>=92&&P.lowCloud>=50));
+    const iC=isAboveCloudSea||((!iDC)&&(P.totalCloud<=35)&&(oT>=80)&&(!iDr)&&(!iF));
+    const stabilityDamping=isAboveCloudSea?0.45:(cS>=50?0.65:1.0);
+    const canopyFrictionSummit=_0xSEC._c(P.mtEle,P.mtEle);
+    let al=P.pointType==='rock'?0.45:P.pointType==='ridge'?0.4:P.pointType==='shelter'?0.25:0.35;
+    const sW=parseFloat((W*(1+al*(P.mtEle/1000)*stabilityDamping)*canopyFrictionSummit).toFixed(1));
+    const gustMultiplier=(sW<=3.5)?1.45:(sW<=6.5?1.65:1.9);
+    const sG=parseFloat((Math.max(G*0.9,sW*gustMultiplier)).toFixed(1));
+    const vH=sW*3.6;let sF=smT;
+    if(vH>4.8)sF=13.12+(0.6215*smT)-(11.37*Math.pow(vH,0.16))+(0.3965*smT*Math.pow(vH,0.16));
+    sF=parseFloat(sF.toFixed(1));
+    const sS=computeSunAndTrailSafety(P.daily,P.targetHourTime);
+    return{summitTemp:smT,summitFeel:sF,summitHumidity:R,summitWind:sW,summitGust:sG,rainMm:P.rawRain,weatherCode:P.rawCode,effectiveCloudBase:eCB,clearance:eCB-P.mtEle,isCrystalClear:iC,isAboveCloudSea:isAboveCloudSea,isDarkCloud:iDC,isDrizzling:iDr,isRealFog:iF,totalCloud:P.totalCloud,lowCloud:P.lowCloud,midCloud:P.midCloud,visibility:P.visibility,surfaceTemp:parseFloat(sT.toFixed(1)),surfaceRH:sRH,wmoInfo:wI,betaExt:bX,opticalTrans:oT,cloudSeaProb:cS,cloudSeaPhase:cS_d.phase,sunSafety:sS,_rawParams:P,_baseLclM:bL};
+  }
+};
 
 window.handleAltitudeScrub=function(z){
   if(!liveCurrentCalculatedRes)return;
   const tZ=parseInt(z),r=liveCurrentCalculatedRes,p=r._rawParams,bL=r._baseLclM;
-
-  if(Math.abs(tZ - _lastHapticZ) >= 20){
-    _lastHapticZ = tZ;
-    if(window.navigator && navigator.vibrate) navigator.vibrate(6);
-  }
-
+  if(Math.abs(tZ-_lastHapticZ)>=20){_lastHapticZ=tZ;if(window.navigator&&navigator.vibrate)navigator.vibrate(6);}
   let sT=tZ<=bL?r.surfaceTemp-(0.0098*Math.max(0,tZ-50)):r.surfaceTemp-(0.0098*Math.max(0,bL-50)+0.0055*(tZ-bL));
   sT=parseFloat(sT.toFixed(1));
-  const sW=parseFloat((p.rawWind*(1+0.35*(tZ/1000))).toFixed(1)),sG=parseFloat((sW*1.5).toFixed(1));
-  const v=sW*3.6;
-  let sF=sT;
+  const canopyFriction=_0xSEC._c(tZ,currentMt.ele);
+  const stabilityDamping=r.isAboveCloudSea?0.45:(r.cloudSeaProb>=50?0.65:1.0);
+  const sW=parseFloat((p.rawWind*(1+0.35*(tZ/1000)*stabilityDamping)*canopyFriction).toFixed(1));
+  const sG=parseFloat((sW*((sW<=3.5)?1.45:1.65)).toFixed(1));
+  const v=sW*3.6;let sF=sT;
   if(v>4.8)sF=13.12+(0.6215*sT)-(11.37*Math.pow(v,0.16))+(0.3965*sT*Math.pow(v,0.16));
   sF=parseFloat(sF.toFixed(1));
   const iC=(tZ>=r.effectiveCloudBase);
-
-  document.getElementById('scrubber-current-label').innerText=`${tZ}m (${tZ===currentMt.ele?'정상':(tZ<=150?'들머리':'중턱')})`;
-  document.getElementById('card-peak-desc').innerText=`해발 ${tZ}m · ${tZ===currentMt.ele?'정상부':(tZ<=150?'들머리':'중턱 능선')} 분석`;
+  document.getElementById('scrubber-current-label').innerText=`${tZ}m (${tZ===currentMt.ele?'정상':(tZ<=150?'들머리 (숲)':'중턱 능선')})`;
+  document.getElementById('card-peak-desc').innerText=`해발 ${tZ}m · ${tZ===currentMt.ele?'정상부':(tZ<=150?'들머리 (숲 차폐)':'중턱 능선')} 분석`;
   document.getElementById('brief-temp').innerText=`${Math.round(sT)}°`;
   document.getElementById('summit-feel').innerText=`${sF}°`;
   document.getElementById('brief-wind').innerText=`${sW} / ${sG} m/s`;
-  
   const sP=document.getElementById('card-status-pill');
   if(r.rainMm>0)sP.innerText=`강우 (${r.rainMm}mm)`;
-  else if(r.isAboveCloudSea && tZ >= r.effectiveCloudBase){
-    sP.style.background='rgba(48,209,88,0.25)';
-    sP.style.borderColor='rgba(48,209,88,0.45)';
-    sP.style.color='var(--accent-green)';
+  else if(r.isAboveCloudSea&&tZ>=r.effectiveCloudBase){
+    sP.style.background='rgba(48,209,88,0.25)';sP.style.borderColor='rgba(48,209,88,0.45)';sP.style.color='var(--accent-green)';
     sP.innerText='구름바다 위 (운해 조망 ☁️🌊)';
-  }else if(iC && r.isRealFog){
-    sP.style.background='rgba(255,159,10,0.25)';
-    sP.style.borderColor='rgba(255,159,10,0.45)';
-    sP.style.color='var(--accent-amber)';
+  }else if(iC&&r.isRealFog){
+    sP.style.background='rgba(255,159,10,0.25)';sP.style.borderColor='rgba(255,159,10,0.45)';sP.style.color='var(--accent-amber)';
     sP.innerText='구름 진입 (운무 🌫️)';
   }else{
-    sP.style.background='rgba(48,209,88,0.2)';
-    sP.style.borderColor='rgba(48,209,88,0.35)';
-    sP.style.color='var(--accent-green)';
+    sP.style.background='rgba(48,209,88,0.2)';sP.style.borderColor='rgba(48,209,88,0.35)';sP.style.color='var(--accent-green)';
     sP.innerText='시야 확보 (쾌청)';
   }
   document.getElementById('meter-mt-label').innerText=`${tZ}m`;
@@ -1740,33 +1596,33 @@ window.handleAltitudeScrub=function(z){
 };
 
 window.resetAltitudeToSummit=function(){
-  const s=document.getElementById('altitude-slider');
-  if(!s)return;
-  s.value=currentMt.ele;
-  handleAltitudeScrub(currentMt.ele);
-  if(window.navigator && navigator.vibrate) navigator.vibrate(10);
+  const s=document.getElementById('altitude-slider');if(!s)return;
+  s.value=currentMt.ele;handleAltitudeScrub(currentMt.ele);
+  if(window.navigator&&navigator.vibrate)navigator.vibrate(10);
   if(liveCurrentCalculatedRes)updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',false,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);
 };
 
-function updateWeatherArtworkScene(r,n){const s=document.getElementById('weather-stage');if(!s)return;s.className='weather-scene-stage';if(r.wmoInfo.state==='storm')s.classList.add('scene-storm');else if(r.wmoInfo.state==='snow')s.classList.add('scene-snow');else if(r.rainMm>0||r.wmoInfo.state==='rain')s.classList.add('scene-rain');else if(r.isDrizzling)s.classList.add('scene-drizzle');else if(r.isRealFog)s.classList.add('scene-fog');else if(r.isDarkCloud||r.wmoInfo.state==='cloudy')s.classList.add('scene-cloudy');else s.classList.add(n?'scene-clear-night':'scene-clear-day');}
+function updateWeatherArtworkScene(r,n){
+  const s=document.getElementById('weather-stage');if(!s)return;
+  s.className='weather-scene-stage';
+  if(r.wmoInfo.state==='storm')s.classList.add('scene-storm');
+  else if(r.wmoInfo.state==='snow')s.classList.add('scene-snow');
+  else if(r.rainMm>0||r.wmoInfo.state==='rain')s.classList.add('scene-rain');
+  else if(r.isDrizzling)s.classList.add('scene-drizzle');
+  else if(r.isRealFog)s.classList.add('scene-fog');
+  else if(r.isDarkCloud||r.wmoInfo.state==='cloudy')s.classList.add('scene-cloudy');
+  else s.classList.add(n?'scene-clear-night':'scene-clear-day');
+}
 
 function updateAlpineWeatherHUD(r,hS,iN,pT,iO=false,dK=null){
   const sP=document.getElementById('card-status-pill'),b=document.getElementById('alert-banner'),bT=document.getElementById('alert-banner-text'),bTg=document.getElementById('alert-banner-tag'),lD=document.getElementById('brand-live-dot');
-  updateWeatherArtworkScene(r,iN);
-  updateFavoriteBtnState();
+  updateWeatherArtworkScene(r,iN);updateFavoriteBtnState();
   document.getElementById('card-peak-title').innerText=currentMt.name;
-  
-  // 실시간 내 GPS 고도 표시 업데이트
-  const descEl = document.getElementById('card-peak-desc');
-  descEl.innerText = dK ? `해발 ${currentMt.ele}m · 내 위치에서 ${dK}km` : `해발 ${currentMt.ele}m · 정상부 분석`;
-  const gpsPill = document.getElementById('user-gps-alt-pill');
-  if(currentUserAltitude !== null && currentUserAltitude > 0){
-    gpsPill.innerText = `📍 내 GPS 고도 ${currentUserAltitude}m`;
-    gpsPill.style.display = 'inline-flex';
-  } else {
-    gpsPill.style.display = 'none';
-  }
-
+  const descEl=document.getElementById('card-peak-desc');
+  descEl.innerText=dK?`해발 ${currentMt.ele}m · 내 위치에서 ${dK}km`:`해발 ${currentMt.ele}m · 정상부 분석`;
+  const gpsPill=document.getElementById('user-gps-alt-pill');
+  if(currentUserAltitude!==null&&currentUserAltitude>0){gpsPill.innerText=`📍 내 GPS 고도 ${currentUserAltitude}m`;gpsPill.style.display='inline-flex';}
+  else{gpsPill.style.display='none';}
   document.getElementById('brief-temp').innerText=`${Math.round(r.summitTemp)}°`;
   document.getElementById('summit-feel').innerText=`${r.summitFeel}°`;
   document.getElementById('brief-wind').innerText=`${r.summitWind} / ${r.summitGust} m/s`;
@@ -1783,113 +1639,73 @@ function updateAlpineWeatherHUD(r,hS,iN,pT,iO=false,dK=null){
   document.getElementById('scrubber-summit-tick').innerText=`정상 ${currentMt.ele}m`;
   
   if(r.sunSafety){
-    document.getElementById('label-sunrise').innerText = r.sunSafety.leftLabel;
-    document.getElementById('label-solar-state').innerText = r.sunSafety.midLabel;
-    document.getElementById('label-sunset').innerText = r.sunSafety.rightLabel;
-    
-    const trFill = document.getElementById('sun-track-fill');
-    trFill.style.width = `${r.sunSafety.sunProgress}%`;
-    if(r.sunSafety.isNight){
-      trFill.style.background = 'linear-gradient(90deg, #BF5AF2 0%, #0A84FF 50%, #64D2FF 100%)';
-    } else {
-      trFill.style.background = 'linear-gradient(90deg, #FF9F0A 0%, #FFD60A 50%, #0A84FF 100%)';
-    }
-
-    const trOrb = document.getElementById('sun-track-orb');
-    trOrb.style.left = `${r.sunSafety.sunProgress}%`;
-    trOrb.innerText = r.sunSafety.orbChar;
-    if(r.sunSafety.isNight){
-      trOrb.style.filter = 'drop-shadow(0 0 10px rgba(191, 90, 242, 0.9))';
-    } else {
-      trOrb.style.filter = 'drop-shadow(0 0 8px rgba(255, 214, 10, 0.8))';
-    }
-
-    const sb = document.getElementById('sun-safety-badge');
-    sb.innerText = r.sunSafety.badgeText;
-    sb.style.color = r.sunSafety.badgeColor;
-    sb.style.borderColor = r.sunSafety.badgeColor;
-    sb.style.background = r.sunSafety.isNight ? 'rgba(191, 90, 242, 0.18)' : 'rgba(255, 159, 10, 0.18)';
-    
-    document.getElementById('sun-safety-main-title').innerText = r.sunSafety.isNight ? '달 궤적 & 일출 카운트다운' : '일출 · 일몰 & 안전 하산 인디케이터';
-    const dotInd = document.getElementById('sun-dot-indicator');
-    if(dotInd){
-      dotInd.style.background = r.sunSafety.isNight ? 'var(--accent-purple)' : 'var(--accent-amber)';
-      dotInd.style.boxShadow = r.sunSafety.isNight ? '0 0 8px var(--accent-purple)' : '0 0 8px var(--accent-amber)';
-    }
-
-    document.getElementById('sun-safety-desc').innerHTML = r.sunSafety.descText;
+    document.getElementById('label-sunrise').innerText=r.sunSafety.leftLabel;
+    document.getElementById('label-solar-state').innerText=r.sunSafety.midLabel;
+    document.getElementById('label-sunset').innerText=r.sunSafety.rightLabel;
+    const trFill=document.getElementById('sun-track-fill');
+    trFill.style.width=`${r.sunSafety.sunProgress}%`;
+    trFill.style.background=r.sunSafety.isNight?'linear-gradient(90deg, #BF5AF2 0%, #0A84FF 50%, #64D2FF 100%)':'linear-gradient(90deg, #FF9F0A 0%, #FFD60A 50%, #0A84FF 100%)';
+    const trOrb=document.getElementById('sun-track-orb');
+    trOrb.style.left=`${r.sunSafety.sunProgress}%`;trOrb.innerText=r.sunSafety.orbChar;
+    trOrb.style.filter=r.sunSafety.isNight?'drop-shadow(0 0 10px rgba(191, 90, 242, 0.9))':'drop-shadow(0 0 8px rgba(255, 214, 10, 0.8))';
+    const sb=document.getElementById('sun-safety-badge');
+    sb.innerText=r.sunSafety.badgeText;sb.style.color=r.sunSafety.badgeColor;sb.style.borderColor=r.sunSafety.badgeColor;
+    sb.style.background=r.sunSafety.isNight?'rgba(191, 90, 242, 0.18)':'rgba(255, 159, 10, 0.18)';
+    document.getElementById('sun-safety-main-title').innerText=r.sunSafety.isNight?'달 궤적 & 일출 카운트다운':'일출 · 일몰 & 안전 하산 인디케이터';
+    const dotInd=document.getElementById('sun-dot-indicator');
+    if(dotInd){dotInd.style.background=r.sunSafety.isNight?'var(--accent-purple)':'var(--accent-amber)';dotInd.style.boxShadow=r.sunSafety.isNight?'0 0 8px var(--accent-purple)':'0 0 8px var(--accent-amber)';}
+    document.getElementById('sun-safety-desc').innerHTML=r.sunSafety.descText;
   }
   
   const csB=document.getElementById('cs-prob-badge'),csF=document.getElementById('cs-meter-fill');
   csF.style.width=`${r.cloudSeaProb}%`;
-  csB.innerText=`${r.cloudSeaProb}% ${r.cloudSeaProb>=75?'최적 발달 (Optimal)':r.cloudSeaProb>=50?'형성 가능 (Moderate)':'조건 미달 (Low)'}`;
+  const phaseTag=(r.cloudSeaPhase==='golden')?'(골든타임)':(r.cloudSeaPhase==='warming')?'(온도 상승 중)':(r.cloudSeaPhase==='evaporating')?'(자연 증발 진행)':'';
+  csB.innerText=`${r.cloudSeaProb}% ${r.cloudSeaProb>=75?'최적 발달':r.cloudSeaProb>=50?'형성 가능':'조건 미달'} ${phaseTag}`;
   document.getElementById('cs-inversion-txt').innerText=`역전층: ${(r.surfaceRH-r.summitHumidity)>=10?'강함 (포화)':'보통'}`;
   document.getElementById('cs-wind-txt').innerText=`풍속: ${r.summitWind<=3.5?'안정':'보통'} (${r.summitWind}m/s)`;
   document.getElementById('cs-sky-txt').innerText=`상공: ${r.midCloud<=30?'개방(쾌청)':'구름'}`;
   
-  // ★ [수정] 운해 위 파노라마 브리핑
   if(r.isAboveCloudSea){
-    document.getElementById('cs-brief-desc').innerHTML = `<strong>[${hS} 雲海 파노라마 대성공]:</strong> 산 정상(${currentMt.ele}m)이 계곡 운해층(${r.effectiveCloudBase}m) 위로 우뚝 솟아올라 <strong>발아래 끝없이 펼쳐지는 구름바다와 환상적인 일출 조망</strong>이 완성되었습니다 ☁️🌊`;
-  } else {
-    document.getElementById('cs-brief-desc').innerHTML = r.cloudSeaProb>=75?`<strong>[${hS} 운해 최적 조건]:</strong> 골짜기 수증기 포화로 발아래 <strong>출렁이는 구름바다</strong>가 펼쳐질 확률이 극히 높습니다.`:r.cloudSeaProb>=50?`<strong>[${hS} 운해 부분 형성]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해가 형성될 수 있습니다.`:`<strong>[${hS} 운해 조건 미달]:</strong> 대기 혼합으로 운해 형성 가능성이 낮습니다.`;
+    document.getElementById('cs-brief-desc').innerHTML=`<strong>[${hS} 雲海 파노라마 대성공]:</strong> 산 정상(${currentMt.ele}m)이 계곡 운해층(${r.effectiveCloudBase}m) 위로 우뚝 솟아올라 <strong>발아래 끝없이 펼쳐지는 구름바다와 환상적인 일출 조망</strong>이 완성되었습니다 ☁️🌊`;
+  }else if(r.cloudSeaPhase==='evaporating'){
+    document.getElementById('cs-brief-desc').innerHTML=`<strong>[${hS} 태양열 증발(Burn-off) 구간]:</strong> 일출 후 기온 상승으로 계곡 운해가 수증기로 증발하여 점차 흩어지고 있습니다.`;
+  }else{
+    document.getElementById('cs-brief-desc').innerHTML=r.cloudSeaProb>=75?`<strong>[${hS} 운해 최적 조건]:</strong> 골짜기 수증기 포화로 발아래 <strong>출렁이는 구름바다</strong>가 펼쳐질 확률이 극히 높습니다.`:r.cloudSeaProb>=50?`<strong>[${hS} 운해 부분 형성]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해가 형성될 수 있습니다.`:`<strong>[${hS} 운해 조건 미달]:</strong> 대기 혼합으로 운해 형성 가능성이 낮습니다.`;
   }
 
-  // ★ [수정] 상태 태그 및 시야 판정 (곰탕 뷰 오판 수정)
   const cbP=document.getElementById('cb-status-pill'),cbD=document.getElementById('cb-desc-text');
   if(cbP&&cbD){
     if(r.wmoInfo.state==='storm'){
-      cbP.style.color='var(--accent-red)';
-      cbP.innerText=`뇌우 구름대 (투과율 ${r.opticalTrans}%)`;
-      cbD.innerHTML=`<strong>${hS}:</strong> 강한 대류성 뇌우 구름대가 형성되었습니다. 즉시 안전한 지대로 이동하세요.`;
-      sP.innerText='낙뢰 위험'; sP.style.color='var(--accent-red)';
+      cbP.style.color='var(--accent-red)';cbP.innerText=`뇌우 구름대 (투과율 ${r.opticalTrans}%)`;cbD.innerHTML=`<strong>${hS}:</strong> 강한 대류성 뇌우 구름대가 형성되었습니다. 즉시 안전한 지대로 이동하세요.`;
+      sP.innerText='낙뢰 위험';sP.style.color='var(--accent-red)';
     }else if(r.rainMm>0||r.wmoInfo.state==='rain'){
-      cbP.style.color='var(--accent-red)';
-      cbP.innerText=`강우 구름대 (투과율 ${r.opticalTrans}%)`;
-      cbD.innerHTML=`<strong>${hS}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방수 장비를 착용하세요.`;
-      sP.innerText=`강우 (${r.rainMm}mm)`; sP.style.color='var(--accent-red)';
+      cbP.style.color='var(--accent-red)';cbP.innerText=`강우 구름대 (투과율 ${r.opticalTrans}%)`;cbD.innerHTML=`<strong>${hS}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방수 장비를 착용하세요.`;
+      sP.innerText=`강우 (${r.rainMm}mm)`;sP.style.color='var(--accent-red)';
     }else if(r.isAboveCloudSea){
-      // ★ 구름바다 위 쾌청 (운상 돌출)
-      cbP.style.color='var(--accent-green)';
-      cbP.innerText=`운해 위 쾌청 (투과율 ${r.opticalTrans}%)`;
-      cbD.innerHTML=`<strong>${hS} [구름바다 위 파노라마]:</strong> 운해(${r.effectiveCloudBase}m)가 발아래 깔려 있고 상공은 쾌청하여 <strong>시야 100% 특급 조망</strong>이 펼쳐집니다!`;
-      sP.innerText='구름바다 위 (운해 조망 ☁️🌊)';
-      sP.style.color='var(--accent-green)';
-      sP.style.background='rgba(48, 209, 88, 0.25)';
-      sP.style.borderColor='rgba(48, 209, 88, 0.5)';
+      cbP.style.color='var(--accent-green)';cbP.innerText=`운해 위 쾌청 (투과율 ${r.opticalTrans}%)`;cbD.innerHTML=`<strong>${hS} [구름바다 위 파노라마]:</strong> 운해(${r.effectiveCloudBase}m)가 발아래 깔려 있고 상공은 쾌청하여 <strong>시야 100% 특급 조망</strong>이 펼쳐집니다!`;
+      sP.innerText='구름바다 위 (운해 조망 ☁️🌊)';sP.style.color='var(--accent-green)';sP.style.background='rgba(48, 209, 88, 0.25)';sP.style.borderColor='rgba(48, 209, 88, 0.5)';
     }else if(r.isRealFog){
-      cbP.style.color='var(--accent-amber)';
-      cbP.innerText=`구름 속 갇힘 (투과율 ${r.opticalTrans}%)`;
-      cbD.innerHTML=`<strong>${hS}:</strong> 짙은 운무가 정상을 감싸 시야가 차단된 곰탕 뷰입니다.`;
-      sP.innerText='운무 갇힘 (곰탕 뷰)';
-      sP.style.color='var(--accent-amber)';
-      sP.style.background='rgba(255,159,10,0.2)';
-      sP.style.borderColor='rgba(255,159,10,0.4)';
+      cbP.style.color='var(--accent-amber)';cbP.innerText=`구름 속 갇힘 (투과율 ${r.opticalTrans}%)`;cbD.innerHTML=`<strong>${hS}:</strong> 짙은 운무가 정상을 감싸 시야가 차단된 곰탕 뷰입니다.`;
+      sP.innerText='운무 갇힘 (곰탕 뷰)';sP.style.color='var(--accent-amber)';sP.style.background='rgba(255,159,10,0.2)';sP.style.borderColor='rgba(255,159,10,0.4)';
     }else if(iN){
-      if(!r.isDarkCloud && r.opticalTrans >= 80){
-        cbP.style.color='var(--accent-purple)';
-        cbP.innerText=`별빛·은하수 특급 (투과율 ${r.opticalTrans}%)`;
-        cbD.innerHTML=`<strong>${hS} [야간 천체 조망 최적]:</strong> 밤하늘 별빛과 은하수, 도심 야경이 쏟아지듯 선명합니다 🌌`;
-        sP.innerText='시야 100% 쾌청 (야경)'; sP.style.color='var(--accent-green)';
-      } else {
-        cbP.style.color='rgba(235, 235, 245, 0.8)';
-        cbP.innerText=`야간 흐림 (별빛 차단)`;
-        cbD.innerHTML=`<strong>${hS}:</strong> 상공 구름으로 별빛이 차단되어 어둡습니다. 헤드랜턴을 필수 지참하세요.`;
-        sP.innerText='야간 흐림'; sP.style.color='rgba(235,235,245,0.8)';
+      if(!r.isDarkCloud&&r.opticalTrans>=80){
+        cbP.style.color='var(--accent-purple)';cbP.innerText=`별빛·은하수 특급 (투과율 ${r.opticalTrans}%)`;cbD.innerHTML=`<strong>${hS} [야간 천체 조망 최적]:</strong> 밤하늘 별빛과 은하수, 도심 야경이 쏟아지듯 선명합니다 🌌`;
+        sP.innerText='시야 100% 쾌청 (야경)';sP.style.color='var(--accent-green)';
+      }else{
+        cbP.style.color='rgba(235, 235, 245, 0.8)';cbP.innerText=`야간 흐림 (별빛 차단)`;cbD.innerHTML=`<strong>${hS}:</strong> 상공 구름으로 별빛이 차단되어 어둡습니다. 헤드랜턴을 필수 지참하세요.`;
+        sP.innerText='야간 흐림';sP.style.color='rgba(235,235,245,0.8)';
       }
     }else if(r.isDarkCloud){
-      cbP.style.color='rgba(235, 235, 245, 0.8)';
-      cbP.innerText=`흐림 (투과율 ${r.opticalTrans}%)`;
-      cbD.innerHTML=`<strong>${hS}:</strong> 전운량 ${r.totalCloud}%로 일조가 차단되며 조망이 어둡게 제한됩니다.`;
-      sP.innerText=`흐림 (전운 ${r.totalCloud}%)`; sP.style.color='rgba(235,235,245,0.8)';
+      cbP.style.color='rgba(235, 235, 245, 0.8)';cbP.innerText=`흐림 (투과율 ${r.opticalTrans}%)`;cbD.innerHTML=`<strong>${hS}:</strong> 전운량 ${r.totalCloud}%로 일조가 차단되며 조망이 어둡게 제한됩니다.`;
+      sP.innerText=`흐림 (전운 ${r.totalCloud}%)`;sP.style.color='rgba(235,235,245,0.8)';
     }else{
-      cbP.style.color='var(--accent-green)';
-      cbP.innerText=`조망 특급 (투과율 ${r.opticalTrans}%)`;
-      cbD.innerHTML=`<strong>${hS}:</strong> 구름층(${r.effectiveCloudBase}m)이 정상 상공에 위치하며 광학 투과율 <strong>${r.opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
-      sP.innerText='시야 100% 쾌청'; sP.style.color='var(--accent-green)';
+      cbP.style.color='var(--accent-green)';cbP.innerText=`조망 특급 (투과율 ${r.opticalTrans}%)`;cbD.innerHTML=`<strong>${hS}:</strong> 구름층(${r.effectiveCloudBase}m)이 정상 상공에 위치하며 광학 투과율 <strong>${r.opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
+      sP.innerText='시야 100% 쾌청';sP.style.color='var(--accent-green)';
     }
   }
 
-  if(iO){lD.classList.add('offline');b.style.borderColor='rgba(255,159,10,0.4)';bT.innerText='⚠️ 통신 음영지역 (기기 캐시 유지 중)';bTg.innerText='캐시';bTg.style.color='var(--accent-amber)';}else{lD.classList.remove('offline');bTg.innerText='정상';bTg.style.color='var(--accent-green)';}
+  if(iO){lD.classList.add('offline');b.style.borderColor='rgba(255,159,10,0.4)';bT.innerText='⚠️ 통신 음영지역 (기기 캐시 유지 중)';bTg.innerText='캐시';bTg.style.color='var(--accent-amber)';}
+  else{lD.classList.remove('offline');bTg.innerText='정상';bTg.style.color='var(--accent-green)';}
 
   document.getElementById('summit-temp').innerText=`${r.summitTemp} °C`;
   document.getElementById('summit-humidity').innerText=`${r.summitHumidity} %`;
@@ -1904,39 +1720,54 @@ function updateAlpineWeatherHUD(r,hS,iN,pT,iO=false,dK=null){
   document.getElementById('city-beta').innerText=`${r.betaExt} /km`;
 }
 
-function renderLiveForecastTrack(h){const t=document.getElementById('forecast-track');if(!t)return;t.innerHTML='';const sI=h?findCurrentHourIndex(h):0,nw=new Date();for(let o=0;o<12;o++){const dI=sI+o,tT=(h&&h.time&&h.time[dI])?new Date(h.time[dI]):new Date(nw.getTime()+o*3600000),tH=tT.getHours(),hS=`${tH<10?'0':''}${tH}:00`,lb=(o===0)?'현재':`+${o}h`;let tm=16,wC=0,tC=0,mC=0;if(h&&h.temperature_2m&&h.temperature_2m[dI]!==undefined){tm=Math.round(h.temperature_2m[dI]);wC=h.weather_code[dI];tC=h.cloud_cover?h.cloud_cover[dI]:0;mC=h.cloud_cover_mid?h.cloud_cover_mid[dI]:0;}const iN=(tH>=19||tH<=5);let wI=decodeWmoCode(wC,iN),ic=wI.icon;if(tC>=65||mC>=55)ic=(wC>=51)?'🌧️':'☁️';const sl=document.createElement('div');sl.className=`time-slot ${o===selectedHourOffset?'active':''}`;sl.innerHTML=`<div class="slot-label">${lb}</div><div class="slot-time">${hS}</div><div class="slot-icon">${ic}</div><div class="slot-temp">${tm}°</div>`;sl.onclick=()=>selectForecastHour(o,dI,tH,hS,tT);t.appendChild(sl);}}
+function renderLiveForecastTrack(h){
+  const t=document.getElementById('forecast-track');if(!t)return;t.innerHTML='';
+  const sI=h?findCurrentHourIndex(h):0,nw=new Date();
+  for(let o=0;o<12;o++){
+    const dI=sI+o,tT=(h&&h.time&&h.time[dI])?new Date(h.time[dI]):new Date(nw.getTime()+o*3600000),tH=tT.getHours(),hS=`${tH<10?'0':''}${tH}:00`,lb=(o===0)?'현재':`+${o}h`;
+    let tm=16,wC=0,tC=0,mC=0;
+    if(h&&h.temperature_2m&&h.temperature_2m[dI]!==undefined){tm=Math.round(h.temperature_2m[dI]);wC=h.weather_code[dI];tC=h.cloud_cover?h.cloud_cover[dI]:0;mC=h.cloud_cover_mid?h.cloud_cover_mid[dI]:0;}
+    const iN=(tH>=19||tH<=5);let wI=decodeWmoCode(wC,iN),ic=wI.icon;
+    if(tC>=65||mC>=55)ic=(wC>=51)?'🌧️':'☁️';
+    const sl=document.createElement('div');
+    sl.className=`time-slot ${o===selectedHourOffset?'active':''}`;
+    sl.innerHTML=`<div class="slot-label">${lb}</div><div class="slot-time">${hS}</div><div class="slot-icon">${ic}</div><div class="slot-temp">${tm}°</div>`;
+    sl.onclick=()=>selectForecastHour(o,dI,tH,hS,tT);
+    t.appendChild(sl);
+  }
+}
 
-function selectForecastHour(o,dI,tH,hS,tT=null){selectedHourOffset=o;document.querySelectorAll('.time-slot').forEach((s,i)=>s.classList.toggle('active',i===o));const iN=(tH>=19||tH<=5);if(o===0&&liveCurrentCalculatedRes){updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',iN,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);return;}document.getElementById('clock-live').innerText=`예보 모드: ${o}시간 뒤 (${hS})`;if(!liveWeatherData||!liveWeatherData.hourly)return;const h=liveWeatherData.hourly;const res=compute5PhysicsMountainWeather({mtEle:currentMt.ele,rawTemp:h.temperature_2m[dI]??15.0,rawRH:h.relative_humidity_2m[dI]??70,rawWind:(h.wind_speed_10m[dI]??3.0)*0.2777,rawGust:(h.wind_gusts_10m[dI]??6.0)*0.2777,rawRain:h.precipitation[dI]??0.0,rawCode:h.weather_code[dI]??0,totalCloud:h.cloud_cover?h.cloud_cover[dI]:0,lowCloud:h.cloud_cover_low?h.cloud_cover_low[dI]:0,midCloud:h.cloud_cover_mid?h.cloud_cover_mid[dI]:0,visibility:h.visibility?h.visibility[dI]:15000,rawDew:h.dew_point_2m?h.dew_point_2m[dI]:null,pointType:currentMt.type||'peak',targetHour:tH,daily:liveWeatherData.daily||null,targetHourTime:tT});updateAlpineWeatherHUD(res,hS,iN,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);}
+function selectForecastHour(o,dI,tH,hS,tT=null){
+  selectedHourOffset=o;
+  document.querySelectorAll('.time-slot').forEach((s,i)=>s.classList.toggle('active',i===o));
+  const iN=(tH>=19||tH<=5);
+  if(o===0&&liveCurrentCalculatedRes){updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',iN,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);return;}
+  document.getElementById('clock-live').innerText=`예보 모드: ${o}시간 뒤 (${hS})`;
+  if(!liveWeatherData||!liveWeatherData.hourly)return;
+  const h=liveWeatherData.hourly;
+  const res=_0xSEC._run({mtEle:currentMt.ele,rawTemp:h.temperature_2m[dI]??15.0,rawRH:h.relative_humidity_2m[dI]??70,rawWind:(h.wind_speed_10m[dI]??3.0)*0.2777,rawGust:(h.wind_gusts_10m[dI]??6.0)*0.2777,rawRain:h.precipitation[dI]??0.0,rawCode:h.weather_code[dI]??0,totalCloud:h.cloud_cover?h.cloud_cover[dI]:0,lowCloud:h.cloud_cover_low?h.cloud_cover_low[dI]:0,midCloud:h.cloud_cover_mid?h.cloud_cover_mid[dI]:0,visibility:h.visibility?h.visibility[dI]:15000,rawDew:h.dew_point_2m?h.dew_point_2m[dI]:null,pointType:currentMt.type||'peak',targetHour:tH,daily:liveWeatherData.daily||null,targetHourTime:tT});
+  updateAlpineWeatherHUD(res,hS,iN,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);
+}
 
 window.selectMountain=async function(n,e,bE,t='peak',lt=38.1192,lg=128.4652,dK=null){
   currentMt={name:n,ele:e,type:t,lat:lt,lng:lg,distanceKm:dK};
-  selectedHourOffset=0;
-  renderFavoritesChips();
+  selectedHourOffset=0;renderFavoritesChips();
   document.getElementById('card-peak-title').innerText=n;
   document.getElementById('clock-live').innerText='STATLAB 연산 중...';
   renderLiveForecastTrack(null);
-
-  const eleParam=(e && e>0)?e:0;
+  const eleParam=(e&&e>0)?e:0;
   liveWeatherData=await fetchLiveMountainWeather(lt,lg,eleParam);
-
-  if(liveWeatherData && liveWeatherData.current){
-    if((!e || e<=0) && liveWeatherData.elevation){
-      e=Math.max(50, Math.round(liveWeatherData.elevation));
-      currentMt.ele=e;
-    } else if(!e || e<=0){
-      e=1708;
-      currentMt.ele=e;
-    }
-
+  if(liveWeatherData&&liveWeatherData.current){
+    if((!e||e<=0)&&liveWeatherData.elevation){e=Math.max(50,Math.round(liveWeatherData.elevation));currentMt.ele=e;}
+    else if(!e||e<=0){e=1708;currentMt.ele=e;}
     const cur=liveWeatherData.current,nw=new Date(),iN=(nw.getHours()>=19||nw.getHours()<=5);
-    liveCurrentCalculatedRes=compute5PhysicsMountainWeather({mtEle:e,rawTemp:cur.temperature_2m,rawRH:cur.relative_humidity_2m,rawWind:cur.wind_speed_10m*0.2777,rawGust:cur.wind_gusts_10m*0.2777,rawRain:cur.precipitation,rawCode:cur.weather_code,totalCloud:cur.cloud_cover||0,lowCloud:cur.cloud_cover_low||0,midCloud:cur.cloud_cover_mid||0,visibility:cur.visibility||15000,rawDew:cur.dew_point_2m||null,pointType:t,targetHour:nw.getHours(),daily:liveWeatherData.daily||null,targetHourTime:nw});
+    liveCurrentCalculatedRes=_0xSEC._run({mtEle:e,rawTemp:cur.temperature_2m,rawRH:cur.relative_humidity_2m,rawWind:cur.wind_speed_10m*0.2777,rawGust:cur.wind_gusts_10m*0.2777,rawRain:cur.precipitation,rawCode:cur.weather_code,totalCloud:cur.cloud_cover||0,lowCloud:cur.cloud_cover_low||0,midCloud:cur.cloud_cover_mid||0,visibility:cur.visibility||15000,rawDew:cur.dew_point_2m||null,pointType:t,targetHour:nw.getHours(),daily:liveWeatherData.daily||null,targetHourTime:nw});
     saveMountainCache(n,liveWeatherData.hourly,cur,liveCurrentCalculatedRes,liveWeatherData.daily);
     renderLiveForecastTrack(liveWeatherData.hourly);
     updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',iN,t,false,dK);
     document.getElementById('clock-live').innerText=`${nw.getHours().toString().padStart(2,'0')}:${nw.getMinutes().toString().padStart(2,'0')} 동기화 완료`;
     return;
   }
-
   const c=getMountainCache(n);
   if(c){
     liveWeatherData={hourly:c.rawHourly,daily:c.rawDaily||null};
@@ -1951,8 +1782,8 @@ let searchTimer=null;
 window.handleMountainSearch=function(k){
   clearTimeout(searchTimer);
   const d=document.getElementById('search-dropdown'),q=k.trim();
-  if(!q){renderSearchDropdown(mountainDB.slice(0,14));return;}
-  const lM=mountainDB.filter(m=>m.name.includes(q)||m.region.includes(q));
+  if(!q){renderSearchDropdown(_0xdb.slice(0,14));return;}
+  const lM=_0xdb.filter(m=>m.name.includes(q)||m.region.includes(q));
   renderSearchDropdown(lM);
   searchTimer=setTimeout(()=>{
     if(window.kakao&&kakao.maps&&kakao.maps.services){
@@ -1963,10 +1794,8 @@ window.handleMountainSearch=function(k){
           dt.forEach(p=>{
             const pN=p.place_name,cg=p.category_name||'';
             if(!lM.some(x=>x.name===pN)&&!/아파트|빌라|부동산|역$\vert{}정류장\vert{}식당\vert{}카페\vert{}병원/i.test(pN)&&!/주거\vert{}교통\vert{}쇼핑\vert{}음식/i.test(cg)&&(/(산\vert{}봉\vert{}바위\vert{}대피소\vert{}능선\vert{}령)$/.test(pN)||cg.includes('산'))){
-              let eE=650;
-              const m=pN.match(/(\d+)m/);
-              if(m)eE=parseInt(m[1]);
-              else if(pN.includes('대피소'))eE=1250;
+              let eE=650;const m=pN.match(/(\d+)m/);
+              if(m)eE=parseInt(m[1]);else if(pN.includes('대피소'))eE=1250;
               ex.push({name:pN,type:pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'),region:p.address_name,ele:eE,lat:parseFloat(p.y),lng:parseFloat(p.x)});
             }
           });
@@ -1977,15 +1806,29 @@ window.handleMountainSearch=function(k){
   },180);
 };
 
-function renderSearchDropdown(l){const d=document.getElementById('search-dropdown');if(!d)return;if(l.length===0){d.innerHTML='<div style="padding:14px;font-size:12px;color:var(--text-secondary);text-align:center;">검색 결과가 없습니다.</div>';d.style.display='block';return;}let h='';l.slice(0,16).forEach(m=>{h+=`<div class="search-item" onclick="selectSearchedMountain('${m.name}',${m.ele},'${m.type}',${m.lat||38.11},${m.lng||128.46})"><div><span>${m.name}</span><div class="search-item-sub">${m.region}</div></div><span style="color:var(--accent-cyan);font-weight:700;">${m.ele}m</span></div>`;});d.innerHTML=h;d.style.display='block';}
+function renderSearchDropdown(l){
+  const d=document.getElementById('search-dropdown');if(!d)return;
+  if(l.length===0){d.innerHTML='<div style="padding:14px;font-size:12px;color:var(--text-secondary);text-align:center;">검색 결과가 없습니다.</div>';d.style.display='block';return;}
+  let h='';
+  l.slice(0,16).forEach(m=>{
+    h+=`<div class="search-item" onclick="selectSearchedMountain('${m.name}',${m.ele},'${m.type}',${m.lat||38.11},${m.lng||128.46})"><div><span>${m.name}</span><div class="search-item-sub">${m.region}</div></div><span style="color:var(--accent-cyan);font-weight:700;">${m.ele}m</span></div>`;
+  });
+  d.innerHTML=h;d.style.display='block';
+}
 
-window.selectSearchedMountain=function(n,e,t,lt,lg){document.getElementById('mt-search-input').value=`${n} (${e}m)`;document.getElementById('search-dropdown').style.display='none';selectMountain(n,e,null,t,lt,lg);};
+window.selectSearchedMountain=function(n,e,t,lt,lg){
+  document.getElementById('mt-search-input').value=`${n} (${e}m)`;
+  document.getElementById('search-dropdown').style.display='none';
+  selectMountain(n,e,null,t,lt,lg);
+};
 
-document.addEventListener('click',e=>{const sc=document.querySelector('.search-container');if(sc&&!sc.contains(e.target)){const sd=document.getElementById('search-dropdown');if(sd)sd.style.display='none';}});
+document.addEventListener('click',e=>{
+  const sc=document.querySelector('.search-container');
+  if(sc&&!sc.contains(e.target)){const sd=document.getElementById('search-dropdown');if(sd)sd.style.display='none';}
+});
 
 window.onload=()=>{
-  renderFavoritesChips();
-  triggerGPSMatching();
+  renderFavoritesChips();triggerGPSMatching();
   setInterval(()=>{
     if(navigator.onLine)selectMountain(currentMt.name,currentMt.ele,null,currentMt.type,currentMt.lat,currentMt.lng,currentMt.distanceKm);
   },600000);
