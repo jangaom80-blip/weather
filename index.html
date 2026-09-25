@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v6.5</title>
+  <title>STATLAB 산악 기상 분석 v6.6</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -1348,7 +1348,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v6.5
+    STATLAB v6.6
   </div>
 
 <script>
@@ -1469,7 +1469,6 @@ function findCurrentHourIndex(h){
   return bI;
 }
 
-// ★ [버그 완전 해결] 선택된 예보 시각(targetDate)을 정확하게 기준점으로 계산
 function computeSunAndTrailSafety(d, targetDate = null){
   const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
   
@@ -1568,6 +1567,20 @@ function calculateCanopyFriction(currentAlt, summitAlt){
   return (r < 0.65) ? (0.40 + 0.35 * (r / 0.65)) : (0.75 + 0.25 * ((r - 0.65) / 0.35));
 }
 
+// ★ [v6.6 신규] 지형성 강우 증폭 계산 함수 (Orographic Precipitation Scaling)
+function calculateOrographicPrecipitation(baseRain, alt, cloudBase){
+  if(!baseRain || baseRain <= 0) return 0.0;
+  // 1. 고도 상승에 따른 상승기류 응결 증폭 (1000m당 +50%)
+  const altFactor = 1.0 + Math.max(0, (alt - 50) / 1000) * 0.50;
+  // 2. 비구름층(운저고도) 내부 진입 시 직접 수적 포획 가중치 (+35%)
+  const inCloudFactor = (cloudBase && alt >= cloudBase) ? 1.35 : 1.0;
+  
+  let scaled = baseRain * altFactor * inCloudFactor;
+  scaled = parseFloat(scaled.toFixed(1));
+  if(scaled < 0.1 && baseRain > 0) scaled = 0.1;
+  return scaled;
+}
+
 function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, daily, targetTime){
   let s = 0;
   const c = eB - e;
@@ -1618,7 +1631,6 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   return { prob: finalProb, phase: burnOffPhase, factor: burnOffFactor };
 }
 
-// ★ [버그 완전 해결] 맑은 날 곰탕 뷰 오판 원천 차단 물리 공식
 function compute5PhysicsMountainWeather(P){
   const _K1 = 17.67, _K2 = 243.5, T = P.rawTemp, R = P.rawRH, W = P.rawWind, G = P.rawGust;
   const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (R / 100);
@@ -1638,13 +1650,13 @@ function compute5PhysicsMountainWeather(P){
   if(!iDC && P.totalCloud <= 35 && oT >= 85 && !iDr) eCB = Math.max(P.mtEle + 900, bC);
   else if(iDC) eCB = Math.min(Math.max(300, bC), P.mtEle + 400);
 
+  // ★ 정상 고도 지형성 강우량 산출
+  const summitRain = calculateOrographicPrecipitation(P.rawRain, P.mtEle, eCB);
+
   const cS_data = calculateCloudSeaProbabilityWithBurnOff(P.mtEle, R, sRH, W, P.midCloud, P.totalCloud, eCB, P.targetHour, P.daily, P.targetHourTime);
   const cS = cS_data.prob;
 
-  // 운해 위 돌출(쾌청) 판정
   const isAboveCloudSea = (cS >= 45) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 55) && !iDr;
-
-  // ★ [핵심] 날씨가 맑거나 구름 조금일 때 곰탕 뷰가 뜨지 않도록 완벽 가드
   const isActuallyCloudyOrFog = (wI.state === 'fog') || (P.visibility < 1500) || (P.totalCloud >= 60 && P.lowCloud >= 60);
   const iF = !isAboveCloudSea && isActuallyCloudyOrFog && (wI.state === 'fog' || (bC <= P.mtEle + 50 && (P.mtEle - bC) < 700));
   
@@ -1671,7 +1683,8 @@ function compute5PhysicsMountainWeather(P){
     summitHumidity: R,
     summitWind: sW,
     summitGust: sG,
-    rainMm: P.rawRain,
+    rainMm: summitRain,
+    rawBaseRain: P.rawRain,
     weatherCode: P.rawCode,
     effectiveCloudBase: eCB,
     clearance: eCB - P.mtEle,
@@ -1697,6 +1710,7 @@ function compute5PhysicsMountainWeather(P){
   };
 }
 
+// ★ [v6.6 실시간 슬라이더 강우 증폭 연동]
 window.handleAltitudeScrub=function(z){
   if(!liveCurrentCalculatedRes)return;
   const tZ=parseInt(z),r=liveCurrentCalculatedRes,p=r._rawParams,bL=r._baseLclM;
@@ -1711,14 +1725,24 @@ window.handleAltitudeScrub=function(z){
   if(v>4.8)sF=13.12+(0.6215*sT)-(11.37*Math.pow(v,0.16))+(0.3965*sT*Math.pow(v,0.16));
   sF=parseFloat(sF.toFixed(1));
   const iC=(tZ>=r.effectiveCloudBase);
+
+  // ★ 실시간 고도별 강우량 증폭 계산
+  const scrubRain = calculateOrographicPrecipitation(p.rawRain, tZ, r.effectiveCloudBase);
+
   document.getElementById('scrubber-current-label').innerText=`${tZ}m (${tZ===currentMt.ele?'정상':(tZ<=150?'들머리 (숲)':'중턱 능선')})`;
   document.getElementById('card-peak-desc').innerText=`해발 ${tZ}m · ${tZ===currentMt.ele?'정상부':(tZ<=150?'들머리 (숲 차폐)':'중턱 능선')} 분석`;
   document.getElementById('brief-temp').innerText=`${Math.round(sT)}°`;
   document.getElementById('summit-feel').innerText=`${sF}°`;
   document.getElementById('brief-wind').innerText=`${sW} / ${sG} m/s`;
+  document.getElementById('brief-rain').innerText = (r.isDrizzling && scrubRain === 0) ? '미세 빗방울' : `${scrubRain} mm`;
+
   const sP=document.getElementById('card-status-pill');
-  if(r.rainMm>0)sP.innerText=`강우 (${r.rainMm}mm)`;
-  else if(r.isAboveCloudSea&&tZ>=r.effectiveCloudBase){
+  if(scrubRain > 0){
+    sP.style.background='rgba(255, 69, 58, 0.2)';
+    sP.style.borderColor='rgba(255, 69, 58, 0.4)';
+    sP.style.color='var(--accent-red)';
+    sP.innerText=`강우 (${scrubRain}mm)`;
+  }else if(r.isAboveCloudSea&&tZ>=r.effectiveCloudBase){
     sP.style.background='rgba(48,209,88,0.25)';sP.style.borderColor='rgba(48,209,88,0.45)';sP.style.color='var(--accent-green)';
     sP.innerText='구름바다 위 (운해 조망 ☁️🌊)';
   }else if(iC&&r.isRealFog){
@@ -1862,7 +1886,6 @@ function renderLiveForecastTrack(h){
   const sI=h?findCurrentHourIndex(h):0,nw=new Date();
   for(let o=0;o<12;o++){
     const dI=sI+o;
-    // 정확한 시간 인스턴스 생성 (브라우저 종속 에러 방지)
     const tT = (h && h.time && h.time[dI] && !isNaN(new Date(h.time[dI]).getTime())) 
                ? new Date(h.time[dI]) 
                : new Date(nw.getTime() + o * 3600000);
@@ -1885,16 +1908,12 @@ function renderLiveForecastTrack(h){
   }
 }
 
-// ★ [버그 완전 해결] 예보 슬롯 클릭 시 상단 헤더, 일몰 시간, 날씨 HUD 완전 동기화
 function selectForecastHour(o, dI, tH, hS, tT = null){
   selectedHourOffset = o;
   document.querySelectorAll('.time-slot').forEach((s, i) => s.classList.toggle('active', i === o));
   const iN = (tH >= 19 || tH <= 5);
-
-  // 대상 시각 산출 (o시간 뒤)
   const targetDate = tT || new Date(Date.now() + o * 3600000);
 
-  // '현재' (o === 0)로 복귀했을 때 헤더 상태 정상 복구
   if(o === 0){
     const nw = new Date();
     document.getElementById('clock-live').innerText = `${nw.getHours().toString().padStart(2,'0')}:${nw.getMinutes().toString().padStart(2,'0')} 동기화 완료`;
@@ -1909,7 +1928,6 @@ function selectForecastHour(o, dI, tH, hS, tT = null){
   if(!liveWeatherData || !liveWeatherData.hourly) return;
   const h = liveWeatherData.hourly;
 
-  // 선택한 시간의 데이터로 물리 엔진 즉각 재연산
   const res = compute5PhysicsMountainWeather({
     mtEle: currentMt.ele,
     rawTemp: h.temperature_2m[dI] ?? 15.0,
