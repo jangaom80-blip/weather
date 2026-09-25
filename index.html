@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v6.4.1</title>
+  <title>STATLAB 산악 기상 분석 v6.5</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -260,7 +260,7 @@
     .forecast-track::-webkit-scrollbar { display: none; }
     .time-slot {
       flex-shrink: 0;
-      width: 60px;
+      width: 62px;
       background: var(--card-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -273,10 +273,11 @@
     }
     .time-slot:active { transform: scale(0.96); }
     .time-slot.active {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(10, 132, 255, 0.25) !important;
+      border: 1px solid var(--accent-cyan) !important;
+      box-shadow: 0 0 12px rgba(100, 210, 255, 0.45);
     }
-    .slot-label { font-size: 10px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 500; }
+    .slot-label { font-size: 10px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 600; }
     .slot-time { font-size: 11px; font-weight: 700; color: #FFFFFF; }
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
@@ -1347,7 +1348,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v6.4.1 (VERIFIED)
+    STATLAB v6.5
   </div>
 
 <script>
@@ -1456,45 +1457,112 @@ async function fetchLiveMountainWeather(lt,lg,el){
   }catch(e){return null;}
 }
 
-function findCurrentHourIndex(h){if(!h||!h.time||!h.time.length)return 0;const nw=new Date();let bI=0,mD=Infinity;for(let i=0;i<h.time.length;i++){const df=Math.abs(new Date(h.time[i]).getTime()-nw.getTime());if(df<mD){mD=df;bI=i;}}return bI;}
-
-function computeSunAndTrailSafety(d,tH=null){
-  const n=tH?new Date(tH):new Date();let sR=new Date(),sS=new Date(),sR_next=new Date();
-  sR.setHours(6,14,0,0);sS.setHours(18,32,0,0);sR_next.setDate(sR.getDate()+1);sR_next.setHours(6,14,0,0);
-  if(d&&d.sunrise&&d.sunrise[0])sR=new Date(d.sunrise[0]);
-  if(d&&d.sunset&&d.sunset[0])sS=new Date(d.sunset[0]);
-  if(d&&d.sunrise&&d.sunrise[1])sR_next=new Date(d.sunrise[1]);else sR_next=new Date(sR.getTime()+24*3600000);
-  const sR_s=`${sR.getHours().toString().padStart(2,'0')}:${sR.getMinutes().toString().padStart(2,'0')}`;
-  const sS_s=`${sS.getHours().toString().padStart(2,'0')}:${sS.getMinutes().toString().padStart(2,'0')}`;
-  const sR_next_s=`${sR_next.getHours().toString().padStart(2,'0')}:${sR_next.getMinutes().toString().padStart(2,'0')}`;
-  let p=0,bT='일조 양호',bC='var(--accent-green)',dT='',isNight=false,orbChar='☀️',leftLabel=`일출 ${sR_s}`,midLabel='태양 궤적',rightLabel=`일몰 ${sS_s}`;
-  if(n<sR){
-    isNight=true;orbChar='🌙';const sS_prev=new Date(sS.getTime()-24*3600000);
-    p=Math.min(100,Math.max(0,Math.round(((n.getTime()-sS_prev.getTime())/(sR.getTime()-sS_prev.getTime()))*100)));
-    const mTR=Math.floor((sR.getTime()-n.getTime())/60000),hR=Math.floor(mTR/60),rM=mTR%60;
-    bT=mTR<=60?`🌅 일출 ${mTR}분 전 (여명)`:`일출까지 ${hR}시간 ${rM}분`;bC='var(--accent-amber)';leftLabel=`어제 일몰 ${sS_s}`;midLabel='달 궤적 (새벽)';rightLabel=`오늘 일출 ${sR_s}`;
-    dT=`<strong>🌅 [오늘 일출 ${sR_s} (${hR>0?hR+'시간 ':''}${rM}분 전)]:</strong> 여명 및 새벽 산행 구간입니다. 능선 일출 조망 시 기온 급강하에 대비해 방한 의류를 준비하세요.`;
-  }else if(n>=sR&&n<sS){
-    isNight=false;orbChar='☀️';p=Math.min(100,Math.max(0,Math.round(((n.getTime()-sR.getTime())/(sS.getTime()-sR.getTime()))*100)));
-    const mTS=Math.floor((sS.getTime()-n.getTime())/60000),hR=Math.floor(mTS/60),rM=mTS%60;
-    leftLabel=`일출 ${sR_s}`;midLabel='태양 궤적';rightLabel=`일몰 ${sS_s}`;
-    if(mTS<=60){bT='🚨 하산 완료 필수';bC='var(--accent-red)';dT=`<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 완전히 어두워집니다. 즉시 하산을 완료하고 헤드랜턴을 점등하세요.`;}
-    else if(mTS<=120){bT='⚠️ 하산 코스 진입';bC='var(--accent-amber)';dT=`<strong>⚠️ [일몰 ${hR}시간 ${rM}분 전]:</strong> 일몰 시각(<strong>${sS_s}</strong>) 전에 하산로에 진입해야 안전합니다.`;}
-    else{bT=`일몰까지 ${hR}시간 ${rM}분`;bC='var(--accent-green)';dT=`<strong>[안전 일조 확보]:</strong> 일몰 시각은 <strong>${sS_s}</strong>입니다. 넉넉한 일조량으로 안전한 주간 산행이 가능합니다.`;}
-  }else{
-    isNight=true;orbChar='🌙';p=Math.min(100,Math.max(0,Math.round(((n.getTime()-sS.getTime())/(sR_next.getTime()-sS.getTime()))*100)));
-    const mTN=Math.floor((sR_next.getTime()-n.getTime())/60000),hR=Math.floor(mTN/60),rM=mTN%60;
-    bT=`내일 일출까지 ${hR}시간 ${rM}분`;bC='var(--accent-purple)';leftLabel=`일몰 ${sS_s}`;midLabel='달 궤적 (야간)';rightLabel=`내일 일출 ${sR_next_s}`;
-    dT=`<strong>🌙 [일몰 완료 / 내일 일출(${sR_next_s})까지 ${hR}시간 ${rM}분]:</strong> 야간 산행 및 비박 구간입니다. 칠흑 같은 어둠에 대비해 예비 배터리와 방한 조치에 각별히 유의하세요.`;
+function findCurrentHourIndex(h){
+  if(!h||!h.time||!h.time.length)return 0;
+  const nw=new Date();let bI=0,mD=Infinity;
+  for(let i=0;i<h.time.length;i++){
+    const ts=new Date(h.time[i]).getTime();
+    if(isNaN(ts))continue;
+    const df=Math.abs(ts-nw.getTime());
+    if(df<mD){mD=df;bI=i;}
   }
-  return{srStr:sR_s,ssStr:sS_s,sunProgress:p,badgeText:bT,badgeColor:bC,descText:dT,isNight:isNight,orbChar:orbChar,leftLabel:leftLabel,midLabel:midLabel,rightLabel:rightLabel};
+  return bI;
 }
 
-/**
- * =========================================================================
- * [정밀 물리 엔진] 수목한계선 숲 차폐 마찰 계수 & 일출 후 Burn-off 증발 타이머
- * =========================================================================
- */
+// ★ [버그 완전 해결] 선택된 예보 시각(targetDate)을 정확하게 기준점으로 계산
+function computeSunAndTrailSafety(d, targetDate = null){
+  const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
+  
+  let sR = new Date(n.getFullYear(), n.getMonth(), n.getDate(), 6, 15, 0);
+  let sS = new Date(n.getFullYear(), n.getMonth(), n.getDate(), 18, 20, 0);
+  let sR_next = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 6, 15, 0);
+
+  if(d && d.sunrise && d.sunrise[0]) {
+    const pR = new Date(d.sunrise[0]);
+    if(!isNaN(pR.getTime())) sR = pR;
+  }
+  if(d && d.sunset && d.sunset[0]) {
+    const pS = new Date(d.sunset[0]);
+    if(!isNaN(pS.getTime())) sS = pS;
+  }
+  if(d && d.sunrise && d.sunrise[1]) {
+    const pRN = new Date(d.sunrise[1]);
+    if(!isNaN(pRN.getTime())) sR_next = pRN;
+  } else {
+    sR_next = new Date(sR.getTime() + 24*3600000);
+  }
+
+  const sR_s = `${sR.getHours().toString().padStart(2,'0')}:${sR.getMinutes().toString().padStart(2,'0')}`;
+  const sS_s = `${sS.getHours().toString().padStart(2,'0')}:${sS.getMinutes().toString().padStart(2,'0')}`;
+  const sR_next_s = `${sR_next.getHours().toString().padStart(2,'0')}:${sR_next.getMinutes().toString().padStart(2,'0')}`;
+
+  let p = 0, bT = '일조 양호', bC = 'var(--accent-green)', dT = '';
+  let isNight = false, orbChar = '☀️', leftLabel = `일출 ${sR_s}`, midLabel = '태양 궤적', rightLabel = `일몰 ${sS_s}`;
+
+  if(n < sR){
+    isNight = true;
+    orbChar = '🌙';
+    const sS_prev = new Date(sS.getTime() - 24*3600000);
+    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS_prev.getTime()) / (sR.getTime() - sS_prev.getTime())) * 100)));
+    const mTR = Math.floor((sR.getTime() - n.getTime()) / 60000);
+    const hR = Math.floor(mTR / 60), rM = mTR % 60;
+    bT = mTR <= 60 ? `🌅 일출 ${mTR}분 전 (여명)` : `일출까지 ${hR}시간 ${rM}분`;
+    bC = 'var(--accent-amber)';
+    leftLabel = `어제 일몰 ${sS_s}`;
+    midLabel = '달 궤적 (새벽)';
+    rightLabel = `오늘 일출 ${sR_s}`;
+    dT = `<strong>🌅 [일출 ${sR_s} (${hR>0?hR+'시간 ':''}${rM}분 전)]:</strong> 여명 및 새벽 산행 구간입니다. 능선 일출 조망 시 기온 급강하에 대비해 방한 의류를 준비하세요.`;
+  } else if(n >= sR && n < sS){
+    isNight = false;
+    orbChar = '☀️';
+    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sR.getTime()) / (sS.getTime() - sR.getTime())) * 100)));
+    const mTS = Math.floor((sS.getTime() - n.getTime()) / 60000);
+    const hR = Math.floor(mTS / 60), rM = mTS % 60;
+    leftLabel = `일출 ${sR_s}`;
+    midLabel = '태양 궤적';
+    rightLabel = `일몰 ${sS_s}`;
+    if(mTS <= 60){
+      bT = '🚨 하산 완료 필수';
+      bC = 'var(--accent-red)';
+      dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 완전히 어두워집니다. 즉시 하산을 완료하고 헤드랜턴을 점등하세요.`;
+    } else if(mTS <= 120){
+      bT = '⚠️ 하산 코스 진입';
+      bC = 'var(--accent-amber)';
+      dT = `<strong>⚠️ [일몰 ${hR}시간 ${rM}분 전]:</strong> 일몰 시각(<strong>${sS_s}</strong>) 전에 하산로에 진입해야 안전합니다.`;
+    } else {
+      bT = `일몰까지 ${hR}시간 ${rM}분`;
+      bC = 'var(--accent-green)';
+      dT = `<strong>[안전 일조 확보]:</strong> 일몰 시각은 <strong>${sS_s}</strong>입니다. 넉넉한 일조량으로 안전한 주간 산행이 가능합니다.`;
+    }
+  } else {
+    isNight = true;
+    orbChar = '🌙';
+    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS.getTime()) / (sR_next.getTime() - sS.getTime())) * 100)));
+    const mTN = Math.floor((sR_next.getTime() - n.getTime()) / 60000);
+    const hR = Math.floor(mTN / 60), rM = mTN % 60;
+    bT = `내일 일출까지 ${hR}시간 ${rM}분`;
+    bC = 'var(--accent-purple)';
+    leftLabel = `일몰 ${sS_s}`;
+    midLabel = '달 궤적 (야간)';
+    rightLabel = `내일 일출 ${sR_next_s}`;
+    dT = `<strong>🌙 [일몰 완료 / 내일 일출(${sR_next_s})까지 ${hR}시간 ${rM}분]:</strong> 야간 산행 및 비박 구간입니다. 칠흑 같은 어둠에 대비해 예비 배터리와 방한 조치에 각별히 유의하세요.`;
+  }
+
+  return {
+    srStr: sR_s,
+    ssStr: sS_s,
+    sunProgress: p,
+    badgeText: bT,
+    badgeColor: bC,
+    descText: dT,
+    isNight: isNight,
+    orbChar: orbChar,
+    leftLabel: leftLabel,
+    midLabel: midLabel,
+    rightLabel: rightLabel
+  };
+}
+
 function calculateCanopyFriction(currentAlt, summitAlt){
   const r = Math.min(1.0, Math.max(0.0, (currentAlt - 50) / Math.max(1, summitAlt - 50)));
   return (r < 0.65) ? (0.40 + 0.35 * (r / 0.65)) : (0.75 + 0.25 * ((r - 0.65) / 0.35));
@@ -1528,19 +1596,21 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
 
   if(daily && daily.sunrise && daily.sunrise[0] && targetTime){
     const sR_date = new Date(daily.sunrise[0]);
-    const diffMins = Math.round((targetTime.getTime() - sR_date.getTime()) / 60000);
-    if(diffMins >= -60 && diffMins <= 60){
-      burnOffFactor = 1.0;
-      burnOffPhase = 'golden';
-    } else if(diffMins > 60 && diffMins <= 120){
-      burnOffFactor = 0.85;
-      burnOffPhase = 'warming';
-    } else if(diffMins > 120 && diffMins <= 180){
-      burnOffFactor = 0.55;
-      burnOffPhase = 'evaporating';
-    } else if(diffMins > 180 && diffMins <= 600){
-      burnOffFactor = 0.25;
-      burnOffPhase = 'dispersed';
+    if(!isNaN(sR_date.getTime())){
+      const diffMins = Math.round((targetTime.getTime() - sR_date.getTime()) / 60000);
+      if(diffMins >= -60 && diffMins <= 60){
+        burnOffFactor = 1.0;
+        burnOffPhase = 'golden';
+      } else if(diffMins > 60 && diffMins <= 120){
+        burnOffFactor = 0.85;
+        burnOffPhase = 'warming';
+      } else if(diffMins > 120 && diffMins <= 180){
+        burnOffFactor = 0.55;
+        burnOffPhase = 'evaporating';
+      } else if(diffMins > 180 && diffMins <= 600){
+        burnOffFactor = 0.25;
+        burnOffPhase = 'dispersed';
+      }
     }
   }
 
@@ -1548,6 +1618,7 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   return { prob: finalProb, phase: burnOffPhase, factor: burnOffFactor };
 }
 
+// ★ [버그 완전 해결] 맑은 날 곰탕 뷰 오판 원천 차단 물리 공식
 function compute5PhysicsMountainWeather(P){
   const _K1 = 17.67, _K2 = 243.5, T = P.rawTemp, R = P.rawRH, W = P.rawWind, G = P.rawGust;
   const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (R / 100);
@@ -1570,10 +1641,14 @@ function compute5PhysicsMountainWeather(P){
   const cS_data = calculateCloudSeaProbabilityWithBurnOff(P.mtEle, R, sRH, W, P.midCloud, P.totalCloud, eCB, P.targetHour, P.daily, P.targetHourTime);
   const cS = cS_data.prob;
 
-  // 운해 위 돌출 쾌청 여부 판정
-  const isAboveCloudSea = (cS >= 50) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 55) && !iDr;
-  const iF = !isAboveCloudSea && ((P.visibility < 2000) || (oT < 45) || (wI.state === 'fog') || (P.lowCloud >= 70 && bC <= P.mtEle + 80) || (R >= 92 && P.lowCloud >= 50));
-  const iC = isAboveCloudSea || ((!iDC) && (P.totalCloud <= 35) && (oT >= 80) && (!iDr) && (!iF));
+  // 운해 위 돌출(쾌청) 판정
+  const isAboveCloudSea = (cS >= 45) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 55) && !iDr;
+
+  // ★ [핵심] 날씨가 맑거나 구름 조금일 때 곰탕 뷰가 뜨지 않도록 완벽 가드
+  const isActuallyCloudyOrFog = (wI.state === 'fog') || (P.visibility < 1500) || (P.totalCloud >= 60 && P.lowCloud >= 60);
+  const iF = !isAboveCloudSea && isActuallyCloudyOrFog && (wI.state === 'fog' || (bC <= P.mtEle + 50 && (P.mtEle - bC) < 700));
+  
+  const iC = isAboveCloudSea || ((!iDC) && (P.totalCloud <= 40) && (oT >= 75) && (!iDr) && (!iF));
 
   const stabilityDamping = isAboveCloudSea ? 0.45 : (cS >= 50 ? 0.65 : 1.0);
   const canopyFrictionSummit = calculateCanopyFriction(P.mtEle, P.mtEle);
@@ -1786,10 +1861,21 @@ function renderLiveForecastTrack(h){
   const t=document.getElementById('forecast-track');if(!t)return;t.innerHTML='';
   const sI=h?findCurrentHourIndex(h):0,nw=new Date();
   for(let o=0;o<12;o++){
-    const dI=sI+o,tT=(h&&h.time&&h.time[dI])?new Date(h.time[dI]):new Date(nw.getTime()+o*3600000),tH=tT.getHours(),hS=`${tH<10?'0':''}${tH}:00`,lb=(o===0)?'현재':`+${o}h`;
+    const dI=sI+o;
+    // 정확한 시간 인스턴스 생성 (브라우저 종속 에러 방지)
+    const tT = (h && h.time && h.time[dI] && !isNaN(new Date(h.time[dI]).getTime())) 
+               ? new Date(h.time[dI]) 
+               : new Date(nw.getTime() + o * 3600000);
+    const tH = tT.getHours(), hS = `${tH<10?'0':''}${tH}:00`, lb = (o===0)?'현재':`+${o}h`;
     let tm=16,wC=0,tC=0,mC=0;
-    if(h&&h.temperature_2m&&h.temperature_2m[dI]!==undefined){tm=Math.round(h.temperature_2m[dI]);wC=h.weather_code[dI];tC=h.cloud_cover?h.cloud_cover[dI]:0;mC=h.cloud_cover_mid?h.cloud_cover_mid[dI]:0;}
-    const iN=(tH>=19||tH<=5);let wI=decodeWmoCode(wC,iN),ic=wI.icon;
+    if(h&&h.temperature_2m&&h.temperature_2m[dI]!==undefined){
+      tm=Math.round(h.temperature_2m[dI]);
+      wC=h.weather_code[dI];
+      tC=h.cloud_cover?h.cloud_cover[dI]:0;
+      mC=h.cloud_cover_mid?h.cloud_cover_mid[dI]:0;
+    }
+    const iN=(tH>=19||tH<=5);
+    let wI=decodeWmoCode(wC,iN),ic=wI.icon;
     if(tC>=65||mC>=55)ic=(wC>=51)?'🌧️':'☁️';
     const sl=document.createElement('div');
     sl.className=`time-slot ${o===selectedHourOffset?'active':''}`;
@@ -1799,16 +1885,51 @@ function renderLiveForecastTrack(h){
   }
 }
 
-function selectForecastHour(o,dI,tH,hS,tT=null){
-  selectedHourOffset=o;
-  document.querySelectorAll('.time-slot').forEach((s,i)=>s.classList.toggle('active',i===o));
-  const iN=(tH>=19||tH<=5);
-  if(o===0&&liveCurrentCalculatedRes){updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',iN,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);return;}
-  document.getElementById('clock-live').innerText=`예보 모드: ${o}시간 뒤 (${hS})`;
-  if(!liveWeatherData||!liveWeatherData.hourly)return;
-  const h=liveWeatherData.hourly;
-  const res=compute5PhysicsMountainWeather({mtEle:currentMt.ele,rawTemp:h.temperature_2m[dI]??15.0,rawRH:h.relative_humidity_2m[dI]??70,rawWind:(h.wind_speed_10m[dI]??3.0)*0.2777,rawGust:(h.wind_gusts_10m[dI]??6.0)*0.2777,rawRain:h.precipitation[dI]??0.0,rawCode:h.weather_code[dI]??0,totalCloud:h.cloud_cover?h.cloud_cover[dI]:0,lowCloud:h.cloud_cover_low?h.cloud_cover_low[dI]:0,midCloud:h.cloud_cover_mid?h.cloud_cover_mid[dI]:0,visibility:h.visibility?h.visibility[dI]:15000,rawDew:h.dew_point_2m?h.dew_point_2m[dI]:null,pointType:currentMt.type||'peak',targetHour:tH,daily:liveWeatherData.daily||null,targetHourTime:tT});
-  updateAlpineWeatherHUD(res,hS,iN,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);
+// ★ [버그 완전 해결] 예보 슬롯 클릭 시 상단 헤더, 일몰 시간, 날씨 HUD 완전 동기화
+function selectForecastHour(o, dI, tH, hS, tT = null){
+  selectedHourOffset = o;
+  document.querySelectorAll('.time-slot').forEach((s, i) => s.classList.toggle('active', i === o));
+  const iN = (tH >= 19 || tH <= 5);
+
+  // 대상 시각 산출 (o시간 뒤)
+  const targetDate = tT || new Date(Date.now() + o * 3600000);
+
+  // '현재' (o === 0)로 복귀했을 때 헤더 상태 정상 복구
+  if(o === 0){
+    const nw = new Date();
+    document.getElementById('clock-live').innerText = `${nw.getHours().toString().padStart(2,'0')}:${nw.getMinutes().toString().padStart(2,'0')} 동기화 완료`;
+    if(liveCurrentCalculatedRes){
+      updateAlpineWeatherHUD(liveCurrentCalculatedRes, '현재', iN, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
+      return;
+    }
+  } else {
+    document.getElementById('clock-live').innerText = `예보 모드: ${o}시간 뒤 (${hS})`;
+  }
+
+  if(!liveWeatherData || !liveWeatherData.hourly) return;
+  const h = liveWeatherData.hourly;
+
+  // 선택한 시간의 데이터로 물리 엔진 즉각 재연산
+  const res = compute5PhysicsMountainWeather({
+    mtEle: currentMt.ele,
+    rawTemp: h.temperature_2m[dI] ?? 15.0,
+    rawRH: h.relative_humidity_2m[dI] ?? 70,
+    rawWind: (h.wind_speed_10m[dI] ?? 3.0) * 0.2777,
+    rawGust: (h.wind_gusts_10m[dI] ?? 6.0) * 0.2777,
+    rawRain: h.precipitation[dI] ?? 0.0,
+    rawCode: h.weather_code[dI] ?? 0,
+    totalCloud: h.cloud_cover ? h.cloud_cover[dI] : 0,
+    lowCloud: h.cloud_cover_low ? h.cloud_cover_low[dI] : 0,
+    midCloud: h.cloud_cover_mid ? h.cloud_cover_mid[dI] : 0,
+    visibility: h.visibility ? h.visibility[dI] : 15000,
+    rawDew: h.dew_point_2m ? h.dew_point_2m[dI] : null,
+    pointType: currentMt.type || 'peak',
+    targetHour: tH,
+    daily: liveWeatherData.daily || null,
+    targetHourTime: targetDate
+  });
+
+  updateAlpineWeatherHUD(res, hS, iN, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
 }
 
 window.selectMountain=async function(n,e,bE,t='peak',lt=38.1192,lg=128.4652,dK=null){
