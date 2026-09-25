@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v6.8</title>
+  <title>STATLAB 산악 기상 분석 v6.9</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -42,7 +42,7 @@
     }
 
     html, body {
-      overscroll-behavior-y: contain; /* 앱 당김 새로고침 덜컹거림 방지 */
+      overscroll-behavior-y: contain;
     }
 
     body {
@@ -680,7 +680,6 @@
       border-top: 0.5px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* ★ [v6.8 신규] 시각화된 전용 운해 소멸 타이머 배지 */
     .cloudsea-card {
       background: linear-gradient(135deg, rgba(28, 24, 40, 0.8) 0%, rgba(18, 20, 32, 0.88) 100%);
       backdrop-filter: blur(25px);
@@ -724,7 +723,6 @@
       color: #E5B8FF;
     }
 
-    /* ★ 운해 소멸 타이머 전용 비주얼 배너 */
     .cs-burnoff-timer-banner {
       background: rgba(255, 255, 255, 0.04);
       border: 0.5px solid rgba(255, 255, 255, 0.1);
@@ -1235,7 +1233,7 @@
         </div>
         <div class="spec-item">
           <span class="spec-label">강수량</span>
-          <span id="brief-rain" class="spec-val" style="color: var(--accent-cyan);">0.0 mm</span>
+          <span id="brief-rain" class="spec-val" style="color: var(--accent-cyan);">0 mm</span>
         </div>
       </div>
     </div>
@@ -1275,7 +1273,7 @@
       <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
     </div>
 
-    <!-- ★ [v6.8 신규] 시각화된 전용 운해 소멸 타이머 배너 -->
+    <!-- 운해 소멸 타이머 전용 비주얼 배너 -->
     <div id="cs-burnoff-banner" class="cs-burnoff-timer-banner">
       <div class="cs-timer-label">
         <span id="cs-timer-icon">⏳</span>
@@ -1394,7 +1392,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v6.8 (STORE READY)
+    STATLAB v6.9 (VERIFIED)
   </div>
 
 <script>
@@ -1437,7 +1435,6 @@ let baseLiveCurrentRes=null;
 let activeForecastRes=null;
 let _lastHapticZ=0,currentUserAltitude=null;
 
-// ★ [안드로이드 뒤로가기 버튼 대응]
 window.openLegalModal=function(){
   document.getElementById('legal-modal').classList.add('active');
   document.body.style.overflow='hidden';
@@ -1640,7 +1637,6 @@ function calculateOrographicPrecipitation(baseRain, alt, cloudBase){
   return scaled;
 }
 
-// ★ [v6.8 업그레이드] 명확한 잔여 시간 표기를 제공하는 운해 소멸 타이머 계산
 function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, daily, targetTime){
   let s = 0;
   const c = eB - e;
@@ -1713,6 +1709,7 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   };
 }
 
+// ★ [v6.9 정밀 강수 공식] 과민 반응(마른 흐림 시 빗방울 오판) 완전 제거
 function compute5PhysicsMountainWeather(P){
   const _K1 = 17.67, _K2 = 243.5, T = P.rawTemp, R = P.rawRH, W = P.rawWind, G = P.rawGust;
   const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (R / 100);
@@ -1726,11 +1723,17 @@ function compute5PhysicsMountainWeather(P){
   const oB = Math.min(250, Math.round(W * 14)), bC = Math.max(150, Math.round(50 + bL - oB));
   const wI = decodeWmoCode(P.rawCode), dD = Math.max(0, smT - Td);
   const iDC = (P.totalCloud >= 55) || (P.midCloud >= 50);
-  const iDr = (P.rawRain > 0) || (wI.state === 'drizzle') || (iDC && dD <= 3.8 && R >= 80);
 
   let eCB = bC;
-  if(!iDC && P.totalCloud <= 35 && oT >= 85 && !iDr) eCB = Math.max(P.mtEle + 900, bC);
+  if(!iDC && P.totalCloud <= 35 && oT >= 85 && P.rawRain <= 0) eCB = Math.max(P.mtEle + 900, bC);
   else if(iDC) eCB = Math.min(Math.max(300, bC), P.mtEle + 400);
+
+  // ★ [핵심 필터] 
+  // 산이 운저(비구름) 내부로 직접 진입했고 + 상대습도 95% 이상 + 이슬점 차이 0.8°C 이하일 때만 극단적 미세수적 응결 인정
+  const isMountainInCloud = (P.mtEle >= eCB);
+  const isExtremeSaturation = (R >= 95 && dD <= 0.8 && isMountainInCloud);
+  const isDrizzlingWmo = (wI.state === 'drizzle');
+  const iDr = (P.rawRain > 0) || isDrizzlingWmo || isExtremeSaturation;
 
   const summitRain = calculateOrographicPrecipitation(P.rawRain, P.mtEle, eCB);
   const cS_data = calculateCloudSeaProbabilityWithBurnOff(P.mtEle, R, sRH, W, P.midCloud, P.totalCloud, eCB, P.targetHour, P.daily, P.targetHourTime);
@@ -1822,12 +1825,23 @@ window.handleAltitudeScrub=function(z){
   const scrubRain = calculateOrographicPrecipitation(p.rawRain, tZ, r.effectiveCloudBase);
   const isSummit = (tZ === currentMt.ele);
 
+  // ★ 정밀 슬라이더 강수 상태 판단
+  const inCloudAtZ = (tZ >= r.effectiveCloudBase);
+  const isDrizzleAtZ = (p.rawRain > 0) || (r.wmoInfo.state === 'drizzle') || (inCloudAtZ && (sT - (p.rawDew || sT)) <= 0.8 && p.rawRH >= 95);
+
   document.getElementById('scrubber-current-label').innerText = `${tZ}m (${isSummit ? '정상' : (tZ <= 150 ? '들머리 (숲)' : '중턱 능선')})`;
   document.getElementById('card-peak-desc').innerText = `해발 ${tZ}m · ${isSummit ? '정상부' : (tZ <= 150 ? '들머리 (숲 차폐)' : '중턱 능선')} 분석`;
   document.getElementById('brief-temp').innerText = `${Math.round(sT)}°`;
   document.getElementById('summit-feel').innerText = `${sF}°`;
   document.getElementById('brief-wind').innerText = `${sW} / ${sG} m/s`;
-  document.getElementById('brief-rain').innerText = (r.isDrizzling && scrubRain === 0) ? '미세 빗방울' : `${scrubRain} mm`;
+
+  if(scrubRain > 0){
+    document.getElementById('brief-rain').innerText = `${scrubRain} mm`;
+  } else if(isDrizzleAtZ){
+    document.getElementById('brief-rain').innerText = '미세 빗방울';
+  } else {
+    document.getElementById('brief-rain').innerText = '0 mm';
+  }
 
   const sP = document.getElementById('card-status-pill');
   if(scrubRain > 0){
@@ -1835,6 +1849,11 @@ window.handleAltitudeScrub=function(z){
     sP.style.borderColor = 'rgba(255, 69, 58, 0.4)';
     sP.style.color = 'var(--accent-red)';
     sP.innerText = `강우 (${scrubRain}mm)`;
+  } else if(isDrizzleAtZ){
+    sP.style.background = 'rgba(100, 210, 255, 0.2)';
+    sP.style.borderColor = 'rgba(100, 210, 255, 0.4)';
+    sP.style.color = 'var(--accent-cyan)';
+    sP.innerText = '미세 빗방울 (안개비)';
   } else if(r.isAboveCloudSea && tZ >= r.effectiveCloudBase){
     sP.style.background = 'rgba(48,209,88,0.25)';
     sP.style.borderColor = 'rgba(48,209,88,0.45)';
@@ -1845,6 +1864,11 @@ window.handleAltitudeScrub=function(z){
     sP.style.borderColor = 'rgba(255,159,10,0.45)';
     sP.style.color = 'var(--accent-amber)';
     sP.innerText = '구름 진입 (운무 🌫️)';
+  } else if(r.isDarkCloud){
+    sP.style.background = 'rgba(255, 255, 255, 0.08)';
+    sP.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+    sP.style.color = 'rgba(235, 235, 245, 0.8)';
+    sP.innerText = `흐림 (전운 ${r.totalCloud}%)`;
   } else {
     sP.style.background = 'rgba(48,209,88,0.2)';
     sP.style.borderColor = 'rgba(48,209,88,0.35)';
@@ -1896,7 +1920,16 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
   document.getElementById('brief-temp').innerText = `${Math.round(r.summitTemp)}°`;
   document.getElementById('summit-feel').innerText = `${r.summitFeel}°`;
   document.getElementById('brief-wind').innerText = `${r.summitWind} / ${r.summitGust} m/s`;
-  document.getElementById('brief-rain').innerText = r.isDrizzling && r.rainMm === 0 ? '미세 빗방울' : `${r.rainMm} mm`;
+  
+  // ★ [v6.9] 정확한 강수량 및 미세 빗방울 분기 표기
+  if(r.rainMm > 0){
+    document.getElementById('brief-rain').innerText = `${r.rainMm} mm`;
+  } else if(r.isDrizzling){
+    document.getElementById('brief-rain').innerText = '미세 빗방울';
+  } else {
+    document.getElementById('brief-rain').innerText = '0 mm';
+  }
+
   document.getElementById('meter-mt-label').innerText = `정상 ${currentMt.ele}m`;
   document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(10, Math.round((currentMt.ele / 3000) * 100)))}%`;
   document.getElementById('meter-cloud-line').style.left = `${Math.min(98, Math.max(5, Math.round((r.effectiveCloudBase / 3000) * 100)))}%`;
@@ -1934,7 +1967,6 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
     document.getElementById('sun-safety-desc').innerHTML = r.sunSafety.descText;
   }
   
-  // ★ [v6.8 신규] 시각화된 전용 운해 소멸 타이머 배너 실시간 갱신
   const timerBadge = document.getElementById('cs-timer-badge');
   if(timerBadge && r.cloudSeaTimerText){
     timerBadge.innerText = r.cloudSeaTimerText;
@@ -1965,6 +1997,10 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
       cbP.style.color = 'var(--accent-red)'; cbP.innerText = `강우 구름대 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방수 장비를 착용하세요.`;
       sP.innerText = `강우 (${r.rainMm}mm)`; sP.style.color = 'var(--accent-red)';
       sP.style.background = 'rgba(255, 69, 58, 0.2)'; sP.style.borderColor = 'rgba(255, 69, 58, 0.4)';
+    } else if(r.isDrizzling){
+      cbP.style.color = 'var(--accent-cyan)'; cbP.innerText = `안개비 구름대 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 짙은 안개비 구름대 내부로 미세 빗방울이 맺히고 있습니다.`;
+      sP.innerText = '미세 빗방울 (안개비)'; sP.style.color = 'var(--accent-cyan)';
+      sP.style.background = 'rgba(100, 210, 255, 0.2)'; sP.style.borderColor = 'rgba(100, 210, 255, 0.4)';
     } else if(r.isAboveCloudSea){
       cbP.style.color = 'var(--accent-green)'; cbP.innerText = `운해 위 쾌청 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS} [구름바다 위 파노라마]:</strong> 운해(${r.effectiveCloudBase}m)가 발아래 깔려 있고 상공은 쾌청하여 <strong>시야 100% 특급 조망</strong>이 펼쳐집니다!`;
       sP.innerText = '구름바다 위 (운해 조망 ☁️🌊)'; sP.style.color = 'var(--accent-green)';
@@ -1984,9 +2020,11 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
     } else if(r.isDarkCloud){
       cbP.style.color = 'rgba(235, 235, 245, 0.8)'; cbP.innerText = `흐림 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 전운량 ${r.totalCloud}%로 일조가 차단되며 조망이 어둡게 제한됩니다.`;
       sP.innerText = `흐림 (전운 ${r.totalCloud}%)`; sP.style.color = 'rgba(235,235,245,0.8)';
+      sP.style.background = 'rgba(255, 255, 255, 0.08)'; sP.style.borderColor = 'rgba(255, 255, 255, 0.15)';
     } else {
       cbP.style.color = 'var(--accent-green)'; cbP.innerText = `조망 특급 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 구름층(${r.effectiveCloudBase}m)이 정상 상공에 위치하며 광학 투과율 <strong>${r.opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
       sP.innerText = '시야 100% 쾌청'; sP.style.color = 'var(--accent-green)';
+      sP.style.background = 'rgba(48, 209, 88, 0.2)'; sP.style.borderColor = 'rgba(48, 209, 88, 0.4)';
     }
   }
 
