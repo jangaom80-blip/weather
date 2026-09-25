@@ -6,8 +6,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v6.7</title>
+  <title>STATLAB 산악 기상 분석 v6.8</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -38,6 +39,10 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Pretendard", sans-serif;
       letter-spacing: -0.3px;
       font-variant-numeric: tabular-nums;
+    }
+
+    html, body {
+      overscroll-behavior-y: contain; /* 앱 당김 새로고침 덜컹거림 방지 */
     }
 
     body {
@@ -675,6 +680,7 @@
       border-top: 0.5px solid rgba(255, 255, 255, 0.08);
     }
 
+    /* ★ [v6.8 신규] 시각화된 전용 운해 소멸 타이머 배지 */
     .cloudsea-card {
       background: linear-gradient(135deg, rgba(28, 24, 40, 0.8) 0%, rgba(18, 20, 32, 0.88) 100%);
       backdrop-filter: blur(25px);
@@ -689,7 +695,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .cs-title {
       font-size: 12px;
@@ -717,6 +723,34 @@
       border: 0.5px solid rgba(191, 90, 242, 0.45);
       color: #E5B8FF;
     }
+
+    /* ★ 운해 소멸 타이머 전용 비주얼 배너 */
+    .cs-burnoff-timer-banner {
+      background: rgba(255, 255, 255, 0.04);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+    .cs-timer-label {
+      color: #FFFFFF;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cs-timer-badge {
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      letter-spacing: 0.2px;
+    }
+
     .cs-meter-wrap {
       margin-bottom: 6px;
     }
@@ -1240,6 +1274,18 @@
       </div>
       <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
     </div>
+
+    <!-- ★ [v6.8 신규] 시각화된 전용 운해 소멸 타이머 배너 -->
+    <div id="cs-burnoff-banner" class="cs-burnoff-timer-banner">
+      <div class="cs-timer-label">
+        <span id="cs-timer-icon">⏳</span>
+        <span id="cs-timer-title">운해 소멸 타이머</span>
+      </div>
+      <div id="cs-timer-badge" class="cs-timer-badge" style="background: rgba(48,209,88,0.2); color: var(--accent-green); border: 0.5px solid rgba(48,209,88,0.4);">
+        골든타임 분석 중
+      </div>
+    </div>
+
     <div class="cs-meter-wrap">
       <div class="cs-meter-bar">
         <div id="cs-meter-fill" class="cs-meter-fill" style="width: 0%;"></div>
@@ -1348,7 +1394,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v6.7
+    STATLAB v6.8 (STORE READY)
   </div>
 
 <script>
@@ -1385,14 +1431,29 @@ function isCurrentFavorite(){return getFavorites().some(m=>m.name===currentMt.na
 window.toggleCurrentFavorite=function(){let f=getFavorites();const b=document.getElementById('fav-toggle-btn');if(isCurrentFavorite()){f=f.filter(m=>m.name!==currentMt.name);b.classList.remove('active');b.innerText='☆';}else{f.push({name:currentMt.name,ele:currentMt.ele,type:currentMt.type||'peak',lat:currentMt.lat,lng:currentMt.lng});b.classList.add('active');b.innerText='★';}saveFavorites(f);renderFavoritesChips();};
 function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;if(isCurrentFavorite()){b.classList.add('active');b.innerText='★';}else{b.classList.remove('active');b.innerText='☆';}}
 
-let currentMt=mountainDB[4]; // 금정산 고당봉 기본
+let currentMt=mountainDB[4];
 let selectedHourOffset=0,liveWeatherData=null;
-let baseLiveCurrentRes=null; // ★ 현재(0h) 기상 객체 영구 보존
-let activeForecastRes=null;  // ★ 현재 화면에 선택된 시점(현재 또는 예보)의 기상 객체
+let baseLiveCurrentRes=null;
+let activeForecastRes=null;
 let _lastHapticZ=0,currentUserAltitude=null;
 
-window.openLegalModal=function(){document.getElementById('legal-modal').classList.add('active');document.body.style.overflow='hidden';};
-window.closeLegalModal=function(){document.getElementById('legal-modal').classList.remove('active');document.body.style.overflow='auto';};
+// ★ [안드로이드 뒤로가기 버튼 대응]
+window.openLegalModal=function(){
+  document.getElementById('legal-modal').classList.add('active');
+  document.body.style.overflow='hidden';
+  history.pushState({modalOpen:true},'');
+};
+window.closeLegalModal=function(){
+  document.getElementById('legal-modal').classList.remove('active');
+  document.body.style.overflow='auto';
+};
+window.addEventListener('popstate',function(e){
+  const m=document.getElementById('legal-modal');
+  if(m&&m.classList.contains('active')){
+    m.classList.remove('active');
+    document.body.style.overflow='auto';
+  }
+});
 window.handleModalOverlayClick=function(e){if(e.target.id==='legal-modal')closeLegalModal();};
 window.handleAdClick=function(){window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥','_blank');};
 
@@ -1579,6 +1640,7 @@ function calculateOrographicPrecipitation(baseRain, alt, cloudBase){
   return scaled;
 }
 
+// ★ [v6.8 업그레이드] 명확한 잔여 시간 표기를 제공하는 운해 소멸 타이머 계산
 function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, daily, targetTime){
   let s = 0;
   const c = eB - e;
@@ -1604,29 +1666,51 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   let baseProb = Math.min(99, Math.max(5, Math.round(s)));
   let burnOffFactor = 1.0;
   let burnOffPhase = 'dawn';
+  let burnOffText = '일출 전 (운해 형성 대기)';
+  let burnOffBadgeStyle = 'background: rgba(191,90,242,0.2); color: #E5B8FF; border: 0.5px solid rgba(191,90,242,0.45);';
 
   if(daily && daily.sunrise && daily.sunrise[0] && targetTime){
     const sR_date = new Date(daily.sunrise[0]);
     if(!isNaN(sR_date.getTime())){
       const diffMins = Math.round((targetTime.getTime() - sR_date.getTime()) / 60000);
-      if(diffMins >= -60 && diffMins <= 60){
+      
+      if(diffMins < -60){
+        burnOffFactor = 1.0;
+        burnOffPhase = 'night';
+        burnOffText = '새벽 야간 냉각 중 (운해 태동)';
+      } else if(diffMins >= -60 && diffMins <= 60){
         burnOffFactor = 1.0;
         burnOffPhase = 'golden';
+        const rem = 60 - diffMins;
+        burnOffText = `⏳ 운해 골든타임 (소멸까지 약 ${rem}분)`;
+        burnOffBadgeStyle = 'background: rgba(48,209,88,0.22); color: #30D158; border: 0.5px solid #30D158; box-shadow: 0 0 8px rgba(48,209,88,0.4);';
       } else if(diffMins > 60 && diffMins <= 120){
         burnOffFactor = 0.85;
         burnOffPhase = 'warming';
+        burnOffText = '🔥 태양열 가열 시작 (증발 초기)';
+        burnOffBadgeStyle = 'background: rgba(255,159,10,0.2); color: var(--accent-amber); border: 0.5px solid var(--accent-amber);';
       } else if(diffMins > 120 && diffMins <= 180){
         burnOffFactor = 0.55;
         burnOffPhase = 'evaporating';
-      } else if(diffMins > 180 && diffMins <= 600){
-        burnOffFactor = 0.25;
+        burnOffText = '💨 운해 급격 증발 중 (자연 소멸 진행)';
+        burnOffBadgeStyle = 'background: rgba(255,69,58,0.2); color: var(--accent-red); border: 0.5px solid var(--accent-red);';
+      } else {
+        burnOffFactor = 0.20;
         burnOffPhase = 'dispersed';
+        burnOffText = '☀️ 증발 완료 (낮 시간대 완전 소산)';
+        burnOffBadgeStyle = 'background: rgba(255,255,255,0.08); color: var(--text-tertiary); border: 0.5px solid rgba(255,255,255,0.15);';
       }
     }
   }
 
   const finalProb = Math.min(99, Math.max(5, Math.round(baseProb * burnOffFactor)));
-  return { prob: finalProb, phase: burnOffPhase, factor: burnOffFactor };
+  return { 
+    prob: finalProb, 
+    phase: burnOffPhase, 
+    factor: burnOffFactor,
+    timerText: burnOffText,
+    badgeStyle: burnOffBadgeStyle
+  };
 }
 
 function compute5PhysicsMountainWeather(P){
@@ -1700,20 +1784,20 @@ function compute5PhysicsMountainWeather(P){
     opticalTrans: oT,
     cloudSeaProb: cS,
     cloudSeaPhase: cS_data.phase,
+    cloudSeaTimerText: cS_data.timerText,
+    cloudSeaBadgeStyle: cS_data.badgeStyle,
     sunSafety: sS,
     _rawParams: P,
     _baseLclM: bL
   };
 }
 
-// ★ [v6.7 완전 동기화] 현재 선택된 시간대(activeForecastRes)를 기준으로 고도 스크러빙
 window.handleAltitudeScrub=function(z){
   const r = activeForecastRes || baseLiveCurrentRes;
   if(!r) return;
   const p = r._rawParams, bL = r._baseLclM;
 
   let tZ = parseInt(z);
-  // ★ [정상 자석 스냅] 슬라이더가 800m 등 끝자락에 오면 자동으로 정상(801m)으로 스냅
   if(Math.abs(tZ - currentMt.ele) <= 15){
     tZ = currentMt.ele;
   }
@@ -1735,10 +1819,9 @@ window.handleAltitudeScrub=function(z){
   sF = parseFloat(sF.toFixed(1));
   const iC = (tZ >= r.effectiveCloudBase);
 
-  // 고도별 지형성 강우량 산출
   const scrubRain = calculateOrographicPrecipitation(p.rawRain, tZ, r.effectiveCloudBase);
-
   const isSummit = (tZ === currentMt.ele);
+
   document.getElementById('scrubber-current-label').innerText = `${tZ}m (${isSummit ? '정상' : (tZ <= 150 ? '들머리 (숲)' : '중턱 능선')})`;
   document.getElementById('card-peak-desc').innerText = `해발 ${tZ}m · ${isSummit ? '정상부' : (tZ <= 150 ? '들머리 (숲 차폐)' : '중턱 능선')} 분석`;
   document.getElementById('brief-temp').innerText = `${Math.round(sT)}°`;
@@ -1773,7 +1856,6 @@ window.handleAltitudeScrub=function(z){
   document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(5, Math.round((tZ / 3000) * 100)))}%`;
 };
 
-// ★ [v6.7 정상 앵커 복구] 현재 시간 모드를 유지하며 정상 고도로 안전하게 복귀
 window.resetAltitudeToSummit=function(){
   const s = document.getElementById('altitude-slider');
   if(!s) return;
@@ -1852,10 +1934,16 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
     document.getElementById('sun-safety-desc').innerHTML = r.sunSafety.descText;
   }
   
+  // ★ [v6.8 신규] 시각화된 전용 운해 소멸 타이머 배너 실시간 갱신
+  const timerBadge = document.getElementById('cs-timer-badge');
+  if(timerBadge && r.cloudSeaTimerText){
+    timerBadge.innerText = r.cloudSeaTimerText;
+    timerBadge.style.cssText = r.cloudSeaBadgeStyle;
+  }
+
   const csB = document.getElementById('cs-prob-badge'), csF = document.getElementById('cs-meter-fill');
   csF.style.width = `${r.cloudSeaProb}%`;
-  const phaseTag = (r.cloudSeaPhase === 'golden') ? '(골든타임)' : (r.cloudSeaPhase === 'warming') ? '(온도 상승 중)' : (r.cloudSeaPhase === 'evaporating') ? '(자연 증발 진행)' : '';
-  csB.innerText = `${r.cloudSeaProb}% ${r.cloudSeaProb >= 75 ? '최적 발달' : r.cloudSeaProb >= 50 ? '형성 가능' : '조건 미달'} ${phaseTag}`;
+  csB.innerText = `${r.cloudSeaProb}% ${r.cloudSeaProb >= 75 ? '최적 발달' : r.cloudSeaProb >= 50 ? '형성 가능' : '조건 미달'}`;
   document.getElementById('cs-inversion-txt').innerText = `역전층: ${(r.surfaceRH - r.summitHumidity) >= 10 ? '강함 (포화)' : '보통'}`;
   document.getElementById('cs-wind-txt').innerText = `풍속: ${r.summitWind <= 3.5 ? '안정' : '보통'} (${r.summitWind}m/s)`;
   document.getElementById('cs-sky-txt').innerText = `상공: ${r.midCloud <= 30 ? '개방(쾌청)' : '구름'}`;
@@ -1945,7 +2033,6 @@ function renderLiveForecastTrack(h){
   }
 }
 
-// ★ [v6.7 완전 동기화] 선택 시간대의 res를 activeForecastRes에 완벽 갱신
 function selectForecastHour(o, dI, tH, hS, tT = null){
   selectedHourOffset = o;
   document.querySelectorAll('.time-slot').forEach((s, i) => s.classList.toggle('active', i === o));
@@ -1956,7 +2043,7 @@ function selectForecastHour(o, dI, tH, hS, tT = null){
     const nw = new Date();
     document.getElementById('clock-live').innerText = `${nw.getHours().toString().padStart(2,'0')}:${nw.getMinutes().toString().padStart(2,'0')} 동기화 완료`;
     if(baseLiveCurrentRes){
-      activeForecastRes = baseLiveCurrentRes; // 활성 객체 복구
+      activeForecastRes = baseLiveCurrentRes;
       updateAlpineWeatherHUD(activeForecastRes, '현재', iN, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
       return;
     }
@@ -1986,7 +2073,6 @@ function selectForecastHour(o, dI, tH, hS, tT = null){
     targetHourTime: targetDate
   });
 
-  // ★ 현재 화면에 선택된 시점의 기상 객체 즉시 갱신
   activeForecastRes = res;
   updateAlpineWeatherHUD(activeForecastRes, hS, iN, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
 }
@@ -2005,7 +2091,7 @@ window.selectMountain=async function(n,e,bE,t='peak',lt=35.2846,lg=129.0565,dK=n
     else if(!e||e<=0){e=801;currentMt.ele=e;}
     const cur=liveWeatherData.current,nw=new Date(),iN=(nw.getHours()>=19||nw.getHours()<=5);
     baseLiveCurrentRes=compute5PhysicsMountainWeather({mtEle:e,rawTemp:cur.temperature_2m,rawRH:cur.relative_humidity_2m,rawWind:cur.wind_speed_10m*0.2777,rawGust:cur.wind_gusts_10m*0.2777,rawRain:cur.precipitation,rawCode:cur.weather_code,totalCloud:cur.cloud_cover||0,lowCloud:cur.cloud_cover_low||0,midCloud:cur.cloud_cover_mid||0,visibility:cur.visibility||15000,rawDew:cur.dew_point_2m||null,pointType:t,targetHour:nw.getHours(),daily:liveWeatherData.daily||null,targetHourTime:nw});
-    activeForecastRes=baseLiveCurrentRes; // 활성 객체 초기화
+    activeForecastRes=baseLiveCurrentRes;
     saveMountainCache(n,liveWeatherData.hourly,cur,baseLiveCurrentRes,liveWeatherData.daily);
     renderLiveForecastTrack(liveWeatherData.hourly);
     updateAlpineWeatherHUD(activeForecastRes,'현재',iN,t,false,dK);
