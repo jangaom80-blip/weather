@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   
-  <title>STATLAB 산악 기상 분석 v6.4 (SECURED)</title>
+  <title>STATLAB 산악 기상 분석 v6.4.1</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -1347,31 +1347,25 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v6.4 (SECURED)
+    STATLAB v6.4.1 (VERIFIED)
   </div>
 
 <script>
-/**
- * =========================================================================
- * [PROPRIETARY & ENCRYPTED SECURITY LAYER]
- * STATLAB ALPINE ATMOSPHERIC PHYSICS ENGINE (v6.4 SECURED BUILD)
- * COPYRIGHT (C) 2026 STATLAB CORP. ALL RIGHTS RESERVED.
- * UNAUTHORIZED REVERSE ENGINEERING, CLONING, OR EXTRACTION IS STRICTLY PROHIBITED.
- * =========================================================================
- */
-const _0xdb=[
+const mountainDB=[
   {name:'설악산 대청봉',type:'peak',region:'강원 양양군 서면',ele:1708,lat:38.1192,lng:128.4652},
   {name:'설악산 중청대피소',type:'shelter',region:'강원 양양군 서면',ele:1665,lat:38.1215,lng:128.4590},
   {name:'설악산 울산바위',type:'rock',region:'강원 속초시 설악동',ele:873,lat:38.2092,lng:128.4725},
   {name:'금정산 장군봉',type:'peak',region:'부산 금정구/경남 양산',ele:735,lat:35.3015,lng:129.0535},
   {name:'금정산 고당봉',type:'peak',region:'부산 금정구 청룡동',ele:801,lat:35.2846,lng:129.0565},
   {name:'금정산 남문/망미봉',type:'peak',region:'부산 동래구/금정구 금성동',ele:605,lat:35.2340,lng:129.0550},
+  {name:'금정산 상계봉',type:'peak',region:'부산 북구 덕천/만덕',ele:640,lat:35.2285,lng:129.0435},
+  {name:'백양산 정상',type:'peak',region:'부산 부산진구/북구',ele:642,lat:35.1837,lng:129.0273},
+  {name:'해운대 장산',type:'peak',region:'부산 해운대구',ele:634,lat:35.1942,lng:129.1444},
   {name:'지리산 천왕봉',type:'peak',region:'경남 산청군 시천면',ele:1915,lat:35.3371,lng:127.7306},
   {name:'한라산 백록담',type:'peak',region:'제주 서귀포시 토평동',ele:1947,lat:33.3617,lng:126.5332},
   {name:'북한산 백운대',type:'peak',region:'서울 강북구/경기 고양',ele:836,lat:37.6587,lng:126.9780},
   {name:'정병산 수리봉',type:'peak',region:'경남 창원 의창구/성산구',ele:566,lat:35.2575,lng:128.7042},
-  {name:'무학산 정상',type:'peak',region:'경남 창원 마산합포구',ele:761,lat:35.2105,lng:128.5367},
-  {name:'해운대 장산',type:'peak',region:'부산 해운대구',ele:634,lat:35.1942,lng:129.1444}
+  {name:'무학산 정상',type:'peak',region:'경남 창원 마산합포구',ele:761,lat:35.2105,lng:128.5367}
 ];
 
 const FAVORITES_KEY='STATLAB_USER_FAVORITES_v5';
@@ -1390,7 +1384,7 @@ function isCurrentFavorite(){return getFavorites().some(m=>m.name===currentMt.na
 window.toggleCurrentFavorite=function(){let f=getFavorites();const b=document.getElementById('fav-toggle-btn');if(isCurrentFavorite()){f=f.filter(m=>m.name!==currentMt.name);b.classList.remove('active');b.innerText='☆';}else{f.push({name:currentMt.name,ele:currentMt.ele,type:currentMt.type||'peak',lat:currentMt.lat,lng:currentMt.lng});b.classList.add('active');b.innerText='★';}saveFavorites(f);renderFavoritesChips();};
 function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;if(isCurrentFavorite()){b.classList.add('active');b.innerText='★';}else{b.classList.remove('active');b.innerText='☆';}}
 
-let currentMt=_0xdb[0];
+let currentMt=mountainDB[0];
 let selectedHourOffset=0,liveWeatherData=null,liveCurrentCalculatedRes=null;
 let _lastHapticZ=0,currentUserAltitude=null;
 
@@ -1400,7 +1394,7 @@ window.handleModalOverlayClick=function(e){if(e.target.id==='legal-modal')closeL
 window.handleAdClick=function(){window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥','_blank');};
 
 function calculateDistanceKm(l1,o1,l2,o2){const R=6371,dL=(l2-l1)*Math.PI/180,dO=(o2-o1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dO/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-function findNearestMountainFromDb(uL,uO){let n=_0xdb[0],mD=Infinity;for(let i=0;i<_0xdb.length;i++){const d=calculateDistanceKm(uL,uO,_0xdb[i].lat,_0xdb[i].lng);if(d<mD){mD=d;n={..._0xdb[i],distanceKm:d.toFixed(1),rawDist:d};}}return n;}
+function findNearestMountainFromDb(uL,uO){let n=mountainDB[0],mD=Infinity;for(let i=0;i<mountainDB.length;i++){const d=calculateDistanceKm(uL,uO,mountainDB[i].lat,mountainDB[i].lng);if(d<mD){mD=d;n={...mountainDB[i],distanceKm:d.toFixed(1),rawDist:d};}}return n;}
 
 function searchKakaoPlacesAsync(k,lat,lng,r=18000){return new Promise(res=>{if(!window.kakao||!kakao.maps||!kakao.maps.services){res([]);return;}const pS=new kakao.maps.services.Places();pS.keywordSearch(k,(dt,st)=>{if(st===kakao.maps.services.Status.OK&&dt)res(dt);else res([]);},{location:new kakao.maps.LatLng(lat,lng),radius:r,sort:kakao.maps.services.SortBy.DISTANCE});});}
 
@@ -1498,67 +1492,135 @@ function computeSunAndTrailSafety(d,tH=null){
 
 /**
  * =========================================================================
- * [OBFUSCATED CORE ATMOSPHERIC ENGINE]
- * CANOPY FRICTION & SOLAR BURN-OFF PHYSICS
+ * [정밀 물리 엔진] 수목한계선 숲 차폐 마찰 계수 & 일출 후 Burn-off 증발 타이머
  * =========================================================================
  */
-const _0xSEC={
-  _c:function(_0x1,_0x2){
-    const _0x3=Math.min(1.0,Math.max(0.0,(_0x1-50)/Math.max(1,_0x2-50)));
-    return (_0x3<0.65)?(0.40+0.35*(_0x3/0.65)):(0.75+0.25*((_0x3-0.65)/0.35));
-  },
-  _b:function(_0xa,_0xb,_0xc,_0xd,_0xe,_0xf,_0x10,_0x11,_0x12,_0x13){
-    let _s=0;const _c=_0x10-_0xa;
-    if(_c<-50&&_c>-700)_s+=35;else if(_c<=-700)_s+=20;else if(_c>=-50&&_c<=80)_s+=15;
-    if(_0xc>=85&&_0xb<=75)_s+=30;else if(_0xc>=80)_s+=20;else if(_0xc>=70)_s+=10;
-    if(_0xd<=2.2)_s+=20;else if(_0xd<=3.8)_s+=12;else if(_0xd<=5.5)_s+=5;else _s-=10;
-    if(_0xe<=25&&_0xf<=45)_s+=15;else if(_0xe<=45)_s+=8;
-    if(_0x11>=5&&_0x11<=8)_s+=10;else if(_0x11>=4&&_0x11<=9)_s+=5;
-    let _bp=Math.min(99,Math.max(5,Math.round(_s))),_bf=1.0,_p='dawn';
-    if(_0x12&&_0x12.sunrise&&_0x12.sunrise[0]&&_0x13){
-      const _sr=new Date(_0x12.sunrise[0]);
-      const _df=Math.round((_0x13.getTime()-_sr.getTime())/60000);
-      if(_df>=-60&&_df<=60){_bf=1.0;_p='golden';}
-      else if(_df>60&&_df<=120){_bf=0.85;_p='warming';}
-      else if(_df>120&&_df<=180){_bf=0.55;_p='evaporating';}
-      else if(_df>180&&_df<=600){_bf=0.25;_p='dispersed';}
+function calculateCanopyFriction(currentAlt, summitAlt){
+  const r = Math.min(1.0, Math.max(0.0, (currentAlt - 50) / Math.max(1, summitAlt - 50)));
+  return (r < 0.65) ? (0.40 + 0.35 * (r / 0.65)) : (0.75 + 0.25 * ((r - 0.65) / 0.35));
+}
+
+function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, daily, targetTime){
+  let s = 0;
+  const c = eB - e;
+  if(c < -50 && c > -700) s += 35;
+  else if(c <= -700) s += 20;
+  else if(c >= -50 && c <= 80) s += 15;
+
+  if(sR >= 85 && sH <= 75) s += 30;
+  else if(sR >= 80) s += 20;
+  else if(sR >= 70) s += 10;
+
+  if(sW <= 2.2) s += 20;
+  else if(sW <= 3.8) s += 12;
+  else if(sW <= 5.5) s += 5;
+  else s -= 10;
+
+  if(mC <= 25 && tC <= 45) s += 15;
+  else if(mC <= 45) s += 8;
+
+  if(tH >= 5 && tH <= 8) s += 10;
+  else if(tH >= 4 && tH <= 9) s += 5;
+
+  let baseProb = Math.min(99, Math.max(5, Math.round(s)));
+  let burnOffFactor = 1.0;
+  let burnOffPhase = 'dawn';
+
+  if(daily && daily.sunrise && daily.sunrise[0] && targetTime){
+    const sR_date = new Date(daily.sunrise[0]);
+    const diffMins = Math.round((targetTime.getTime() - sR_date.getTime()) / 60000);
+    if(diffMins >= -60 && diffMins <= 60){
+      burnOffFactor = 1.0;
+      burnOffPhase = 'golden';
+    } else if(diffMins > 60 && diffMins <= 120){
+      burnOffFactor = 0.85;
+      burnOffPhase = 'warming';
+    } else if(diffMins > 120 && diffMins <= 180){
+      burnOffFactor = 0.55;
+      burnOffPhase = 'evaporating';
+    } else if(diffMins > 180 && diffMins <= 600){
+      burnOffFactor = 0.25;
+      burnOffPhase = 'dispersed';
     }
-    return{prob:Math.min(99,Math.max(5,Math.round(_bp*_bf))),phase:_p,factor:_bf};
-  },
-  _run:function(P){
-    const _K1=0x11.aba9e754e38,_K2=0xf3.8,T=P.rawTemp,R=P.rawRH,W=P.rawWind,G=P.rawGust;
-    const eS=6.112*Math.exp((_K1*T)/(_K2+T)),E=eS*(R/100);
-    const Td=(P.rawDew!==null&&P.rawDew!==undefined)?P.rawDew:(_K2*Math.log(E/6.112))/(_K1-Math.log(E/6.112));
-    const vK=Math.max(0.05,P.visibility/1000),bX=parseFloat((3.912/vK).toFixed(3)),oT=parseFloat((Math.min(99.9,Math.max(0.5,Math.exp(-bX*0.5)*100))).toFixed(1));
-    const dH=Math.max(0,P.mtEle-50),sT=T+(dH/100)*0.65,sD=Td+(dH/100)*0.17,sRH=Math.min(100,Math.max(25,R+4));
-    const bL=125*Math.max(0,sT-sD);
-    let smT=P.mtEle<=bL?sT-(0.0098*dH):(sT-(0.0098*(bL-50)+0.0055*(P.mtEle-bL)));
-    smT=parseFloat(smT.toFixed(1));
-    const oB=Math.min(250,Math.round(W*14)),bC=Math.max(150,Math.round(50+bL-oB));
-    const wI=decodeWmoCode(P.rawCode),dD=Math.max(0,smT-Td);
-    const iDC=(P.totalCloud>=55)||(P.midCloud>=50);
-    const iDr=(P.rawRain>0)||(wI.state==='drizzle')||(iDC&&dD<=3.8&&R>=80);
-    let eCB=bC;
-    if(!iDC&&P.totalCloud<=35&&oT>=85&&!iDr)eCB=Math.max(P.mtEle+900,bC);
-    else if(iDC)eCB=Math.min(Math.max(300,bC),P.mtEle+400);
-    const cS_d=_0xSEC._b(P.mtEle,R,sRH,W,P.midCloud,P.totalCloud,eCB,P.targetHour,P.daily,P.targetHourTime);
-    const cS=cS_d.prob;
-    const isAboveCloudSea=(cS>=50)&&(P.mtEle>eCB)&&(P.midCloud<=35)&&(P.totalCloud<=55)&&!iDr;
-    const iF=!isAboveCloudSea&&((P.visibility<2000)||(oT<45)||(wI.state==='fog')||(P.lowCloud>=70&&bC<=P.mtEle+80)||(R>=92&&P.lowCloud>=50));
-    const iC=isAboveCloudSea||((!iDC)&&(P.totalCloud<=35)&&(oT>=80)&&(!iDr)&&(!iF));
-    const stabilityDamping=isAboveCloudSea?0.45:(cS>=50?0.65:1.0);
-    const canopyFrictionSummit=_0xSEC._c(P.mtEle,P.mtEle);
-    let al=P.pointType==='rock'?0.45:P.pointType==='ridge'?0.4:P.pointType==='shelter'?0.25:0.35;
-    const sW=parseFloat((W*(1+al*(P.mtEle/1000)*stabilityDamping)*canopyFrictionSummit).toFixed(1));
-    const gustMultiplier=(sW<=3.5)?1.45:(sW<=6.5?1.65:1.9);
-    const sG=parseFloat((Math.max(G*0.9,sW*gustMultiplier)).toFixed(1));
-    const vH=sW*3.6;let sF=smT;
-    if(vH>4.8)sF=13.12+(0.6215*smT)-(11.37*Math.pow(vH,0.16))+(0.3965*smT*Math.pow(vH,0.16));
-    sF=parseFloat(sF.toFixed(1));
-    const sS=computeSunAndTrailSafety(P.daily,P.targetHourTime);
-    return{summitTemp:smT,summitFeel:sF,summitHumidity:R,summitWind:sW,summitGust:sG,rainMm:P.rawRain,weatherCode:P.rawCode,effectiveCloudBase:eCB,clearance:eCB-P.mtEle,isCrystalClear:iC,isAboveCloudSea:isAboveCloudSea,isDarkCloud:iDC,isDrizzling:iDr,isRealFog:iF,totalCloud:P.totalCloud,lowCloud:P.lowCloud,midCloud:P.midCloud,visibility:P.visibility,surfaceTemp:parseFloat(sT.toFixed(1)),surfaceRH:sRH,wmoInfo:wI,betaExt:bX,opticalTrans:oT,cloudSeaProb:cS,cloudSeaPhase:cS_d.phase,sunSafety:sS,_rawParams:P,_baseLclM:bL};
   }
-};
+
+  const finalProb = Math.min(99, Math.max(5, Math.round(baseProb * burnOffFactor)));
+  return { prob: finalProb, phase: burnOffPhase, factor: burnOffFactor };
+}
+
+function compute5PhysicsMountainWeather(P){
+  const _K1 = 17.67, _K2 = 243.5, T = P.rawTemp, R = P.rawRH, W = P.rawWind, G = P.rawGust;
+  const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (R / 100);
+  const Td = (P.rawDew !== null && P.rawDew !== undefined) ? P.rawDew : (_K2 * Math.log(E / 6.112)) / (_K1 - Math.log(E / 6.112));
+  const vK = Math.max(0.05, P.visibility / 1000), bX = parseFloat((3.912 / vK).toFixed(3)), oT = parseFloat((Math.min(99.9, Math.max(0.5, Math.exp(-bX * 0.5) * 100))).toFixed(1));
+  const dH = Math.max(0, P.mtEle - 50), sT = T + (dH / 100) * 0.65, sD = Td + (dH / 100) * 0.17, sRH = Math.min(100, Math.max(25, R + 4));
+  const bL = 125 * Math.max(0, sT - sD);
+  let smT = P.mtEle <= bL ? sT - (0.0098 * dH) : (sT - (0.0098 * (bL - 50) + 0.0055 * (P.mtEle - bL)));
+  smT = parseFloat(smT.toFixed(1));
+
+  const oB = Math.min(250, Math.round(W * 14)), bC = Math.max(150, Math.round(50 + bL - oB));
+  const wI = decodeWmoCode(P.rawCode), dD = Math.max(0, smT - Td);
+  const iDC = (P.totalCloud >= 55) || (P.midCloud >= 50);
+  const iDr = (P.rawRain > 0) || (wI.state === 'drizzle') || (iDC && dD <= 3.8 && R >= 80);
+
+  let eCB = bC;
+  if(!iDC && P.totalCloud <= 35 && oT >= 85 && !iDr) eCB = Math.max(P.mtEle + 900, bC);
+  else if(iDC) eCB = Math.min(Math.max(300, bC), P.mtEle + 400);
+
+  const cS_data = calculateCloudSeaProbabilityWithBurnOff(P.mtEle, R, sRH, W, P.midCloud, P.totalCloud, eCB, P.targetHour, P.daily, P.targetHourTime);
+  const cS = cS_data.prob;
+
+  // 운해 위 돌출 쾌청 여부 판정
+  const isAboveCloudSea = (cS >= 50) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 55) && !iDr;
+  const iF = !isAboveCloudSea && ((P.visibility < 2000) || (oT < 45) || (wI.state === 'fog') || (P.lowCloud >= 70 && bC <= P.mtEle + 80) || (R >= 92 && P.lowCloud >= 50));
+  const iC = isAboveCloudSea || ((!iDC) && (P.totalCloud <= 35) && (oT >= 80) && (!iDr) && (!iF));
+
+  const stabilityDamping = isAboveCloudSea ? 0.45 : (cS >= 50 ? 0.65 : 1.0);
+  const canopyFrictionSummit = calculateCanopyFriction(P.mtEle, P.mtEle);
+  let al = P.pointType === 'rock' ? 0.45 : P.pointType === 'ridge' ? 0.4 : P.pointType === 'shelter' ? 0.25 : 0.35;
+  const sW = parseFloat((W * (1 + al * (P.mtEle / 1000) * stabilityDamping) * canopyFrictionSummit).toFixed(1));
+
+  const gustMultiplier = (sW <= 3.5) ? 1.45 : (sW <= 6.5 ? 1.65 : 1.9);
+  const sG = parseFloat((Math.max(G * 0.9, sW * gustMultiplier)).toFixed(1));
+
+  const vH = sW * 3.6;
+  let sF = smT;
+  if(vH > 4.8) sF = 13.12 + (0.6215 * smT) - (11.37 * Math.pow(vH, 0.16)) + (0.3965 * smT * Math.pow(vH, 0.16));
+  sF = parseFloat(sF.toFixed(1));
+
+  const sS = computeSunAndTrailSafety(P.daily, P.targetHourTime);
+
+  return {
+    summitTemp: smT,
+    summitFeel: sF,
+    summitHumidity: R,
+    summitWind: sW,
+    summitGust: sG,
+    rainMm: P.rawRain,
+    weatherCode: P.rawCode,
+    effectiveCloudBase: eCB,
+    clearance: eCB - P.mtEle,
+    isCrystalClear: iC,
+    isAboveCloudSea: isAboveCloudSea,
+    isDarkCloud: iDC,
+    isDrizzling: iDr,
+    isRealFog: iF,
+    totalCloud: P.totalCloud,
+    lowCloud: P.lowCloud,
+    midCloud: P.midCloud,
+    visibility: P.visibility,
+    surfaceTemp: parseFloat(sT.toFixed(1)),
+    surfaceRH: sRH,
+    wmoInfo: wI,
+    betaExt: bX,
+    opticalTrans: oT,
+    cloudSeaProb: cS,
+    cloudSeaPhase: cS_data.phase,
+    sunSafety: sS,
+    _rawParams: P,
+    _baseLclM: bL
+  };
+}
 
 window.handleAltitudeScrub=function(z){
   if(!liveCurrentCalculatedRes)return;
@@ -1566,7 +1628,7 @@ window.handleAltitudeScrub=function(z){
   if(Math.abs(tZ-_lastHapticZ)>=20){_lastHapticZ=tZ;if(window.navigator&&navigator.vibrate)navigator.vibrate(6);}
   let sT=tZ<=bL?r.surfaceTemp-(0.0098*Math.max(0,tZ-50)):r.surfaceTemp-(0.0098*Math.max(0,bL-50)+0.0055*(tZ-bL));
   sT=parseFloat(sT.toFixed(1));
-  const canopyFriction=_0xSEC._c(tZ,currentMt.ele);
+  const canopyFriction=calculateCanopyFriction(tZ,currentMt.ele);
   const stabilityDamping=r.isAboveCloudSea?0.45:(r.cloudSeaProb>=50?0.65:1.0);
   const sW=parseFloat((p.rawWind*(1+0.35*(tZ/1000)*stabilityDamping)*canopyFriction).toFixed(1));
   const sG=parseFloat((sW*((sW<=3.5)?1.45:1.65)).toFixed(1));
@@ -1745,7 +1807,7 @@ function selectForecastHour(o,dI,tH,hS,tT=null){
   document.getElementById('clock-live').innerText=`예보 모드: ${o}시간 뒤 (${hS})`;
   if(!liveWeatherData||!liveWeatherData.hourly)return;
   const h=liveWeatherData.hourly;
-  const res=_0xSEC._run({mtEle:currentMt.ele,rawTemp:h.temperature_2m[dI]??15.0,rawRH:h.relative_humidity_2m[dI]??70,rawWind:(h.wind_speed_10m[dI]??3.0)*0.2777,rawGust:(h.wind_gusts_10m[dI]??6.0)*0.2777,rawRain:h.precipitation[dI]??0.0,rawCode:h.weather_code[dI]??0,totalCloud:h.cloud_cover?h.cloud_cover[dI]:0,lowCloud:h.cloud_cover_low?h.cloud_cover_low[dI]:0,midCloud:h.cloud_cover_mid?h.cloud_cover_mid[dI]:0,visibility:h.visibility?h.visibility[dI]:15000,rawDew:h.dew_point_2m?h.dew_point_2m[dI]:null,pointType:currentMt.type||'peak',targetHour:tH,daily:liveWeatherData.daily||null,targetHourTime:tT});
+  const res=compute5PhysicsMountainWeather({mtEle:currentMt.ele,rawTemp:h.temperature_2m[dI]??15.0,rawRH:h.relative_humidity_2m[dI]??70,rawWind:(h.wind_speed_10m[dI]??3.0)*0.2777,rawGust:(h.wind_gusts_10m[dI]??6.0)*0.2777,rawRain:h.precipitation[dI]??0.0,rawCode:h.weather_code[dI]??0,totalCloud:h.cloud_cover?h.cloud_cover[dI]:0,lowCloud:h.cloud_cover_low?h.cloud_cover_low[dI]:0,midCloud:h.cloud_cover_mid?h.cloud_cover_mid[dI]:0,visibility:h.visibility?h.visibility[dI]:15000,rawDew:h.dew_point_2m?h.dew_point_2m[dI]:null,pointType:currentMt.type||'peak',targetHour:tH,daily:liveWeatherData.daily||null,targetHourTime:tT});
   updateAlpineWeatherHUD(res,hS,iN,currentMt.type||'peak',!navigator.onLine,currentMt.distanceKm);
 }
 
@@ -1761,7 +1823,7 @@ window.selectMountain=async function(n,e,bE,t='peak',lt=38.1192,lg=128.4652,dK=n
     if((!e||e<=0)&&liveWeatherData.elevation){e=Math.max(50,Math.round(liveWeatherData.elevation));currentMt.ele=e;}
     else if(!e||e<=0){e=1708;currentMt.ele=e;}
     const cur=liveWeatherData.current,nw=new Date(),iN=(nw.getHours()>=19||nw.getHours()<=5);
-    liveCurrentCalculatedRes=_0xSEC._run({mtEle:e,rawTemp:cur.temperature_2m,rawRH:cur.relative_humidity_2m,rawWind:cur.wind_speed_10m*0.2777,rawGust:cur.wind_gusts_10m*0.2777,rawRain:cur.precipitation,rawCode:cur.weather_code,totalCloud:cur.cloud_cover||0,lowCloud:cur.cloud_cover_low||0,midCloud:cur.cloud_cover_mid||0,visibility:cur.visibility||15000,rawDew:cur.dew_point_2m||null,pointType:t,targetHour:nw.getHours(),daily:liveWeatherData.daily||null,targetHourTime:nw});
+    liveCurrentCalculatedRes=compute5PhysicsMountainWeather({mtEle:e,rawTemp:cur.temperature_2m,rawRH:cur.relative_humidity_2m,rawWind:cur.wind_speed_10m*0.2777,rawGust:cur.wind_gusts_10m*0.2777,rawRain:cur.precipitation,rawCode:cur.weather_code,totalCloud:cur.cloud_cover||0,lowCloud:cur.cloud_cover_low||0,midCloud:cur.cloud_cover_mid||0,visibility:cur.visibility||15000,rawDew:cur.dew_point_2m||null,pointType:t,targetHour:nw.getHours(),daily:liveWeatherData.daily||null,targetHourTime:nw});
     saveMountainCache(n,liveWeatherData.hourly,cur,liveCurrentCalculatedRes,liveWeatherData.daily);
     renderLiveForecastTrack(liveWeatherData.hourly);
     updateAlpineWeatherHUD(liveCurrentCalculatedRes,'현재',iN,t,false,dK);
@@ -1782,8 +1844,8 @@ let searchTimer=null;
 window.handleMountainSearch=function(k){
   clearTimeout(searchTimer);
   const d=document.getElementById('search-dropdown'),q=k.trim();
-  if(!q){renderSearchDropdown(_0xdb.slice(0,14));return;}
-  const lM=_0xdb.filter(m=>m.name.includes(q)||m.region.includes(q));
+  if(!q){renderSearchDropdown(mountainDB.slice(0,14));return;}
+  const lM=mountainDB.filter(m=>m.name.includes(q)||m.region.includes(q));
   renderSearchDropdown(lM);
   searchTimer=setTimeout(()=>{
     if(window.kakao&&kakao.maps&&kakao.maps.services){
