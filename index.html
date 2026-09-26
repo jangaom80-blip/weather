@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v8.4 FULL</title>
+  <title>STATLAB 산악 기상 분석 v8.5 GPS FIX</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -148,6 +148,7 @@
     }
     .gps-btn:active {
       transform: scale(0.94);
+      background: rgba(10, 132, 255, 0.25);
     }
 
     .search-dropdown {
@@ -472,7 +473,6 @@
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
-    /* 광고 배너 스타일 */
     .ad-banner-container { background: linear-gradient(135deg, rgba(38, 28, 24, 0.75) 0%, rgba(26, 26, 30, 0.85) 100%); border: 0.5px solid rgba(255, 159, 10, 0.35); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
     .ad-left-wrap { display: flex; align-items: center; gap: 12px; }
     .ad-icon-box { flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, rgba(255, 69, 58, 0.22) 0%, rgba(255, 159, 10, 0.22) 100%); border: 0.5px solid rgba(255, 159, 10, 0.45); display: flex; align-items: center; justify-content: center; font-size: 22px; }
@@ -481,7 +481,6 @@
     .ad-sub { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
     .ad-action-btn { font-size: 11px; font-weight: 700; color: #FFFFFF; background: linear-gradient(135deg, #FF9F0A 0%, #FF453A 100%); border: none; padding: 6px 11px; border-radius: 10px; }
 
-    /* 법적 고지 스타일 */
     .legal-summary-card { background: rgba(255, 255, 255, 0.03); border: 0.5px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 13px 14px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 6px; }
     .legal-btn { background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 600; color: var(--accent-cyan); cursor: pointer; }
 
@@ -500,6 +499,13 @@
     .day-hero-icon { font-size: 38px; }
     .day-hero-state-title { font-size: 17px; font-weight: 800; color: #FFF; line-height: 1.2; }
     .day-hero-temp-sub { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-top: 2px; }
+
+    .day-hero-gauges { display: flex; gap: 10px; justify-content: space-around; background: rgba(0, 0, 0, 0.45); border: 0.5px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 10px 8px; }
+    .gauge-item { display: flex; align-items: center; gap: 8px; }
+    .radial-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; font-size: 12px; font-weight: 800; color: #FFF; }
+    .gauge-label-col { display: flex; flex-direction: column; gap: 2px; }
+    .gauge-title { font-size: 11px; font-weight: 700; color: #FFF; }
+    .gauge-desc { font-size: 9px; color: var(--text-secondary); font-weight: 500; }
 
     .day-cross-section-box { background: rgba(0,0,0,0.35); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; }
     .cross-section-tag { font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 6px; }
@@ -765,7 +771,7 @@
     </div>
   </div>
 
-  <div id="statlab-badge"><span class="badge-mark"></span><span>STATLAB v8.4 (FULL ENGINE)</span></div>
+  <div id="statlab-badge"><span class="badge-mark"></span><span>STATLAB v8.5 GPS FIX</span></div>
 
 <script>
 // 14개 전국 명산 데이터베이스
@@ -817,7 +823,7 @@ window.toggleCurrentFavorite=function(){
 };
 function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;b.classList.toggle('active', isCurrentFavorite());b.innerText=isCurrentFavorite()?'★':'☆';}
 
-let currentMt=mountainDB[4]; // 금정산 고당봉 기본 타깃
+let currentMt=mountainDB[4];
 let selectedHourOffset=0,liveWeatherData=null;
 let baseLiveCurrentRes=null,activeForecastRes=null;
 let currentUserAltitude=null,currentForecastView='hourly';
@@ -846,7 +852,6 @@ window.switchForecastView=function(mode){
   if(isW && liveWeatherData) render7DayWeeklyTrack(liveWeatherData);
 };
 
-// Open-Meteo 전용 표준 API 호출 함수
 async function fetchLiveMountainWeather(lt,lg,el){
   try{
     const eq=(el&&el>0)?`&elevation=${el}`:'';
@@ -881,7 +886,6 @@ function decodeWmoCode(c,n=false){
   return{text:'맑음',icon:'☀️',state:'clear'};
 }
 
-// 일출/일몰 계산식 (선택 날짜 실시간 연동, 마이너스 시간 방지)
 function computeSunAndTrailSafety(d, targetDate = null){
   const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
   const y = n.getFullYear(), m = n.getMonth(), day = n.getDate();
@@ -1118,7 +1122,7 @@ function compute5PhysicsMountainWeather(P){
   };
 }
 
-// 7일 전용 산악 복합 물리 공식 및 시간 분기형 타이틀 매핑 (모순 완벽 해결)
+// 7일 전용 산악 복합 물리 공식 및 시간 분기형 타이틀 매핑
 function compute7DayAlpineForecast(data, ele){
   if(!data || !data.daily || !data.daily.time || data.daily.time.length < 7) return [];
   const daily = data.daily, hourly = data.hourly || null;
@@ -1529,6 +1533,78 @@ function renderWinterCardUI(w){
   document.getElementById('winter-desc').innerHTML = w.descHtml;
 }
 
+// ★ [핵심 복원] 전국의 모든 산을 카카오 지도 API로 정확히 검색하고 거리순 1순위로 잡는 GPS 매칭 엔진
+async function searchKakaoPlacesAsync(k, lat, lng, r = 25000){
+  return new Promise(res => {
+    if(!window.kakao || !kakao.maps || !kakao.maps.services){ res([]); return; }
+    const pS = new kakao.maps.services.Places();
+    pS.keywordSearch(k, (dt, st) => {
+      if(st === kakao.maps.services.Status.OK && dt) res(dt);
+      else res([]);
+    }, { location: new kakao.maps.LatLng(lat, lng), radius: r, sort: kakao.maps.services.SortBy.DISTANCE });
+  });
+}
+
+window.triggerGPSMatching = function(){
+  const c = document.getElementById('clock-live');
+  if(c) c.innerText = 'GPS 위치 및 산악 레이더 스캔 중...';
+  if(!navigator.geolocation){ fallbackToDb(35.2846, 129.0565); return; }
+
+  navigator.geolocation.getCurrentPosition(async p => {
+    const uLat = p.coords.latitude, uLng = p.coords.longitude;
+    if(p.coords.altitude && p.coords.altitude > 0) currentUserAltitude = Math.round(p.coords.altitude);
+
+    try {
+      const [rS, rB] = await Promise.all([
+        searchKakaoPlacesAsync('산', uLat, uLng, 25000),
+        searchKakaoPlacesAsync('봉우리', uLat, uLng, 25000)
+      ]);
+      const comb = [...rS, ...rB], seen = new Set(), cd = [];
+
+      comb.forEach(item => {
+        const pN = item.place_name || '', cg = item.category_name || '', cCode = item.category_group_code || '', id = item.id || pN;
+        if(seen.has(id)) return; seen.add(id);
+
+        const isJunk = /식당|음식|카페|병원|의원|약국|아파트|빌라|원룸|오피스텔|부동산|역$|정류장|초등학교|중학교|고등학교|학원|호텔|모텔|펜션|주유소|골프|빌딩|상가|마트|편의점|공영주차장/i.test(pN) || ['FD6','CE7','HP8','PM9','PK6','OL7','SW8','BK9'].includes(cCode);
+        const isMt = cg.includes('산') || cg.includes('산봉우리') || cg.includes('자연명소') || /(산|봉|봉우리|대피소|능선|고개|재|령)$/.test(pN);
+
+        if(!isJunk && isMt){
+          const dist = calculateDistanceKm(uLat, uLng, parseFloat(item.y), parseFloat(item.x));
+          let ele = 600; const m = pN.match(/(\d+)m/);
+          if(m) ele = parseInt(m[1]); else if(pN.includes('대피소')) ele = 1650;
+          cd.push({ name: pN, type: pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'), region: item.address_name||'', ele: ele, lat: parseFloat(item.y), lng: parseFloat(item.x), rawDist: dist });
+        }
+      });
+
+      if(cd.length > 0){
+        cd.sort((a, b) => a.rawDist - b.rawDist);
+        const cl = cd[0];
+        selectMountain(cl.name, cl.ele, null, cl.type, cl.lat, cl.lng, cl.rawDist.toFixed(1));
+        if(c) c.innerText = `${cl.name} (${cl.rawDist.toFixed(1)}km) 동기화 완료`;
+        return;
+      }
+      fallbackToDb(uLat, uLng);
+    } catch(e) {
+      fallbackToDb(uLat, uLng);
+    }
+  }, () => { fallbackToDb(35.2846, 129.0565); }, { timeout: 8000, enableHighAccuracy: true });
+};
+
+function fallbackToDb(lt, lg){
+  let n = mountainDB[0], minD = Infinity;
+  mountainDB.forEach(m => {
+    const d = calculateDistanceKm(lt, lg, m.lat, m.lng);
+    if(d < minD){ minD = d; n = m; }
+  });
+  selectMountain(n.name, n.ele, null, n.type, n.lat, n.lng, minD.toFixed(1));
+}
+
+function calculateDistanceKm(l1, o1, l2, o2){
+  const R = 6371, dL = (l2 - l1) * Math.PI / 180, dO = (o2 - o1) * Math.PI / 180;
+  const a = Math.sin(dL/2)**2 + Math.cos(l1 * Math.PI / 180) * Math.cos(l2 * Math.PI / 180) * Math.sin(dO/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 async function selectMountain(n, e, bE, t='peak', lt=35.2846, lg=129.0565, dK=null){
   currentMt = { name: n, ele: e || 801, type: t, lat: lt, lng: lg, distanceKm: dK };
   selectedHourOffset = 0;
@@ -1573,41 +1649,51 @@ async function selectMountain(n, e, bE, t='peak', lt=35.2846, lg=129.0565, dK=nu
   }
 }
 
-function triggerGPSMatching(){
-  if(!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(async p => {
-    const uLat = p.coords.latitude, uLng = p.coords.longitude;
-    if(p.coords.altitude && p.coords.altitude > 0) currentUserAltitude = Math.round(p.coords.altitude);
-    let n = mountainDB[4], minD = Infinity;
-    mountainDB.forEach(m => {
-      const d = Math.hypot(m.lat - uLat, m.lng - uLng);
-      if(d < minD){ minD = d; n = m; }
-    });
-    selectMountain(n.name, n.ele, null, n.type, n.lat, n.lng);
-  }, () => {}, { timeout: 6000 });
-}
-
-function handleMountainSearch(k){
+let searchTimer = null;
+window.handleMountainSearch = function(k){
+  clearTimeout(searchTimer);
   const d = document.getElementById('search-dropdown'), q = k.trim();
   if(!q){ d.style.display = 'none'; return; }
-  const match = mountainDB.filter(m => m.name.includes(q) || m.region.includes(q));
-  d.innerHTML = '';
-  if(match.length === 0){ d.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text-secondary);text-align:center;">검색 결과 없음</div>'; }
-  else {
-    match.forEach(m => {
-      const item = document.createElement('div');
-      item.className = 'search-item';
-      item.innerHTML = `<div>${m.name} <span style="font-size:11px;color:var(--text-secondary);">${m.region}</span></div><span style="color:var(--accent-cyan);">${m.ele}m</span>`;
-      item.onclick = () => {
-        document.getElementById('mt-search-input').value = m.name;
-        d.style.display = 'none';
-        selectMountain(m.name, m.ele, null, m.type, m.lat, m.lng);
-      };
-      d.appendChild(item);
-    });
-  }
-  d.style.display = 'block';
+  
+  const lM = mountainDB.filter(m => m.name.includes(q) || m.region.includes(q));
+  renderSearchDropdown(lM);
+
+  searchTimer = setTimeout(async () => {
+    if(window.kakao && kakao.maps && kakao.maps.services){
+      const pS = new kakao.maps.services.Places();
+      pS.keywordSearch(q, (dt, st) => {
+        if(st === kakao.maps.services.Status.OK && dt){
+          const ex = [];
+          dt.forEach(p => {
+            const pN = p.place_name, cg = p.category_name || '';
+            if(!lM.some(x => x.name === pN) && !/아파트|빌라|부동산|역$|정류장|식당|카페|병원/i.test(pN)){
+              let eE = 650; const m = pN.match(/(\d+)m/);
+              if(m) eE = parseInt(m[1]); else if(pN.includes('대피소')) eE = 1250;
+              ex.push({ name: pN, type: pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'), region: p.address_name, ele: eE, lat: parseFloat(p.y), lng: parseFloat(p.x) });
+            }
+          });
+          if(ex.length > 0) renderSearchDropdown(lM.concat(ex));
+        }
+      }, { radius: 30000 });
+    }
+  }, 200);
+};
+
+function renderSearchDropdown(l){
+  const d = document.getElementById('search-dropdown'); if(!d) return;
+  if(l.length === 0){ d.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text-secondary);text-align:center;">검색 결과 없음</div>'; d.style.display = 'block'; return; }
+  let h = '';
+  l.slice(0, 14).forEach(m => {
+    h += `<div class="search-item" onclick="selectSearchedMountain('${m.name}',${m.ele},'${m.type}',${m.lat},${m.lng})"><div><span>${m.name}</span><div class="search-item-sub">${m.region}</div></div><span style="color:var(--accent-cyan);font-weight:700;">${m.ele}m</span></div>`;
+  });
+  d.innerHTML = h; d.style.display = 'block';
 }
+
+window.selectSearchedMountain = function(n, e, t, lt, lg){
+  document.getElementById('mt-search-input').value = `${n} (${e}m)`;
+  document.getElementById('search-dropdown').style.display = 'none';
+  selectMountain(n, e, null, t, lt, lg);
+};
 
 document.addEventListener('click', e => {
   const sc = document.querySelector('.search-container');
