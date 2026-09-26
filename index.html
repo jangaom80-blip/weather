@@ -8,17 +8,17 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v8.1</title>
+  <title>STATLAB 산악 기상 분석 v8.4 FULL</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
-  <!-- 포트원(PortOne/구 아임포트) 결제 SDK -->
+  <!-- 포트원(PortOne/구 아임포트) 정식 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
   <style>
     :root {
       --bg: #000000;
-      --card-bg: rgba(26, 26, 30, 0.72);
+      --card-bg: rgba(26, 26, 30, 0.75);
       --card-border: rgba(255, 255, 255, 0.12);
       --text-primary: #FFFFFF;
       --text-secondary: rgba(235, 235, 245, 0.68);
@@ -119,15 +119,9 @@
       font-size: 14px;
       font-weight: 500;
       outline: none;
-      transition: all 0.2s ease;
-    }
-    .search-box:focus {
-      background: rgba(118, 118, 128, 0.35);
-      border-color: rgba(255, 255, 255, 0.25);
     }
     .search-box::placeholder {
       color: var(--text-secondary);
-      font-weight: 400;
     }
     .search-icon {
       position: absolute;
@@ -151,11 +145,9 @@
       justify-content: center;
       font-size: 16px;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
     .gps-btn:active {
       transform: scale(0.94);
-      background: rgba(10, 132, 255, 0.25);
     }
 
     .search-dropdown {
@@ -163,9 +155,8 @@
       top: calc(100% + 6px);
       left: 0;
       right: 0;
-      background: rgba(30, 30, 32, 0.95);
+      background: rgba(30, 30, 32, 0.96);
       backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
       border: 0.5px solid var(--card-border);
       border-radius: 14px;
       max-height: 280px;
@@ -184,8 +175,6 @@
       font-weight: 600;
       color: var(--text-primary);
     }
-    .search-item:last-child { border-bottom: none; }
-    .search-item:active { background: rgba(255, 255, 255, 0.08); }
     .search-item-sub {
       font-size: 11px;
       color: var(--text-secondary);
@@ -212,10 +201,6 @@
       font-weight: 600;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
     .mt-chip.active {
       background: rgba(255, 255, 255, 0.22);
@@ -254,7 +239,6 @@
       color: var(--text-secondary);
       border-radius: 9px;
       cursor: pointer;
-      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -309,6 +293,7 @@
       font-weight: 500;
       color: var(--accent-cyan);
     }
+
     .forecast-track {
       display: flex;
       gap: 8px;
@@ -324,13 +309,11 @@
       width: 62px;
       background: var(--card-bg);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
       border: 0.5px solid var(--card-border);
       border-radius: 14px;
       padding: 8px 4px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
     .time-slot:active { transform: scale(0.96); }
     .time-slot.active {
@@ -343,10 +326,9 @@
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* 주간 카드 스타일 */
     .weekly-slot {
       flex-shrink: 0;
-      width: 116px;
+      width: 120px;
       background: linear-gradient(180deg, rgba(32, 32, 38, 0.92) 0%, rgba(18, 18, 24, 0.96) 100%);
       border: 0.5px solid rgba(255, 255, 255, 0.14);
       border-radius: 16px;
@@ -355,107 +337,32 @@
       flex-direction: column;
       gap: 5px;
       cursor: pointer;
-      transition: all 0.2s ease;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
-    .weekly-slot:active {
-      transform: scale(0.96);
-    }
+    .weekly-slot:active { transform: scale(0.96); }
     .weekly-slot.weekend {
       border-color: rgba(255, 214, 10, 0.45);
       background: linear-gradient(180deg, rgba(42, 38, 30, 0.9) 0%, rgba(20, 20, 26, 0.96) 100%);
     }
-    .w-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .w-day-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: #FFFFFF;
-    }
-    .w-date-sub {
-      font-size: 10px;
-      color: var(--text-tertiary);
-    }
-    .w-safety-pill {
-      font-size: 9px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 6px;
-      text-align: center;
-    }
-    .w-ampm-row {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 4px 2px;
-      border-radius: 8px;
-      font-size: 10px;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-    .w-ampm-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1px;
-    }
-    .w-ampm-icon {
-      font-size: 14px;
-    }
-    .w-temp-bar-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-      margin: 2px 0;
-    }
-    .w-temp-val {
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .w-temp-bar-bg {
-      flex: 1;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 2px;
-      position: relative;
-      overflow: hidden;
-    }
-    .w-temp-bar-fill {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      border-radius: 2px;
-      background: linear-gradient(90deg, #64D2FF 0%, #FF9F0A 100%);
-    }
-    .w-sub-info-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-    .w-cs-badge {
-      font-size: 9px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 6px;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .w-top-row { display: flex; justify-content: space-between; align-items: center; }
+    .w-day-title { font-size: 12px; font-weight: 800; color: #FFFFFF; }
+    .w-date-sub { font-size: 10px; color: var(--text-tertiary); }
+    .w-safety-pill { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; text-align: center; }
+    .w-ampm-row { display: flex; justify-content: space-around; align-items: center; background: rgba(255, 255, 255, 0.04); padding: 4px 2px; border-radius: 8px; font-size: 10px; color: var(--text-secondary); font-weight: 600; }
+    .w-ampm-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    .w-ampm-icon { font-size: 14px; }
+    .w-temp-bar-wrap { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin: 2px 0; }
+    .w-temp-val { font-size: 11px; font-weight: 800; }
+    .w-temp-bar-bg { flex: 1; height: 4px; background: rgba(255, 255, 255, 0.12); border-radius: 2px; position: relative; overflow: hidden; }
+    .w-temp-bar-fill { position: absolute; top: 0; height: 100%; border-radius: 2px; background: linear-gradient(90deg, #64D2FF 0%, #FF9F0A 100%); }
+    .w-sub-info-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-secondary); font-weight: 600; }
+    .w-cs-badge { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,0.06); color: #FFF; }
 
     .hero-weather-card {
       position: relative;
       width: 100%;
       background: linear-gradient(180deg, rgba(28, 28, 32, 0.85) 0%, rgba(18, 18, 22, 0.92) 100%);
       backdrop-filter: blur(35px);
-      -webkit-backdrop-filter: blur(35px);
       border: 0.5px solid var(--card-border);
       border-radius: 20px;
       padding: 15px 14px;
@@ -471,32 +378,20 @@
       z-index: 1;
       overflow: hidden;
       border-radius: 20px;
-      transition: all 0.8s ease;
     }
-
     .sun-orb-wrap { position: absolute; top: -30px; right: 15px; width: 140px; height: 140px; display: none; }
-    .sun-glow { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(255, 179, 0, 0.45) 0%, rgba(255, 149, 0, 0.15) 50%, transparent 75%); filter: blur(12px); animation: sunPulse 5s infinite alternate ease-in-out; }
+    .sun-glow { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(255, 179, 0, 0.45) 0%, transparent 75%); filter: blur(12px); animation: sunPulse 5s infinite alternate ease-in-out; }
     .sun-core { position: absolute; top: 35px; right: 35px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FFE600 0%, #FF9F0A 100%); box-shadow: 0 0 25px rgba(255, 184, 0, 0.6); }
-
     .moon-star-wrap { position: absolute; top: 10px; right: 25px; width: 120px; height: 100px; display: none; }
-    .crescent-moon { position: absolute; top: 5px; right: 10px; width: 44px; height: 44px; border-radius: 50%; box-shadow: 8px 6px 0 0 #FFD60A; filter: drop-shadow(0 0 14px rgba(255, 214, 10, 0.7)); transform: rotate(-15deg); animation: moonGlow 6s infinite alternate ease-in-out; }
-    .twinkle-star { position: absolute; background: #FFFFFF; border-radius: 50%; box-shadow: 0 0 6px #FFFFFF; animation: starTwinkle 3s infinite ease-in-out; }
-
+    .crescent-moon { position: absolute; top: 5px; right: 10px; width: 44px; height: 44px; border-radius: 50%; box-shadow: 8px 6px 0 0 #FFD60A; filter: drop-shadow(0 0 14px rgba(255, 214, 10, 0.7)); transform: rotate(-15deg); }
     .fog-cloud-layer { position: absolute; inset: -20px; display: none; opacity: 0.85; }
-    .fog-wave { position: absolute; bottom: 0; left: -50%; width: 200%; height: 130px; background: radial-gradient(ellipse at 50% 100%, rgba(203, 213, 225, 0.4) 0%, rgba(148, 163, 184, 0.15) 50%, transparent 80%); filter: blur(16px); animation: fogDrift 14s infinite alternate ease-in-out; }
-    .fog-wave-2 { height: 90px; background: radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.3) 0%, rgba(203, 213, 225, 0.1) 60%, transparent 80%); filter: blur(20px); animation: fogDriftReverse 18s infinite alternate ease-in-out; }
-
+    .fog-wave { position: absolute; bottom: 0; left: -50%; width: 200%; height: 130px; background: radial-gradient(ellipse at 50% 100%, rgba(203, 213, 225, 0.4) 0%, transparent 80%); filter: blur(16px); }
     .cloud-cluster-wrap { position: absolute; top: -10px; right: -20px; width: 240px; height: 150px; display: none; }
-    .storm-cloud-puff { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(71, 85, 105, 0.6) 0%, rgba(30, 41, 59, 0.3) 60%, transparent 80%); filter: blur(14px); }
-    .puff-1 { width: 130px; height: 90px; top: 10px; right: 40px; animation: puffSway 10s infinite alternate ease-in-out; }
-    .puff-2 { width: 150px; height: 100px; top: 30px; right: 0px; animation: puffSway 12s infinite alternate ease-in-out 1s; }
-
+    .storm-cloud-puff { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(71, 85, 105, 0.6) 0%, transparent 80%); filter: blur(14px); width: 130px; height: 90px; top: 10px; right: 40px; }
     .rain-scene-wrap { position: absolute; inset: 0; display: none; }
     .rain-drop { position: absolute; width: 1.5px; height: 22px; background: linear-gradient(180deg, transparent, rgba(100, 210, 255, 0.6), transparent); transform: rotate(-18deg); animation: rainDropFall 1.2s infinite linear; }
-    .thunder-flash { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.22); opacity: 0; display: none; animation: flashPulse 8s infinite; }
-
-    .snow-scene-wrap { position: absolute; inset: 0; display: none; }
-    .snow-flake { position: absolute; background: #FFFFFF; border-radius: 50%; box-shadow: 0 0 6px rgba(255, 255, 255, 0.8); animation: snowFall 4s infinite linear; }
+    @keyframes rainDropFall { 0% { transform: translateY(-30px) rotate(-18deg); opacity: 0; } 50% { opacity: 0.7; } 100% { transform: translateY(280px) rotate(-18deg); opacity: 0; } }
+    @keyframes sunPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.18); opacity: 1; } }
 
     .scene-clear-day .sun-orb-wrap { display: block; }
     .scene-clear-night .moon-star-wrap { display: block; }
@@ -504,941 +399,113 @@
     .scene-cloudy .cloud-cluster-wrap { display: block; }
     .scene-drizzle .cloud-cluster-wrap, .scene-drizzle .rain-scene-wrap { display: block; }
     .scene-rain .cloud-cluster-wrap, .scene-rain .rain-scene-wrap { display: block; }
-    .scene-storm .cloud-cluster-wrap, .scene-storm .rain-scene-wrap, .scene-storm .thunder-flash { display: block; }
-    .scene-snow .cloud-cluster-wrap, .scene-snow .snow-scene-wrap { display: block; }
 
-    @keyframes sunPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.18); opacity: 1; } }
-    @keyframes moonGlow { 0% { filter: drop-shadow(0 0 10px rgba(255, 214, 10, 0.5)); } 100% { filter: drop-shadow(0 0 20px rgba(255, 214, 10, 0.85)); } }
-    @keyframes starTwinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.3); } }
-    @keyframes fogDrift { 0% { transform: translateX(0) scaleY(1); } 100% { transform: translateX(40px) scaleY(1.15); } }
-    @keyframes fogDriftReverse { 0% { transform: translateX(0); } 100% { transform: translateX(-35px); } }
-    @keyframes puffSway { 0% { transform: translate(0, 0); } 100% { transform: translate(-15px, 8px); } }
-    @keyframes rainDropFall { 0% { transform: translateY(-30px) rotate(-18deg); opacity: 0; } 40% { opacity: 0.7; } 100% { transform: translateY(280px) rotate(-18deg); opacity: 0; } }
-    @keyframes flashPulse { 0%, 93%, 97%, 100% { opacity: 0; } 94% { opacity: 0.45; } 96% { opacity: 0.7; } }
-    @keyframes snowFall { 0% { transform: translateY(-20px) translateX(0); opacity: 0; } 30% { opacity: 0.8; } 100% { transform: translateY(280px) translateX(25px); opacity: 0; } }
+    .hero-content-front { position: relative; z-index: 3; }
+    .hero-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .hero-title-line { display: flex; align-items: center; gap: 6px; }
+    .hero-mt-name { font-size: 21px; font-weight: 800; color: #FFFFFF; }
+    .fav-star-btn { background: none; border: none; font-size: 18px; color: rgba(255, 255, 255, 0.25); cursor: pointer; }
+    .fav-star-btn.active { color: var(--accent-gold); }
+    .hero-mt-sub { font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+    .gps-alt-badge { display: inline-flex; align-items: center; gap: 2px; background: rgba(10, 132, 255, 0.2); border: 0.5px solid rgba(10, 132, 255, 0.45); color: var(--accent-cyan); font-weight: 700; padding: 1px 5px; border-radius: 6px; font-size: 10px; }
+    .hero-temp-wrap { text-align: right; }
+    .hero-temp { font-size: 36px; font-weight: 800; color: #FFFFFF; line-height: 1; }
+    .hero-status-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 8px; margin-top: 5px; background: rgba(48, 209, 88, 0.2); color: var(--accent-green); border: 0.5px solid rgba(48, 209, 88, 0.4); }
 
-    .hero-content-front {
-      position: relative;
-      z-index: 3;
-    }
+    .altitude-meter-box { position: relative; background: rgba(0, 0, 0, 0.55); border: 0.5px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+    .meter-visual-track { position: relative; flex-grow: 1; height: 6px; background: rgba(255, 255, 255, 0.15); border-radius: 3px; margin: 0 10px; }
+    .meter-fill-summit { position: absolute; top: 0; left: 0; height: 100%; background: var(--accent-blue); border-radius: 3px; }
+    .meter-marker-cloud { position: absolute; top: -4px; width: 3px; height: 14px; background: #FFFFFF; box-shadow: 0 0 10px #FFFFFF; border-radius: 2px; }
+    .meter-label-left, .meter-label-right { font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
 
-    .hero-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-    .hero-location-wrap {
-      display: flex;
-      flex-direction: column;
-    }
-    .hero-title-line {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .hero-mt-name {
-      font-size: 21px;
-      font-weight: 800;
-      color: #FFFFFF;
-      letter-spacing: -0.5px;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
-    }
-    .fav-star-btn {
-      background: none;
-      border: none;
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.25);
-      cursor: pointer;
-      padding: 0 2px;
-      transition: all 0.2s ease;
-    }
-    .fav-star-btn.active {
-      color: var(--accent-gold);
-      filter: drop-shadow(0 0 6px rgba(255, 214, 10, 0.6));
-    }
-    .hero-mt-sub {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-weight: 500;
-      margin-top: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
-    }
-    .gps-alt-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      background: rgba(10, 132, 255, 0.2);
-      border: 0.5px solid rgba(10, 132, 255, 0.45);
-      color: var(--accent-cyan);
-      font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 6px;
-      font-size: 10px;
-    }
-    .hero-temp-wrap {
-      text-align: right;
-    }
-    .hero-temp {
-      font-size: 36px;
-      font-weight: 800;
-      color: #FFFFFF;
-      line-height: 1;
-      letter-spacing: -1px;
-      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
-    }
-    .hero-status-tag {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 8px;
-      margin-top: 5px;
-      background: rgba(48, 209, 88, 0.2);
-      color: var(--accent-green);
-      border: 0.5px solid rgba(48, 209, 88, 0.4);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
+    .altitude-scrubber-box { background: rgba(255, 255, 255, 0.04); border: 0.5px solid rgba(255, 255, 255, 0.09); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
+    .scrubber-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .scrubber-title { font-size: 11px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+    .scrubber-val-pill { color: var(--accent-cyan); font-weight: 800; background: rgba(100, 210, 255, 0.15); padding: 1px 6px; border-radius: 6px; }
+    .scrubber-reset-btn { background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 2px 8px; font-size: 10px; font-weight: 700; color: #FFFFFF; cursor: pointer; }
+    .altitude-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #30D158 0%, #64D2FF 50%, #0A84FF 100%); outline: none; margin: 8px 0 6px 0; }
+    .altitude-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #FFFFFF; border: 2px solid var(--accent-blue); cursor: pointer; }
+    .scrubber-ticks { display: flex; justify-content: space-between; font-size: 9px; font-weight: 600; color: var(--text-tertiary); }
 
-    .altitude-meter-box {
-      position: relative;
-      background: rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 0.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-    }
-    .meter-visual-track {
-      position: relative;
-      flex-grow: 1;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 3px;
-      margin: 0 10px;
-    }
-    .meter-fill-summit {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      background: var(--accent-blue);
-      border-radius: 3px;
-      transition: width 0.4s ease;
-    }
-    .meter-marker-cloud {
-      position: absolute;
-      top: -4px;
-      width: 3px;
-      height: 14px;
-      background: #FFFFFF;
-      box-shadow: 0 0 10px #FFFFFF;
-      border-radius: 2px;
-      transition: left 0.4s ease;
-    }
-    .meter-label-left, .meter-label-right {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      white-space: nowrap;
-    }
+    .hero-specs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 0.5px solid rgba(255, 255, 255, 0.1); padding-top: 10px; text-align: center; }
+    .spec-item { display: flex; flex-direction: column; gap: 3px; }
+    .spec-item:nth-child(2) { border-left: 0.5px solid rgba(255, 255, 255, 0.1); border-right: 0.5px solid rgba(255, 255, 255, 0.1); }
+    .spec-label { font-size: 10px; font-weight: 600; color: var(--text-secondary); }
+    .spec-val { font-size: 13px; font-weight: 700; color: #FFFFFF; }
 
-    .altitude-scrubber-box {
-      background: rgba(255, 255, 255, 0.04);
-      border: 0.5px solid rgba(255, 255, 255, 0.09);
-      border-radius: 14px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
-    }
-    .scrubber-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .scrubber-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .scrubber-val-pill {
-      color: var(--accent-cyan);
-      font-weight: 800;
-      background: rgba(100, 210, 255, 0.15);
-      padding: 1px 6px;
-      border-radius: 6px;
-    }
-    .scrubber-reset-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 2px 8px;
-      font-size: 10px;
-      font-weight: 700;
-      color: #FFFFFF;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .scrubber-reset-btn:active {
-      transform: scale(0.95);
-      background: rgba(10, 132, 255, 0.3);
-    }
-    .altitude-slider {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #30D158 0%, #64D2FF 50%, #0A84FF 100%);
-      outline: none;
-      margin: 8px 0 6px 0;
-    }
-    .altitude-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #FFFFFF;
-      border: 2px solid var(--accent-blue);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-      cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-    .altitude-slider::-webkit-slider-thumb:active {
-      transform: scale(1.25);
-    }
-    .scrubber-ticks {
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      font-weight: 600;
-      color: var(--text-tertiary);
-    }
+    .winter-safety-card { background: linear-gradient(135deg, rgba(16, 28, 45, 0.88) 0%, rgba(10, 18, 30, 0.95) 100%); border: 0.5px solid rgba(174, 232, 255, 0.45); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; display: none; }
+    .winter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 700; }
+    .winter-pill { font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 10px; }
+    .winter-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.04); padding: 8px 10px; border-radius: 10px; }
+    .winter-desc { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 1.5; padding-top: 6px; border-top: 0.5px solid rgba(255, 255, 255, 0.08); }
 
-    .hero-specs-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      border-top: 0.5px solid rgba(255, 255, 255, 0.1);
-      padding-top: 10px;
-      text-align: center;
-    }
-    .spec-item {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .spec-item:nth-child(2) {
-      border-left: 0.5px solid rgba(255, 255, 255, 0.1);
-      border-right: 0.5px solid rgba(255, 255, 255, 0.1);
-    }
-    .spec-label {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-    }
-    .spec-val {
-      font-size: 13px;
-      font-weight: 700;
-      color: #FFFFFF;
-    }
+    .sun-safety-card { background: linear-gradient(135deg, rgba(35, 28, 20, 0.78) 0%, rgba(20, 24, 32, 0.88) 100%); border: 0.5px solid rgba(255, 159, 10, 0.35); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; }
+    .sun-safety-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 700; }
+    .sun-safety-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; background: rgba(255, 159, 10, 0.18); border: 0.5px solid rgba(255, 159, 10, 0.45); color: #FFE299; }
+    .sun-track-bar { position: relative; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; margin: 8px 0 6px 0; }
+    .sun-track-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #FF9F0A 0%, #0A84FF 100%); }
+    .sun-track-orb { position: absolute; top: -9px; transform: translateX(-50%); font-size: 14px; }
+    .sun-time-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-secondary); }
+    .sun-safety-desc { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 1.5; padding-top: 6px; border-top: 0.5px solid rgba(255, 255, 255, 0.08); }
 
-    .winter-safety-card {
-      background: linear-gradient(135deg, rgba(16, 28, 45, 0.88) 0%, rgba(10, 18, 30, 0.95) 100%);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 0.5px solid rgba(174, 232, 255, 0.45);
-      border-radius: 18px;
-      padding: 13px 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 16px rgba(100, 210, 255, 0.15);
-      animation: fadeInAlert 0.3s ease-out;
-    }
-    @keyframes fadeInAlert {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .winter-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .winter-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      letter-spacing: 0.2px;
-      text-transform: uppercase;
-    }
-    .winter-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent-cyan);
-      box-shadow: 0 0 8px var(--accent-cyan);
-    }
-    .winter-pill {
-      font-size: 11px;
-      font-weight: 800;
-      padding: 3px 10px;
-      border-radius: 10px;
-    }
-    .winter-data-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 8px;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 8px 10px;
-      border-radius: 10px;
-    }
-    .winter-col {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .winter-label {
-      font-size: 10px;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-    .winter-val {
-      font-size: 13px;
-      color: #FFFFFF;
-      font-weight: 800;
-    }
-    .winter-desc {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-primary);
-      line-height: 1.5;
-      padding-top: 6px;
-      border-top: 0.5px solid rgba(255, 255, 255, 0.08);
-    }
+    .cloudsea-card { background: linear-gradient(135deg, rgba(28, 24, 40, 0.8) 0%, rgba(18, 20, 32, 0.88) 100%); border: 0.5px solid rgba(191, 90, 242, 0.3); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; }
+    .cs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; font-weight: 700; }
+    .cs-prob-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; background: rgba(191, 90, 242, 0.18); border: 0.5px solid rgba(191, 90, 242, 0.45); color: #E5B8FF; }
+    .cs-burnoff-timer-banner { background: rgba(255, 255, 255, 0.04); border: 0.5px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 6px 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+    .cs-timer-badge { font-weight: 800; padding: 2px 7px; border-radius: 6px; font-size: 10px; }
+    .cs-meter-bar { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+    .cs-meter-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #64D2FF 0%, #BF5AF2 60%, #FF9F0A 100%); }
+    .cs-sub-row { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary); font-weight: 600; }
+    .cs-desc { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 1.5; padding-top: 6px; border-top: 0.5px solid rgba(255, 255, 255, 0.08); }
 
-    .sun-safety-card {
-      background: linear-gradient(135deg, rgba(35, 28, 20, 0.78) 0%, rgba(20, 24, 32, 0.88) 100%);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 0.5px solid rgba(255, 159, 10, 0.35);
-      border-radius: 18px;
-      padding: 13px 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-      transition: all 0.5s ease;
-    }
-    .sun-safety-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .sun-safety-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-    }
-    .sun-dot-indicator {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent-amber);
-      box-shadow: 0 0 8px var(--accent-amber);
-    }
-    .sun-safety-pill {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 10px;
-      background: rgba(255, 159, 10, 0.18);
-      border: 0.5px solid rgba(255, 159, 10, 0.45);
-      color: #FFE299;
-    }
-    .sun-track-container {
-      margin-bottom: 6px;
-    }
-    .sun-track-bar {
-      position: relative;
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      margin: 8px 0 6px 0;
-    }
-    .sun-track-fill {
-      height: 100%;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #FF9F0A 0%, #FFD60A 50%, #0A84FF 100%);
-      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.6s ease;
-    }
-    .sun-track-orb {
-      position: absolute;
-      top: -9px;
-      transform: translateX(-50%);
-      font-size: 14px;
-      filter: drop-shadow(0 0 8px rgba(255, 214, 10, 0.8));
-      transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
-    }
-    .sun-time-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-    .sun-safety-desc {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-primary);
-      line-height: 1.5;
-      padding-top: 6px;
-      border-top: 0.5px solid rgba(255, 255, 255, 0.08);
-    }
+    .cloudbase-summary-card { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; }
+    .cb-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; font-weight: 600; }
+    .cb-card-tag { font-size: 11px; font-weight: 700; color: var(--accent-cyan); }
+    .cb-card-desc { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 1.5; }
 
-    .cloudsea-card {
-      background: linear-gradient(135deg, rgba(28, 24, 40, 0.8) 0%, rgba(18, 20, 32, 0.88) 100%);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 0.5px solid rgba(191, 90, 242, 0.3);
-      border-radius: 18px;
-      padding: 13px 14px;
-      margin-bottom: 10px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    }
-    .cs-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .cs-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #FFFFFF;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      letter-spacing: 0.2px;
-      text-transform: uppercase;
-    }
-    .cs-dot-indicator {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent-purple);
-      box-shadow: 0 0 8px var(--accent-purple);
-    }
-    .cs-prob-pill {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 10px;
-      background: rgba(191, 90, 242, 0.18);
-      border: 0.5px solid rgba(191, 90, 242, 0.45);
-      color: #E5B8FF;
-    }
-
-    .cs-burnoff-timer-banner {
-      background: rgba(255, 255, 255, 0.04);
-      border: 0.5px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      padding: 6px 10px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-    }
-    .cs-timer-label {
-      color: #FFFFFF;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .cs-timer-badge {
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 6px;
-      font-size: 10px;
-      letter-spacing: 0.2px;
-    }
-
-    .cs-meter-wrap {
-      margin-bottom: 6px;
-    }
-    .cs-meter-bar {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-    .cs-meter-fill {
-      height: 100%;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #64D2FF 0%, #BF5AF2 60%, #FF9F0A 100%);
-      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .cs-sub-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-    .cs-desc {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-primary);
-      line-height: 1.5;
-      padding-top: 6px;
-      border-top: 0.5px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .cloudbase-summary-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 0.5px solid var(--card-border);
-      border-radius: 18px;
-      padding: 13px 14px;
-      margin-bottom: 10px;
-    }
-    .cb-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .cb-card-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-    }
-    .cb-card-tag {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-    .cb-card-desc {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-primary);
-      line-height: 1.5;
-    }
-
-    .modular-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .grid-tile {
-      background: var(--card-bg);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 0.5px solid var(--card-border);
-      border-radius: 16px;
-      padding: 13px 12px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .tile-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .tile-data-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 5px;
-      font-size: 11px;
-    }
-    .tile-data-row:last-child { margin-bottom: 0; }
+    .modular-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .grid-tile { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: 16px; padding: 13px 12px; display: flex; flex-direction: column; justify-content: space-between; }
+    .tile-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; }
+    .tile-data-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px; }
     .tile-label { color: var(--text-secondary); font-weight: 500; }
     .tile-value { font-weight: 700; color: #FFFFFF; }
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
-    .ad-banner-container {
-      background: linear-gradient(135deg, rgba(38, 28, 24, 0.75) 0%, rgba(26, 26, 30, 0.85) 100%);
-      border: 0.5px solid rgba(255, 159, 10, 0.35);
-      border-radius: 16px;
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
-    }
-    .ad-banner-container:active {
-      transform: scale(0.98);
-      background: rgba(255, 159, 10, 0.12);
-    }
-    .ad-left-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      overflow: hidden;
-    }
-    .ad-icon-box {
-      flex-shrink: 0;
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(255, 69, 58, 0.22) 0%, rgba(255, 159, 10, 0.22) 100%);
-      border: 0.5px solid rgba(255, 159, 10, 0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
-    }
-    .ad-text-box {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-    .ad-tag-line {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .ad-badge {
-      font-size: 9px;
-      font-weight: 800;
-      color: #FFD60A;
-      background: rgba(255, 214, 10, 0.15);
-      border: 0.5px solid rgba(255, 214, 10, 0.4);
-      padding: 1px 5px;
-      border-radius: 4px;
-      letter-spacing: 0.3px;
-    }
-    .ad-rating-pill {
-      font-size: 10px;
-      font-weight: 700;
-      color: #FF9F0A;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-    }
-    .ad-title {
-      font-size: 13px;
-      font-weight: 800;
-      color: #FFFFFF;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .ad-sub {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .ad-action-btn {
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 700;
-      color: #FFFFFF;
-      background: linear-gradient(135deg, #FF9F0A 0%, #FF453A 100%);
-      border: none;
-      padding: 6px 11px;
-      border-radius: 10px;
-      white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(255, 159, 10, 0.35);
-      margin-left: 8px;
-    }
+    /* 광고 배너 스타일 */
+    .ad-banner-container { background: linear-gradient(135deg, rgba(38, 28, 24, 0.75) 0%, rgba(26, 26, 30, 0.85) 100%); border: 0.5px solid rgba(255, 159, 10, 0.35); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .ad-left-wrap { display: flex; align-items: center; gap: 12px; }
+    .ad-icon-box { flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, rgba(255, 69, 58, 0.22) 0%, rgba(255, 159, 10, 0.22) 100%); border: 0.5px solid rgba(255, 159, 10, 0.45); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .ad-badge { font-size: 9px; font-weight: 800; color: #FFD60A; background: rgba(255, 214, 10, 0.15); border: 0.5px solid rgba(255, 214, 10, 0.4); padding: 1px 5px; border-radius: 4px; }
+    .ad-title { font-size: 13px; font-weight: 800; color: #FFFFFF; }
+    .ad-sub { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+    .ad-action-btn { font-size: 11px; font-weight: 700; color: #FFFFFF; background: linear-gradient(135deg, #FF9F0A 0%, #FF453A 100%); border: none; padding: 6px 11px; border-radius: 10px; }
 
-    .legal-summary-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 0.5px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 13px 14px;
-      margin-bottom: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .legal-top-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .legal-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .legal-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 4px 8px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--accent-cyan);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .legal-btn:active {
-      transform: scale(0.96);
-      background: rgba(100, 210, 255, 0.2);
-    }
-    .legal-brief-text {
-      font-size: 10px;
-      color: var(--text-tertiary);
-      line-height: 1.6;
-    }
+    /* 법적 고지 스타일 */
+    .legal-summary-card { background: rgba(255, 255, 255, 0.03); border: 0.5px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 13px 14px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 6px; }
+    .legal-btn { background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 600; color: var(--accent-cyan); cursor: pointer; }
 
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.82);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      z-index: 4000;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-    .modal-overlay.active {
-      display: flex;
-      opacity: 1;
-    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(16px); z-index: 4000; display: none; align-items: flex-end; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-sheet { background: rgba(24, 24, 28, 0.98); border-top: 0.5px solid rgba(255, 255, 255, 0.25); border-radius: 26px 26px 0 0; width: 100%; max-width: 540px; height: 86vh; max-height: 88vh; padding: 16px 18px calc(24px + env(safe-area-inset-bottom, 16px)) 18px; overflow-y: auto; }
+    .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.25); margin: 0 auto 12px auto; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 0.5px solid rgba(255, 255, 255, 0.1); }
+    .sheet-title { font-size: 15px; font-weight: 800; color: #FFFFFF; }
+    .sheet-close-btn { background: rgba(255, 255, 255, 0.1); border: none; width: 28px; height: 28px; border-radius: 50%; color: #FFFFFF; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .sheet-content { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
 
-    .modal-sheet {
-      background: rgba(24, 24, 28, 0.98);
-      border-top: 0.5px solid rgba(255, 255, 255, 0.25);
-      border-radius: 26px 26px 0 0;
-      width: 100%;
-      max-width: 540px;
-      height: 86vh;
-      max-height: 88vh;
-      padding: 16px 18px calc(24px + env(safe-area-inset-bottom, 16px)) 18px;
-      overflow-y: auto;
-      transform: translateY(100%);
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 -10px 45px rgba(0, 0, 0, 0.95);
-    }
-    .modal-overlay.active .modal-sheet {
-      transform: translateY(0);
-    }
-    .sheet-handle {
-      width: 36px;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.25);
-      margin: 0 auto 12px auto;
-    }
-    .sheet-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
-    }
-    .sheet-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #FFFFFF;
-      letter-spacing: -0.3px;
-    }
-    .sheet-close-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      color: #FFFFFF;
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    .sheet-content {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
+    .day-hero-stage { position: relative; border-radius: 20px; padding: 16px 14px; margin-bottom: 14px; border: 0.5px solid rgba(255, 255, 255, 0.15); display: flex; flex-direction: column; gap: 12px; }
+    .day-hero-top { display: flex; justify-content: space-between; align-items: center; }
+    .day-hero-main-txt { display: flex; align-items: center; gap: 8px; }
+    .day-hero-icon { font-size: 38px; }
+    .day-hero-state-title { font-size: 17px; font-weight: 800; color: #FFF; line-height: 1.2; }
+    .day-hero-temp-sub { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-top: 2px; }
 
-    .day-hero-stage {
-      position: relative;
-      border-radius: 20px;
-      padding: 16px 14px;
-      margin-bottom: 14px;
-      overflow: hidden;
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .day-hero-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .day-hero-main-txt {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .day-hero-icon {
-      font-size: 38px;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-    }
-    .day-hero-state-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #FFF;
-      line-height: 1.2;
-    }
-    .day-hero-temp-sub {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
+    .day-cross-section-box { background: rgba(0,0,0,0.35); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; }
+    .cross-section-tag { font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 6px; }
 
-    .day-hero-gauges {
-      display: flex;
-      gap: 10px;
-      justify-content: space-around;
-      background: rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(14px);
-      border: 0.5px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 10px 8px;
-    }
-    .gauge-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .radial-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      font-size: 12px;
-      font-weight: 800;
-      color: #FFF;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
-    .gauge-label-col {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .gauge-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #FFF;
-    }
-    .gauge-desc {
-      font-size: 9px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .day-cross-section-box {
-      background: rgba(0,0,0,0.35);
-      border: 0.5px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .cross-section-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #FFF;
-    }
-    .cross-section-tag {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 1px 6px;
-      border-radius: 6px;
-    }
-
-    #statlab-badge {
-      position: fixed;
-      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-      right: 14px;
-      z-index: 2000;
-      font-size: 11px;
-      font-weight: 700;
-      color: #FFFFFF;
-      background: rgba(30, 30, 32, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 5px 12px;
-      border-radius: 16px;
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .badge-mark {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent-green);
-    }
+    #statlab-badge { position: fixed; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); right: 14px; z-index: 2000; font-size: 11px; font-weight: 700; color: #FFFFFF; background: rgba(30, 30, 32, 0.88); backdrop-filter: blur(16px); padding: 5px 12px; border-radius: 16px; border: 0.5px solid rgba(255, 255, 255, 0.15); pointer-events: none; display: flex; align-items: center; gap: 5px; }
+    .badge-mark { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); }
   </style>
 </head>
 <body>
@@ -1448,21 +515,13 @@
       <span id="brand-live-dot" class="brand-dot"></span>
       STATLAB ALPINE WEATHER
     </div>
-    <div id="clock-live" class="brand-status">실시간 동기화 중...</div>
+    <div id="clock-live" class="brand-status">기상 위성 수신 중...</div>
   </div>
 
   <div class="search-row">
     <div class="search-container">
       <span class="search-icon">🔍</span>
-      <input
-        type="text"
-        id="mt-search-input"
-        class="search-box"
-        placeholder="전국 산·봉우리·대피소 검색"
-        autocomplete="off"
-        oninput="handleMountainSearch(this.value)"
-        onfocus="handleMountainSearch(this.value)"
-      />
+      <input type="text" id="mt-search-input" class="search-box" placeholder="전국 산·봉우리·대피소 검색" autocomplete="off" oninput="handleMountainSearch(this.value)" />
       <div id="search-dropdown" class="search-dropdown"></div>
     </div>
     <button class="gps-btn" onclick="triggerGPSMatching()" title="내 위치 기준 산 찾기">📍</button>
@@ -1476,12 +535,8 @@
   </div>
 
   <div class="forecast-toggle-bar">
-    <div id="tab-hourly-btn" class="toggle-tab-btn active" onclick="switchForecastView('hourly')">
-      12시간 초단기 현장 예보
-    </div>
-    <div id="tab-weekly-btn" class="toggle-tab-btn" onclick="switchForecastView('weekly')">
-      7일 주간 예보 <span class="pro-badge-free">FREE BETA</span>
-    </div>
+    <div id="tab-hourly-btn" class="toggle-tab-btn active" onclick="switchForecastView('hourly')">12시간 초단기 현장 예보</div>
+    <div id="tab-weekly-btn" class="toggle-tab-btn" onclick="switchForecastView('weekly')">7일 주간 예보 <span class="pro-badge-free">FREE BETA</span></div>
   </div>
 
   <div id="weekly-ai-banner" class="weekly-ai-banner" style="display:none;">
@@ -1497,41 +552,25 @@
   <div id="forecast-track" class="forecast-track"></div>
   <div id="weekly-forecast-track" class="forecast-track" style="display:none;"></div>
 
-  <!-- 메인 히어로 카드 -->
   <div id="hero-card" class="hero-weather-card">
-    
     <div id="weather-stage" class="weather-scene-stage scene-clear-day">
       <div class="sun-orb-wrap"><div class="sun-glow"></div><div class="sun-core"></div></div>
-      <div class="moon-star-wrap">
-        <div class="crescent-moon"></div>
-        <div class="twinkle-star" style="top: 15px; left: 15px; width: 2px; height: 2px; animation-delay: 0.2s;"></div>
-        <div class="twinkle-star" style="top: 50px; left: 35px; width: 3px; height: 3px; animation-delay: 1.1s;"></div>
-        <div class="twinkle-star" style="top: 25px; left: 60px; width: 2px; height: 2px; animation-delay: 2s;"></div>
-      </div>
-      <div class="fog-cloud-layer"><div class="fog-wave"></div><div class="fog-wave fog-wave-2"></div></div>
-      <div class="cloud-cluster-wrap"><div class="storm-cloud-puff puff-1"></div><div class="storm-cloud-puff puff-2"></div></div>
+      <div class="moon-star-wrap"><div class="crescent-moon"></div></div>
+      <div class="fog-cloud-layer"><div class="fog-wave"></div></div>
+      <div class="cloud-cluster-wrap"><div class="storm-cloud-puff"></div></div>
       <div class="rain-scene-wrap">
-        <div class="rain-drop" style="left: 15%; animation-delay: 0.1s;"></div>
-        <div class="rain-drop" style="left: 32%; animation-delay: 0.6s;"></div>
-        <div class="rain-drop" style="left: 50%; animation-delay: 0.2s;"></div>
-        <div class="rain-drop" style="left: 68%; animation-delay: 0.8s;"></div>
-        <div class="rain-drop" style="left: 85%; animation-delay: 0.4s;"></div>
-      </div>
-      <div class="thunder-flash"></div>
-      <div class="snow-scene-wrap">
-        <div class="snow-flake" style="left: 20%; top: 0; width: 4px; height: 4px; animation-delay: 0.3s;"></div>
-        <div class="snow-flake" style="left: 45%; top: 0; width: 6px; height: 6px; animation-delay: 1.2s;"></div>
-        <div class="snow-flake" style="left: 70%; top: 0; width: 5px; height: 5px; animation-delay: 2.1s;"></div>
-        <div class="snow-flake" style="left: 88%; top: 0; width: 3px; height: 3px; animation-delay: 0.8s;"></div>
+        <div class="rain-drop" style="left: 20%; animation-delay: 0.1s;"></div>
+        <div class="rain-drop" style="left: 50%; animation-delay: 0.3s;"></div>
+        <div class="rain-drop" style="left: 80%; animation-delay: 0.6s;"></div>
       </div>
     </div>
 
     <div class="hero-content-front">
       <div class="hero-top-row">
-        <div class="hero-location-wrap">
+        <div>
           <div class="hero-title-line">
             <div id="card-peak-title" class="hero-mt-name">금정산 고당봉</div>
-            <button id="fav-toggle-btn" class="fav-star-btn active" onclick="toggleCurrentFavorite()" title="즐겨찾기 토글">★</button>
+            <button id="fav-toggle-btn" class="fav-star-btn active" onclick="toggleCurrentFavorite()">★</button>
           </div>
           <div id="card-peak-ele" class="hero-mt-sub">
             <span id="card-peak-desc">해발 801m · 정상부 분석</span>
@@ -1548,7 +587,7 @@
         <div id="meter-mt-label" class="meter-label-left">정상 801m</div>
         <div class="meter-visual-track">
           <div id="meter-fill" class="meter-fill-summit" style="width: 27%;"></div>
-          <div id="meter-cloud-line" class="meter-marker-cloud" style="left: 70%;" title="구름 밑바닥"></div>
+          <div id="meter-cloud-line" class="meter-marker-cloud" style="left: 70%;"></div>
         </div>
         <div id="meter-cloud-label" class="meter-label-right">운저 계산 중</div>
       </div>
@@ -1561,16 +600,7 @@
           </div>
           <button class="scrubber-reset-btn" onclick="resetAltitudeToSummit()">정상 앵커</button>
         </div>
-        <input
-          type="range"
-          id="altitude-slider"
-          class="altitude-slider"
-          min="50"
-          max="801"
-          value="801"
-          step="10"
-          oninput="handleAltitudeScrub(this.value)"
-        />
+        <input type="range" id="altitude-slider" class="altitude-slider" min="50" max="801" value="801" step="10" oninput="handleAltitudeScrub(this.value)" />
         <div class="scrubber-ticks">
           <span>들머리 50m</span>
           <span id="scrubber-mid-tick">중턱 401m</span>
@@ -1579,203 +609,166 @@
       </div>
 
       <div class="hero-specs-grid">
-        <div class="spec-item">
-          <span class="spec-label">능선 체감</span>
-          <span id="summit-feel" class="spec-val">--°</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">능선 바람 (평균 / 돌풍)</span>
-          <span id="brief-wind" class="spec-val" style="color: var(--accent-amber);">-- / -- m/s</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-label">강수량</span>
-          <span id="brief-rain" class="spec-val" style="color: var(--accent-cyan);">0 mm</span>
-        </div>
+        <div class="spec-item"><span class="spec-label">능선 체감</span><span id="summit-feel" class="spec-val">--°</span></div>
+        <div class="spec-item"><span class="spec-label">능선 바람 (평균/돌풍)</span><span id="brief-wind" class="spec-val" style="color: var(--accent-amber);">-- / -- m/s</span></div>
+        <div class="spec-item"><span class="spec-label">강수량</span><span id="brief-rain" class="spec-val" style="color: var(--accent-cyan);">0 mm</span></div>
       </div>
     </div>
-
   </div>
 
-  <!-- 동절기 결빙/적설 안전 카드 -->
-  <div id="winter-safety-card" class="winter-safety-card" style="display:none;">
+  <div id="winter-safety-card" class="winter-safety-card">
     <div class="winter-header">
-      <div class="winter-title">
-        <span id="winter-dot" class="winter-dot"></span>
-        <span id="winter-main-title">동절기 등산로 결빙 & 적설 안전</span>
-      </div>
-      <span id="winter-badge" class="winter-pill" style="background: rgba(100,210,255,0.2); color: var(--accent-cyan); border: 0.5px solid var(--accent-cyan);">
-        분석 중
-      </span>
+      <div><span class="winter-dot"></span> 동절기 등산로 결빙 & 적설 안전</div>
+      <span id="winter-badge" class="winter-pill">분석 중</span>
     </div>
     <div class="winter-data-grid">
-      <div class="winter-col">
-        <span class="winter-label">결빙 위험도</span>
-        <span id="winter-ice-risk" class="winter-val">안전</span>
-      </div>
-      <div class="winter-col">
-        <span class="winter-label">예상 적설 / 신적설</span>
-        <span id="winter-snow-val" class="winter-val">0 cm</span>
-      </div>
+      <div><span style="font-size:10px; color:var(--text-secondary);">결빙 위험도</span><div id="winter-ice-risk" style="font-weight:800;">안전</div></div>
+      <div><span style="font-size:10px; color:var(--text-secondary);">예상 적설</span><div id="winter-snow-val" style="font-weight:800;">0 cm</div></div>
     </div>
-    <div id="winter-desc" class="winter-desc">
-      영하권 및 빙점 기온을 추적하고 있습니다...
-    </div>
+    <div id="winter-desc" class="winter-desc"></div>
   </div>
 
   <div id="sun-safety-card" class="sun-safety-card">
     <div class="sun-safety-header">
-      <div class="sun-safety-title">
-        <span id="sun-dot-indicator" class="sun-dot-indicator"></span>
-        <span id="sun-safety-main-title">일출 · 일몰 & 안전 하산 인디케이터</span>
-      </div>
+      <div id="sun-safety-main-title">일출 · 일몰 & 안전 하산 인디케이터</div>
       <span id="sun-safety-badge" class="sun-safety-pill">일조 분석 중</span>
     </div>
-    <div class="sun-track-container">
-      <div class="sun-track-bar">
-        <div id="sun-track-fill" class="sun-track-fill" style="width: 50%;"></div>
-        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️</div>
-      </div>
-      <div class="sun-time-labels">
-        <span id="label-sunrise">일출 --:--</span>
-        <span id="label-solar-state">태양 궤적</span>
-        <span id="label-sunset">일몰 --:--</span>
-      </div>
+    <div class="sun-track-bar">
+      <div id="sun-track-fill" class="sun-track-fill" style="width: 50%;"></div>
+      <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️</div>
     </div>
-    <div id="sun-safety-desc" class="sun-safety-desc">
-      일출·일몰 시각 및 잔여 시간을 계산하고 있습니다...
+    <div class="sun-time-labels">
+      <span id="label-sunrise">일출 --:--</span>
+      <span id="label-solar-state">태양 궤적</span>
+      <span id="label-sunset">일몰 --:--</span>
     </div>
+    <div id="sun-safety-desc" class="sun-safety-desc">일출·일몰 시각을 계산하고 있습니다...</div>
   </div>
 
   <div class="cloudsea-card">
     <div class="cs-header">
-      <div class="cs-title">
-        <span class="cs-dot-indicator"></span>
-        <span>운해(雲海) 파노라마 지수 · SEA OF CLOUDS</span>
-      </div>
+      <div>운해(雲海) 파노라마 지수 · SEA OF CLOUDS</div>
       <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
     </div>
-
-    <div id="cs-burnoff-banner" class="cs-burnoff-timer-banner">
-      <div class="cs-timer-label">
-        <span id="cs-timer-icon">⏳</span>
-        <span id="cs-timer-title">운해 소멸 타이머</span>
-      </div>
-      <div id="cs-timer-badge" class="cs-timer-badge" style="background: rgba(48,209,88,0.2); color: var(--accent-green); border: 0.5px solid rgba(48,209,88,0.4);">
-        골든타임 분석 중
-      </div>
+    <div class="cs-burnoff-timer-banner">
+      <div style="font-weight:700;">⏳ 운해 소멸 타이머</div>
+      <div id="cs-timer-badge" class="cs-timer-badge" style="background: rgba(48,209,88,0.2); color: var(--accent-green);">골든타임 분석 중</div>
     </div>
-
-    <div class="cs-meter-wrap">
-      <div class="cs-meter-bar">
-        <div id="cs-meter-fill" class="cs-meter-fill" style="width: 0%;"></div>
-      </div>
-      <div class="cs-sub-row">
-        <span id="cs-inversion-txt">역전층: 분석 중</span>
-        <span id="cs-wind-txt">풍속 안정도: --</span>
-        <span id="cs-sky-txt">상공: --</span>
-      </div>
+    <div class="cs-meter-bar"><div id="cs-meter-fill" class="cs-meter-fill" style="width: 0%;"></div></div>
+    <div class="cs-sub-row">
+      <span id="cs-inversion-txt">역전층: 분석 중</span>
+      <span id="cs-wind-txt">풍속: --</span>
+      <span id="cs-sky-txt">상공: --</span>
     </div>
-    <div id="cs-brief-desc" class="cs-desc">
-      정상과 골짜기 수증기 역전층 및 대기 안정도를 분석하고 있습니다...
-    </div>
+    <div id="cs-brief-desc" class="cs-desc">운해 조건을 분석하고 있습니다...</div>
   </div>
 
   <div class="cloudbase-summary-card">
     <div class="cb-card-header">
-      <span class="cb-card-title">산악 운저고도 & 광학 시야 분석</span>
+      <span>산악 운저고도 & 광학 시야 분석</span>
       <span id="cb-status-pill" class="cb-card-tag">분석 중</span>
     </div>
-    <div id="cb-desc-text" class="cb-card-desc">
-      미 산란(Mie Extinction) 및 나노 핵생성 물리 공식 연산 중...
-    </div>
+    <div id="cb-desc-text" class="cb-card-desc">미 산란(Mie Extinction) 연산 중...</div>
   </div>
 
   <div class="modular-grid">
     <div class="grid-tile">
       <div class="tile-title">산악 현지 관측 (정상부)</div>
-      <div class="tile-data-row"><span class="tile-label">정상 실측기온</span><span id="summit-temp" class="tile-value">--.- °C</span></div>
-      <div class="tile-data-row"><span class="tile-label">정상 상대습도</span><span id="summit-humidity" class="tile-value">-- %</span></div>
-      <div class="tile-data-row"><span class="tile-label">정상 평균풍속</span><span id="summit-wind" class="tile-value cyan">--.- m/s</span></div>
-      <div class="tile-data-row"><span class="tile-label">순간 최대돌풍</span><span id="summit-gust" class="tile-value amber">--.- m/s</span></div>
-      <div class="tile-data-row"><span class="tile-label">해발 운저고도</span><span id="summit-cloudbase" class="tile-value cyan">--.- m</span></div>
-      <div class="tile-data-row"><span class="tile-label">광학 투과율</span><span id="summit-optical" class="tile-value cyan">--.- %</span></div>
+      <div class="tile-data-row"><span class="tile-label">실측기온</span><span id="summit-temp" class="tile-value">--.- °C</span></div>
+      <div class="tile-data-row"><span class="tile-label">상대습도</span><span id="summit-humidity" class="tile-value">-- %</span></div>
+      <div class="tile-data-row"><span class="tile-label">평균풍속</span><span id="summit-wind" class="tile-value cyan">--.- m/s</span></div>
+      <div class="tile-data-row"><span class="tile-label">최대돌풍</span><span id="summit-gust" class="tile-value amber">--.- m/s</span></div>
+      <div class="tile-data-row"><span class="tile-label">운저고도</span><span id="summit-cloudbase" class="tile-value cyan">--.- m</span></div>
+      <div class="tile-data-row"><span class="tile-label">투과율</span><span id="summit-optical" class="tile-value cyan">--.- %</span></div>
     </div>
-
     <div class="grid-tile">
       <div class="tile-title">기저 평지 예보 (참고용)</div>
-      <div class="tile-data-row"><span class="tile-label">도심 평지기온</span><span id="city-temp" class="tile-value">--.- °C</span></div>
-      <div class="tile-data-row"><span class="tile-label">평지 체감기온</span><span id="city-feel" class="tile-value">--.- °C</span></div>
-      <div class="tile-data-row"><span class="tile-label">평지 상대습도</span><span id="city-humidity" class="tile-value">-- %</span></div>
-      <div class="tile-data-row"><span class="tile-label">평지 평균풍속</span><span id="city-wind" class="tile-value">--.- m/s</span></div>
-      <div class="tile-data-row"><span class="tile-label">평지 강수확률</span><span id="city-pop" class="tile-value amber">-- %</span></div>
-      <div class="tile-data-row"><span class="tile-label">광학 소멸계수</span><span id="city-beta" class="tile-value">--.- /km</span></div>
+      <div class="tile-data-row"><span class="tile-label">도심기온</span><span id="city-temp" class="tile-value">--.- °C</span></div>
+      <div class="tile-data-row"><span class="tile-label">체감기온</span><span id="city-feel" class="tile-value">--.- °C</span></div>
+      <div class="tile-data-row"><span class="tile-label">상대습도</span><span id="city-humidity" class="tile-value">-- %</span></div>
+      <div class="tile-data-row"><span class="tile-label">평균풍속</span><span id="city-wind" class="tile-value">--.- m/s</span></div>
+      <div class="tile-data-row"><span class="tile-label">강수확률</span><span id="city-pop" class="tile-value amber">-- %</span></div>
+      <div class="tile-data-row"><span class="tile-label">소멸계수</span><span id="city-beta" class="tile-value">--.- /km</span></div>
     </div>
   </div>
 
-  <div class="ad-banner-container" onclick="handleAdClick()">
+  <!-- 대한초밥 스폰서 광고 배너 -->
+  <div class="ad-banner-container" onclick="window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥','_blank')">
     <div class="ad-left-wrap">
       <div class="ad-icon-box">🍣</div>
-      <div class="ad-text-box">
-        <div class="ad-tag-line">
+      <div>
+        <div style="display:flex; align-items:center; gap:6px;">
           <span class="ad-badge">SPONSORED</span>
-          <span class="ad-rating-pill">★ 5.0</span>
+          <span style="font-size:10px; font-weight:700; color:#FF9F0A;">★ 5.0</span>
           <span style="font-size:10px; color:var(--text-tertiary);">대연역 6번출구</span>
         </div>
-        <span class="ad-title">대한초밥 · 대연동 본점</span>
-        <span class="ad-sub">붉은 홍국쌀 신선초밥 · 1인 오마카세급 미식</span>
+        <div class="ad-title">대한초밥 · 대연동 본점</div>
+        <div class="ad-sub">붉은 홍국쌀 신선초밥 · 1인 오마카세급 미식</div>
       </div>
     </div>
     <div class="ad-action-btn">플레이스</div>
   </div>
 
+  <!-- 법적 면책 요약 카드 -->
   <div class="legal-summary-card">
-    <div class="legal-top-line">
-      <span class="legal-title">STATLAB Legal & Disclaimer</span>
-      <button class="legal-btn" onclick="openLegalModal()">약관 및 면책 전문 보기</button>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">STATLAB Legal & Disclaimer</span>
+      <button class="legal-btn" onclick="document.getElementById('legal-modal').classList.add('active')">약관 전문</button>
     </div>
-    <div class="legal-brief-text">
-      본 시스템은 수치 시뮬레이션 모델 기반 산행 참고용 서비스이며, 대한민국 기상청 법적 특보를 대체하지 않습니다. 산행 전 기상청 특보 확인을 권장합니다.
+    <div style="font-size:10px; color:var(--text-tertiary); line-height:1.6;">
+      본 시스템은 수치 시뮬레이션 기반 산행 참고용이며 공식 기상특보를 대체하지 않습니다. 산행 전 기상청 특보 확인을 권장합니다.
     </div>
   </div>
 
-  <div id="legal-modal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
+  <!-- 법적 면책 전문 모달 (5개 조항 완전 복원) -->
+  <div id="legal-modal" class="modal-overlay" onclick="if(event.target.id==='legal-modal')this.classList.remove('active')">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-header">
         <span class="sheet-title">서비스 이용약관 및 법적 면책 공고</span>
-        <button class="sheet-close-btn" onclick="closeLegalModal()">✕</button>
+        <button class="sheet-close-btn" onclick="document.getElementById('legal-modal').classList.remove('active')">✕</button>
       </div>
       <div class="sheet-content">
-        <div class="sheet-clause">
-          <div class="clause-title">1. 기상 데이터 성격 및 시뮬레이션 한계</div>
-          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델 원천 데이터에 자체 산악 물리 알고리즘을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다.
+        <div style="margin-bottom:14px;">
+          <strong>1. 기상 데이터 성격 및 시뮬레이션 한계</strong><br>
+          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델 원천 데이터에 자체 산악 물리 알고리즘을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다. 국지성 산악 기후의 돌발적 급변으로 인해 실제 현장 상황과 오차가 발생할 수 있습니다.
         </div>
-        <div class="sheet-clause">
-          <div class="clause-title">2. 법적 기상특보 대체 불가</div>
-          본 서비스는 대한민국 기상청의 공식 기상특보를 대체하지 않습니다.
+        <div style="margin-bottom:14px;">
+          <strong>2. 법적 기상특보 대체 불가 (기상법 제17조 준수)</strong><br>
+          본 서비스는 대한민국 기상청의 공식 기상예보 및 법적 기상특보를 대체하지 않습니다. 산행 전 및 산행 중에는 반드시 대한민국 기상청 공식 발표와 국립공원공단 입산 통제 정보를 확인하시기 바랍니다.
+        </div>
+        <div style="margin-bottom:14px;">
+          <strong>3. 안전사고에 대한 개발자 완전 면책</strong><br>
+          본 서비스가 제공하는 모든 정보는 산행 계획 수립을 위한 단순 참고 자료입니다. 이용자가 본 정보에 의존하여 발생한 안전사고, 조난, 인명 피해, 신체 부상 및 재산상 손해에 대하여 서비스 개발자 및 운영사는 어떠한 민·형사상 법적 책임도 부담하지 않습니다.
+        </div>
+        <div style="margin-bottom:14px;">
+          <strong>4. 위치기반서비스(GPS) 및 개인정보 처리방침</strong><br>
+          본 서비스는 이용자의 위치에서 가장 가까운 산악 지점을 탐색하기 위해 단말기 GPS 좌표를 일회성으로 조회합니다. 해당 좌표는 외부 서버로 전송되거나 저장되지 않으며, 기기 내부에서 연산 직후 즉시 파기됩니다.
+        </div>
+        <div style="margin-bottom:14px;">
+          <strong>5. 데이터 라이선스 및 제휴 출처</strong><br>
+          Meteorological numerical data provided by Open-Meteo.com (CC BY 4.0 License). Location & Geocoding services powered by Kakao Maps SDK.
         </div>
       </div>
     </div>
   </div>
 
   <!-- 요일별 상세 리포트 모달 시트 -->
-  <div id="day-detail-modal" class="modal-overlay" onclick="handleDayDetailOverlayClick(event)">
+  <div id="day-detail-modal" class="modal-overlay" onclick="if(event.target.id==='day-detail-modal')this.classList.remove('active')">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
       <div class="sheet-header">
         <span id="day-detail-modal-title" class="sheet-title">산악 상세 리포트</span>
-        <button class="sheet-close-btn" onclick="closeDayDetailModal()">✕</button>
+        <button class="sheet-close-btn" onclick="document.getElementById('day-detail-modal').classList.remove('active')">✕</button>
       </div>
       <div id="day-detail-modal-body" class="sheet-content"></div>
     </div>
   </div>
 
-  <div id="statlab-badge">
-    <span class="badge-mark"></span>
-    <span>STATLAB v8.1 (EASY VIEW)</span>
-  </div>
+  <div id="statlab-badge"><span class="badge-mark"></span><span>STATLAB v8.4 (FULL ENGINE)</span></div>
 
 <script>
+// 14개 전국 명산 데이터베이스
 const mountainDB=[
   {name:'설악산 대청봉',type:'peak',region:'강원 양양군 서면',ele:1708,lat:38.1192,lng:128.4652},
   {name:'설악산 중청대피소',type:'shelter',region:'강원 양양군 서면',ele:1665,lat:38.1215,lng:128.4590},
@@ -1794,7 +787,6 @@ const mountainDB=[
 ];
 
 const FAVORITES_KEY='STATLAB_USER_FAVORITES_v5';
-
 const defaultFavorites=[
   {name:'금정산 고당봉',ele:801,type:'peak',lat:35.2846,lng:129.0565},
   {name:'금정산 장군봉',ele:735,type:'peak',lat:35.3015,lng:129.0535},
@@ -1805,240 +797,76 @@ const defaultFavorites=[
 
 function getFavorites(){try{const d=localStorage.getItem(FAVORITES_KEY);if(d)return JSON.parse(d);}catch(e){}return defaultFavorites;}
 function saveFavorites(l){try{localStorage.setItem(FAVORITES_KEY,JSON.stringify(l));}catch(e){}}
-function renderFavoritesChips(){const c=document.getElementById('mountain-chip-scroll');if(!c)return;const f=getFavorites();c.innerHTML='';f.forEach(m=>{const d=document.createElement('div');d.className=`mt-chip ${m.name===currentMt.name?'active':''}`;d.innerHTML=`<span>${m.name}</span>`;d.onclick=()=>selectMountain(m.name,m.ele,d,m.type||'peak',m.lat,m.lng);c.appendChild(d);});}
+function renderFavoritesChips(){
+  const c=document.getElementById('mountain-chip-scroll');if(!c)return;
+  const f=getFavorites();c.innerHTML='';
+  f.forEach(m=>{
+    const d=document.createElement('div');
+    d.className=`mt-chip ${m.name===currentMt.name?'active':''}`;
+    d.innerHTML=`<span>${m.name}</span>`;
+    d.onclick=()=>selectMountain(m.name,m.ele,d,m.type||'peak',m.lat,m.lng);
+    c.appendChild(d);
+  });
+}
 function isCurrentFavorite(){return getFavorites().some(m=>m.name===currentMt.name);}
-window.toggleCurrentFavorite=function(){let f=getFavorites();const b=document.getElementById('fav-toggle-btn');if(isCurrentFavorite()){f=f.filter(m=>m.name!==currentMt.name);b.classList.remove('active');b.innerText='☆';}else{f.push({name:currentMt.name,ele:currentMt.ele,type:currentMt.type||'peak',lat:currentMt.lat,lng:currentMt.lng});b.classList.add('active');b.innerText='★';}saveFavorites(f);renderFavoritesChips();};
-function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;if(isCurrentFavorite()){b.classList.add('active');b.innerText='★';}else{b.classList.remove('active');b.innerText='☆';}}
+window.toggleCurrentFavorite=function(){
+  let f=getFavorites();const b=document.getElementById('fav-toggle-btn');
+  if(isCurrentFavorite()){f=f.filter(m=>m.name!==currentMt.name);b.classList.remove('active');b.innerText='☆';}
+  else{f.push({name:currentMt.name,ele:currentMt.ele,type:currentMt.type||'peak',lat:currentMt.lat,lng:currentMt.lng});b.classList.add('active');b.innerText='★';}
+  saveFavorites(f);renderFavoritesChips();
+};
+function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;b.classList.toggle('active', isCurrentFavorite());b.innerText=isCurrentFavorite()?'★':'☆';}
 
-let currentMt=mountainDB[4];
+let currentMt=mountainDB[4]; // 금정산 고당봉 기본 타깃
 let selectedHourOffset=0,liveWeatherData=null;
 let baseLiveCurrentRes=null,activeForecastRes=null;
-let _lastHapticZ=0,currentUserAltitude=null;
-let currentForecastView='hourly';
+let currentUserAltitude=null,currentForecastView='hourly';
 let cachedWeeklyCalculatedData=[];
+
+window.onload=()=>{
+  renderFavoritesChips();
+  selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng);
+  triggerGPSMatching();
+  setInterval(()=>{
+    if(navigator.onLine) selectMountain(currentMt.name,currentMt.ele,null,currentMt.type,currentMt.lat,currentMt.lng,currentMt.distanceKm);
+  },600000);
+};
 
 window.switchForecastView=function(mode){
   const banner = document.getElementById('weekly-ai-banner');
-  if(mode==='weekly'){
-    currentForecastView='weekly';
-    document.getElementById('tab-hourly-btn').classList.remove('active');
-    document.getElementById('tab-weekly-btn').classList.add('active');
-    document.getElementById('forecast-track').style.display='none';
-    document.getElementById('weekly-forecast-track').style.display='flex';
-    if(banner) banner.style.display='flex';
-    document.getElementById('forecast-section-title').innerText='7일 주간 산악 정밀 예보';
-    document.getElementById('section-sub-label').innerText='카드를 터치하면 상세 리포트가 열립니다';
-    if(liveWeatherData) render7DayWeeklyTrack(liveWeatherData);
-  } else {
-    currentForecastView='hourly';
-    document.getElementById('tab-weekly-btn').classList.remove('active');
-    document.getElementById('tab-hourly-btn').classList.add('active');
-    document.getElementById('weekly-forecast-track').style.display='none';
-    if(banner) banner.style.display='none';
-    document.getElementById('forecast-track').style.display='flex';
-    document.getElementById('forecast-section-title').innerText='12시간 초단기 예보';
-    document.getElementById('section-sub-label').innerText='1시간 간격 정밀 분석';
+  const isW = (mode==='weekly');
+  currentForecastView = mode;
+  document.getElementById('tab-hourly-btn').classList.toggle('active', !isW);
+  document.getElementById('tab-weekly-btn').classList.toggle('active', isW);
+  document.getElementById('forecast-track').style.display = isW ? 'none' : 'flex';
+  document.getElementById('weekly-forecast-track').style.display = isW ? 'flex' : 'none';
+  if(banner) banner.style.display = isW ? 'flex' : 'none';
+  document.getElementById('forecast-section-title').innerText = isW ? '7일 주간 산악 정밀 예보' : '12시간 초단기 예보';
+  document.getElementById('section-sub-label').innerText = isW ? '카드를 터치하면 상세 리포트가 열립니다' : '1시간 간격 정밀 분석';
+  if(isW && liveWeatherData) render7DayWeeklyTrack(liveWeatherData);
+};
+
+// Open-Meteo 전용 표준 API 호출 함수
+async function fetchLiveMountainWeather(lt,lg,el){
+  try{
+    const eq=(el&&el>0)?`&elevation=${el}`:'';
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall,snow_depth&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=7`;
+    const r=await fetch(u);
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){ return null; }
+}
+
+function findCurrentHourIndex(h){
+  if(!h||!h.time||!h.time.length)return 0;
+  const nw=new Date().getTime();
+  let b=0, min=Infinity;
+  for(let i=0;i<h.time.length;i++){
+    const d=Math.abs(new Date(h.time[i]).getTime()-nw);
+    if(d<min){min=d;b=i;}
   }
-};
-
-// ★ [v8.1] 일반인 눈높이 3초 직관 리포트 모달
-window.openDayDetailModal=function(idx){
-  const item = cachedWeeklyCalculatedData[idx];
-  if(!item) return;
-  const titleEl = document.getElementById('day-detail-modal-title');
-  const bodyEl = document.getElementById('day-detail-modal-body');
-  titleEl.innerText = `${item.dateStr} (${item.dayName}) · ${currentMt.name} 날씨 판정`;
-
-  let heroTheme = 'background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);';
-  if(item.hasRain){
-    heroTheme = 'background: linear-gradient(135deg, rgba(60, 25, 30, 0.95) 0%, rgba(20, 24, 38, 0.98) 100%); border-color: rgba(255, 69, 58, 0.4);';
-  } else if(item.csScore >= 75){
-    heroTheme = 'background: linear-gradient(135deg, rgba(88, 28, 135, 0.85) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(191, 90, 242, 0.45);';
-  } else if(item.rainProb <= 20 && item.summitPrecip === 0){
-    heroTheme = 'background: linear-gradient(135deg, rgba(120, 53, 15, 0.8) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(255, 214, 10, 0.4);';
-  }
-
-  const safeColor = item.safetyScore >= 80 ? '#30D158' : (item.safetyScore >= 50 ? '#FF9F0A' : '#FF453A');
-  const safeDeg = Math.round((item.safetyScore / 100) * 360);
-  const csDeg = Math.round((item.csScore / 100) * 360);
-
-  bodyEl.innerHTML = `
-    <!-- 상단 대형 비주얼 카드 -->
-    <div class="day-hero-stage" style="${heroTheme}">
-      <div class="day-hero-top">
-        <div class="day-hero-main-txt">
-          <span class="day-hero-icon">${item.icon}</span>
-          <div>
-            <div class="day-hero-state-title">${item.plainTitle}</div>
-            <div class="day-hero-temp-sub">정상 기온 <strong style="color:var(--accent-cyan);">${item.summitMin}°C</strong> ~ <strong style="color:#FF9F0A;">${item.summitMax}°C</strong></div>
-          </div>
-        </div>
-        <div style="text-align:right;">
-          <span style="${item.safetyStyle}; font-size:11px; font-weight:800; padding:3px 9px; border-radius:8px;">${item.safetyLabel}</span>
-          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">예보 정확도 ${item.confidence}%</div>
-        </div>
-      </div>
-
-      <!-- 듀얼 원형 게이지 -->
-      <div class="day-hero-gauges">
-        <div class="gauge-item">
-          <div class="radial-circle" style="background: conic-gradient(${safeColor} ${safeDeg}deg, rgba(255,255,255,0.12) 0deg); border: 2px solid rgba(0,0,0,0.8);">
-            <div style="position:absolute; inset:5px; background:#1C1C1E; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-              <span style="color:${safeColor};">${item.safetyScore}%</span>
-            </div>
-          </div>
-          <div class="gauge-label-col">
-            <span class="gauge-title">산행 안전 지수</span>
-            <span class="gauge-desc">${item.safetyScore>=80?'산행 추천 (쾌청)':(item.safetyScore>=50?'변동 주의 요망':'산행 자제 권장')}</span>
-          </div>
-        </div>
-
-        <div style="width:0.5px; height:36px; background:rgba(255,255,255,0.15); align-self:center;"></div>
-
-        <div class="gauge-item">
-          <div class="radial-circle" style="background: conic-gradient(#BF5AF2 ${csDeg}deg, rgba(255,255,255,0.12) 0deg); border: 2px solid rgba(0,0,0,0.8);">
-            <div style="position:absolute; inset:5px; background:#1C1C1E; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-              <span style="color:#E5B8FF;">${item.csScore}%</span>
-            </div>
-          </div>
-          <div class="gauge-label-col">
-            <span class="gauge-title">운해 조망 확률</span>
-            <span class="gauge-desc">${item.csScore>=75?'구름바다 대박':(item.csScore>=50?'일부 골짜기 운무':'대기 혼합 미달')}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 시야 및 풍경 단면 태그 -->
-      <div class="day-cross-section-box">
-        <div class="cross-section-left">
-          <span>⛰️ 정상 ${currentMt.ele}m</span>
-          <span style="color:var(--text-tertiary);">|</span>
-          <span>${item.viewSummary}</span>
-        </div>
-        <span class="cross-section-tag" style="${item.viewTagStyle}">
-          ${item.viewTagText}
-        </span>
-      </div>
-    </div>
-
-    <!-- ★ [v8.1] 일반인 눈높이 3초 직관 브리핑 카드 -->
-    <div style="background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 12px; margin-bottom: 12px;">
-      <div style="font-size:13px; font-weight:800; color:#FFF; margin-bottom:8px;">등산객 핵심 행동 요령</div>
-      <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.5;">
-        <div>🚩 <strong>산행 추천도:</strong> <span style="color:#FFF;">${item.plainAction}</span></div>
-        <div>👀 <strong>정상 조망/풍경:</strong> <span style="color:var(--text-secondary);">${item.plainSight}</span></div>
-        <div>🧥 <strong>추천 옷차림:</strong> <span style="color:var(--text-secondary);">${item.plainWear}</span></div>
-      </div>
-    </div>
-
-    <!-- 핵심 수치 2칸 그리드 -->
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
-      <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
-        <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">능선 최대 돌풍</div>
-        <div style="font-size:15px; font-weight:800; color:${item.maxGust>=13?'var(--accent-red)':'#FFF'}; margin-top:2px;">
-          ${item.maxGust} m/s
-        </div>
-        <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">${item.maxGust>=13?'암릉 바람 주의보':'안전 보행 가능'}</div>
-      </div>
-
-      <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
-        <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">지형성 일강우량</div>
-        <div style="font-size:15px; font-weight:800; color:${item.summitPrecip>=1?'var(--accent-cyan)':'#FFF'}; margin-top:2px;">
-          ${item.summitPrecip} mm
-        </div>
-        <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">강수확률 ${item.rainProb}%</div>
-      </div>
-    </div>
-
-    <!-- 오전 vs 오후 타임라인 -->
-    <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
-      <div style="font-size:11px; font-weight:700; color:#FFF; margin-bottom:8px;">오전 vs 오후 상세 흐름</div>
-      <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary);">
-        <span>🌅 오전 (06~12시): <strong>${item.amIcon} ${item.amText}</strong></span>
-        <span>${item.amHasRain ? '☔ 빗방울 주의' : '쾌청 개방'}</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-top:6px;">
-        <span>☀️ 오후 (12~18시): <strong>${item.pmIcon} ${item.pmText}</strong></span>
-        <span>${item.pmHasRain ? '☔ 강우 대비 필수' : '안정적 하산'}</span>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('day-detail-modal').classList.add('active');
-  document.body.style.overflow='hidden';
-};
-
-window.closeDayDetailModal=function(){
-  document.getElementById('day-detail-modal').classList.remove('active');
-  document.body.style.overflow='auto';
-};
-window.handleDayDetailOverlayClick=function(e){if(e.target.id==='day-detail-modal')closeDayDetailModal();};
-
-window.openLegalModal=function(){
-  document.getElementById('legal-modal').classList.add('active');
-  document.body.style.overflow='hidden';
-  history.pushState({modalOpen:true},'');
-};
-window.closeLegalModal=function(){
-  document.getElementById('legal-modal').classList.remove('active');
-  document.body.style.overflow='auto';
-};
-window.addEventListener('popstate',function(e){
-  const m=document.getElementById('legal-modal');
-  if(m&&m.classList.contains('active')){
-    m.classList.remove('active');
-    document.body.style.overflow='auto';
-  }
-  const d=document.getElementById('day-detail-modal');
-  if(d&&d.classList.contains('active')){
-    d.classList.remove('active');
-    document.body.style.overflow='auto';
-  }
-});
-window.handleModalOverlayClick=function(e){if(e.target.id==='legal-modal')closeLegalModal();};
-window.handleAdClick=function(){window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥','_blank');};
-
-function calculateDistanceKm(l1,o1,l2,o2){const R=6371,dL=(l2-l1)*Math.PI/180,dO=(o2-o1)*Math.PI/180,a=Math.sin(dL/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dO/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-function findNearestMountainFromDb(uL,uO){let n=mountainDB[0],mD=Infinity;for(let i=0;i<mountainDB.length;i++){const d=calculateDistanceKm(uL,uO,mountainDB[i].lat,mountainDB[i].lng);if(d<mD){mD=d;n={...mountainDB[i],distanceKm:d.toFixed(1),rawDist:d};}}return n;}
-
-function searchKakaoPlacesAsync(k,lat,lng,r=18000){return new Promise(res=>{if(!window.kakao||!kakao.maps||!kakao.maps.services){res([]);return;}const pS=new kakao.maps.services.Places();pS.keywordSearch(k,(dt,st)=>{if(st===kakao.maps.services.Status.OK&&dt)res(dt);else res([]);},{location:new kakao.maps.LatLng(lat,lng),radius:r,sort:kakao.maps.services.SortBy.DISTANCE});});}
-
-window.triggerGPSMatching=function(){
-  const c=document.getElementById('clock-live');
-  if(c)c.innerText='GPS 위치 및 고도 수신 중...';
-  if(!navigator.geolocation){fallbackToDb(35.2846,129.0565);return;}
-  navigator.geolocation.getCurrentPosition(async p=>{
-    const uLat=p.coords.latitude,uLng=p.coords.longitude;
-    if(p.coords.altitude!==null&&!isNaN(p.coords.altitude)&&p.coords.altitude>0)currentUserAltitude=Math.round(p.coords.altitude);
-    else currentUserAltitude=null;
-    if(c)c.innerText='실시간 최근접 산악 레이더 스캔...';
-    try{
-      const [rS,rB]=await Promise.all([searchKakaoPlacesAsync('산',uLat,uLng,18000),searchKakaoPlacesAsync('봉',uLat,uLng,18000)]);
-      const comb=[...rS,...rB],seen=new Set(),cd=[];
-      comb.forEach(item=>{
-        const pN=item.place_name||'',cg=item.category_name||'',cCode=item.category_group_code||'',id=item.id||pN;
-        if(seen.has(id))return;seen.add(id);
-        const isJunk=/식당|음식|카페|병원|의원|약국|아파트|빌라|원룸|오피스텔|부동산|역$|정류장|초등학교|중학교|고등학교|학원|호텔|모텔|펜션|주유소|골프|빌딩|상가|마트|편의점|공영주차장/i.test(pN)||/음식점|서비스|부동산|쇼핑|교통|주차장|숙박/i.test(cg)||['FD6','CE7','HP8','PM9','PK6','OL7','SW8','BK9'].includes(cCode);
-        const isMt=cg.includes('산')||cg.includes('산봉우리')||cg.includes('자연명소')||/(산|봉|봉우리|대피소|능선|고개|재|령)$/.test(pN);
-        if(!isJunk&&isMt){
-          const dist=calculateDistanceKm(uLat,uLng,parseFloat(item.y),parseFloat(item.x));
-          let ele=0;const m=pN.match(/(\d+)m/);
-          if(m)ele=parseInt(m[1]);else if(pN.includes('대피소'))ele=1650;
-          cd.push({name:pN,type:pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'),region:item.address_name||'',ele:ele,lat:parseFloat(item.y),lng:parseFloat(item.x),distanceKm:dist.toFixed(1),rawDist:dist});
-        }
-      });
-      cd.push(findNearestMountainFromDb(uLat,uLng));
-      if(cd.length>0){cd.sort((a,b)=>a.rawDist-b.rawDist);const cl=cd[0];selectMountain(cl.name,cl.ele,null,cl.type,cl.lat,cl.lng,cl.distanceKm);return;}
-      fallbackToDb(uLat,uLng);
-    }catch(e){fallbackToDb(uLat,uLng);}
-  },e=>{fallbackToDb(35.2846,129.0565);},{timeout:6000,enableHighAccuracy:true});
-};
-
-function fallbackToDb(lt,lg){const t=findNearestMountainFromDb(lt,lg);selectMountain(t.name,t.ele,null,t.type,t.lat,t.lng,t.distanceKm);}
-
-const CACHE_PREFIX='STATLAB_CACHE_v7_';
-function saveMountainCache(n,rH,rC,cR,rD){try{localStorage.setItem(CACHE_PREFIX+n,JSON.stringify({name:n,rawHourly:rH,rawCurrent:rC,computedRes:cR,rawDaily:rD,timestamp:Date.now()}));}catch(e){}}
-function getMountainCache(n){try{const d=localStorage.getItem(CACHE_PREFIX+n);if(d)return JSON.parse(d);}catch(e){}return null;}
+  return b;
+}
 
 function decodeWmoCode(c,n=false){
   if(c===0)return{text:'쾌청 맑음',icon:n?'🌙':'☀️',state:'clear'};
@@ -2053,131 +881,55 @@ function decodeWmoCode(c,n=false){
   return{text:'맑음',icon:'☀️',state:'clear'};
 }
 
-async function fetchLiveMountainWeather(lt,lg,el){
-  try{
-    const eq=(el&&el>0)?`&elevation=${el}`:'';
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall,snow_depth&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=7`;
-    const r=await fetch(u);if(!r.ok)throw new Error('API');return await r.json();
-  }catch(e){return null;}
-}
-
-function findCurrentHourIndex(h){
-  if(!h||!h.time||!h.time.length)return 0;
-  const nw=new Date();let bI=0,mD=Infinity;
-  for(let i=0;i<h.time.length;i++){
-    const ts=new Date(h.time[i]).getTime();
-    if(isNaN(ts))continue;
-    const df=Math.abs(ts-nw.getTime());
-    if(df<mD){mD=df;bI=i;}
-  }
-  return bI;
-}
-
-// ★ [v8.1 완벽 수정] 날짜 기준 동기화로 마이너스 시간 오류 원천 차단
+// 일출/일몰 계산식 (선택 날짜 실시간 연동, 마이너스 시간 방지)
 function computeSunAndTrailSafety(d, targetDate = null){
   const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
-  const nDateStr = `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
-  
-  let dayIdx = 0;
+  const y = n.getFullYear(), m = n.getMonth(), day = n.getDate();
+  const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+  let idx = 0;
   if(d && d.time && Array.isArray(d.time)){
-    const found = d.time.findIndex(t => t.startsWith(nDateStr));
-    if(found !== -1) dayIdx = found;
+    const f = d.time.findIndex(t => t.startsWith(dateStr));
+    if(f !== -1) idx = f;
   }
 
-  let sR = new Date(n.getFullYear(), n.getMonth(), n.getDate(), 6, 15, 0);
-  let sS = new Date(n.getFullYear(), n.getMonth(), n.getDate(), 18, 20, 0);
-  let sR_next = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 6, 15, 0);
-  let sS_prev = new Date(n.getFullYear(), n.getMonth(), n.getDate() - 1, 18, 20, 0);
-
-  if(d && d.sunrise && d.sunrise[dayIdx]){
-    const pR = new Date(d.sunrise[dayIdx]);
-    if(!isNaN(pR.getTime())) sR = pR;
-  }
-  if(d && d.sunset && d.sunset[dayIdx]){
-    const pS = new Date(d.sunset[dayIdx]);
-    if(!isNaN(pS.getTime())) sS = pS;
-  }
-  if(d && d.sunrise && d.sunrise[dayIdx + 1]){
-    const pRN = new Date(d.sunrise[dayIdx + 1]);
-    if(!isNaN(pRN.getTime())) sR_next = pRN;
-  } else {
-    sR_next = new Date(sR.getTime() + 24 * 3600000);
-  }
-  if(d && d.sunset && dayIdx > 0 && d.sunset[dayIdx - 1]){
-    const pSP = new Date(d.sunset[dayIdx - 1]);
-    if(!isNaN(pSP.getTime())) sS_prev = pSP;
-  } else {
-    sS_prev = new Date(sS.getTime() - 24 * 3600000);
-  }
+  let sR = new Date(y, m, day, 6, 15), sS = new Date(y, m, day, 18, 20), sR_next = new Date(y, m, day + 1, 6, 15);
+  if(d && d.sunrise && d.sunrise[idx]) sR = new Date(d.sunrise[idx]);
+  if(d && d.sunset && d.sunset[idx]) sS = new Date(d.sunset[idx]);
+  if(d && d.sunrise && d.sunrise[idx+1]) sR_next = new Date(d.sunrise[idx+1]);
 
   const sR_s = `${String(sR.getHours()).padStart(2,'0')}:${String(sR.getMinutes()).padStart(2,'0')}`;
   const sS_s = `${String(sS.getHours()).padStart(2,'0')}:${String(sS.getMinutes()).padStart(2,'0')}`;
-  const sR_next_s = `${String(sR_next.getHours()).padStart(2,'0')}:${String(sR_next.getMinutes()).padStart(2,'0')}`;
 
-  let p = 0, bT = '일조 양호', bC = 'var(--accent-green)', dT = '';
-  let isNight = false, orbChar = '☀️', leftLabel = `일출 ${sR_s}`, midLabel = '태양 궤적', rightLabel = `일몰 ${sS_s}`;
+  let p = 0, bT = '', bC = 'var(--accent-green)', dT = '', orbChar = '☀️';
 
   if(n < sR){
-    isNight = true;
     orbChar = '🌙';
-    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS_prev.getTime()) / (sR.getTime() - sS_prev.getTime())) * 100)));
-    const mTR = Math.max(0, Math.floor((sR.getTime() - n.getTime()) / 60000));
-    const hR = Math.floor(mTR / 60), rM = mTR % 60;
-    bT = mTR <= 60 ? `🌅 일출 ${mTR}분 전 (여명)` : `오늘 일출까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`;
+    const diff = Math.max(0, Math.floor((sR - n) / 60000));
+    const h = Math.floor(diff / 60), min = diff % 60;
+    bT = `오늘 일출까지 ${h > 0 ? h + '시간 ' : ''}${min}분`;
     bC = 'var(--accent-amber)';
-    leftLabel = `어제 일몰 ${String(sS_prev.getHours()).padStart(2,'0')}:${String(sS_prev.getMinutes()).padStart(2,'0')}`;
-    midLabel = '달 궤적 (새벽)';
-    rightLabel = `오늘 일출 ${sR_s}`;
-    dT = `<strong>🌅 [오늘 일출 ${sR_s} (${hR > 0 ? hR + '시간 ' : ''}${rM}분 전)]:</strong> 여명 및 새벽 산행 구간입니다. 능선 일출 조망 시 기온 급강하에 유의하세요.`;
+    dT = `<strong>🌅 [오늘 일출 ${sR_s} (${h > 0 ? h + '시간 ' : ''}${min}분 전)]:</strong> 여명 산행 구간입니다. 능선 방한에 유의하세요.`;
+    p = 20;
   } else if(n >= sR && n < sS){
-    isNight = false;
     orbChar = '☀️';
-    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sR.getTime()) / (sS.getTime() - sR.getTime())) * 100)));
-    const mTS = Math.max(0, Math.floor((sS.getTime() - n.getTime()) / 60000));
-    const hR = Math.floor(mTS / 60), rM = mTS % 60;
-    leftLabel = `일출 ${sR_s}`;
-    midLabel = '태양 궤적 (주간)';
-    rightLabel = `일몰 ${sS_s}`;
-    if(mTS <= 60){
-      bT = '🚨 하산 완료 필수';
-      bC = 'var(--accent-red)';
-      dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 완전히 어두워집니다. 즉시 하산을 완료하세요.`;
-    } else if(mTS <= 120){
-      bT = '⚠️ 하산 코스 진입';
-      bC = 'var(--accent-amber)';
-      dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(<strong>${sS_s}</strong>) 전에 하산로에 진입하세요.`;
-    } else {
-      bT = `일몰까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`;
-      bC = 'var(--accent-green)';
-      dT = `<strong>☀️ [주간 일조 확보]:</strong> 일몰 시각은 <strong>${sS_s}</strong>입니다. 안전한 주간 산행이 가능합니다.`;
-    }
+    const diff = Math.max(0, Math.floor((sS - n) / 60000));
+    const h = Math.floor(diff / 60), min = diff % 60;
+    bT = `일몰까지 ${h > 0 ? h + '시간 ' : ''}${min}분`;
+    bC = diff <= 60 ? 'var(--accent-red)' : 'var(--accent-green)';
+    dT = `<strong>☀️ [주간 일조 양호]:</strong> 오늘 일몰 시각은 <strong>${sS_s}</strong>입니다. 안전한 주간 산행이 가능합니다.`;
+    p = Math.min(100, Math.max(0, Math.round(((n - sR) / (sS - sR)) * 100)));
   } else {
-    isNight = true;
     orbChar = '🌙';
-    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS.getTime()) / (sR_next.getTime() - sS.getTime())) * 100)));
-    const mTN = Math.max(0, Math.floor((sR_next.getTime() - n.getTime()) / 60000));
-    const hR = Math.floor(mTN / 60), rM = mTN % 60;
-    bT = `내일 일출까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`;
+    const diff = Math.max(0, Math.floor((sR_next - n) / 60000));
+    const h = Math.floor(diff / 60), min = diff % 60;
+    bT = `내일 일출까지 ${h > 0 ? h + '시간 ' : ''}${min}분`;
     bC = 'var(--accent-purple)';
-    leftLabel = `일몰 ${sS_s}`;
-    midLabel = '달 궤적 (야간)';
-    rightLabel = `내일 일출 ${sR_next_s}`;
-    dT = `<strong>🌙 [일몰 완료 / 내일 일출(${sR_next_s})까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분]:</strong> 야간 산행 및 비박 구간입니다. 헤드랜턴을 필수 지참하세요.`;
+    dT = `<strong>🌙 [일몰 완료 / 내일 일출까지 ${h > 0 ? h + '시간 ' : ''}${min}분]:</strong> 야간 산행 구간입니다. 헤드랜턴을 필수 지참하세요.`;
+    p = 90;
   }
 
-  return {
-    srStr: sR_s,
-    ssStr: sS_s,
-    sunProgress: p,
-    badgeText: bT,
-    badgeColor: bC,
-    descText: dT,
-    isNight: isNight,
-    orbChar: orbChar,
-    leftLabel: leftLabel,
-    midLabel: midLabel,
-    rightLabel: rightLabel
-  };
+  return { srStr: sR_s, ssStr: sS_s, progress: p, badgeText: bT, badgeColor: bC, descText: dT, orbChar: orbChar };
 }
 
 function calculateCanopyFriction(currentAlt, summitAlt){
@@ -2219,7 +971,6 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
 
   let baseProb = Math.min(99, Math.max(5, Math.round(s)));
   let burnOffFactor = 1.0;
-  let burnOffPhase = 'dawn';
   let burnOffText = '일출 전 (운해 형성 대기)';
   let burnOffBadgeStyle = 'background: rgba(191,90,242,0.2); color: #E5B8FF; border: 0.5px solid rgba(191,90,242,0.45);';
 
@@ -2227,30 +978,24 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
     const sR_date = new Date(daily.sunrise[0]);
     if(!isNaN(sR_date.getTime())){
       const diffMins = Math.round((targetTime.getTime() - sR_date.getTime()) / 60000);
-      
       if(diffMins < -60){
         burnOffFactor = 1.0;
-        burnOffPhase = 'night';
         burnOffText = '새벽 야간 냉각 중 (운해 태동)';
       } else if(diffMins >= -60 && diffMins <= 60){
         burnOffFactor = 1.0;
-        burnOffPhase = 'golden';
         const rem = 60 - diffMins;
         burnOffText = `⏳ 운해 골든타임 (소멸까지 약 ${rem}분)`;
         burnOffBadgeStyle = 'background: rgba(48,209,88,0.22); color: #30D158; border: 0.5px solid #30D158; box-shadow: 0 0 8px rgba(48,209,88,0.4);';
       } else if(diffMins > 60 && diffMins <= 120){
         burnOffFactor = 0.85;
-        burnOffPhase = 'warming';
         burnOffText = '🔥 태양열 가열 시작 (증발 초기)';
         burnOffBadgeStyle = 'background: rgba(255,159,10,0.2); color: var(--accent-amber); border: 0.5px solid var(--accent-amber);';
       } else if(diffMins > 120 && diffMins <= 180){
         burnOffFactor = 0.55;
-        burnOffPhase = 'evaporating';
         burnOffText = '💨 운해 급격 증발 중 (자연 소멸 진행)';
         burnOffBadgeStyle = 'background: rgba(255,69,58,0.2); color: var(--accent-red); border: 0.5px solid var(--accent-red);';
       } else {
         burnOffFactor = 0.20;
-        burnOffPhase = 'dispersed';
         burnOffText = '☀️ 증발 완료 (낮 시간대 완전 소산)';
         burnOffBadgeStyle = 'background: rgba(255,255,255,0.08); color: var(--text-tertiary); border: 0.5px solid rgba(255,255,255,0.15);';
       }
@@ -2258,13 +1003,7 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   }
 
   const finalProb = Math.min(99, Math.max(5, Math.round(baseProb * burnOffFactor)));
-  return { 
-    prob: finalProb, 
-    phase: burnOffPhase, 
-    factor: burnOffFactor,
-    timerText: burnOffText,
-    badgeStyle: burnOffBadgeStyle
-  };
+  return { prob: finalProb, timerText: burnOffText, badgeStyle: burnOffBadgeStyle };
 }
 
 function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snowfall=0, snowDepth=0){
@@ -2273,9 +1012,7 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
   const isSnowCode = (weatherCode >= 71 && weatherCode <= 77) || (weatherCode >= 85 && weatherCode <= 86);
   const hasSnow = (snowfall > 0.1 || snowDepth > 0.5 || isSnowCode);
 
-  if(!isFreezing && !isNearZero && !hasSnow){
-    return { shouldShow: false };
-  }
+  if(!isFreezing && !isNearZero && !hasSnow) return { shouldShow: false };
 
   if(snowfall >= 2.0 || snowDepth >= 3.0){
     return {
@@ -2284,7 +1021,7 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
       badgeStyle: 'background: rgba(255,69,58,0.22); color: var(--accent-red); border: 0.5px solid var(--accent-red);',
       iceRiskText: '심설 러셀 구간',
       snowValText: `${Math.max(snowDepth, snowfall * 1.5).toFixed(1)} cm`,
-      descHtml: `<strong>🌨️ [심설 및 신적설 경보]:</strong> 등산로에 눈이 깊게 쌓여 러셀 및 미끄러짐 위험이 매우 큽니다. 방한 스패츠와 12발 체인아이젠을 반드시 착용하세요.`
+      descHtml: `<strong>🌨️ [심설 및 신적설 경보]:</strong> 등산로에 눈이 깊게 쌓여 미끄러짐 위험이 매우 큽니다. 방한 장비를 착용하세요.`
     };
   }
 
@@ -2296,7 +1033,7 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
       badgeStyle: 'background: rgba(100,210,255,0.2); color: var(--accent-cyan); border: 0.5px solid var(--accent-cyan);',
       iceRiskText: '영하권 결빙 (빙판)',
       snowValText: snowCm,
-      descHtml: `<strong>❄️ [영하 ${Math.abs(temp)}°C 결빙 주의]:</strong> 등산로 그늘진 사면과 바위 틈새가 얼어붙어 있습니다. 미끄럼 방지용 아이젠 및 스틱을 준비하세요.`
+      descHtml: `<strong>❄️ [영하 ${Math.abs(temp)}°C 결빙 주의]:</strong> 등산로 그늘진 바위 틈새가 얼어붙어 있습니다. 아이젠을 준비하세요.`
     };
   }
 
@@ -2307,7 +1044,7 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
       badgeStyle: 'background: rgba(255,159,10,0.2); color: var(--accent-amber); border: 0.5px solid var(--accent-amber);',
       iceRiskText: '암릉 살얼음 위험',
       snowValText: '0 cm',
-      descHtml: `<strong>⚠️ [투명 살얼음 주의]:</strong> 영상 0~3°C 저온 다습 구간으로 바위 암릉 표면에 투명한 살얼음(블랙아이스)이 낄 수 있습니다. 디딤발 접지력에 유의하세요.`
+      descHtml: `<strong>⚠️ [투명 살얼음 주의]:</strong> 영상 0~3°C 저온 다습 구간으로 바위 표면에 투명한 살얼음(블랙아이스)이 낄 수 있습니다.`
     };
   }
 
@@ -2317,7 +1054,7 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
     badgeStyle: 'background: rgba(255,255,255,0.08); color: var(--text-secondary); border: 0.5px solid rgba(255,255,255,0.18);',
     iceRiskText: '저온 한랭',
     snowValText: '0 cm',
-    descHtml: `<strong>[능선 저온 주의]:</strong> 정상부 기온이 ${temp}°C까지 떨어집니다. 능선 정체 시 저체온증에 대비해 방풍 보온 자켓을 챙기세요.`
+    descHtml: `<strong>[능선 저온 주의]:</strong> 정상부 기온이 낮습니다. 보온 의류를 챙기세요.`
   };
 }
 
@@ -2371,46 +1108,20 @@ function compute5PhysicsMountainWeather(P){
   const winterCond = evaluateWinterTrailConditions(smT, R, summitRain, P.rawCode, P.rawSnowfall || 0, P.rawSnowDepth || 0);
 
   return {
-    summitTemp: smT,
-    summitFeel: sF,
-    summitHumidity: R,
-    summitWind: sW,
-    summitGust: sG,
-    rainMm: summitRain,
-    rawBaseRain: P.rawRain,
-    weatherCode: P.rawCode,
-    effectiveCloudBase: eCB,
-    clearance: eCB - P.mtEle,
-    isCrystalClear: iC,
-    isAboveCloudSea: isAboveCloudSea,
-    isDarkCloud: iDC,
-    isDrizzling: iDr,
-    isRealFog: iF,
-    totalCloud: P.totalCloud,
-    lowCloud: P.lowCloud,
-    midCloud: P.midCloud,
-    visibility: P.visibility,
-    surfaceTemp: parseFloat(sT.toFixed(1)),
-    surfaceRH: sRH,
-    wmoInfo: wI,
-    betaExt: bX,
-    opticalTrans: oT,
-    cloudSeaProb: cS,
-    cloudSeaPhase: cS_data.phase,
-    cloudSeaTimerText: cS_data.timerText,
-    cloudSeaBadgeStyle: cS_data.badgeStyle,
-    sunSafety: sS,
-    winterSafety: winterCond,
-    _rawParams: P,
-    _baseLclM: bL
+    summitTemp: smT, summitFeel: sF, summitHumidity: R, summitWind: sW, summitGust: sG,
+    rainMm: summitRain, rawBaseRain: P.rawRain, weatherCode: P.rawCode, effectiveCloudBase: eCB,
+    isCrystalClear: iC, isAboveCloudSea, isDarkCloud: iDC, isDrizzling: iDr, isRealFog: iF,
+    totalCloud: P.totalCloud, lowCloud: P.lowCloud, midCloud: P.midCloud, visibility: P.visibility,
+    surfaceTemp: parseFloat(sT.toFixed(1)), surfaceRH: sRH, wmoInfo: wI, betaExt: bX, opticalTrans: oT,
+    cloudSeaProb: cS, cloudSeaTimerText: cS_data.timerText, cloudSeaBadgeStyle: cS_data.badgeStyle,
+    sunSafety: sS, winterSafety: winterCond, _rawParams: P, _baseLclM: bL
   };
 }
 
-// ★★★ [v8.1 SAM-Engine: 일반인 직관화 100% 반영] ★★★
+// 7일 전용 산악 복합 물리 공식 및 시간 분기형 타이틀 매핑 (모순 완벽 해결)
 function compute7DayAlpineForecast(data, ele){
   if(!data || !data.daily || !data.daily.time || data.daily.time.length < 7) return [];
-  const daily = data.daily;
-  const hourly = data.hourly || null;
+  const daily = data.daily, hourly = data.hourly || null;
   const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
   const altDiff = Math.max(0, ele - 50);
   const results = [];
@@ -2455,8 +1166,7 @@ function compute7DayAlpineForecast(data, ele){
       if(summitPrecip === 0 && code >= 51) summitPrecip = 0.8;
     }
 
-    let amCode = code, pmCode = code;
-    let amHasRain = false, pmHasRain = false;
+    let amCode = code, pmCode = code, amHasRain = false, pmHasRain = false;
 
     if(hourly && hourly.time && hourly.time.length >= (i+1)*24){
       const startIdx = i * 24;
@@ -2474,10 +1184,8 @@ function compute7DayAlpineForecast(data, ele){
     }
 
     const dayHasRain = (code >= 51 || summitPrecip >= 0.5 || rainProb >= 50);
-    if(dayHasRain && !amHasRain && !pmHasRain){
-      amHasRain = true;
-      amCode = code;
-    }
+    if(dayHasRain && !amHasRain && !pmHasRain) { amHasRain = true; }
+
     const amInfo = decodeWmoCode(amCode);
     const pmInfo = decodeWmoCode(pmCode);
 
@@ -2487,130 +1195,62 @@ function compute7DayAlpineForecast(data, ele){
     if(basePrecip > 0 && i > 0 && daily.precipitation_sum[i-1] > 2.0) csScore += 15;
     csScore = Math.min(95, Math.max(10, Math.round(csScore * damping)));
 
-    // ★ [v8.1 핵심] 일반인이 3초 만에 이해하는 직관적인 타이틀 & 풍경 태그
-    let plainTitle = '쾌청 맑음';
-    let plainAction = '산행 강력 추천 (최적)';
-    let plainSight = '시야 15km+ 뻥 뚫린 파노라마 조망 가능';
-    let plainWear = '가벼운 등산복 및 자외선 차단 모자';
-    let viewSummary = '상공 시야 개방';
-    let viewTagText = '시야 100% 쾌청';
-    let viewTagStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid var(--accent-green);';
-    let cardMiniBadge = '☀️ 쾌청조망';
+    // 직관형 타이틀 분기 매핑
+    let plainTitle = '쾌청 맑음', plainAction = '산행 적극 추천 (최적)', plainSight = '시야 15km+ 탁 트인 파노라마 뷰', plainWear = '가벼운 등산복 및 모자', cardBadge = '☀️ 쾌청조망', viewTagText = '시야 100% 쾌청';
 
-    if(dayHasRain && summitPrecip >= 5){
-      plainTitle = '비바람 / 호우 주의';
-      plainAction = '🚨 산행 자제 강력 권장 (악천후)';
-      plainSight = '짙은 비구름 속으로 사방이 하얗게 차단됨 (조망 없음)';
-      plainWear = '방수 겉옷(고어텍스) 필수, 배낭 방수커버';
-      viewSummary = `운저 420m (구름 속 관통)`;
-      viewTagText = '비바람 곰탕 (조망 불가 ⚠️)';
-      viewTagStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid var(--accent-red);';
-      cardMiniBadge = '🌧️ 비바람주의';
-    } else if(dayHasRain){
-      plainTitle = '안개비 & 곰탕 뷰';
-      plainAction = '⚠️ 산행 주의 (방수 및 미끄럼 대비)';
-      plainSight = '흩날리는 안개비와 운무로 조망이 거의 보이지 않습니다.';
-      plainWear = '방수 바람막이 및 접지력 좋은 등산화';
-      viewSummary = `운저 500m (운무 유입)`;
-      viewTagText = '곰탕 뷰 (조망 없음 🌫️)';
-      viewTagStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid var(--accent-amber);';
-      cardMiniBadge = '🌦️ 곰탕/안개비';
+    if(!amHasRain && pmHasRain){
+      plainTitle = '오전 쾌청 ➔ 오후 안개비·곰탕 유입';
+      plainAction = '⚡ 오전 일찍 산행 추천 (12시 전 하산 완료 필수!)';
+      plainSight = '오전엔 15km 쾌청 조망이나, 낮 12시부터 운무로 시야 차단';
+      plainWear = '방수 바람막이 지참 필수';
+      cardBadge = '⛅➔🌧️ 오후비·주의';
+      viewTagText = '오전 쾌청 / 오후 곰탕';
+    } else if(amHasRain && !pmHasRain){
+      plainTitle = '오전 안개비 ➔ 오후 맑게 갬';
+      plainAction = '오후 12시 이후 산행 권장';
+      plainSight = '오전 짙은 안개, 오후 비 갠 뒤 시야 회복';
+      plainWear = '방수 등산화 착용';
+      cardBadge = '🌧️➔🌤️ 오후갬';
+      viewTagText = '오후 시야 회복';
+    } else if(amHasRain && pmHasRain){
+      plainTitle = summitPrecip >= 5 ? '종일 비바람 / 호우 주의' : '종일 안개비 & 곰탕 뷰';
+      plainAction = '🚨 산행 자제 권장 (미끄럼 위험)';
+      plainSight = '사방이 하얗게 가려져 조망이 전혀 보이지 않음';
+      plainWear = '방수복 필수, 체온 유지 유의';
+      cardBadge = '🌧️ 종일비·주의';
+      viewTagText = '조망 불가 (곰탕 뷰)';
     } else if(csScore >= 75){
       plainTitle = '특급 운해(구름바다)';
       plainAction = '✨ 일출 산행 적극 추천';
       plainSight = '발아래 하얗게 출렁이는 구름바다와 환상적인 일출 조망!';
       plainWear = '새벽 방한 자켓 및 헤드랜턴 지참';
-      viewSummary = '운해층 550m (정상 돌출)';
       viewTagText = '구름바다 대박 🌊';
-      viewTagStyle = 'background:rgba(191,90,242,0.25); color:#E5B8FF; border:0.5px solid #BF5AF2;';
-      cardMiniBadge = '🌊 운해대박';
-    } else if(code >= 45 && code <= 48){
-      plainTitle = '짙은 안개 (곰탕 뷰)';
-      plainAction = '산행 보통 (길 찾기 유의)';
-      plainSight = '사방이 하얗게 가려져 정상 뷰가 전혀 안 보입니다.';
-      plainWear = '시야가 좁으므로 밝은 옷 착용 권장';
-      viewSummary = '정상부 운무 포화';
-      viewTagText = '시야 차단 (곰탕 뷰 🌫️)';
-      viewTagStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid var(--accent-amber);';
-      cardMiniBadge = '🌫️ 곰탕뷰';
+      cardBadge = '🌊 운해대박';
     } else if(code >= 2){
       plainTitle = '마른 흐림 (비 안 옴)';
-      plainAction = '산행 양호 (걷기 시원한 날)';
-      plainSight = '하늘은 흐리지만 비는 오지 않아 시원하게 등산 가능';
-      plainWear = '적당한 통기성 등산복';
-      viewSummary = '구름 아래 시야 트임';
-      viewTagText = '시원한 흐림 ☁️';
-      viewTagStyle = 'background:rgba(255,255,255,0.08); color:var(--text-secondary); border:0.5px solid rgba(255,255,255,0.18);';
-      cardMiniBadge = '☁️ 마른흐림';
+      plainAction = '산행 양호 (걷기 시원한 날씨)';
+      plainSight = '비는 안 오며 능선 시야 양호';
+      plainWear = '통기성 등산복';
+      cardBadge = '☁️ 마른흐림';
+      viewTagText = '시원한 흐림';
     }
 
-    let csLabel = '운해 보통';
-    let csStyle = 'background: rgba(255,255,255,0.06); color: var(--text-secondary);';
-    if(csScore >= 75 && !dayHasRain){
-      csLabel = `운해 ${csScore}% 🌊`;
-      csStyle = 'background: rgba(191,90,242,0.25); color: #E5B8FF; border: 0.5px solid #BF5AF2;';
-    } else if(csScore >= 50 && !dayHasRain){
-      csLabel = `운해 ${csScore}%`;
-      csStyle = 'background: rgba(100,210,255,0.18); color: var(--accent-cyan);';
-    } else if(dayHasRain){
-      csLabel = '비바람(미달)';
-      csStyle = 'background: rgba(255,255,255,0.04); color: var(--text-tertiary);';
-    }
+    let csLabel = csScore >= 75 ? `운해 ${csScore}% 🌊` : (csScore >= 50 ? `운해 ${csScore}%` : '운해 보통');
+    let csStyle = csScore >= 75 ? 'background: rgba(191,90,242,0.25); color: #E5B8FF;' : 'background: rgba(255,255,255,0.06); color: var(--text-secondary);';
 
     let safeScore = 95;
-    if(summitPrecip >= 10 || rainProb >= 70 || summitMaxGust >= 14){
-      safeScore = Math.max(15, Math.round(35 - (summitPrecip * 1.2)));
-    } else if(summitPrecip >= 0.5 || rainProb >= 40 || summitMaxGust >= 10){
-      safeScore = Math.max(45, Math.round(65 - (summitMaxGust * 1.5)));
-    } else if(summitMin <= 2){
-      safeScore = 60;
-    }
-
-    let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid rgba(48,209,88,0.4);';
-    if(safeScore < 40){
-      sLabel = '🔴 위험';
-      sStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid rgba(255,69,58,0.45);';
-    } else if(safeScore < 75){
-      sLabel = '🟡 주의';
-      sStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid rgba(255,159,10,0.4);';
-    }
-
-    const confVal = Math.max(50, Math.round(95 - i * 6.5));
+    if(summitPrecip >= 10 || rainProb >= 70 || summitMaxGust >= 14) safeScore = 25;
+    else if(summitPrecip >= 0.5 || rainProb >= 40 || summitMaxGust >= 10) safeScore = 55;
 
     results.push({
-      idx: i,
-      dayName: i === 0 ? '오늘' : (i === 1 ? '내일' : `${dayName}요일`),
-      dateStr: dateStr,
-      isWeekend: (dateObj.getDay() === 0 || dateObj.getDay() === 6),
-      icon: wInfo.icon,
-      statusText: wInfo.text,
-      summitMin: summitMin,
-      summitMax: summitMax,
-      summitPrecip: summitPrecip,
-      rainProb: rainProb,
-      maxGust: summitMaxGust,
-      hasRain: dayHasRain,
-      plainTitle: plainTitle,
-      plainAction: plainAction,
-      plainSight: plainSight,
-      plainWear: plainWear,
-      viewSummary: viewSummary,
-      viewTagText: viewTagText,
-      viewTagStyle: viewTagStyle,
-      cardMiniBadge: cardMiniBadge,
-      amIcon: amInfo.icon,
-      amText: amInfo.text,
-      amHasRain: amHasRain,
-      pmIcon: pmInfo.icon,
-      pmText: pmInfo.text,
-      pmHasRain: pmHasRain,
-      csScore: csScore,
-      csLabel: csLabel,
-      csStyle: csStyle,
-      safetyScore: safeScore,
-      safetyLabel: sLabel,
-      safetyStyle: sStyle,
-      confidence: confVal
+      idx: i, dayName: i === 0 ? '오늘' : `${dayName}요일`, dateStr, isWeekend: (dateObj.getDay() === 0 || dateObj.getDay() === 6),
+      icon: wInfo.icon, summitMin, summitMax, summitPrecip, rainProb, maxGust: summitMaxGust, hasRain: dayHasRain,
+      plainTitle, plainAction, plainSight, plainWear, cardBadge, viewTagText,
+      amIcon: amInfo.icon, amText: amInfo.text, amHasRain, pmIcon: pmInfo.icon, pmText: pmInfo.text, pmHasRain,
+      csScore, csLabel, csStyle, safetyScore: safeScore,
+      safetyLabel: dayHasRain ? '🟡 주의' : '🟢 최적',
+      safetyStyle: dayHasRain ? 'background:rgba(255,159,10,0.2); color:var(--accent-amber);' : 'background:rgba(48,209,88,0.2); color:var(--accent-green);',
+      confidence: Math.max(50, Math.round(95 - i * 6.5))
     });
   }
   return results;
@@ -2619,343 +1259,136 @@ function compute7DayAlpineForecast(data, ele){
 function render7DayWeeklyTrack(data){
   const track = document.getElementById('weekly-forecast-track');
   const aiBannerText = document.getElementById('weekly-ai-text');
-  if(!track || !data || !data.daily) return;
+  if(!track || !data.daily) return;
   track.innerHTML = '';
 
   cachedWeeklyCalculatedData = compute7DayAlpineForecast(data, currentMt.ele);
 
-  let bestDay = cachedWeeklyCalculatedData[1];
-  let worstDay = null;
-  cachedWeeklyCalculatedData.forEach(d => {
-    if(d.csScore > (bestDay ? bestDay.csScore : 0) && !d.hasRain) bestDay = d;
-    if(d.summitPrecip >= 10 || d.rainProb >= 70) worstDay = d;
-  });
-  if(aiBannerText){
-    let txt = `✨ 이번 주 추천일: <strong>${bestDay.dateStr}(${bestDay.dayName})</strong> - ${bestDay.plainTitle}`;
-    if(worstDay){
-      txt += ` · <strong>${worstDay.dateStr}(${worstDay.dayName})</strong> ${worstDay.plainTitle} 주의 ⚠️`;
-    }
-    aiBannerText.innerHTML = txt;
+  const bestDay = cachedWeeklyCalculatedData[1] || cachedWeeklyCalculatedData[0];
+  if(aiBannerText && bestDay){
+    aiBannerText.innerHTML = `✨ 이번 주 추천일: <strong>${bestDay.dateStr}(${bestDay.dayName})</strong> - ${bestDay.plainTitle}`;
   }
 
   let allMin = Math.min(...cachedWeeklyCalculatedData.map(d => d.summitMin));
   let allMax = Math.max(...cachedWeeklyCalculatedData.map(d => d.summitMax));
-  if(allMax === allMin) allMax = allMin + 10;
+  if(allMax === allMin) allMax += 10;
 
   cachedWeeklyCalculatedData.forEach((day, idx) => {
     const slot = document.createElement('div');
     slot.className = `weekly-slot ${day.isWeekend ? 'weekend' : ''}`;
     slot.onclick = () => openDayDetailModal(idx);
 
-    const leftPercent = Math.max(0, Math.min(80, Math.round(((day.summitMin - allMin) / (allMax - allMin)) * 100)));
-    const widthPercent = Math.max(20, Math.min(100 - leftPercent, Math.round(((day.summitMax - day.summitMin) / (allMax - allMin)) * 100)));
+    const left = Math.max(0, Math.min(70, Math.round(((day.summitMin - allMin) / (allMax - allMin)) * 100)));
+    const width = Math.max(20, Math.min(100 - left, Math.round(((day.summitMax - day.summitMin) / (allMax - allMin)) * 100)));
 
     slot.innerHTML = `
       <div class="w-top-row">
-        <div>
-          <span class="w-day-title" style="${day.isWeekend ? 'color: var(--accent-gold);' : ''}">${day.dayName}</span>
-          <span class="w-date-sub">${day.dateStr}</span>
-        </div>
+        <div><span class="w-day-title" style="${day.isWeekend ? 'color:var(--accent-gold);' : ''}">${day.dayName}</span> <span class="w-date-sub">${day.dateStr}</span></div>
         <span class="w-safety-pill" style="${day.safetyStyle}">${day.safetyLabel}</span>
       </div>
-
       <div class="w-ampm-row">
-        <div class="w-ampm-item">
-          <span class="w-ampm-icon">${day.amIcon}</span>
-          <span>오전</span>
-        </div>
-        <span style="opacity:0.3;">|</span>
-        <div class="w-ampm-item">
-          <span class="w-ampm-icon">${day.pmIcon}</span>
-          <span>오후</span>
-        </div>
+        <span>${day.amIcon} 오전</span><span>|</span><span>${day.pmIcon} 오후</span>
       </div>
-
       <div class="w-temp-bar-wrap">
         <span class="w-temp-val" style="color:var(--accent-cyan);">${day.summitMin}°</span>
-        <div class="w-temp-bar-bg">
-          <div class="w-temp-bar-fill" style="left:${leftPercent}%; width:${widthPercent}%;"></div>
-        </div>
+        <div class="w-temp-bar-bg"><div class="w-temp-bar-fill" style="left:${left}%; width:${width}%;"></div></div>
         <span class="w-temp-val" style="color:#FF9F0A;">${day.summitMax}°</span>
       </div>
-
       <div class="w-sub-info-row">
-        <span style="color:${day.rainProb>=40?'var(--accent-cyan)':'var(--text-tertiary)'};">💧 ${day.rainProb}%</span>
-        <span style="color:${day.maxGust>=13?'var(--accent-red)':'var(--text-secondary)'};">💨 ${day.maxGust}m/s</span>
+        <span>💧 ${day.rainProb}%</span><span>💨 ${day.maxGust}m/s</span>
       </div>
-
-      <div class="w-cs-badge" style="background:rgba(255,255,255,0.06); color:#FFF;">${day.cardMiniBadge}</div>
+      <div class="w-cs-badge">${day.cardBadge}</div>
     `;
     track.appendChild(slot);
   });
 }
 
-window.handleAltitudeScrub=function(z){
+function openDayDetailModal(idx){
+  const item = cachedWeeklyCalculatedData[idx]; if(!item) return;
+  document.getElementById('day-detail-modal-title').innerText = `${item.dateStr} (${item.dayName}) · ${currentMt.name} 날씨 판정`;
+  const body = document.getElementById('day-detail-modal-body');
+
+  body.innerHTML = `
+    <div class="day-hero-stage" style="background:linear-gradient(135deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.98) 100%);">
+      <div class="day-hero-top">
+        <div class="day-hero-main-txt">
+          <span class="day-hero-icon">${item.icon}</span>
+          <div>
+            <div class="day-hero-state-title">${item.plainTitle}</div>
+            <div class="day-hero-temp-sub">정상 기온 <strong style="color:var(--accent-cyan);">${item.summitMin}°C</strong> ~ <strong style="color:#FF9F0A;">${item.summitMax}°C</strong></div>
+          </div>
+        </div>
+        <span style="${item.safetyStyle}; font-size:11px; font-weight:800; padding:3px 9px; border-radius:8px;">${item.safetyLabel}</span>
+      </div>
+      <div class="day-cross-section-box">
+        <span>⛰️ 정상 ${currentMt.ele}m | ${item.viewTagText}</span>
+        <span class="cross-section-tag" style="background:rgba(255,255,255,0.1); color:#FFF;">${item.cardBadge}</span>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.04); border:0.5px solid rgba(255,255,255,0.12); border-radius:14px; padding:12px; margin-bottom:12px;">
+      <div style="font-size:13px; font-weight:800; color:#FFF; margin-bottom:8px;">등산객 핵심 행동 요령</div>
+      <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.5;">
+        <div>🚩 <strong>산행 추천도:</strong> <span style="color:#FFF;">${item.plainAction}</span></div>
+        <div>👀 <strong>정상 조망/풍경:</strong> <span style="color:var(--text-secondary);">${item.plainSight}</span></div>
+        <div>🧥 <strong>추천 옷차림:</strong> <span style="color:var(--text-secondary);">${item.plainWear}</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+      <div style="background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
+        <div style="font-size:10px; color:var(--text-secondary);">능선 최대 돌풍</div>
+        <div style="font-size:15px; font-weight:800; color:#FFF; margin-top:2px;">${item.maxGust} m/s</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
+        <div style="font-size:10px; color:var(--text-secondary);">지형성 강우량</div>
+        <div style="font-size:15px; font-weight:800; color:var(--accent-cyan); margin-top:2px;">${item.summitPrecip} mm</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:12px; font-size:12px;">
+      <div style="font-weight:700; color:#FFF; margin-bottom:6px;">오전 vs 오후 상세 흐름</div>
+      <div style="display:flex; justify-content:space-between; color:var(--text-secondary);">
+        <span>🌅 오전: ${item.amIcon} ${item.amText}</span>
+        <span>${item.amHasRain ? '☔ 빗방울 주의' : '시야 양호'}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; color:var(--text-secondary); margin-top:4px;">
+        <span>☀️ 오후: ${item.pmIcon} ${item.pmText}</span>
+        <span>${item.pmHasRain ? '☔ 강우 대비 필수' : '안정적 하산'}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('day-detail-modal').classList.add('active');
+}
+
+function handleAltitudeScrub(z){
   const r = activeForecastRes || baseLiveCurrentRes;
   if(!r) return;
   const p = r._rawParams, bL = r._baseLclM;
 
   let tZ = parseInt(z);
-  if(Math.abs(tZ - currentMt.ele) <= 15){
-    tZ = currentMt.ele;
-  }
-
-  if(Math.abs(tZ - _lastHapticZ) >= 20){
-    _lastHapticZ = tZ;
-    if(window.navigator && navigator.vibrate) navigator.vibrate(6);
-  }
+  if(Math.abs(tZ - currentMt.ele) <= 15) tZ = currentMt.ele;
 
   let sT = tZ <= bL ? r.surfaceTemp - (0.0098 * Math.max(0, tZ - 50)) : r.surfaceTemp - (0.0098 * Math.max(0, bL - 50) + 0.0055 * (tZ - bL));
   sT = parseFloat(sT.toFixed(1));
 
   const canopyFriction = calculateCanopyFriction(tZ, currentMt.ele);
-  const stabilityDamping = r.isAboveCloudSea ? 0.45 : (r.cloudSeaProb >= 50 ? 0.65 : 1.0);
-  const sW = parseFloat((p.rawWind * (1 + 0.35 * (tZ / 1000) * stabilityDamping) * canopyFriction).toFixed(1));
-  const sG = parseFloat((sW * ((sW <= 3.5) ? 1.45 : 1.65)).toFixed(1));
-  const v = sW * 3.6; let sF = sT;
-  if(v > 4.8) sF = 13.12 + (0.6215 * sT) - (11.37 * Math.pow(v, 0.16)) + (0.3965 * sT * Math.pow(v, 0.16));
-  sF = parseFloat(sF.toFixed(1));
-  const iC = (tZ >= r.effectiveCloudBase);
+  const sW = parseFloat((p.rawWind * (1 + 0.35 * (tZ / 1000)) * canopyFriction).toFixed(1));
+  const sG = parseFloat((sW * 1.5).toFixed(1));
+  const v = sW * 3.6;
+  let sF = v > 4.8 ? parseFloat((13.12 + 0.6215 * sT - 11.37 * Math.pow(v, 0.16) + 0.3965 * sT * Math.pow(v, 0.16)).toFixed(1)) : sT;
 
-  const scrubRain = calculateOrographicPrecipitation(p.rawRain, tZ, r.effectiveCloudBase);
-  const isSummit = (tZ === currentMt.ele);
-
-  const inCloudAtZ = (tZ >= r.effectiveCloudBase);
-  const isDrizzleAtZ = (p.rawRain > 0) || (r.wmoInfo.state === 'drizzle') || (inCloudAtZ && (sT - (p.rawDew || sT)) <= 0.8 && p.rawRH >= 95);
-
-  document.getElementById('scrubber-current-label').innerText = `${tZ}m (${isSummit ? '정상' : (tZ <= 150 ? '들머리 (숲)' : '중턱 능선')})`;
-  document.getElementById('card-peak-desc').innerText = `해발 ${tZ}m · ${isSummit ? '정상부' : (tZ <= 150 ? '들머리 (숲 차폐)' : '중턱 능선')} 분석`;
+  document.getElementById('scrubber-current-label').innerText = `${tZ}m (${tZ === currentMt.ele ? '정상' : '중턱'})`;
+  document.getElementById('card-peak-desc').innerText = `해발 ${tZ}m · ${tZ === currentMt.ele ? '정상부' : '등산로'} 분석`;
   document.getElementById('brief-temp').innerText = `${Math.round(sT)}°`;
   document.getElementById('summit-feel').innerText = `${sF}°`;
   document.getElementById('brief-wind').innerText = `${sW} / ${sG} m/s`;
+}
 
-  if(scrubRain > 0){
-    document.getElementById('brief-rain').innerText = `${scrubRain} mm`;
-  } else if(isDrizzleAtZ){
-    document.getElementById('brief-rain').innerText = '미세 빗방울';
-  } else {
-    document.getElementById('brief-rain').innerText = '0 mm';
-  }
-
-  const sP = document.getElementById('card-status-pill');
-  if(scrubRain > 0){
-    sP.style.background = 'rgba(255, 69, 58, 0.2)';
-    sP.style.borderColor = 'rgba(255, 69, 58, 0.4)';
-    sP.style.color = 'var(--accent-red)';
-    sP.innerText = `강우 (${scrubRain}mm)`;
-  } else if(isDrizzleAtZ){
-    sP.style.background = 'rgba(100, 210, 255, 0.2)';
-    sP.style.borderColor = 'rgba(100, 210, 255, 0.4)';
-    sP.style.color = 'var(--accent-cyan)';
-    sP.innerText = '미세 빗방울 (안개비)';
-  } else if(r.isAboveCloudSea && tZ >= r.effectiveCloudBase){
-    sP.style.background = 'rgba(48,209,88,0.25)';
-    sP.style.borderColor = 'rgba(48,209,88,0.45)';
-    sP.style.color = 'var(--accent-green)';
-    sP.innerText = '구름바다 위 (운해 조망 ☁️🌊)';
-  } else if(iC && r.isRealFog){
-    sP.style.background = 'rgba(255,159,10,0.25)';
-    sP.style.borderColor = 'rgba(255,159,10,0.45)';
-    sP.style.color = 'var(--accent-amber)';
-    sP.innerText = '구름 진입 (운무 🌫️)';
-  } else if(r.isDarkCloud){
-    sP.style.background = 'rgba(255, 255, 255, 0.08)';
-    sP.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-    sP.style.color = 'rgba(235, 235, 245, 0.8)';
-    sP.innerText = `흐림 (전운 ${r.totalCloud}%)`;
-  } else {
-    sP.style.background = 'rgba(48,209,88,0.2)';
-    sP.style.borderColor = 'rgba(48,209,88,0.35)';
-    sP.style.color = 'var(--accent-green)';
-    sP.innerText = '시야 확보 (쾌청)';
-  }
-
-  document.getElementById('meter-mt-label').innerText = `${tZ}m`;
-  document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(5, Math.round((tZ / 3000) * 100)))}%`;
-
-  const winterAlt = evaluateWinterTrailConditions(sT, p.rawRH, scrubRain, p.rawCode, p.rawSnowfall || 0, p.rawSnowDepth || 0);
-  renderWinterCardUI(winterAlt);
-};
-
-window.resetAltitudeToSummit=function(){
-  const s = document.getElementById('altitude-slider');
-  if(!s) return;
+function resetAltitudeToSummit(){
+  const s = document.getElementById('altitude-slider'); if(!s) return;
   s.value = currentMt.ele;
   handleAltitudeScrub(currentMt.ele);
-  if(window.navigator && navigator.vibrate) navigator.vibrate(10);
-};
-
-function renderWinterCardUI(w){
-  const card = document.getElementById('winter-safety-card');
-  if(!card) return;
-  if(!w || !w.shouldShow){
-    card.style.display = 'none';
-    return;
-  }
-  card.style.display = 'block';
-  const badge = document.getElementById('winter-badge');
-  badge.innerText = w.badgeText;
-  badge.style.cssText = w.badgeStyle;
-  document.getElementById('winter-ice-risk').innerText = w.iceRiskText;
-  document.getElementById('winter-snow-val').innerText = w.snowValText;
-  document.getElementById('winter-desc').innerHTML = w.descHtml;
-}
-
-function updateWeatherArtworkScene(r, n){
-  const s = document.getElementById('weather-stage');
-  if(!s) return;
-  s.className = 'weather-scene-stage';
-  if(r.wmoInfo.state === 'storm') s.classList.add('scene-storm');
-  else if(r.wmoInfo.state === 'snow') s.classList.add('scene-snow');
-  else if(r.rainMm > 0 || r.wmoInfo.state === 'rain') s.classList.add('scene-rain');
-  else if(r.isDrizzling) s.classList.add('scene-drizzle');
-  else if(r.isRealFog) s.classList.add('scene-fog');
-  else if(r.isDarkCloud || r.wmoInfo.state === 'cloudy') s.classList.add('scene-cloudy');
-  else s.classList.add(n ? 'scene-clear-night' : 'scene-clear-day');
-}
-
-function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
-  const sP = document.getElementById('card-status-pill'), b = document.getElementById('alert-banner'), bT = document.getElementById('alert-banner-text'), bTg = document.getElementById('alert-banner-tag'), lD = document.getElementById('brand-live-dot');
-  updateWeatherArtworkScene(r, iN);
-  updateFavoriteBtnState();
-  document.getElementById('card-peak-title').innerText = currentMt.name;
-  
-  const descEl = document.getElementById('card-peak-desc');
-  descEl.innerText = dK ? `해발 ${currentMt.ele}m · 내 위치에서 ${dK}km` : `해발 ${currentMt.ele}m · 정상부 분석`;
-  const gpsPill = document.getElementById('user-gps-alt-pill');
-  if(currentUserAltitude !== null && currentUserAltitude > 0){
-    gpsPill.innerText = `📍 내 GPS 고도 ${currentUserAltitude}m`;
-    gpsPill.style.display = 'inline-flex';
-  } else {
-    gpsPill.style.display = 'none';
-  }
-
-  document.getElementById('brief-temp').innerText = `${Math.round(r.summitTemp)}°`;
-  document.getElementById('summit-feel').innerText = `${r.summitFeel}°`;
-  document.getElementById('brief-wind').innerText = `${r.summitWind} / ${r.summitGust} m/s`;
-  
-  if(r.rainMm > 0){
-    document.getElementById('brief-rain').innerText = `${r.rainMm} mm`;
-  } else if(r.isDrizzling){
-    document.getElementById('brief-rain').innerText = '미세 빗방울';
-  } else {
-    document.getElementById('brief-rain').innerText = '0 mm';
-  }
-
-  document.getElementById('meter-mt-label').innerText = `정상 ${currentMt.ele}m`;
-  document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(10, Math.round((currentMt.ele / 3000) * 100)))}%`;
-  document.getElementById('meter-cloud-line').style.left = `${Math.min(98, Math.max(5, Math.round((r.effectiveCloudBase / 3000) * 100)))}%`;
-  document.getElementById('meter-cloud-label').innerText = `운저 ${r.effectiveCloudBase.toLocaleString()}m`;
-  
-  const sl = document.getElementById('altitude-slider');
-  if(sl){ sl.max = currentMt.ele; sl.value = currentMt.ele; }
-  _lastHapticZ = currentMt.ele;
-  document.getElementById('scrubber-current-label').innerText = `${currentMt.ele}m (정상)`;
-  document.getElementById('scrubber-mid-tick').innerText = `중턱 ${Math.round(currentMt.ele / 2)}m`;
-  document.getElementById('scrubber-summit-tick').innerText = `정상 ${currentMt.ele}m`;
-  
-  renderWinterCardUI(r.winterSafety);
-
-  if(r.sunSafety){
-    document.getElementById('label-sunrise').innerText = r.sunSafety.leftLabel;
-    document.getElementById('label-solar-state').innerText = r.sunSafety.midLabel;
-    document.getElementById('label-sunset').innerText = r.sunSafety.rightLabel;
-    const trFill = document.getElementById('sun-track-fill');
-    trFill.style.width = `${r.sunSafety.sunProgress}%`;
-    trFill.style.background = r.sunSafety.isNight ? 'linear-gradient(90deg, #BF5AF2 0%, #0A84FF 50%, #64D2FF 100%)' : 'linear-gradient(90deg, #FF9F0A 0%, #FFD60A 50%, #0A84FF 100%)';
-    const trOrb = document.getElementById('sun-track-orb');
-    trOrb.style.left = `${r.sunSafety.sunProgress}%`;
-    trOrb.innerText = r.sunSafety.orbChar;
-    trOrb.style.filter = r.sunSafety.isNight ? 'drop-shadow(0 0 10px rgba(191, 90, 242, 0.9))' : 'drop-shadow(0 0 8px rgba(255, 214, 10, 0.8))';
-    const sb = document.getElementById('sun-safety-badge');
-    sb.innerText = r.sunSafety.badgeText;
-    sb.style.color = r.sunSafety.badgeColor;
-    sb.style.borderColor = r.sunSafety.badgeColor;
-    sb.style.background = r.sunSafety.isNight ? 'rgba(191, 90, 242, 0.18)' : 'rgba(255, 159, 10, 0.18)';
-    document.getElementById('sun-safety-main-title').innerText = r.sunSafety.isNight ? '달 궤적 & 일출 카운트다운' : '일출 · 일몰 & 안전 하산 인디케이터';
-    const dotInd = document.getElementById('sun-dot-indicator');
-    if(dotInd){
-      dotInd.style.background = r.sunSafety.isNight ? 'var(--accent-purple)' : 'var(--accent-amber)';
-      dotInd.style.boxShadow = r.sunSafety.isNight ? '0 0 8px var(--accent-purple)' : '0 0 8px var(--accent-amber)';
-    }
-    document.getElementById('sun-safety-desc').innerHTML = r.sunSafety.descText;
-  }
-  
-  const timerBadge = document.getElementById('cs-timer-badge');
-  if(timerBadge && r.cloudSeaTimerText){
-    timerBadge.innerText = r.cloudSeaTimerText;
-    timerBadge.style.cssText = r.cloudSeaBadgeStyle;
-  }
-
-  const csB = document.getElementById('cs-prob-badge'), csF = document.getElementById('cs-meter-fill');
-  csF.style.width = `${r.cloudSeaProb}%`;
-  csB.innerText = `${r.cloudSeaProb}% ${r.cloudSeaProb >= 75 ? '최적 발달' : r.cloudSeaProb >= 50 ? '형성 가능' : '조건 미달'}`;
-  document.getElementById('cs-inversion-txt').innerText = `역전층: ${(r.surfaceRH - r.summitHumidity) >= 10 ? '강함 (포화)' : '보통'}`;
-  document.getElementById('cs-wind-txt').innerText = `풍속: ${r.summitWind <= 3.5 ? '안정' : '보통'} (${r.summitWind}m/s)`;
-  document.getElementById('cs-sky-txt').innerText = `상공: ${r.midCloud <= 30 ? '개방(쾌청)' : '구름'}`;
-  
-  if(r.isAboveCloudSea){
-    document.getElementById('cs-brief-desc').innerHTML = `<strong>[${hS} 雲海 파노라마 대성공]:</strong> 산 정상(${currentMt.ele}m)이 계곡 운해층(${r.effectiveCloudBase}m) 위로 우뚝 솟아올라 <strong>발아래 끝없이 펼쳐지는 구름바다와 환상적인 일출 조망</strong>이 완성되었습니다 ☁️🌊`;
-  } else if(r.cloudSeaPhase === 'evaporating'){
-    document.getElementById('cs-brief-desc').innerHTML = `<strong>[${hS} 태양열 증발(Burn-off) 구간]:</strong> 일출 후 기온 상승으로 계곡 운해가 수증기로 증발하여 점차 흩어지고 있습니다.`;
-  } else {
-    document.getElementById('cs-brief-desc').innerHTML = r.cloudSeaProb >= 75 ? `<strong>[${hS} 운해 최적 조건]:</strong> 골짜기 수증기 포화로 발아래 <strong>출렁이는 구름바다</strong>가 펼쳐질 확률이 극히 높습니다.` : r.cloudSeaProb >= 50 ? `<strong>[${hS} 운해 부분 형성]:</strong> 주변 계곡부에 짙은 운무가 고여 부분적인 운해가 형성될 수 있습니다.` : `<strong>[${hS} 운해 조건 미달]:</strong> 대기 혼합으로 운해 형성 가능성이 낮습니다.`;
-  }
-
-  const cbP = document.getElementById('cb-status-pill'), cbD = document.getElementById('cb-desc-text');
-  if(cbP && cbD){
-    if(r.wmoInfo.state === 'storm'){
-      cbP.style.color = 'var(--accent-red)'; cbP.innerText = `뇌우 구름대 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 강한 대류성 뇌우 구름대가 형성되었습니다. 즉시 안전한 지대로 이동하세요.`;
-      sP.innerText = '낙뢰 위험'; sP.style.color = 'var(--accent-red)';
-    } else if(r.rainMm > 0 || r.wmoInfo.state === 'rain'){
-      cbP.style.color = 'var(--accent-red)'; cbP.innerText = `강우 구름대 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 산악 비구름대가 정상을 통과 중입니다. 방수 장비를 착용하세요.`;
-      sP.innerText = `강우 (${r.rainMm}mm)`; sP.style.color = 'var(--accent-red)';
-      sP.style.background = 'rgba(255, 69, 58, 0.2)'; sP.style.borderColor = 'rgba(255, 69, 58, 0.4)';
-    } else if(r.isDrizzling){
-      cbP.style.color = 'var(--accent-cyan)'; cbP.innerText = `안개비 구름대 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 짙은 안개비 구름대 내부로 미세 빗방울이 맺히고 있습니다.`;
-      sP.innerText = '미세 빗방울 (안개비)'; sP.style.color = 'var(--accent-cyan)';
-      sP.style.background = 'rgba(100, 210, 255, 0.2)'; sP.style.borderColor = 'rgba(100, 210, 255, 0.4)';
-    } else if(r.isAboveCloudSea){
-      cbP.style.color = 'var(--accent-green)'; cbP.innerText = `운해 위 쾌청 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS} [구름바다 위 파노라마]:</strong> 운해(${r.effectiveCloudBase}m)가 발아래 깔려 있고 상공은 쾌청하여 <strong>시야 100% 특급 조망</strong>이 펼쳐집니다!`;
-      sP.innerText = '구름바다 위 (운해 조망 ☁️🌊)'; sP.style.color = 'var(--accent-green)';
-      sP.style.background = 'rgba(48, 209, 88, 0.25)'; sP.style.borderColor = 'rgba(48, 209, 88, 0.5)';
-    } else if(r.isRealFog){
-      cbP.style.color = 'var(--accent-amber)'; cbP.innerText = `구름 속 갇힘 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 짙은 운무가 정상을 감싸 시야가 차단된 곰탕 뷰입니다.`;
-      sP.innerText = '운무 갇힘 (곰탕 뷰)'; sP.style.color = 'var(--accent-amber)';
-      sP.style.background = 'rgba(255,159,10,0.2)'; sP.style.borderColor = 'rgba(255,159,10,0.4)';
-    } else if(iN){
-      if(!r.isDarkCloud && r.opticalTrans >= 80){
-        cbP.style.color = 'var(--accent-purple)'; cbP.innerText = `별빛·은하수 특급 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS} [야간 천체 조망 최적]:</strong> 밤하늘 별빛과 은하수, 도심 야경이 쏟아지듯 선명합니다 🌌`;
-        sP.innerText = '시야 100% 쾌청 (야경)'; sP.style.color = 'var(--accent-green)';
-      } else {
-        cbP.style.color = 'rgba(235, 235, 245, 0.8)'; cbP.innerText = `야간 흐림 (별빛 차단)`; cbD.innerHTML = `<strong>${hS}:</strong> 상공 구름으로 별빛이 차단되어 어둡습니다. 헤드랜턴을 필수 지참하세요.`;
-        sP.innerText = '야간 흐림'; sP.style.color = 'rgba(235,235,245,0.8)';
-      }
-    } else if(r.isDarkCloud){
-      cbP.style.color = 'rgba(235, 235, 245, 0.8)'; cbP.innerText = `흐림 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 전운량 ${r.totalCloud}%로 일조가 차단되며 조망이 어둡게 제한됩니다.`;
-      sP.innerText = `흐림 (전운 ${r.totalCloud}%)`; sP.style.color = 'rgba(235,235,245,0.8)';
-      sP.style.background = 'rgba(255, 255, 255, 0.08)'; sP.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-    } else {
-      cbP.style.color = 'var(--accent-green)'; cbP.innerText = `조망 특급 (투과율 ${r.opticalTrans}%)`; cbD.innerHTML = `<strong>${hS}:</strong> 구름층(${r.effectiveCloudBase}m)이 정상 상공에 위치하며 광학 투과율 <strong>${r.opticalTrans}%</strong>로 원거리 조망이 극도로 선명합니다.`;
-      sP.innerText = '시야 100% 쾌청'; sP.style.color = 'var(--accent-green)';
-      sP.style.background = 'rgba(48, 209, 88, 0.2)'; sP.style.borderColor = 'rgba(48, 209, 88, 0.4)';
-    }
-  }
-
-  if(iO){ lD.classList.add('offline'); b.style.borderColor = 'rgba(255,159,10,0.4)'; bT.innerText = '⚠️ 통신 음영지역 (기기 캐시 유지 중)'; bTg.innerText = '캐시'; bTg.style.color = 'var(--accent-amber)'; }
-  else { lD.classList.remove('offline'); bTg.innerText = '정상'; bTg.style.color = 'var(--accent-green)'; }
-
-  document.getElementById('summit-temp').innerText = `${r.summitTemp} °C`;
-  document.getElementById('summit-humidity').innerText = `${r.summitHumidity} %`;
-  document.getElementById('summit-wind').innerText = `${r.summitWind} m/s`;
-  document.getElementById('summit-gust').innerText = `${r.summitGust} m/s`;
-  document.getElementById('summit-cloudbase').innerText = `${r.effectiveCloudBase.toLocaleString()} m`;
-  document.getElementById('summit-optical').innerText = `${r.opticalTrans} %`;
-  document.getElementById('city-temp').innerText = `${r.surfaceTemp} °C`;
-  document.getElementById('city-feel').innerText = `${(r.surfaceTemp - 0.5).toFixed(1)} °C`;
-  document.getElementById('city-humidity').innerText = `${r.surfaceRH} %`;
-  document.getElementById('city-wind').innerText = `${(r.summitWind * 0.6).toFixed(1)} m/s`;
-  document.getElementById('city-beta').innerText = `${r.betaExt} /km`;
 }
 
 function renderLiveForecastTrack(h){
@@ -2963,48 +1396,33 @@ function renderLiveForecastTrack(h){
   const sI = h ? findCurrentHourIndex(h) : 0, nw = new Date();
   for(let o = 0; o < 12; o++){
     const dI = sI + o;
-    const tT = (h && h.time && h.time[dI] && !isNaN(new Date(h.time[dI]).getTime())) 
-               ? new Date(h.time[dI]) 
-               : new Date(nw.getTime() + o * 3600000);
-    const tH = tT.getHours(), hS = `${tH < 10 ? '0' : ''}${tH}:00`, lb = (o === 0) ? '현재' : `+${o}h`;
-    let tm = 16, wC = 0, tC = 0, mC = 0;
-    if(h && h.temperature_2m && h.temperature_2m[dI] !== undefined){
-      tm = Math.round(h.temperature_2m[dI]);
-      wC = h.weather_code[dI];
-      tC = h.cloud_cover ? h.cloud_cover[dI] : 0;
-      mC = h.cloud_cover_mid ? h.cloud_cover_mid[dI] : 0;
-    }
-    const iN = (tH >= 19 || tH <= 5);
-    let wI = decodeWmoCode(wC, iN), ic = wI.icon;
-    if(tC >= 65 || mC >= 55) ic = (wC >= 51) ? '🌧️' : '☁️';
+    const tT = (h && h.time && h.time[dI]) ? new Date(h.time[dI]) : new Date(nw.getTime() + o * 3600000);
+    const tH = tT.getHours(), hS = `${String(tH).padStart(2,'0')}:00`;
+    const tm = (h && h.temperature_2m && h.temperature_2m[dI] !== undefined) ? Math.round(h.temperature_2m[dI]) : 15;
+    const wC = (h && h.weather_code) ? h.weather_code[dI] : 0;
+    const wI = decodeWmoCode(wC);
+
     const sl = document.createElement('div');
     sl.className = `time-slot ${o === selectedHourOffset ? 'active' : ''}`;
-    sl.innerHTML = `<div class="slot-label">${lb}</div><div class="slot-time">${hS}</div><div class="slot-icon">${ic}</div><div class="slot-temp">${tm}°</div>`;
+    sl.innerHTML = `<div class="slot-label">${o === 0 ? '현재' : `+${o}h`}</div><div class="slot-time">${hS}</div><div class="slot-icon">${wI.icon}</div><div class="slot-temp">${tm}°</div>`;
     sl.onclick = () => selectForecastHour(o, dI, tH, hS, tT);
     t.appendChild(sl);
   }
 }
 
-function selectForecastHour(o, dI, tH, hS, tT = null){
+function selectForecastHour(o, dI, tH, hS, tT){
   selectedHourOffset = o;
   document.querySelectorAll('.time-slot').forEach((s, i) => s.classList.toggle('active', i === o));
-  const iN = (tH >= 19 || tH <= 5);
-  const targetDate = tT || new Date(Date.now() + o * 3600000);
 
-  if(o === 0){
-    const nw = new Date();
-    document.getElementById('clock-live').innerText = `${nw.getHours().toString().padStart(2,'0')}:${nw.getMinutes().toString().padStart(2,'0')} 동기화 완료`;
-    if(baseLiveCurrentRes){
-      activeForecastRes = baseLiveCurrentRes;
-      updateAlpineWeatherHUD(activeForecastRes, '현재', iN, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
-      return;
-    }
-  } else {
-    document.getElementById('clock-live').innerText = `예보 모드: ${o}시간 뒤 (${hS})`;
+  if(o === 0 && baseLiveCurrentRes){
+    activeForecastRes = baseLiveCurrentRes;
+    updateAlpineWeatherHUD(activeForecastRes, '현재');
+    return;
   }
 
   if(!liveWeatherData || !liveWeatherData.hourly) return;
   const h = liveWeatherData.hourly;
+  const targetDate = tT || new Date(Date.now() + o * 3600000);
 
   const res = compute5PhysicsMountainWeather({
     mtEle: currentMt.ele,
@@ -3014,11 +1432,11 @@ function selectForecastHour(o, dI, tH, hS, tT = null){
     rawGust: (h.wind_gusts_10m[dI] ?? 6.0) * 0.2777,
     rawRain: h.precipitation[dI] ?? 0.0,
     rawCode: h.weather_code[dI] ?? 0,
-    rawSnowfall: h.snowfall ? h.snowfall[dI] : 0.0,
-    rawSnowDepth: h.snow_depth ? h.snow_depth[dI] : 0.0,
-    totalCloud: h.cloud_cover ? h.cloud_cover[dI] : 0,
-    lowCloud: h.cloud_cover_low ? h.cloud_cover_low[dI] : 0,
-    midCloud: h.cloud_cover_mid ? h.cloud_cover_mid[dI] : 0,
+    rawSnowfall: 0.0,
+    rawSnowDepth: 0.0,
+    totalCloud: 0,
+    lowCloud: 0,
+    midCloud: 0,
     visibility: h.visibility ? h.visibility[dI] : 15000,
     rawDew: h.dew_point_2m ? h.dew_point_2m[dI] : null,
     pointType: currentMt.type || 'peak',
@@ -3028,118 +1446,173 @@ function selectForecastHour(o, dI, tH, hS, tT = null){
   });
 
   activeForecastRes = res;
-  updateAlpineWeatherHUD(activeForecastRes, hS, iN, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
+  updateAlpineWeatherHUD(activeForecastRes, hS);
 }
 
-window.selectMountain=async function(n,e,bE,t='peak',lt=35.2846,lg=129.0565,dK=null){
-  currentMt={name:n,ele:e,type:t,lat:lt,lng:lg,distanceKm:dK};
-  selectedHourOffset=0;
+function updateWeatherArtworkScene(r, n){
+  const s = document.getElementById('weather-stage'); if(!s) return;
+  s.className = 'weather-scene-stage';
+  if(r.wmoInfo.state === 'storm') s.classList.add('scene-storm');
+  else if(r.rainMm > 0 || r.wmoInfo.state === 'rain') s.classList.add('scene-rain');
+  else if(r.isDrizzling) s.classList.add('scene-drizzle');
+  else if(r.isRealFog) s.classList.add('scene-fog');
+  else if(r.isDarkCloud) s.classList.add('scene-cloudy');
+  else s.classList.add(n ? 'scene-clear-night' : 'scene-clear-day');
+}
+
+function updateAlpineWeatherHUD(r, hS){
+  const nw = new Date(), iN = (nw.getHours() >= 19 || nw.getHours() <= 5);
+  updateWeatherArtworkScene(r, iN);
+  updateFavoriteBtnState();
+  document.getElementById('card-peak-title').innerText = currentMt.name;
+  document.getElementById('card-peak-desc').innerText = `해발 ${currentMt.ele}m · 정상부 분석`;
+  document.getElementById('brief-temp').innerText = `${Math.round(r.summitTemp)}°`;
+  document.getElementById('summit-feel').innerText = `${r.summitFeel}°`;
+  document.getElementById('brief-wind').innerText = `${r.summitWind} / ${r.summitGust} m/s`;
+  document.getElementById('brief-rain').innerText = r.rainMm > 0 ? `${r.rainMm} mm` : '0 mm';
+
+  const sP = document.getElementById('card-status-pill');
+  if(r.rainMm > 0){ sP.innerText = `강우 (${r.rainMm}mm)`; sP.style.color = 'var(--accent-red)'; }
+  else if(r.isAboveCloudSea){ sP.innerText = '구름바다 위 (특급 조망 🌊)'; sP.style.color = 'var(--accent-green)'; }
+  else { sP.innerText = '시야 100% 쾌청'; sP.style.color = 'var(--accent-green)'; }
+
+  document.getElementById('meter-mt-label').innerText = `정상 ${currentMt.ele}m`;
+  document.getElementById('meter-cloud-label').innerText = `운저 ${r.effectiveCloudBase}m`;
+
+  const sl = document.getElementById('altitude-slider');
+  if(sl){ sl.max = currentMt.ele; sl.value = currentMt.ele; }
+  document.getElementById('scrubber-current-label').innerText = `${currentMt.ele}m (정상)`;
+  document.getElementById('scrubber-mid-tick').innerText = `중턱 ${Math.round(currentMt.ele / 2)}m`;
+  document.getElementById('scrubber-summit-tick').innerText = `정상 ${currentMt.ele}m`;
+
+  renderWinterCardUI(r.winterSafety);
+
+  if(r.sunSafety){
+    document.getElementById('label-sunrise').innerText = `일출 ${r.sunSafety.srStr}`;
+    document.getElementById('label-sunset').innerText = `일몰 ${r.sunSafety.ssStr}`;
+    document.getElementById('sun-track-fill').style.width = `${r.sunSafety.progress}%`;
+    document.getElementById('sun-track-orb').style.left = `${r.sunSafety.progress}%`;
+    document.getElementById('sun-track-orb').innerText = r.sunSafety.orbChar;
+    const sb = document.getElementById('sun-safety-badge');
+    sb.innerText = r.sunSafety.badgeText;
+    sb.style.color = r.sunSafety.badgeColor;
+    document.getElementById('sun-safety-desc').innerHTML = r.sunSafety.descText;
+  }
+
+  const csF = document.getElementById('cs-meter-fill');
+  if(csF) csF.style.width = `${r.cloudSeaProb}%`;
+  document.getElementById('cs-prob-badge').innerText = `${r.cloudSeaProb}% 분석됨`;
+  document.getElementById('cs-timer-badge').innerText = r.cloudSeaTimerText;
+  document.getElementById('cs-timer-badge').style.cssText = r.cloudSeaBadgeStyle;
+
+  document.getElementById('summit-temp').innerText = `${r.summitTemp} °C`;
+  document.getElementById('summit-humidity').innerText = `${r.summitHumidity} %`;
+  document.getElementById('summit-wind').innerText = `${r.summitWind} m/s`;
+  document.getElementById('summit-gust').innerText = `${r.summitGust} m/s`;
+  document.getElementById('summit-cloudbase').innerText = `${r.effectiveCloudBase} m`;
+  document.getElementById('summit-optical').innerText = `${r.opticalTrans} %`;
+  document.getElementById('city-temp').innerText = `${r.surfaceTemp} °C`;
+  document.getElementById('city-feel').innerText = `${(r.surfaceTemp - 0.5).toFixed(1)} °C`;
+  document.getElementById('city-humidity').innerText = `${r.surfaceRH} %`;
+  document.getElementById('city-wind').innerText = `${(r.summitWind * 0.6).toFixed(1)} m/s`;
+  document.getElementById('city-beta').innerText = `${r.betaExt} /km`;
+}
+
+function renderWinterCardUI(w){
+  const card = document.getElementById('winter-safety-card'); if(!card) return;
+  if(!w || !w.shouldShow){ card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  document.getElementById('winter-badge').innerText = w.badgeText;
+  document.getElementById('winter-badge').style.cssText = w.badgeStyle;
+  document.getElementById('winter-ice-risk').innerText = w.iceRiskText;
+  document.getElementById('winter-snow-val').innerText = w.snowValText;
+  document.getElementById('winter-desc').innerHTML = w.descHtml;
+}
+
+async function selectMountain(n, e, bE, t='peak', lt=35.2846, lg=129.0565, dK=null){
+  currentMt = { name: n, ele: e || 801, type: t, lat: lt, lng: lg, distanceKm: dK };
+  selectedHourOffset = 0;
   renderFavoritesChips();
-  document.getElementById('card-peak-title').innerText=n;
-  document.getElementById('clock-live').innerText='STATLAB 연산 중...';
-  renderLiveForecastTrack(null);
-  const eleParam=(e&&e>0)?e:0;
-  liveWeatherData=await fetchLiveMountainWeather(lt,lg,eleParam);
-  if(liveWeatherData&&liveWeatherData.current){
-    if((!e||e<=0)&&liveWeatherData.elevation){e=Math.max(50,Math.round(liveWeatherData.elevation));currentMt.ele=e;}
-    else if(!e||e<=0){e=801;currentMt.ele=e;}
-    const cur=liveWeatherData.current,nw=new Date(),iN=(nw.getHours()>=19||nw.getHours()<=5);
-    baseLiveCurrentRes=compute5PhysicsMountainWeather({
-      mtEle:e,
-      rawTemp:cur.temperature_2m,
-      rawRH:cur.relative_humidity_2m,
-      rawWind:cur.wind_speed_10m*0.2777,
-      rawGust:cur.wind_gusts_10m*0.2777,
-      rawRain:cur.precipitation,
-      rawCode:cur.weather_code,
-      rawSnowfall:cur.snowfall || 0.0,
-      rawSnowDepth:0.0,
-      totalCloud:cur.cloud_cover||0,
-      lowCloud:cur.cloud_cover_low||0,
-      midCloud:cur.cloud_cover_mid||0,
-      visibility:cur.visibility||15000,
-      rawDew:cur.dew_point_2m||null,
-      pointType:t,
-      targetHour:nw.getHours(),
-      daily:liveWeatherData.daily||null,
-      targetHourTime:nw
+  document.getElementById('card-peak-title').innerText = n;
+  document.getElementById('clock-live').innerText = '기상 데이터 수신 중...';
+
+  liveWeatherData = await fetchLiveMountainWeather(lt, lg, e);
+
+  if(liveWeatherData && liveWeatherData.current && liveWeatherData.hourly){
+    const cur = liveWeatherData.current;
+    const nw = new Date();
+    const hourlyVis = (liveWeatherData.hourly.visibility && liveWeatherData.hourly.visibility[0]) ? liveWeatherData.hourly.visibility[0] : 15000;
+    const hourlyDew = (liveWeatherData.hourly.dew_point_2m && liveWeatherData.hourly.dew_point_2m[0] !== undefined) ? liveWeatherData.hourly.dew_point_2m[0] : null;
+
+    baseLiveCurrentRes = compute5PhysicsMountainWeather({
+      mtEle: currentMt.ele,
+      rawTemp: cur.temperature_2m,
+      rawRH: cur.relative_humidity_2m,
+      rawWind: (cur.wind_speed_10m || 3.0) * 0.2777,
+      rawGust: (cur.wind_gusts_10m || 6.0) * 0.2777,
+      rawRain: cur.precipitation || 0.0,
+      rawCode: cur.weather_code || 0,
+      rawSnowfall: 0.0,
+      rawSnowDepth: 0.0,
+      totalCloud: 0,
+      lowCloud: 0,
+      midCloud: 0,
+      visibility: hourlyVis,
+      rawDew: hourlyDew,
+      pointType: t,
+      targetHour: nw.getHours(),
+      daily: liveWeatherData.daily || null,
+      targetHourTime: nw
     });
-    activeForecastRes=baseLiveCurrentRes;
-    saveMountainCache(n,liveWeatherData.hourly,cur,baseLiveCurrentRes,liveWeatherData.daily);
+
+    activeForecastRes = baseLiveCurrentRes;
     renderLiveForecastTrack(liveWeatherData.hourly);
-    if(currentForecastView==='weekly') render7DayWeeklyTrack(liveWeatherData);
-    updateAlpineWeatherHUD(activeForecastRes,'현재',iN,t,false,dK);
-    document.getElementById('clock-live').innerText=`${nw.getHours().toString().padStart(2,'0')}:${nw.getMinutes().toString().padStart(2,'0')} 동기화 완료`;
-    return;
+    if(currentForecastView === 'weekly') render7DayWeeklyTrack(liveWeatherData);
+    updateAlpineWeatherHUD(activeForecastRes, '현재');
+    document.getElementById('clock-live').innerText = `${String(nw.getHours()).padStart(2,'0')}:${String(nw.getMinutes()).padStart(2,'0')} 실시간 연산 완료`;
   }
-  const c=getMountainCache(n);
-  if(c){
-    liveWeatherData={hourly:c.rawHourly,daily:c.rawDaily||null};
-    baseLiveCurrentRes=c.computedRes;
-    activeForecastRes=baseLiveCurrentRes;
-    renderLiveForecastTrack(c.rawHourly);
-    if(currentForecastView==='weekly') render7DayWeeklyTrack(liveWeatherData);
-    updateAlpineWeatherHUD(activeForecastRes,'캐시',false,t,true,dK);
-    document.getElementById('clock-live').innerText='오프라인 캐시 모드';
-  }
-};
-
-let searchTimer=null;
-window.handleMountainSearch=function(k){
-  clearTimeout(searchTimer);
-  const d=document.getElementById('search-dropdown'),q=k.trim();
-  if(!q){renderSearchDropdown(mountainDB.slice(0,14));return;}
-  const lM=mountainDB.filter(m=>m.name.includes(q)||m.region.includes(q));
-  renderSearchDropdown(lM);
-  searchTimer=setTimeout(()=>{
-    if(window.kakao&&kakao.maps&&kakao.maps.services){
-      const pS=new kakao.maps.services.Places();
-      pS.keywordSearch(q,(dt,st)=>{
-        if(st===kakao.maps.services.Status.OK){
-          const ex=[];
-          dt.forEach(p=>{
-            const pN=p.place_name,cg=p.category_name||'';
-            if(!lM.some(x=>x.name===pN)&&!/아파트|빌라|부동산|역$\vert{}정류장\vert{}식당\vert{}카페\vert{}병원/i.test(pN)&&!/주거\vert{}교통\vert{}쇼핑\vert{}음식/i.test(cg)&&(/(산\vert{}봉\vert{}바위\vert{}대피소\vert{}능선\vert{}령)$/.test(pN)||cg.includes('산'))){
-              let eE=650;const m=pN.match(/(\d+)m/);
-              if(m)eE=parseInt(m[1]);else if(pN.includes('대피소'))eE=1250;
-              ex.push({name:pN,type:pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'),region:p.address_name,ele:eE,lat:parseFloat(p.y),lng:parseFloat(p.x)});
-            }
-          });
-          if(ex.length>0)renderSearchDropdown(lM.concat(ex));
-        }
-      });
-    }
-  },180);
-};
-
-function renderSearchDropdown(l){
-  const d=document.getElementById('search-dropdown');if(!d)return;
-  if(l.length===0){d.innerHTML='<div style="padding:14px;font-size:12px;color:var(--text-secondary);text-align:center;">검색 결과가 없습니다.</div>';d.style.display='block';return;}
-  let h='';
-  l.slice(0,16).forEach(m=>{
-    h+=`<div class="search-item" onclick="selectSearchedMountain('${m.name}',${m.ele},'${m.type}',${m.lat||35.28},${m.lng||129.05})"><div><span>${m.name}</span><div class="search-item-sub">${m.region}</div></div><span style="color:var(--accent-cyan);font-weight:700;">${m.ele}m</span></div>`;
-  });
-  d.innerHTML=h;d.style.display='block';
 }
 
-window.selectSearchedMountain=function(n,e,t,lt,lg){
-  document.getElementById('mt-search-input').value=`${n} (${e}m)`;
-  document.getElementById('search-dropdown').style.display='none';
-  selectMountain(n,e,null,t,lt,lg);
-};
+function triggerGPSMatching(){
+  if(!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(async p => {
+    const uLat = p.coords.latitude, uLng = p.coords.longitude;
+    if(p.coords.altitude && p.coords.altitude > 0) currentUserAltitude = Math.round(p.coords.altitude);
+    let n = mountainDB[4], minD = Infinity;
+    mountainDB.forEach(m => {
+      const d = Math.hypot(m.lat - uLat, m.lng - uLng);
+      if(d < minD){ minD = d; n = m; }
+    });
+    selectMountain(n.name, n.ele, null, n.type, n.lat, n.lng);
+  }, () => {}, { timeout: 6000 });
+}
 
-document.addEventListener('click',e=>{
-  const sc=document.querySelector('.search-container');
-  if(sc&&!sc.contains(e.target)){const sd=document.getElementById('search-dropdown');if(sd)sd.style.display='none';}
+function handleMountainSearch(k){
+  const d = document.getElementById('search-dropdown'), q = k.trim();
+  if(!q){ d.style.display = 'none'; return; }
+  const match = mountainDB.filter(m => m.name.includes(q) || m.region.includes(q));
+  d.innerHTML = '';
+  if(match.length === 0){ d.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text-secondary);text-align:center;">검색 결과 없음</div>'; }
+  else {
+    match.forEach(m => {
+      const item = document.createElement('div');
+      item.className = 'search-item';
+      item.innerHTML = `<div>${m.name} <span style="font-size:11px;color:var(--text-secondary);">${m.region}</span></div><span style="color:var(--accent-cyan);">${m.ele}m</span>`;
+      item.onclick = () => {
+        document.getElementById('mt-search-input').value = m.name;
+        d.style.display = 'none';
+        selectMountain(m.name, m.ele, null, m.type, m.lat, m.lng);
+      };
+      d.appendChild(item);
+    });
+  }
+  d.style.display = 'block';
+}
+
+document.addEventListener('click', e => {
+  const sc = document.querySelector('.search-container');
+  if(sc && !sc.contains(e.target)) document.getElementById('search-dropdown').style.display = 'none';
 });
-
-window.onload=()=>{
-  renderFavoritesChips();
-  triggerGPSMatching();
-  setInterval(()=>{
-    if(navigator.onLine)selectMountain(currentMt.name,currentMt.ele,null,currentMt.type,currentMt.lat,currentMt.lng,currentMt.distanceKm);
-  },600000);
-};
 </script>
 </body>
 </html>
