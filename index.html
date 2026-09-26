@@ -8,10 +8,12 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v7.0</title>
+  <title>STATLAB 산악 기상 분석 v7.3 BETA</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
+  <!-- 포트원(PortOne/구 아임포트) 정식 결제 SDK (정식 출시 대비 탑재) -->
+  <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
   <style>
     :root {
@@ -235,6 +237,45 @@
       margin-bottom: 10px;
     }
 
+    /* 12시간 vs 7일 주간 예보 토글 바 */
+    .forecast-toggle-bar {
+      display: flex;
+      background: rgba(255, 255, 255, 0.06);
+      border: 0.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 3px;
+      margin-bottom: 8px;
+    }
+    .toggle-tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 7px 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .toggle-tab-btn.active {
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    .pro-badge-free {
+      font-size: 9px;
+      font-weight: 800;
+      color: #000;
+      background: var(--accent-green);
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.2px;
+    }
+
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -287,6 +328,41 @@
     .slot-time { font-size: 11px; font-weight: 700; color: #FFFFFF; }
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
+
+    /* 7일 주간 예보 카드 */
+    .weekly-slot {
+      flex-shrink: 0;
+      width: 92px;
+      background: linear-gradient(180deg, rgba(32, 32, 38, 0.9) 0%, rgba(20, 20, 26, 0.95) 100%);
+      border: 0.5px solid rgba(255, 214, 10, 0.35);
+      border-radius: 15px;
+      padding: 10px 6px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .w-slot-day { font-size: 12px; font-weight: 800; color: #FFFFFF; }
+    .w-slot-date { font-size: 10px; color: var(--text-tertiary); margin-bottom: 2px; }
+    .w-slot-icon { font-size: 20px; margin: 3px 0; }
+    .w-slot-temp-range { font-size: 12px; font-weight: 800; color: #FFFFFF; }
+    .w-slot-temp-min { color: var(--accent-cyan); }
+    .w-slot-temp-max { color: #FF9F0A; }
+    .w-slot-rain { font-size: 9px; font-weight: 700; margin-top: 1px; }
+    .w-slot-cs-pill {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      margin-top: 4px;
+      white-space: nowrap;
+    }
+    .w-slot-conf {
+      font-size: 8px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
 
     .hero-weather-card {
       position: relative;
@@ -597,7 +673,6 @@
       color: #FFFFFF;
     }
 
-    /* ★ [v7.0 신규] 똑똑하게 점등되는 동절기 결빙/적설 안전 카드 */
     .winter-safety-card {
       background: linear-gradient(135deg, rgba(16, 28, 45, 0.88) 0%, rgba(10, 18, 30, 0.95) 100%);
       backdrop-filter: blur(25px);
@@ -1069,10 +1144,11 @@
       line-height: 1.6;
     }
 
+    /* 모달 */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       z-index: 4000;
@@ -1087,12 +1163,12 @@
       opacity: 1;
     }
     .modal-sheet {
-      background: rgba(28, 28, 30, 0.96);
+      background: rgba(28, 28, 30, 0.98);
       border-top: 0.5px solid rgba(255, 255, 255, 0.2);
       border-radius: 24px 24px 0 0;
       width: 100%;
       max-width: 540px;
-      max-height: 82vh;
+      max-height: 85vh;
       padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 16px)) 20px;
       overflow-y: auto;
       transform: translateY(100%);
@@ -1176,7 +1252,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--accent-gold);
+      background: var(--accent-green);
     }
   </style>
 </head>
@@ -1214,11 +1290,26 @@
     <span id="alert-banner-tag" style="color: var(--accent-green);">정상</span>
   </div>
 
+  <!-- ★ [v7.3 베타 전면 무료 오픈 탭] -->
+  <div class="forecast-toggle-bar">
+    <div id="tab-hourly-btn" class="toggle-tab-btn active" onclick="switchForecastView('hourly')">
+      12시간 초단기 현장 예보
+    </div>
+    <div id="tab-weekly-btn" class="toggle-tab-btn" onclick="switchForecastView('weekly')">
+      7일 주간 예보 <span class="pro-badge-free">FREE BETA</span>
+    </div>
+  </div>
+
   <div class="section-header">
-    <div class="section-title">12시간 초단기 예보</div>
+    <div id="forecast-section-title" class="section-title">12시간 초단기 예보</div>
     <div id="section-sub-label" class="section-sub">1시간 간격 정밀 분석</div>
   </div>
+
+  <!-- 12시간 트랙 -->
   <div id="forecast-track" class="forecast-track"></div>
+
+  <!-- 7일 주간 트랙 -->
+  <div id="weekly-forecast-track" class="forecast-track" style="display:none;"></div>
 
   <!-- 메인 히어로 카드 -->
   <div id="hero-card" class="hero-weather-card">
@@ -1319,7 +1410,7 @@
 
   </div>
 
-  <!-- ★ [v7.0 신규] 똑똑하게 점등되는 동절기 결빙/적설 안전 카드 (평소엔 숨김) -->
+  <!-- 동절기 결빙/적설 안전 카드 (평소엔 숨김) -->
   <div id="winter-safety-card" class="winter-safety-card" style="display:none;">
     <div class="winter-header">
       <div class="winter-title">
@@ -1378,7 +1469,6 @@
       <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
     </div>
 
-    <!-- 운해 소멸 타이머 전용 비주얼 배너 -->
     <div id="cs-burnoff-banner" class="cs-burnoff-timer-banner">
       <div class="cs-timer-label">
         <span id="cs-timer-icon">⏳</span>
@@ -1462,6 +1552,7 @@
     </div>
   </div>
 
+  <!-- 약관 모달 -->
   <div id="legal-modal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -1472,23 +1563,19 @@
       <div class="sheet-content">
         <div class="sheet-clause">
           <div class="clause-title">1. 기상 데이터 성격 및 시뮬레이션 한계</div>
-          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델(Open-Meteo/ECMWF) 원천 데이터에 자체 산악 대기 물리 알고리즘을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다. 국지성 산악 기후의 돌발적 급변으로 인해 실제 현장 상황과 오차가 발생할 수 있습니다.
+          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델(Open-Meteo/ECMWF) 원천 데이터에 자체 산악 대기 물리 알고리즘을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다.
         </div>
         <div class="sheet-clause">
           <div class="clause-title">2. 법적 기상특보 대체 불가 (기상법 제17조 준수)</div>
-          본 서비스는 대한민국 기상청의 공식 기상예보 및 법적 기상특보를 대체하지 않습니다. 산행 전 및 산행 중에는 반드시 대한민국 기상청 공식 발표와 국립공원공단 입산 통제 정보를 확인하시기 바랍니다.
+          본 서비스는 대한민국 기상청의 공식 기상예보 및 법적 기상특보를 대체하지 않습니다.
         </div>
         <div class="sheet-clause">
           <div class="clause-title">3. 안전사고에 대한 개발자 완전 면책</div>
-          본 서비스가 제공하는 모든 정보는 산행 계획 수립을 위한 단순 참고 자료입니다. 이용자가 본 정보에 의존하여 발생한 안전사고, 조난, 인명 피해, 신체 부상 및 재산상 손해에 대하여 서비스 개발자 및 운영사는 어떠한 민·형사상 법적 책임도 부담하지 않습니다.
+          이용자가 본 정보에 의존하여 발생한 안전사고, 조난, 인명 피해 및 손해에 대하여 운영사는 어떠한 법적 책임도 부담하지 않습니다.
         </div>
         <div class="sheet-clause">
           <div class="clause-title">4. 위치기반서비스(GPS) 및 개인정보 처리방침</div>
-          본 서비스는 이용자의 위치에서 가장 가까운 산악 지점을 탐색하기 위해 단말기 GPS 좌표를 일회성으로 조회합니다. 해당 좌표는 외부 서버로 전송되거나 저장되지 않으며, 기기 내부에서 연산 직후 즉시 파기됩니다.
-        </div>
-        <div class="sheet-clause">
-          <div class="clause-title">5. 데이터 라이선스 및 제휴 출처</div>
-          Meteorological numerical data provided by Open-Meteo.com (CC BY 4.0 License). Location & Geocoding services powered by Kakao Maps SDK.
+          단말기 GPS 좌표는 기기 내부에서 연산 직후 즉시 파기되며 외부 서버로 전송되지 않습니다.
         </div>
       </div>
     </div>
@@ -1496,7 +1583,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    STATLAB v7.0
+    <span>STATLAB v7.3 (BETA FREE)</span>
   </div>
 
 <script>
@@ -1518,6 +1605,7 @@ const mountainDB=[
 ];
 
 const FAVORITES_KEY='STATLAB_USER_FAVORITES_v5';
+
 const defaultFavorites=[
   {name:'금정산 고당봉',ele:801,type:'peak',lat:35.2846,lng:129.0565},
   {name:'금정산 장군봉',ele:735,type:'peak',lat:35.3015,lng:129.0535},
@@ -1535,9 +1623,31 @@ function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-bt
 
 let currentMt=mountainDB[4];
 let selectedHourOffset=0,liveWeatherData=null;
-let baseLiveCurrentRes=null;
-let activeForecastRes=null;
+let baseLiveCurrentRes=null,activeForecastRes=null;
 let _lastHapticZ=0,currentUserAltitude=null;
+let currentForecastView='hourly';
+
+// ★ [출시 전 베타 전면 무료 오픈 모드: 결제창 없이 즉시 열람]
+window.switchForecastView=function(mode){
+  if(mode==='weekly'){
+    currentForecastView='weekly';
+    document.getElementById('tab-hourly-btn').classList.remove('active');
+    document.getElementById('tab-weekly-btn').classList.add('active');
+    document.getElementById('forecast-track').style.display='none';
+    document.getElementById('weekly-forecast-track').style.display='flex';
+    document.getElementById('forecast-section-title').innerText='7일 주간 산악 정밀 예보';
+    document.getElementById('section-sub-label').innerText='🔥 베타 전면 무료 개방: 일교차 & 운해 지수';
+    if(liveWeatherData) render7DayWeeklyTrack(liveWeatherData);
+  } else {
+    currentForecastView='hourly';
+    document.getElementById('tab-weekly-btn').classList.remove('active');
+    document.getElementById('tab-hourly-btn').classList.add('active');
+    document.getElementById('weekly-forecast-track').style.display='none';
+    document.getElementById('forecast-track').style.display='flex';
+    document.getElementById('forecast-section-title').innerText='12시간 초단기 예보';
+    document.getElementById('section-sub-label').innerText='1시간 간격 정밀 분석';
+  }
+};
 
 window.openLegalModal=function(){
   document.getElementById('legal-modal').classList.add('active');
@@ -1616,8 +1726,7 @@ function decodeWmoCode(c,n=false){
 async function fetchLiveMountainWeather(lt,lg,el){
   try{
     const eq=(el&&el>0)?`&elevation=${el}`:'';
-    // snowfall 및 snow_depth 변수 추가
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall,snow_depth&daily=sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=2`;
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall,snow_depth&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=7`;
     const r=await fetch(u);if(!r.ok)throw new Error('API');return await r.json();
   }catch(e){return null;}
 }
@@ -1814,19 +1923,16 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   };
 }
 
-// ★ [v7.0 신규] 똑똑하게 점등되는 동절기 결빙/적설 평가 함수
 function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snowfall=0, snowDepth=0){
   const isFreezing = (temp <= 0.0);
   const isNearZero = (temp > 0.0 && temp <= 3.0);
   const isSnowCode = (weatherCode >= 71 && weatherCode <= 77) || (weatherCode >= 85 && weatherCode <= 86);
   const hasSnow = (snowfall > 0.1 || snowDepth > 0.5 || isSnowCode);
 
-  // 조건 1: 영상 3°C 초과 & 눈 없음 -> 완전 숨김
   if(!isFreezing && !isNearZero && !hasSnow){
     return { shouldShow: false };
   }
 
-  // 조건 2: 적설 / 폭설 경보
   if(snowfall >= 2.0 || snowDepth >= 3.0){
     return {
       shouldShow: true,
@@ -1838,7 +1944,6 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
     };
   }
 
-  // 조건 3: 영하권 등산로 빙판 결빙
   if(isFreezing){
     const snowCm = snowDepth > 0 ? `${snowDepth.toFixed(1)} cm` : (snowfall > 0 ? `${snowfall.toFixed(1)} cm` : '0 cm');
     return {
@@ -1851,7 +1956,6 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
     };
   }
 
-  // 조건 4: 0~3°C 암릉 블랙아이스(살얼음)
   if(isNearZero && (humidity >= 80 || rainMm > 0)){
     return {
       shouldShow: true,
@@ -1863,7 +1967,6 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
     };
   }
 
-  // 조건 5: 0~3°C 건조 저온
   return {
     shouldShow: true,
     badgeText: '방한 장비 권장',
@@ -1921,8 +2024,6 @@ function compute5PhysicsMountainWeather(P){
   sF = parseFloat(sF.toFixed(1));
 
   const sS = computeSunAndTrailSafety(P.daily, P.targetHourTime);
-
-  // 동절기 결빙 평가
   const winterCond = evaluateWinterTrailConditions(smT, R, summitRain, P.rawCode, P.rawSnowfall || 0, P.rawSnowDepth || 0);
 
   return {
@@ -1961,7 +2062,104 @@ function compute5PhysicsMountainWeather(P){
   };
 }
 
-// ★ [v7.0 슬라이더 연동] 고도 변경 시 기온에 따른 동절기 카드 동적 점등/숨김
+// 7일 전용 산악 복합 물리 공식
+function compute7DayAlpineForecast(daily, ele){
+  if(!daily || !daily.time || daily.time.length < 7) return [];
+  const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+  const altDiff = Math.max(0, ele - 50);
+  const results = [];
+
+  for(let i = 0; i < 7; i++){
+    const dateObj = new Date(daily.time[i]);
+    const dayName = daysOfWeek[dateObj.getDay()];
+    const dateStr = `${dateObj.getMonth() + 1}.${dateObj.getDate()}`;
+    const code = daily.weather_code[i] ?? 0;
+    const wInfo = decodeWmoCode(code);
+
+    const baseMin = daily.temperature_2m_min[i] ?? 10.0;
+    const baseMax = daily.temperature_2m_max[i] ?? 20.0;
+    
+    let summitMin = baseMin - (altDiff / 100) * 0.65 - 0.8;
+    let summitMax = baseMax - (altDiff / 100) * 0.65 + 0.5;
+
+    const damping = 1.0 - (i * 0.06);
+    if(i >= 3){
+      const mid = (summitMin + summitMax) / 2;
+      summitMin = mid + (summitMin - mid) * damping;
+      summitMax = mid + (summitMax - mid) * damping;
+    }
+
+    summitMin = Math.round(summitMin);
+    summitMax = Math.round(summitMax);
+
+    const basePrecip = daily.precipitation_sum[i] ?? 0.0;
+    const summitPrecip = calculateOrographicPrecipitation(basePrecip, ele, 800);
+    const rainProb = daily.precipitation_probability_max[i] ?? 0;
+
+    let csScore = 15;
+    if(code <= 2 && rainProb <= 20) csScore += 45;
+    if(daily.wind_speed_10m_max[i] <= 4.0) csScore += 25;
+    if(basePrecip > 0 && i > 0 && daily.precipitation_sum[i-1] > 2.0) csScore += 15;
+    csScore = Math.min(95, Math.max(10, Math.round(csScore * damping)));
+
+    let csLabel = '운해 보통';
+    let csStyle = 'background: rgba(255,255,255,0.06); color: var(--text-secondary);';
+    if(csScore >= 75){
+      csLabel = `운해 ${csScore}% (추천 🌊)`;
+      csStyle = 'background: rgba(191,90,242,0.25); color: #E5B8FF; border: 0.5px solid #BF5AF2;';
+    } else if(csScore >= 50){
+      csLabel = `운해 ${csScore}%`;
+      csStyle = 'background: rgba(100,210,255,0.18); color: var(--accent-cyan);';
+    }
+
+    const confVal = Math.max(50, Math.round(95 - i * 6.5));
+
+    results.push({
+      dayName: i === 0 ? '오늘' : (i === 1 ? '내일' : `${dayName}요일`),
+      dateStr: dateStr,
+      isWeekend: (dateObj.getDay() === 0 || dateObj.getDay() === 6),
+      icon: wInfo.icon,
+      statusText: wInfo.text,
+      summitMin: summitMin,
+      summitMax: summitMax,
+      summitPrecip: summitPrecip,
+      rainProb: rainProb,
+      csLabel: csLabel,
+      csStyle: csStyle,
+      confidence: confVal
+    });
+  }
+  return results;
+}
+
+function render7DayWeeklyTrack(data){
+  const track = document.getElementById('weekly-forecast-track');
+  if(!track || !data || !data.daily) return;
+  track.innerHTML = '';
+
+  const weeklyData = compute7DayAlpineForecast(data.daily, currentMt.ele);
+  weeklyData.forEach((day) => {
+    const slot = document.createElement('div');
+    slot.className = 'weekly-slot';
+    if(day.isWeekend) slot.style.borderColor = 'rgba(255, 214, 10, 0.6)';
+
+    slot.innerHTML = `
+      <div class="w-slot-day" style="${day.isWeekend ? 'color: var(--accent-gold);' : ''}">${day.dayName}</div>
+      <div class="w-slot-date">${day.dateStr}</div>
+      <div class="w-slot-icon">${day.icon}</div>
+      <div class="w-slot-temp-range">
+        <span class="w-slot-temp-min">${day.summitMin}°</span> / <span class="w-slot-temp-max">${day.summitMax}°</span>
+      </div>
+      <div class="w-slot-rain" style="color:${day.rainProb >= 40 ? 'var(--accent-cyan)' : 'var(--text-tertiary)'};">
+        ${day.rainProb > 0 ? day.rainProb + '% (' + day.summitPrecip + 'mm)' : '강수 0%'}
+      </div>
+      <div class="w-slot-cs-pill" style="${day.csStyle}">${day.csLabel}</div>
+      <div class="w-slot-conf">신뢰도 ${day.confidence}%</div>
+    `;
+    track.appendChild(slot);
+  });
+}
+
 window.handleAltitudeScrub=function(z){
   const r = activeForecastRes || baseLiveCurrentRes;
   if(!r) return;
@@ -2045,7 +2243,6 @@ window.handleAltitudeScrub=function(z){
   document.getElementById('meter-mt-label').innerText = `${tZ}m`;
   document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(5, Math.round((tZ / 3000) * 100)))}%`;
 
-  // ★ 슬라이더 고도에 따른 동절기 카드 실시간 팝업 업데이트
   const winterAlt = evaluateWinterTrailConditions(sT, p.rawRH, scrubRain, p.rawCode, p.rawSnowfall || 0, p.rawSnowDepth || 0);
   renderWinterCardUI(winterAlt);
 };
@@ -2127,7 +2324,6 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
   document.getElementById('scrubber-mid-tick').innerText = `중턱 ${Math.round(currentMt.ele / 2)}m`;
   document.getElementById('scrubber-summit-tick').innerText = `정상 ${currentMt.ele}m`;
   
-  // ★ 동절기 카드 렌더링
   renderWinterCardUI(r.winterSafety);
 
   if(r.sunSafety){
@@ -2341,6 +2537,7 @@ window.selectMountain=async function(n,e,bE,t='peak',lt=35.2846,lg=129.0565,dK=n
     activeForecastRes=baseLiveCurrentRes;
     saveMountainCache(n,liveWeatherData.hourly,cur,baseLiveCurrentRes,liveWeatherData.daily);
     renderLiveForecastTrack(liveWeatherData.hourly);
+    if(currentForecastView==='weekly') render7DayWeeklyTrack(liveWeatherData);
     updateAlpineWeatherHUD(activeForecastRes,'현재',iN,t,false,dK);
     document.getElementById('clock-live').innerText=`${nw.getHours().toString().padStart(2,'0')}:${nw.getMinutes().toString().padStart(2,'0')} 동기화 완료`;
     return;
@@ -2351,6 +2548,7 @@ window.selectMountain=async function(n,e,bE,t='peak',lt=35.2846,lg=129.0565,dK=n
     baseLiveCurrentRes=c.computedRes;
     activeForecastRes=baseLiveCurrentRes;
     renderLiveForecastTrack(c.rawHourly);
+    if(currentForecastView==='weekly') render7DayWeeklyTrack(liveWeatherData);
     updateAlpineWeatherHUD(activeForecastRes,'캐시',false,t,true,dK);
     document.getElementById('clock-live').innerText='오프라인 캐시 모드';
   }
