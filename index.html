@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v7.6 SYNC</title>
+  <title>STATLAB 산악 기상 분석 v8.0</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -343,7 +343,7 @@
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* 주간 카드 */
+    /* 주간 카드 스타일 */
     .weekly-slot {
       flex-shrink: 0;
       width: 114px;
@@ -1781,7 +1781,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v7.6 (SYNC PRO)</span>
+    <span>STATLAB v8.0 (SAM-ENGINE)</span>
   </div>
 
 <script>
@@ -1855,7 +1855,7 @@ window.openDayDetailModal=function(idx){
   if(!item) return;
   const titleEl = document.getElementById('day-detail-modal-title');
   const bodyEl = document.getElementById('day-detail-modal-body');
-  titleEl.innerText = `${item.dateStr} (${item.dayName}) · ${currentMt.name} 정밀 리포트`;
+  titleEl.innerText = `${item.dateStr} (${item.dayName}) · ${currentMt.name} SAM-Engine 리포트`;
 
   let heroTheme = 'background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);';
   if(item.hasRain){
@@ -1870,7 +1870,6 @@ window.openDayDetailModal=function(idx){
   const safeDeg = Math.round((item.safetyScore / 100) * 360);
   const csDeg = Math.round((item.csScore / 100) * 360);
 
-  // ★ [수정됨] 비·이슬비가 있으면 시야 양호가 아닌 '비·운무 유입'으로 완전 동기화
   let crossSectionHtml = '';
   if(item.hasRain){
     crossSectionHtml = `
@@ -1956,11 +1955,16 @@ window.openDayDetailModal=function(idx){
       </div>
     </div>
 
+    <!-- 산악 대기역학 해설 -->
     <div style="background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 12px; margin-bottom: 12px;">
-      <div style="font-size:12px; font-weight:800; color:#FFF; margin-bottom:4px;">산악 기상관 종합 판정</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <span style="font-size:12px; font-weight:800; color:#FFF;">SAM-Engine 대기역학 진단</span>
+        <span style="font-size:10px; color:var(--accent-cyan); font-weight:700;">Fr: ${item.froudeNo} · 플럭스: ${item.moistureFlux}</span>
+      </div>
       <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">${item.safetyDesc}</div>
     </div>
 
+    <!-- 4대 수치 그리드 -->
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
       <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
         <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">능선 최대 돌풍</div>
@@ -1979,7 +1983,7 @@ window.openDayDetailModal=function(idx){
       </div>
     </div>
 
-    <!-- ★ [수정됨] 오전/오후 강수 타이밍이 명확히 분기된 타임라인 -->
+    <!-- 오전 vs 오후 타임라인 -->
     <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
       <div style="font-size:11px; font-weight:700; color:#FFF; margin-bottom:8px;">오전 vs 오후 상세 흐름</div>
       <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary);">
@@ -2421,7 +2425,7 @@ function compute5PhysicsMountainWeather(P){
   };
 }
 
-// ★ [v7.6 개선] 구간 전체 스캔 및 모순 해결 동기화 로직
+// ★★★ [STATLAB SAM-Engine v8.0 독자 산악 대기역학 연산식] ★★★
 function compute7DayAlpineForecast(data, ele){
   if(!data || !data.daily || !data.daily.time || data.daily.time.length < 7) return [];
   const daily = data.daily;
@@ -2439,8 +2443,27 @@ function compute7DayAlpineForecast(data, ele){
 
     const baseMin = daily.temperature_2m_min[i] ?? 10.0;
     const baseMax = daily.temperature_2m_max[i] ?? 20.0;
-    
-    let summitMin = baseMin - (altDiff / 100) * 0.65 - 0.8;
+    const baseWind = daily.wind_speed_10m_max[i] ?? 3.5;
+    const basePrecip = daily.precipitation_sum[i] ?? 0.0;
+    const rainProb = daily.precipitation_probability_max[i] ?? 0;
+
+    // 1. 능선 풍속 및 최대 돌풍 계산
+    const summitWind = parseFloat((baseWind * (1 + 0.35 * (ele / 1000))).toFixed(1));
+    const baseMaxGust = daily.wind_gusts_10m_max ? (daily.wind_gusts_10m_max[i] * 0.2777) : 6.0;
+    const summitMaxGust = parseFloat((baseMaxGust * 1.55).toFixed(1));
+
+    // 2. [공식 1] 프로우드 수 (Froude Number) 계산 (N ≈ 0.011)
+    const froudeNumber = parseFloat((summitWind / (0.011 * Math.max(100, altDiff))).toFixed(2));
+
+    // 3. [공식 2] 수증기 유속 플럭스 (Moisture Flux) 계산
+    const estRH = Math.min(95, Math.max(40, 65 + (rainProb * 0.3)));
+    const es = 6.112 * Math.exp((17.67 * baseMax) / (243.5 + baseMax));
+    const moistureFlux = parseFloat(((estRH / 100) * es * summitWind * 0.1).toFixed(1));
+
+    // 4. [공식 3] 복사 침강 감률 적용한 정상 최고/최저 기온
+    const estCloud = Math.min(100, Math.max(10, rainProb + 15));
+    const radSink = parseFloat((1.8 * (1 - estCloud / 100) * Math.exp(-summitWind / 4.0)).toFixed(1));
+    let summitMin = baseMin - (altDiff / 100) * 0.65 - radSink;
     let summitMax = baseMax - (altDiff / 100) * 0.65 + 0.5;
 
     const damping = 1.0 - (i * 0.05);
@@ -2449,55 +2472,48 @@ function compute7DayAlpineForecast(data, ele){
       summitMin = mid + (summitMin - mid) * damping;
       summitMax = mid + (summitMax - mid) * damping;
     }
-
     summitMin = Math.round(summitMin);
     summitMax = Math.round(summitMax);
 
-    const basePrecip = daily.precipitation_sum[i] ?? 0.0;
-    const summitPrecip = calculateOrographicPrecipitation(basePrecip, ele, 800);
-    const rainProb = daily.precipitation_probability_max[i] ?? 0;
+    // 5. [공식 4] 프로우드 수 & 수증기 플럭스 기반 지형성 강우 증폭
+    let summitPrecip = 0.0;
+    if(basePrecip > 0 || code >= 51){
+      const orographicLiftFactor = (froudeNumber >= 0.8) ? (1.35 + Math.min(0.5, (froudeNumber - 0.8) * 0.4)) : 1.0;
+      summitPrecip = parseFloat((basePrecip * (1 + (altDiff / 1000) * 0.5) * orographicLiftFactor).toFixed(1));
+      if(summitPrecip === 0 && code >= 51) summitPrecip = 0.8;
+    }
 
-    const baseMaxGust = daily.wind_gusts_10m_max ? (daily.wind_gusts_10m_max[i] * 0.2777) : 6.0;
-    const summitMaxGust = parseFloat((baseMaxGust * 1.55).toFixed(1));
-
-    // ★ [핵심 개선] 오전(06~12시) & 오후(12~18시) 6시간 전수 스캔 (모순 완전 해결)
+    // 6. 오전 / 오후 6시간 전수 슬라이스 스캔
     let amCode = code, pmCode = code;
-    let amRainSum = 0, pmRainSum = 0;
     let amHasRain = false, pmHasRain = false;
 
     if(hourly && hourly.time && hourly.time.length >= (i+1)*24){
       const startIdx = i * 24;
-      // 오전 슬라이스 (06시 ~ 12시)
       const amSliceCodes = hourly.weather_code.slice(startIdx + 6, startIdx + 12);
       const amSliceRains = hourly.precipitation ? hourly.precipitation.slice(startIdx + 6, startIdx + 12) : [];
-      amRainSum = amSliceRains.reduce((a, b) => a + b, 0);
-      
-      // 악천후 우선 순위 선택
+      const amRainSum = amSliceRains.reduce((a, b) => a + b, 0);
       amCode = amSliceCodes.find(c => c >= 51) || amSliceCodes.find(c => c >= 45) || amSliceCodes.find(c => c >= 2) || amSliceCodes[3] || code;
       amHasRain = (amRainSum > 0 || amCode >= 51);
 
-      // 오후 슬라이스 (12시 ~ 18시)
       const pmSliceCodes = hourly.weather_code.slice(startIdx + 12, startIdx + 18);
       const pmSliceRains = hourly.precipitation ? hourly.precipitation.slice(startIdx + 12, startIdx + 18) : [];
-      pmRainSum = pmSliceRains.reduce((a, b) => a + b, 0);
-
+      const pmRainSum = pmSliceRains.reduce((a, b) => a + b, 0);
       pmCode = pmSliceCodes.find(c => c >= 51) || pmSliceCodes.find(c => c >= 45) || pmSliceCodes.find(c => c >= 2) || pmSliceCodes[3] || code;
       pmHasRain = (pmRainSum > 0 || pmCode >= 51);
     }
 
-    // 만약 전체가 비(code >= 51)인데 둘 다 비가 안 잡혔다면, 새벽/야간 강우이거나 둘 중 하나에 강제 동기화
     const dayHasRain = (code >= 51 || summitPrecip >= 0.5 || rainProb >= 50);
     if(dayHasRain && !amHasRain && !pmHasRain){
       amHasRain = true;
       amCode = code;
     }
-
     const amInfo = decodeWmoCode(amCode);
     const pmInfo = decodeWmoCode(pmCode);
 
+    // 7. 운해 잠재력 지수
     let csScore = 15;
     if(code <= 2 && rainProb <= 20) csScore += 45;
-    if((daily.wind_speed_10m_max[i] || 3.0) <= 4.0) csScore += 25;
+    if(summitWind <= 3.5) csScore += 25;
     if(basePrecip > 0 && i > 0 && daily.precipitation_sum[i-1] > 2.0) csScore += 15;
     csScore = Math.min(95, Math.max(10, Math.round(csScore * damping)));
 
@@ -2514,24 +2530,25 @@ function compute7DayAlpineForecast(data, ele){
       csStyle = 'background: rgba(255,255,255,0.04); color: var(--text-tertiary);';
     }
 
+    // 8. 산행 안전 점수 산출
     let safeScore = 95;
     if(summitPrecip >= 10 || rainProb >= 70 || summitMaxGust >= 14){
       safeScore = Math.max(15, Math.round(35 - (summitPrecip * 1.2)));
-    } else if(summitPrecip >= 1 || rainProb >= 40 || summitMaxGust >= 10){
+    } else if(summitPrecip >= 0.5 || rainProb >= 40 || summitMaxGust >= 10){
       safeScore = Math.max(45, Math.round(65 - (summitMaxGust * 1.5)));
     } else if(summitMin <= 2){
       safeScore = 60;
     }
 
-    let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid rgba(48,209,88,0.4);', sDesc = '맑고 바람이 안정되어 탁 트인 산행을 즐기기에 가장 좋습니다.';
+    let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid rgba(48,209,88,0.4);', sDesc = '기류가 안정되고 시야가 탁 트여 주간 산행을 즐기기에 가장 좋습니다.';
     if(safeScore < 40){
       sLabel = '🔴 위험';
       sStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid rgba(255,69,58,0.45);';
-      sDesc = `호우(${summitPrecip}mm) 및 능선 돌풍(${summitMaxGust}m/s) 위험으로 산행 자제를 강력 권장합니다.`;
+      sDesc = `지형성 융기(Fr ${froudeNumber})로 인한 호우 및 돌풍(${summitMaxGust}m/s) 위험으로 산행 자제를 강력 권장합니다.`;
     } else if(safeScore < 75){
       sLabel = '🟡 주의';
       sStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid rgba(255,159,10,0.4);';
-      sDesc = `기상 변동성 또는 저온·미끄럼 구간이 예상되므로 방수·방한 장비를 철저히 준비하세요.`;
+      sDesc = `기상 변동성 및 수증기 유속 유입으로 안개비·저온 미끄럼 구간이 예상됩니다. 방수 방한 의류를 준비하세요.`;
     }
 
     let estCloudBase = dayHasRain ? 420 : (csScore >= 70 ? 550 : 1400);
@@ -2549,6 +2566,8 @@ function compute7DayAlpineForecast(data, ele){
       summitPrecip: summitPrecip,
       rainProb: rainProb,
       maxGust: summitMaxGust,
+      froudeNo: froudeNumber,
+      moistureFlux: moistureFlux,
       hasRain: dayHasRain,
       amIcon: amInfo.icon,
       amText: amInfo.text,
