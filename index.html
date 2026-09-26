@@ -7,8 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
-  
-  <title>STATLAB 산악 기상 분석 v8.7</title>
+  <title>STATLAB 산악 기상 분석 v8.8</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -32,324 +31,62 @@
       --accent-gold: #FFD60A;
       --accent-ice: #AEE8FF;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Pretendard, sans-serif; letter-spacing: -0.3px; font-variant-numeric: tabular-nums; }
+    html, body { overscroll-behavior-y: contain; background: var(--bg); color: var(--text-primary); }
+    body { padding: env(safe-area-inset-top, 12px) 14px calc(65px + env(safe-area-inset-bottom, 16px)) 14px; overflow-x: hidden; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Pretendard", sans-serif;
-      letter-spacing: -0.3px;
-      font-variant-numeric: tabular-nums;
-    }
+    .brand-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 2px; }
+    .brand-title { font-size: 13px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .brand-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: livePulse 2s infinite ease-in-out; }
+    .brand-dot.offline { background: var(--accent-amber); box-shadow: 0 0 10px var(--accent-amber); animation: none; }
+    @keyframes livePulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.3); opacity: 1; } }
+    .brand-status { font-size: 11px; font-weight: 600; color: var(--accent-cyan); }
 
-    html, body {
-      overscroll-behavior-y: contain;
-    }
+    .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .search-container { position: relative; flex-grow: 1; z-index: 1500; }
+    .search-box { width: 100%; background: rgba(118, 118, 128, 0.24); border: 0.5px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 9px 14px 9px 38px; color: #fff; font-size: 14px; outline: none; }
+    .search-box::placeholder { color: var(--text-secondary); }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-secondary); pointer-events: none; }
+    .gps-btn { flex-shrink: 0; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.12); border-radius: 12px; color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
+    .gps-btn:active { transform: scale(0.94); }
 
-    body {
-      background: var(--bg);
-      color: var(--text-primary);
-      padding: env(safe-area-inset-top, 12px) 14px calc(65px + env(safe-area-inset-bottom, 16px)) 14px;
-      overflow-x: hidden;
-    }
+    .search-dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: rgba(30, 30, 32, 0.96); backdrop-filter: blur(25px); border: 0.5px solid var(--card-border); border-radius: 14px; max-height: 280px; overflow-y: auto; display: none; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8); }
+    .search-item { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid rgba(255, 255, 255, 0.05); cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-primary); }
 
-    .brand-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      padding: 0 2px;
-    }
-    .brand-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .brand-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 10px var(--accent-green);
-      animation: livePulse 2s infinite ease-in-out;
-    }
-    .brand-dot.offline {
-      background: var(--accent-amber);
-      box-shadow: 0 0 10px var(--accent-amber);
-      animation: none;
-    }
-    @keyframes livePulse {
-      0% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px var(--accent-green); }
-      100% { transform: scale(1); opacity: 0.8; }
-    }
-    .brand-status {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--accent-cyan);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .search-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .search-container {
-      position: relative;
-      flex-grow: 1;
-      z-index: 1500;
-    }
-    .search-box {
-      width: 100%;
-      background: rgba(118, 118, 128, 0.24);
-      border: 0.5px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 9px 14px 9px 38px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 500;
-      outline: none;
-    }
-    .search-box::placeholder {
-      color: var(--text-secondary);
-    }
-    .search-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-      color: var(--text-secondary);
-      pointer-events: none;
-    }
-    .gps-btn {
-      flex-shrink: 0;
-      width: 40px;
-      height: 40px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 0.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      color: var(--accent-cyan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .gps-btn:active {
-      transform: scale(0.94);
-      background: rgba(10, 132, 255, 0.25);
-    }
-
-    .search-dropdown {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      right: 0;
-      background: rgba(30, 30, 32, 0.96);
-      backdrop-filter: blur(25px);
-      border: 0.5px solid var(--card-border);
-      border-radius: 14px;
-      max-height: 280px;
-      overflow-y: auto;
-      display: none;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
-    }
-    .search-item {
-      padding: 12px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-    .search-item-sub {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-weight: 400;
-      margin-top: 2px;
-    }
-
-    .mountain-chip-scroll {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 8px;
-      scrollbar-width: none;
-    }
+    .mountain-chip-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; scrollbar-width: none; }
     .mountain-chip-scroll::-webkit-scrollbar { display: none; }
-    .mt-chip {
-      flex-shrink: 0;
-      background: rgba(255, 255, 255, 0.08);
-      border: 0.5px solid rgba(255, 255, 255, 0.08);
-      padding: 5px 12px;
-      border-radius: 18px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-    .mt-chip.active {
-      background: rgba(255, 255, 255, 0.22);
-      border-color: rgba(255, 255, 255, 0.3);
-      color: #FFFFFF;
-    }
+    .mt-chip { flex-shrink: 0; background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.08); padding: 5px 12px; border-radius: 18px; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+    .mt-chip.active { background: rgba(255, 255, 255, 0.22); border-color: rgba(255, 255, 255, 0.3); color: #FFFFFF; }
 
-    .alert-banner {
-      background: rgba(255, 255, 255, 0.04);
-      border: 0.5px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 10px;
-    }
+    .alert-banner { background: rgba(255, 255, 255, 0.04); border: 0.5px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
+    .forecast-toggle-bar { display: flex; background: rgba(255, 255, 255, 0.06); border: 0.5px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 3px; margin-bottom: 8px; }
+    .toggle-tab-btn { flex: 1; text-align: center; padding: 7px 0; font-size: 11px; font-weight: 700; color: var(--text-secondary); border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .toggle-tab-btn.active { background: rgba(255, 255, 255, 0.2); color: #FFFFFF; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
+    .pro-badge-free { font-size: 9px; font-weight: 800; color: #000; background: var(--accent-green); padding: 1px 5px; border-radius: 4px; }
 
-    .forecast-toggle-bar {
-      display: flex;
-      background: rgba(255, 255, 255, 0.06);
-      border: 0.5px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 3px;
-      margin-bottom: 8px;
-    }
-    .toggle-tab-btn {
-      flex: 1;
-      text-align: center;
-      padding: 7px 0;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      border-radius: 9px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-    }
-    .toggle-tab-btn.active {
-      background: rgba(255, 255, 255, 0.2);
-      color: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    }
-    .pro-badge-free {
-      font-size: 9px;
-      font-weight: 800;
-      color: #000;
-      background: var(--accent-green);
-      padding: 1px 5px;
-      border-radius: 4px;
-    }
+    .weekly-ai-banner { background: linear-gradient(135deg, rgba(255, 214, 10, 0.12) 0%, rgba(10, 132, 255, 0.08) 100%); border: 0.5px solid rgba(255, 214, 10, 0.35); border-radius: 12px; padding: 8px 12px; font-size: 11px; font-weight: 600; color: #FFFFFF; line-height: 1.4; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 2px; }
+    .section-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
+    .section-sub { font-size: 11px; font-weight: 500; color: var(--accent-cyan); }
 
-    .weekly-ai-banner {
-      background: linear-gradient(135deg, rgba(255, 214, 10, 0.12) 0%, rgba(10, 132, 255, 0.08) 100%);
-      border: 0.5px solid rgba(255, 214, 10, 0.35);
-      border-radius: 12px;
-      padding: 8px 12px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #FFFFFF;
-      line-height: 1.4;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      padding: 0 2px;
-    }
-    .section-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .section-sub {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--accent-cyan);
-    }
-
-    .forecast-track {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-      scrollbar-width: none;
-      min-height: 72px;
-    }
+    .forecast-track { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; scrollbar-width: none; min-height: 72px; }
     .forecast-track::-webkit-scrollbar { display: none; }
-    .time-slot {
-      flex-shrink: 0;
-      width: 62px;
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border: 0.5px solid var(--card-border);
-      border-radius: 14px;
-      padding: 8px 4px;
-      text-align: center;
-      cursor: pointer;
-    }
+    .time-slot { flex-shrink: 0; width: 62px; background: var(--card-bg); backdrop-filter: blur(20px); border: 0.5px solid var(--card-border); border-radius: 14px; padding: 8px 4px; text-align: center; cursor: pointer; }
     .time-slot:active { transform: scale(0.96); }
-    .time-slot.active {
-      background: rgba(10, 132, 255, 0.25) !important;
-      border: 1px solid var(--accent-cyan) !important;
-      box-shadow: 0 0 12px rgba(100, 210, 255, 0.45);
-    }
+    .time-slot.active { background: rgba(10, 132, 255, 0.25) !important; border: 1px solid var(--accent-cyan) !important; box-shadow: 0 0 12px rgba(100, 210, 255, 0.45); }
     .slot-label { font-size: 10px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 600; }
     .slot-time { font-size: 11px; font-weight: 700; color: #FFFFFF; }
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    .weekly-slot {
-      flex-shrink: 0;
-      width: 120px;
-      background: linear-gradient(180deg, rgba(32, 32, 38, 0.92) 0%, rgba(18, 18, 24, 0.96) 100%);
-      border: 0.5px solid rgba(255, 255, 255, 0.14);
-      border-radius: 16px;
-      padding: 10px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-    }
+    .weekly-slot { flex-shrink: 0; width: 120px; background: linear-gradient(180deg, rgba(32, 32, 38, 0.92) 0%, rgba(18, 18, 24, 0.96) 100%); border: 0.5px solid rgba(255, 255, 255, 0.14); border-radius: 16px; padding: 10px 8px; display: flex; flex-direction: column; gap: 5px; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4); }
     .weekly-slot:active { transform: scale(0.96); }
-    .weekly-slot.weekend {
-      border-color: rgba(255, 214, 10, 0.45);
-      background: linear-gradient(180deg, rgba(42, 38, 30, 0.9) 0%, rgba(20, 20, 26, 0.96) 100%);
-    }
+    .weekly-slot.weekend { border-color: rgba(255, 214, 10, 0.45); background: linear-gradient(180deg, rgba(42, 38, 30, 0.9) 0%, rgba(20, 20, 26, 0.96) 100%); }
     .w-top-row { display: flex; justify-content: space-between; align-items: center; }
     .w-day-title { font-size: 12px; font-weight: 800; color: #FFFFFF; }
     .w-date-sub { font-size: 10px; color: var(--text-tertiary); }
     .w-safety-pill { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; text-align: center; }
     .w-ampm-row { display: flex; justify-content: space-around; align-items: center; background: rgba(255, 255, 255, 0.04); padding: 4px 2px; border-radius: 8px; font-size: 10px; color: var(--text-secondary); font-weight: 600; }
-    .w-ampm-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
     .w-ampm-icon { font-size: 14px; }
     .w-temp-bar-wrap { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin: 2px 0; }
     .w-temp-val { font-size: 11px; font-weight: 800; }
@@ -358,27 +95,8 @@
     .w-sub-info-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-secondary); font-weight: 600; }
     .w-cs-badge { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,0.06); color: #FFF; }
 
-    .hero-weather-card {
-      position: relative;
-      width: 100%;
-      background: linear-gradient(180deg, rgba(28, 28, 32, 0.85) 0%, rgba(18, 18, 22, 0.92) 100%);
-      backdrop-filter: blur(35px);
-      border: 0.5px solid var(--card-border);
-      border-radius: 20px;
-      padding: 15px 14px;
-      margin-bottom: 10px;
-      overflow: hidden;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.6);
-    }
-
-    .weather-scene-stage {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-      border-radius: 20px;
-    }
+    .hero-weather-card { position: relative; width: 100%; background: linear-gradient(180deg, rgba(28, 28, 32, 0.85) 0%, rgba(18, 18, 22, 0.92) 100%); backdrop-filter: blur(35px); border: 0.5px solid var(--card-border); border-radius: 20px; padding: 15px 14px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 14px 32px rgba(0, 0, 0, 0.6); }
+    .weather-scene-stage { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; border-radius: 20px; }
     .sun-orb-wrap { position: absolute; top: -30px; right: 15px; width: 140px; height: 140px; display: none; }
     .sun-glow { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(255, 179, 0, 0.45) 0%, transparent 75%); filter: blur(12px); animation: sunPulse 5s infinite alternate ease-in-out; }
     .sun-core { position: absolute; top: 35px; right: 35px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FFE600 0%, #FF9F0A 100%); box-shadow: 0 0 25px rgba(255, 184, 0, 0.6); }
@@ -764,7 +482,7 @@
     </div>
   </div>
 
-  <div id="statlab-badge"><span class="badge-mark"></span><span>STATLAB v8.7</span></div>
+  <div id="statlab-badge"><span class="badge-mark"></span><span>STATLAB v8.8</span></div>
 
 <script>
 // 전국 대표 명산 정밀 데이터베이스
@@ -833,7 +551,7 @@ window.toggleCurrentFavorite=function(){
 };
 function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;b.classList.toggle('active', isCurrentFavorite());b.innerText=isCurrentFavorite()?'★':'☆';}
 
-let currentMt=mountainDB[4]; // 금정산 고당봉 기본 타깃
+let currentMt=mountainDB[4];
 let selectedHourOffset=0,liveWeatherData=null;
 let baseLiveCurrentRes=null,activeForecastRes=null;
 let currentUserAltitude=null,currentForecastView='hourly';
@@ -917,9 +635,10 @@ function computeSunAndTrailSafety(d, targetDate = null){
   const sR_s = `${String(sR.getHours()).padStart(2,'0')}:${String(sR.getMinutes()).padStart(2,'0')}`;
   const sS_s = `${String(sS.getHours()).padStart(2,'0')}:${String(sS.getMinutes()).padStart(2,'0')}`;
 
-  let p = 0, bT = '', bC = 'var(--accent-green)', dT = '', orbChar = '☀️';
+  let p = 0, bT = '', bC = 'var(--accent-green)', dT = '', orbChar = '☀️', isNight = false;
 
   if(n < sR){
+    isNight = true;
     orbChar = '🌙';
     const diff = Math.max(0, Math.floor((sR - n) / 60000));
     const h = Math.floor(diff / 60), min = diff % 60;
@@ -928,6 +647,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
     dT = `<strong>🌅 [오늘 일출 ${sR_s} (${h > 0 ? h + '시간 ' : ''}${min}분 전)]:</strong> 여명 산행 구간입니다. 능선 방한에 유의하세요.`;
     p = 20;
   } else if(n >= sR && n < sS){
+    isNight = false;
     orbChar = '☀️';
     const diff = Math.max(0, Math.floor((sS - n) / 60000));
     const h = Math.floor(diff / 60), min = diff % 60;
@@ -936,6 +656,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
     dT = `<strong>☀️ [주간 일조 양호]:</strong> 오늘 일몰 시각은 <strong>${sS_s}</strong>입니다. 안전한 주간 산행이 가능합니다.`;
     p = Math.min(100, Math.max(0, Math.round(((n - sR) / (sS - sR)) * 100)));
   } else {
+    isNight = true;
     orbChar = '🌙';
     const diff = Math.max(0, Math.floor((sR_next - n) / 60000));
     const h = Math.floor(diff / 60), min = diff % 60;
@@ -945,7 +666,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
     p = 90;
   }
 
-  return { srStr: sR_s, ssStr: sS_s, progress: p, badgeText: bT, badgeColor: bC, descText: dT, orbChar: orbChar };
+  return { srStr: sR_s, ssStr: sS_s, progress: p, badgeText: bT, badgeColor: bC, descText: dT, orbChar: orbChar, isNight: isNight };
 }
 
 function calculateCanopyFriction(currentAlt, summitAlt){
@@ -1262,7 +983,6 @@ function compute7DayAlpineForecast(data, ele){
       cardBadge = '🌧️ 종일비·주의';
       viewTagText = '조망 불가 (곰탕 뷰)';
     } else if(!dayHasActualRain && summitMaxGust >= 14){
-      // 비는 안 오지만 태풍급 돌풍이 불 때 (image_11 상황 완벽 해결)
       plainTitle = `${amInfo.text} · 능선 돌풍 주의 (${summitMaxGust}m/s)`;
       plainAction = `⚠️ 능선 강풍 주의 (암릉 보행 유의)`;
       plainSight = `시야 15km+ 탁 트인 조망 (바람 거셈)`;
@@ -1483,11 +1203,11 @@ function selectForecastHour(o, dI, tH, hS, tT){
     rawGust: (h.wind_gusts_10m[dI] ?? 6.0) * 0.2777,
     rawRain: h.precipitation[dI] ?? 0.0,
     rawCode: h.weather_code[dI] ?? 0,
-    rawSnowfall: 0.0,
-    rawSnowDepth: 0.0,
-    totalCloud: 0,
-    lowCloud: 0,
-    midCloud: 0,
+    rawSnowfall: h.snowfall ? h.snowfall[dI] : 0.0,
+    rawSnowDepth: h.snow_depth ? h.snow_depth[dI] : 0.0,
+    totalCloud: h.cloud_cover ? h.cloud_cover[dI] : 0,
+    lowCloud: h.cloud_cover_low ? h.cloud_cover_low[dI] : 0,
+    midCloud: h.cloud_cover_mid ? h.cloud_cover_mid[dI] : 0,
     visibility: h.visibility ? h.visibility[dI] : 15000,
     rawDew: h.dew_point_2m ? h.dew_point_2m[dI] : null,
     pointType: currentMt.type || 'peak',
@@ -1500,7 +1220,8 @@ function selectForecastHour(o, dI, tH, hS, tT){
   updateAlpineWeatherHUD(activeForecastRes, hS);
 }
 
-function updateWeatherArtworkScene(r, n){
+// 애니메이션 무대: 선택한 시간대의 낮/밤과 기상 상태를 100% 동기화
+function updateWeatherArtworkScene(r, isNight){
   const s = document.getElementById('weather-stage'); if(!s) return;
   s.className = 'weather-scene-stage';
   if(r.wmoInfo.state === 'storm') s.classList.add('scene-storm');
@@ -1508,13 +1229,13 @@ function updateWeatherArtworkScene(r, n){
   else if(r.isDrizzling) s.classList.add('scene-drizzle');
   else if(r.isRealFog) s.classList.add('scene-fog');
   else if(r.isDarkCloud) s.classList.add('scene-cloudy');
-  else s.classList.add(n ? 'scene-clear-night' : 'scene-clear-day');
+  else s.classList.add(isNight ? 'scene-clear-night' : 'scene-clear-day');
 }
 
-// 실시간 HUD 텍스트 100% 갱신 (image_9 연산 중 멈춤 완벽 해결)
+// 실시간 HUD 텍스트 100% 갱신
 function updateAlpineWeatherHUD(r, hS){
-  const nw = new Date(), iN = (nw.getHours() >= 19 || nw.getHours() <= 5);
-  updateWeatherArtworkScene(r, iN);
+  const isNight = r.sunSafety ? r.sunSafety.isNight : false;
+  updateWeatherArtworkScene(r, isNight);
   updateFavoriteBtnState();
   document.getElementById('card-peak-title').innerText = currentMt.name;
   
@@ -1640,14 +1361,25 @@ function renderWinterCardUI(w){
   document.getElementById('winter-desc').innerHTML = w.descHtml;
 }
 
-// 거리 계산 유틸
 function calculateDistanceKm(l1, o1, l2, o2){
   const R = 6371, dL = (l2 - l1) * Math.PI / 180, dO = (o2 - o1) * Math.PI / 180;
   const a = Math.sin(dL/2)**2 + Math.cos(l1 * Math.PI / 180) * Math.cos(l2 * Math.PI / 180) * Math.sin(dO/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// 내 위치 GPS 주변 산 최우선 매칭 엔진
+// 카카오 실시간 주변 산 탐색 비동기 함수
+function searchKakaoPlacesAsync(k, lat, lng, r = 25000){
+  return new Promise(res => {
+    if(!window.kakao || !kakao.maps || !kakao.maps.services){ res([]); return; }
+    const pS = new kakao.maps.services.Places();
+    pS.keywordSearch(k, (dt, st) => {
+      if(st === kakao.maps.services.Status.OK && dt) res(dt);
+      else res([]);
+    }, { location: new kakao.maps.LatLng(lat, lng), radius: r, sort: kakao.maps.services.SortBy.DISTANCE });
+  });
+}
+
+// 내 위치 GPS 주변 산 최우선 실시간 매칭 엔진
 window.triggerGPSMatching = function(){
   const c = document.getElementById('clock-live');
   if(c) c.innerText = '내 위치 GPS 수신 중...';
@@ -1655,21 +1387,45 @@ window.triggerGPSMatching = function(){
     fallbackToDb(35.2846, 129.0565);
     return;
   }
-  navigator.geolocation.getCurrentPosition(p => {
+  navigator.geolocation.getCurrentPosition(async p => {
     const uLat = p.coords.latitude, uLng = p.coords.longitude;
     if(p.coords.altitude && p.coords.altitude > 0) {
       currentUserAltitude = Math.round(p.coords.altitude);
     }
     
-    // 전국 30개 명산 DB에서 내 위치 최단 거리 산 즉시 도출
-    let nearest = mountainDB[0], minD = Infinity;
-    mountainDB.forEach(m => {
-      const d = calculateDistanceKm(uLat, uLng, m.lat, m.lng);
-      if(d < minD){ minD = d; nearest = { ...m, distanceKm: d.toFixed(1) }; }
-    });
+    try {
+      const [rS, rB] = await Promise.all([
+        searchKakaoPlacesAsync('산', uLat, uLng, 25000),
+        searchKakaoPlacesAsync('봉우리', uLat, uLng, 25000)
+      ]);
+      const comb = [...rS, ...rB], seen = new Set(), cd = [];
 
-    selectMountain(nearest.name, nearest.ele, null, nearest.type, nearest.lat, nearest.lng, nearest.distanceKm);
-    if(c) c.innerText = `${nearest.name} (${nearest.distanceKm}km) 매칭 완료`;
+      comb.forEach(item => {
+        const pN = item.place_name || '', cg = item.category_name || '', cCode = item.category_group_code || '', id = item.id || pN;
+        if(seen.has(id)) return; seen.add(id);
+
+        const isJunk = /식당|음식|카페|병원|의원|약국|아파트|빌라|원룸|오피스텔|부동산|역$|정류장|초등|중학|고등|학원|호텔|모텔|펜션|주유소|골프|빌딩|상가|마트|편의점|공영주차장/i.test(pN) || ['FD6','CE7','HP8','PM9','PK6','OL7','SW8','BK9'].includes(cCode);
+        const isMt = cg.includes('산') || cg.includes('산봉우리') || cg.includes('자연명소') || /(산|봉|봉우리|대피소|능선|고개|재|령)$/.test(pN);
+
+        if(!isJunk && isMt){
+          const dist = calculateDistanceKm(uLat, uLng, parseFloat(item.y), parseFloat(item.x));
+          let ele = 600; const m = pN.match(/(\d+)m/);
+          if(m) ele = parseInt(m[1]); else if(pN.includes('대피소')) ele = 1650;
+          cd.push({ name: pN, type: pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'), region: item.address_name||'', ele: ele, lat: parseFloat(item.y), lng: parseFloat(item.x), rawDist: dist });
+        }
+      });
+
+      if(cd.length > 0){
+        cd.sort((a, b) => a.rawDist - b.rawDist);
+        const cl = cd[0];
+        selectMountain(cl.name, cl.ele, null, cl.type, cl.lat, cl.lng, cl.rawDist.toFixed(1));
+        if(c) c.innerText = `${cl.name} (${cl.rawDist.toFixed(1)}km) 매칭 완료`;
+        return;
+      }
+      fallbackToDb(uLat, uLng);
+    } catch(e) {
+      fallbackToDb(uLat, uLng);
+    }
   }, err => {
     fallbackToDb(35.2846, 129.0565);
   }, { timeout: 8000, enableHighAccuracy: true });
@@ -1698,6 +1454,9 @@ async function selectMountain(n, e, bE, t='peak', lt=35.2846, lg=129.0565, dK=nu
     const nw = new Date();
     const hourlyVis = (liveWeatherData.hourly.visibility && liveWeatherData.hourly.visibility[0]) ? liveWeatherData.hourly.visibility[0] : 15000;
     const hourlyDew = (liveWeatherData.hourly.dew_point_2m && liveWeatherData.hourly.dew_point_2m[0] !== undefined) ? liveWeatherData.hourly.dew_point_2m[0] : null;
+    const hourlyCloud = (liveWeatherData.hourly.cloud_cover && liveWeatherData.hourly.cloud_cover[0] !== undefined) ? liveWeatherData.hourly.cloud_cover[0] : 0;
+    const hourlyLowCloud = (liveWeatherData.hourly.cloud_cover_low && liveWeatherData.hourly.cloud_cover_low[0] !== undefined) ? liveWeatherData.hourly.cloud_cover_low[0] : 0;
+    const hourlyMidCloud = (liveWeatherData.hourly.cloud_cover_mid && liveWeatherData.hourly.cloud_cover_mid[0] !== undefined) ? liveWeatherData.hourly.cloud_cover_mid[0] : 0;
 
     baseLiveCurrentRes = compute5PhysicsMountainWeather({
       mtEle: currentMt.ele,
@@ -1709,9 +1468,9 @@ async function selectMountain(n, e, bE, t='peak', lt=35.2846, lg=129.0565, dK=nu
       rawCode: cur.weather_code || 0,
       rawSnowfall: 0.0,
       rawSnowDepth: 0.0,
-      totalCloud: 0,
-      lowCloud: 0,
-      midCloud: 0,
+      totalCloud: hourlyCloud,
+      lowCloud: hourlyLowCloud,
+      midCloud: hourlyMidCloud,
       visibility: hourlyVis,
       rawDew: hourlyDew,
       pointType: t,
