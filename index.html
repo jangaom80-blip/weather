@@ -8,11 +8,11 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v8.0</title>
+  <title>STATLAB 산악 기상 분석 v8.1</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
-  <!-- 포트원(PortOne/구 아임포트) 정식 결제 SDK -->
+  <!-- 포트원(PortOne/구 아임포트) 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
   <style>
@@ -346,7 +346,7 @@
     /* 주간 카드 스타일 */
     .weekly-slot {
       flex-shrink: 0;
-      width: 114px;
+      width: 116px;
       background: linear-gradient(180deg, rgba(32, 32, 38, 0.92) 0%, rgba(18, 18, 24, 0.96) 100%);
       border: 0.5px solid rgba(255, 255, 255, 0.14);
       border-radius: 16px;
@@ -1738,7 +1738,6 @@
     </div>
   </div>
 
-  <!-- 약관 모달 -->
   <div id="legal-modal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -1749,19 +1748,11 @@
       <div class="sheet-content">
         <div class="sheet-clause">
           <div class="clause-title">1. 기상 데이터 성격 및 시뮬레이션 한계</div>
-          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델(Open-Meteo/ECMWF) 원천 데이터에 자체 산악 대기 물리 알고리즘을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다.
+          본 서비스(STATLAB)가 제공하는 산악 기상 분석, 체감온도, 운저고도 및 운해 예측 지수는 글로벌 수치예보 모델 원천 데이터에 자체 산악 물리 알고리즘을 적용한 <strong>수치적 시뮬레이션 추정치</strong>입니다.
         </div>
         <div class="sheet-clause">
-          <div class="clause-title">2. 법적 기상특보 대체 불가 (기상법 제17조 준수)</div>
-          본 서비스는 대한민국 기상청의 공식 기상예보 및 법적 기상특보를 대체하지 않습니다.
-        </div>
-        <div class="sheet-clause">
-          <div class="clause-title">3. 안전사고에 대한 개발자 완전 면책</div>
-          이용자가 본 정보에 의존하여 발생한 안전사고, 조난, 인명 피해 및 손해에 대하여 운영사는 어떠한 법적 책임도 부담하지 않습니다.
-        </div>
-        <div class="sheet-clause">
-          <div class="clause-title">4. 위치기반서비스(GPS) 및 개인정보 처리방침</div>
-          단말기 GPS 좌표는 기기 내부에서 연산 직후 즉시 파기되며 외부 서버로 전송되지 않습니다.
+          <div class="clause-title">2. 법적 기상특보 대체 불가</div>
+          본 서비스는 대한민국 기상청의 공식 기상특보를 대체하지 않습니다.
         </div>
       </div>
     </div>
@@ -1781,7 +1772,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v8.0 (SAM-ENGINE)</span>
+    <span>STATLAB v8.1 (EASY VIEW)</span>
   </div>
 
 <script>
@@ -1850,12 +1841,13 @@ window.switchForecastView=function(mode){
   }
 };
 
+// ★ [v8.1] 일반인 눈높이 3초 직관 리포트 모달
 window.openDayDetailModal=function(idx){
   const item = cachedWeeklyCalculatedData[idx];
   if(!item) return;
   const titleEl = document.getElementById('day-detail-modal-title');
   const bodyEl = document.getElementById('day-detail-modal-body');
-  titleEl.innerText = `${item.dateStr} (${item.dayName}) · ${currentMt.name} SAM-Engine 리포트`;
+  titleEl.innerText = `${item.dateStr} (${item.dayName}) · ${currentMt.name} 날씨 판정`;
 
   let heroTheme = 'background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);';
   if(item.hasRain){
@@ -1870,58 +1862,24 @@ window.openDayDetailModal=function(idx){
   const safeDeg = Math.round((item.safetyScore / 100) * 360);
   const csDeg = Math.round((item.csScore / 100) * 360);
 
-  let crossSectionHtml = '';
-  if(item.hasRain){
-    crossSectionHtml = `
-      <div class="cross-section-left">
-        <span>⛰️ 정상 ${currentMt.ele}m</span>
-        <span style="color:var(--text-tertiary);">|</span>
-        <span>운저 ${item.estCloudBase}m</span>
-      </div>
-      <span class="cross-section-tag" style="background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid var(--accent-red);">
-        비·운무 유입 (시정 1~3km 단축 🌫️)
-      </span>
-    `;
-  } else if(item.csScore >= 70){
-    crossSectionHtml = `
-      <div class="cross-section-left">
-        <span>⛰️ 정상 ${currentMt.ele}m</span>
-        <span style="color:var(--text-tertiary);">|</span>
-        <span>운해층 ${item.estCloudBase}m</span>
-      </div>
-      <span class="cross-section-tag" style="background:rgba(191,90,242,0.25); color:#E5B8FF; border:0.5px solid #BF5AF2;">
-        구름바다 위 돌출 (특급 조망 🌊)
-      </span>
-    `;
-  } else {
-    crossSectionHtml = `
-      <div class="cross-section-left">
-        <span>⛰️ 정상 ${currentMt.ele}m</span>
-        <span style="color:var(--text-tertiary);">|</span>
-        <span>상공 시야 개방</span>
-      </div>
-      <span class="cross-section-tag" style="background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid var(--accent-green);">
-        시야 양호 (시정 15km+)
-      </span>
-    `;
-  }
-
   bodyEl.innerHTML = `
+    <!-- 상단 대형 비주얼 카드 -->
     <div class="day-hero-stage" style="${heroTheme}">
       <div class="day-hero-top">
         <div class="day-hero-main-txt">
           <span class="day-hero-icon">${item.icon}</span>
           <div>
-            <div class="day-hero-state-title">${item.statusText}</div>
+            <div class="day-hero-state-title">${item.plainTitle}</div>
             <div class="day-hero-temp-sub">정상 기온 <strong style="color:var(--accent-cyan);">${item.summitMin}°C</strong> ~ <strong style="color:#FF9F0A;">${item.summitMax}°C</strong></div>
           </div>
         </div>
         <div style="text-align:right;">
           <span style="${item.safetyStyle}; font-size:11px; font-weight:800; padding:3px 9px; border-radius:8px;">${item.safetyLabel}</span>
-          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">예보 신뢰도 ${item.confidence}%</div>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">예보 정확도 ${item.confidence}%</div>
         </div>
       </div>
 
+      <!-- 듀얼 원형 게이지 -->
       <div class="day-hero-gauges">
         <div class="gauge-item">
           <div class="radial-circle" style="background: conic-gradient(${safeColor} ${safeDeg}deg, rgba(255,255,255,0.12) 0deg); border: 2px solid rgba(0,0,0,0.8);">
@@ -1931,7 +1889,7 @@ window.openDayDetailModal=function(idx){
           </div>
           <div class="gauge-label-col">
             <span class="gauge-title">산행 안전 지수</span>
-            <span class="gauge-desc">${item.safetyScore>=80?'기상 최적 상태':(item.safetyScore>=50?'기상 주의 요망':'기상 악화 경보')}</span>
+            <span class="gauge-desc">${item.safetyScore>=80?'산행 추천 (쾌청)':(item.safetyScore>=50?'변동 주의 요망':'산행 자제 권장')}</span>
           </div>
         </div>
 
@@ -1945,26 +1903,35 @@ window.openDayDetailModal=function(idx){
           </div>
           <div class="gauge-label-col">
             <span class="gauge-title">운해 조망 확률</span>
-            <span class="gauge-desc">${item.csScore>=75?'골든타임 추천':(item.csScore>=50?'부분 운무 예상':'대기 혼합 미달')}</span>
+            <span class="gauge-desc">${item.csScore>=75?'구름바다 대박':(item.csScore>=50?'일부 골짜기 운무':'대기 혼합 미달')}</span>
           </div>
         </div>
       </div>
 
+      <!-- 시야 및 풍경 단면 태그 -->
       <div class="day-cross-section-box">
-        ${crossSectionHtml}
+        <div class="cross-section-left">
+          <span>⛰️ 정상 ${currentMt.ele}m</span>
+          <span style="color:var(--text-tertiary);">|</span>
+          <span>${item.viewSummary}</span>
+        </div>
+        <span class="cross-section-tag" style="${item.viewTagStyle}">
+          ${item.viewTagText}
+        </span>
       </div>
     </div>
 
-    <!-- 산악 대기역학 해설 -->
-    <div style="background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 12px; margin-bottom: 12px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <span style="font-size:12px; font-weight:800; color:#FFF;">SAM-Engine 대기역학 진단</span>
-        <span style="font-size:10px; color:var(--accent-cyan); font-weight:700;">Fr: ${item.froudeNo} · 플럭스: ${item.moistureFlux}</span>
+    <!-- ★ [v8.1] 일반인 눈높이 3초 직관 브리핑 카드 -->
+    <div style="background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 12px; margin-bottom: 12px;">
+      <div style="font-size:13px; font-weight:800; color:#FFF; margin-bottom:8px;">등산객 핵심 행동 요령</div>
+      <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.5;">
+        <div>🚩 <strong>산행 추천도:</strong> <span style="color:#FFF;">${item.plainAction}</span></div>
+        <div>👀 <strong>정상 조망/풍경:</strong> <span style="color:var(--text-secondary);">${item.plainSight}</span></div>
+        <div>🧥 <strong>추천 옷차림:</strong> <span style="color:var(--text-secondary);">${item.plainWear}</span></div>
       </div>
-      <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">${item.safetyDesc}</div>
     </div>
 
-    <!-- 4대 수치 그리드 -->
+    <!-- 핵심 수치 2칸 그리드 -->
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
       <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
         <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">능선 최대 돌풍</div>
@@ -1988,7 +1955,7 @@ window.openDayDetailModal=function(idx){
       <div style="font-size:11px; font-weight:700; color:#FFF; margin-bottom:8px;">오전 vs 오후 상세 흐름</div>
       <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary);">
         <span>🌅 오전 (06~12시): <strong>${item.amIcon} ${item.amText}</strong></span>
-        <span>${item.amHasRain ? '☔ 빗방울 주의' : '시야 개방'}</span>
+        <span>${item.amHasRain ? '☔ 빗방울 주의' : '쾌청 개방'}</span>
       </div>
       <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-top:6px;">
         <span>☀️ 오후 (12~18시): <strong>${item.pmIcon} ${item.pmText}</strong></span>
@@ -2106,31 +2073,46 @@ function findCurrentHourIndex(h){
   return bI;
 }
 
+// ★ [v8.1 완벽 수정] 날짜 기준 동기화로 마이너스 시간 오류 원천 차단
 function computeSunAndTrailSafety(d, targetDate = null){
   const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
+  const nDateStr = `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
   
+  let dayIdx = 0;
+  if(d && d.time && Array.isArray(d.time)){
+    const found = d.time.findIndex(t => t.startsWith(nDateStr));
+    if(found !== -1) dayIdx = found;
+  }
+
   let sR = new Date(n.getFullYear(), n.getMonth(), n.getDate(), 6, 15, 0);
   let sS = new Date(n.getFullYear(), n.getMonth(), n.getDate(), 18, 20, 0);
   let sR_next = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1, 6, 15, 0);
+  let sS_prev = new Date(n.getFullYear(), n.getMonth(), n.getDate() - 1, 18, 20, 0);
 
-  if(d && d.sunrise && d.sunrise[0]) {
-    const pR = new Date(d.sunrise[0]);
+  if(d && d.sunrise && d.sunrise[dayIdx]){
+    const pR = new Date(d.sunrise[dayIdx]);
     if(!isNaN(pR.getTime())) sR = pR;
   }
-  if(d && d.sunset && d.sunset[0]) {
-    const pS = new Date(d.sunset[0]);
+  if(d && d.sunset && d.sunset[dayIdx]){
+    const pS = new Date(d.sunset[dayIdx]);
     if(!isNaN(pS.getTime())) sS = pS;
   }
-  if(d && d.sunrise && d.sunrise[1]) {
-    const pRN = new Date(d.sunrise[1]);
+  if(d && d.sunrise && d.sunrise[dayIdx + 1]){
+    const pRN = new Date(d.sunrise[dayIdx + 1]);
     if(!isNaN(pRN.getTime())) sR_next = pRN;
   } else {
-    sR_next = new Date(sR.getTime() + 24*3600000);
+    sR_next = new Date(sR.getTime() + 24 * 3600000);
+  }
+  if(d && d.sunset && dayIdx > 0 && d.sunset[dayIdx - 1]){
+    const pSP = new Date(d.sunset[dayIdx - 1]);
+    if(!isNaN(pSP.getTime())) sS_prev = pSP;
+  } else {
+    sS_prev = new Date(sS.getTime() - 24 * 3600000);
   }
 
-  const sR_s = `${sR.getHours().toString().padStart(2,'0')}:${sR.getMinutes().toString().padStart(2,'0')}`;
-  const sS_s = `${sS.getHours().toString().padStart(2,'0')}:${sS.getMinutes().toString().padStart(2,'0')}`;
-  const sR_next_s = `${sR_next.getHours().toString().padStart(2,'0')}:${sR_next.getMinutes().toString().padStart(2,'0')}`;
+  const sR_s = `${String(sR.getHours()).padStart(2,'0')}:${String(sR.getMinutes()).padStart(2,'0')}`;
+  const sS_s = `${String(sS.getHours()).padStart(2,'0')}:${String(sS.getMinutes()).padStart(2,'0')}`;
+  const sR_next_s = `${String(sR_next.getHours()).padStart(2,'0')}:${String(sR_next.getMinutes()).padStart(2,'0')}`;
 
   let p = 0, bT = '일조 양호', bC = 'var(--accent-green)', dT = '';
   let isNight = false, orbChar = '☀️', leftLabel = `일출 ${sR_s}`, midLabel = '태양 궤적', rightLabel = `일몰 ${sS_s}`;
@@ -2138,50 +2120,49 @@ function computeSunAndTrailSafety(d, targetDate = null){
   if(n < sR){
     isNight = true;
     orbChar = '🌙';
-    const sS_prev = new Date(sS.getTime() - 24*3600000);
     p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS_prev.getTime()) / (sR.getTime() - sS_prev.getTime())) * 100)));
-    const mTR = Math.floor((sR.getTime() - n.getTime()) / 60000);
+    const mTR = Math.max(0, Math.floor((sR.getTime() - n.getTime()) / 60000));
     const hR = Math.floor(mTR / 60), rM = mTR % 60;
-    bT = mTR <= 60 ? `🌅 일출 ${mTR}분 전 (여명)` : `일출까지 ${hR}시간 ${rM}분`;
+    bT = mTR <= 60 ? `🌅 일출 ${mTR}분 전 (여명)` : `오늘 일출까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`;
     bC = 'var(--accent-amber)';
-    leftLabel = `어제 일몰 ${sS_s}`;
+    leftLabel = `어제 일몰 ${String(sS_prev.getHours()).padStart(2,'0')}:${String(sS_prev.getMinutes()).padStart(2,'0')}`;
     midLabel = '달 궤적 (새벽)';
     rightLabel = `오늘 일출 ${sR_s}`;
-    dT = `<strong>🌅 [일출 ${sR_s} (${hR>0?hR+'시간 ':''}${rM}분 전)]:</strong> 여명 및 새벽 산행 구간입니다. 능선 일출 조망 시 기온 급강하에 대비해 방한 의류를 준비하세요.`;
+    dT = `<strong>🌅 [오늘 일출 ${sR_s} (${hR > 0 ? hR + '시간 ' : ''}${rM}분 전)]:</strong> 여명 및 새벽 산행 구간입니다. 능선 일출 조망 시 기온 급강하에 유의하세요.`;
   } else if(n >= sR && n < sS){
     isNight = false;
     orbChar = '☀️';
     p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sR.getTime()) / (sS.getTime() - sR.getTime())) * 100)));
-    const mTS = Math.floor((sS.getTime() - n.getTime()) / 60000);
+    const mTS = Math.max(0, Math.floor((sS.getTime() - n.getTime()) / 60000));
     const hR = Math.floor(mTS / 60), rM = mTS % 60;
     leftLabel = `일출 ${sR_s}`;
-    midLabel = '태양 궤적';
+    midLabel = '태양 궤적 (주간)';
     rightLabel = `일몰 ${sS_s}`;
     if(mTS <= 60){
       bT = '🚨 하산 완료 필수';
       bC = 'var(--accent-red)';
-      dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 완전히 어두워집니다. 즉시 하산을 완료하고 헤드랜턴을 점등하세요.`;
+      dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 완전히 어두워집니다. 즉시 하산을 완료하세요.`;
     } else if(mTS <= 120){
       bT = '⚠️ 하산 코스 진입';
       bC = 'var(--accent-amber)';
-      dT = `<strong>⚠️ [일몰 ${hR}시간 ${rM}분 전]:</strong> 일몰 시각(<strong>${sS_s}</strong>) 전에 하산로에 진입해야 안전합니다.`;
+      dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(<strong>${sS_s}</strong>) 전에 하산로에 진입하세요.`;
     } else {
-      bT = `일몰까지 ${hR}시간 ${rM}분`;
+      bT = `일몰까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`;
       bC = 'var(--accent-green)';
-      dT = `<strong>[안전 일조 확보]:</strong> 일몰 시각은 <strong>${sS_s}</strong>입니다. 넉넉한 일조량으로 안전한 주간 산행이 가능합니다.`;
+      dT = `<strong>☀️ [주간 일조 확보]:</strong> 일몰 시각은 <strong>${sS_s}</strong>입니다. 안전한 주간 산행이 가능합니다.`;
     }
   } else {
     isNight = true;
     orbChar = '🌙';
     p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS.getTime()) / (sR_next.getTime() - sS.getTime())) * 100)));
-    const mTN = Math.floor((sR_next.getTime() - n.getTime()) / 60000);
+    const mTN = Math.max(0, Math.floor((sR_next.getTime() - n.getTime()) / 60000));
     const hR = Math.floor(mTN / 60), rM = mTN % 60;
-    bT = `내일 일출까지 ${hR}시간 ${rM}분`;
+    bT = `내일 일출까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`;
     bC = 'var(--accent-purple)';
     leftLabel = `일몰 ${sS_s}`;
     midLabel = '달 궤적 (야간)';
     rightLabel = `내일 일출 ${sR_next_s}`;
-    dT = `<strong>🌙 [일몰 완료 / 내일 일출(${sR_next_s})까지 ${hR}시간 ${rM}분]:</strong> 야간 산행 및 비박 구간입니다. 칠흑 같은 어둠에 대비해 예비 배터리와 방한 조치에 각별히 유의하세요.`;
+    dT = `<strong>🌙 [일몰 완료 / 내일 일출(${sR_next_s})까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분]:</strong> 야간 산행 및 비박 구간입니다. 헤드랜턴을 필수 지참하세요.`;
   }
 
   return {
@@ -2425,7 +2406,7 @@ function compute5PhysicsMountainWeather(P){
   };
 }
 
-// ★★★ [STATLAB SAM-Engine v8.0 독자 산악 대기역학 연산식] ★★★
+// ★★★ [v8.1 SAM-Engine: 일반인 직관화 100% 반영] ★★★
 function compute7DayAlpineForecast(data, ele){
   if(!data || !data.daily || !data.daily.time || data.daily.time.length < 7) return [];
   const daily = data.daily;
@@ -2447,22 +2428,14 @@ function compute7DayAlpineForecast(data, ele){
     const basePrecip = daily.precipitation_sum[i] ?? 0.0;
     const rainProb = daily.precipitation_probability_max[i] ?? 0;
 
-    // 1. 능선 풍속 및 최대 돌풍 계산
     const summitWind = parseFloat((baseWind * (1 + 0.35 * (ele / 1000))).toFixed(1));
     const baseMaxGust = daily.wind_gusts_10m_max ? (daily.wind_gusts_10m_max[i] * 0.2777) : 6.0;
     const summitMaxGust = parseFloat((baseMaxGust * 1.55).toFixed(1));
 
-    // 2. [공식 1] 프로우드 수 (Froude Number) 계산 (N ≈ 0.011)
     const froudeNumber = parseFloat((summitWind / (0.011 * Math.max(100, altDiff))).toFixed(2));
-
-    // 3. [공식 2] 수증기 유속 플럭스 (Moisture Flux) 계산
-    const estRH = Math.min(95, Math.max(40, 65 + (rainProb * 0.3)));
-    const es = 6.112 * Math.exp((17.67 * baseMax) / (243.5 + baseMax));
-    const moistureFlux = parseFloat(((estRH / 100) * es * summitWind * 0.1).toFixed(1));
-
-    // 4. [공식 3] 복사 침강 감률 적용한 정상 최고/최저 기온
     const estCloud = Math.min(100, Math.max(10, rainProb + 15));
     const radSink = parseFloat((1.8 * (1 - estCloud / 100) * Math.exp(-summitWind / 4.0)).toFixed(1));
+
     let summitMin = baseMin - (altDiff / 100) * 0.65 - radSink;
     let summitMax = baseMax - (altDiff / 100) * 0.65 + 0.5;
 
@@ -2475,7 +2448,6 @@ function compute7DayAlpineForecast(data, ele){
     summitMin = Math.round(summitMin);
     summitMax = Math.round(summitMax);
 
-    // 5. [공식 4] 프로우드 수 & 수증기 플럭스 기반 지형성 강우 증폭
     let summitPrecip = 0.0;
     if(basePrecip > 0 || code >= 51){
       const orographicLiftFactor = (froudeNumber >= 0.8) ? (1.35 + Math.min(0.5, (froudeNumber - 0.8) * 0.4)) : 1.0;
@@ -2483,7 +2455,6 @@ function compute7DayAlpineForecast(data, ele){
       if(summitPrecip === 0 && code >= 51) summitPrecip = 0.8;
     }
 
-    // 6. 오전 / 오후 6시간 전수 슬라이스 스캔
     let amCode = code, pmCode = code;
     let amHasRain = false, pmHasRain = false;
 
@@ -2510,12 +2481,68 @@ function compute7DayAlpineForecast(data, ele){
     const amInfo = decodeWmoCode(amCode);
     const pmInfo = decodeWmoCode(pmCode);
 
-    // 7. 운해 잠재력 지수
     let csScore = 15;
     if(code <= 2 && rainProb <= 20) csScore += 45;
     if(summitWind <= 3.5) csScore += 25;
     if(basePrecip > 0 && i > 0 && daily.precipitation_sum[i-1] > 2.0) csScore += 15;
     csScore = Math.min(95, Math.max(10, Math.round(csScore * damping)));
+
+    // ★ [v8.1 핵심] 일반인이 3초 만에 이해하는 직관적인 타이틀 & 풍경 태그
+    let plainTitle = '쾌청 맑음';
+    let plainAction = '산행 강력 추천 (최적)';
+    let plainSight = '시야 15km+ 뻥 뚫린 파노라마 조망 가능';
+    let plainWear = '가벼운 등산복 및 자외선 차단 모자';
+    let viewSummary = '상공 시야 개방';
+    let viewTagText = '시야 100% 쾌청';
+    let viewTagStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid var(--accent-green);';
+    let cardMiniBadge = '☀️ 쾌청조망';
+
+    if(dayHasRain && summitPrecip >= 5){
+      plainTitle = '비바람 / 호우 주의';
+      plainAction = '🚨 산행 자제 강력 권장 (악천후)';
+      plainSight = '짙은 비구름 속으로 사방이 하얗게 차단됨 (조망 없음)';
+      plainWear = '방수 겉옷(고어텍스) 필수, 배낭 방수커버';
+      viewSummary = `운저 420m (구름 속 관통)`;
+      viewTagText = '비바람 곰탕 (조망 불가 ⚠️)';
+      viewTagStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid var(--accent-red);';
+      cardMiniBadge = '🌧️ 비바람주의';
+    } else if(dayHasRain){
+      plainTitle = '안개비 & 곰탕 뷰';
+      plainAction = '⚠️ 산행 주의 (방수 및 미끄럼 대비)';
+      plainSight = '흩날리는 안개비와 운무로 조망이 거의 보이지 않습니다.';
+      plainWear = '방수 바람막이 및 접지력 좋은 등산화';
+      viewSummary = `운저 500m (운무 유입)`;
+      viewTagText = '곰탕 뷰 (조망 없음 🌫️)';
+      viewTagStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid var(--accent-amber);';
+      cardMiniBadge = '🌦️ 곰탕/안개비';
+    } else if(csScore >= 75){
+      plainTitle = '특급 운해(구름바다)';
+      plainAction = '✨ 일출 산행 적극 추천';
+      plainSight = '발아래 하얗게 출렁이는 구름바다와 환상적인 일출 조망!';
+      plainWear = '새벽 방한 자켓 및 헤드랜턴 지참';
+      viewSummary = '운해층 550m (정상 돌출)';
+      viewTagText = '구름바다 대박 🌊';
+      viewTagStyle = 'background:rgba(191,90,242,0.25); color:#E5B8FF; border:0.5px solid #BF5AF2;';
+      cardMiniBadge = '🌊 운해대박';
+    } else if(code >= 45 && code <= 48){
+      plainTitle = '짙은 안개 (곰탕 뷰)';
+      plainAction = '산행 보통 (길 찾기 유의)';
+      plainSight = '사방이 하얗게 가려져 정상 뷰가 전혀 안 보입니다.';
+      plainWear = '시야가 좁으므로 밝은 옷 착용 권장';
+      viewSummary = '정상부 운무 포화';
+      viewTagText = '시야 차단 (곰탕 뷰 🌫️)';
+      viewTagStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid var(--accent-amber);';
+      cardMiniBadge = '🌫️ 곰탕뷰';
+    } else if(code >= 2){
+      plainTitle = '마른 흐림 (비 안 옴)';
+      plainAction = '산행 양호 (걷기 시원한 날)';
+      plainSight = '하늘은 흐리지만 비는 오지 않아 시원하게 등산 가능';
+      plainWear = '적당한 통기성 등산복';
+      viewSummary = '구름 아래 시야 트임';
+      viewTagText = '시원한 흐림 ☁️';
+      viewTagStyle = 'background:rgba(255,255,255,0.08); color:var(--text-secondary); border:0.5px solid rgba(255,255,255,0.18);';
+      cardMiniBadge = '☁️ 마른흐림';
+    }
 
     let csLabel = '운해 보통';
     let csStyle = 'background: rgba(255,255,255,0.06); color: var(--text-secondary);';
@@ -2526,11 +2553,10 @@ function compute7DayAlpineForecast(data, ele){
       csLabel = `운해 ${csScore}%`;
       csStyle = 'background: rgba(100,210,255,0.18); color: var(--accent-cyan);';
     } else if(dayHasRain){
-      csLabel = '비바람 (조건미달)';
+      csLabel = '비바람(미달)';
       csStyle = 'background: rgba(255,255,255,0.04); color: var(--text-tertiary);';
     }
 
-    // 8. 산행 안전 점수 산출
     let safeScore = 95;
     if(summitPrecip >= 10 || rainProb >= 70 || summitMaxGust >= 14){
       safeScore = Math.max(15, Math.round(35 - (summitPrecip * 1.2)));
@@ -2540,18 +2566,15 @@ function compute7DayAlpineForecast(data, ele){
       safeScore = 60;
     }
 
-    let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid rgba(48,209,88,0.4);', sDesc = '기류가 안정되고 시야가 탁 트여 주간 산행을 즐기기에 가장 좋습니다.';
+    let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid rgba(48,209,88,0.4);';
     if(safeScore < 40){
       sLabel = '🔴 위험';
       sStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid rgba(255,69,58,0.45);';
-      sDesc = `지형성 융기(Fr ${froudeNumber})로 인한 호우 및 돌풍(${summitMaxGust}m/s) 위험으로 산행 자제를 강력 권장합니다.`;
     } else if(safeScore < 75){
       sLabel = '🟡 주의';
       sStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid rgba(255,159,10,0.4);';
-      sDesc = `기상 변동성 및 수증기 유속 유입으로 안개비·저온 미끄럼 구간이 예상됩니다. 방수 방한 의류를 준비하세요.`;
     }
 
-    let estCloudBase = dayHasRain ? 420 : (csScore >= 70 ? 550 : 1400);
     const confVal = Math.max(50, Math.round(95 - i * 6.5));
 
     results.push({
@@ -2566,9 +2589,15 @@ function compute7DayAlpineForecast(data, ele){
       summitPrecip: summitPrecip,
       rainProb: rainProb,
       maxGust: summitMaxGust,
-      froudeNo: froudeNumber,
-      moistureFlux: moistureFlux,
       hasRain: dayHasRain,
+      plainTitle: plainTitle,
+      plainAction: plainAction,
+      plainSight: plainSight,
+      plainWear: plainWear,
+      viewSummary: viewSummary,
+      viewTagText: viewTagText,
+      viewTagStyle: viewTagStyle,
+      cardMiniBadge: cardMiniBadge,
       amIcon: amInfo.icon,
       amText: amInfo.text,
       amHasRain: amHasRain,
@@ -2578,11 +2607,9 @@ function compute7DayAlpineForecast(data, ele){
       csScore: csScore,
       csLabel: csLabel,
       csStyle: csStyle,
-      estCloudBase: estCloudBase,
       safetyScore: safeScore,
       safetyLabel: sLabel,
       safetyStyle: sStyle,
-      safetyDesc: sDesc,
       confidence: confVal
     });
   }
@@ -2604,9 +2631,9 @@ function render7DayWeeklyTrack(data){
     if(d.summitPrecip >= 10 || d.rainProb >= 70) worstDay = d;
   });
   if(aiBannerText){
-    let txt = `✨ 이번 주 추천일: <strong>${bestDay.dateStr}(${bestDay.dayName})</strong> - ${bestDay.statusText} (${bestDay.csLabel})`;
+    let txt = `✨ 이번 주 추천일: <strong>${bestDay.dateStr}(${bestDay.dayName})</strong> - ${bestDay.plainTitle}`;
     if(worstDay){
-      txt += ` · <strong>${worstDay.dateStr}(${worstDay.dayName})</strong> ${worstDay.statusText} 주의 ⚠️`;
+      txt += ` · <strong>${worstDay.dateStr}(${worstDay.dayName})</strong> ${worstDay.plainTitle} 주의 ⚠️`;
     }
     aiBannerText.innerHTML = txt;
   }
@@ -2657,7 +2684,7 @@ function render7DayWeeklyTrack(data){
         <span style="color:${day.maxGust>=13?'var(--accent-red)':'var(--text-secondary)'};">💨 ${day.maxGust}m/s</span>
       </div>
 
-      <div class="w-cs-badge" style="${day.csStyle}">${day.csLabel}</div>
+      <div class="w-cs-badge" style="background:rgba(255,255,255,0.06); color:#FFF;">${day.cardMiniBadge}</div>
     `;
     track.appendChild(slot);
   });
