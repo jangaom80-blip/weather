@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v7.4 RICH</title>
+  <title>STATLAB 산악 기상 분석 v7.5</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -237,7 +237,6 @@
       margin-bottom: 10px;
     }
 
-    /* 토글 탭 */
     .forecast-toggle-bar {
       display: flex;
       background: rgba(255, 255, 255, 0.06);
@@ -276,7 +275,6 @@
       letter-spacing: 0.2px;
     }
 
-    /* AI 주간 요약 브리핑 배너 */
     .weekly-ai-banner {
       background: linear-gradient(135deg, rgba(255, 214, 10, 0.12) 0%, rgba(10, 132, 255, 0.08) 100%);
       border: 0.5px solid rgba(255, 214, 10, 0.35);
@@ -345,7 +343,7 @@
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* ★ [v7.4 RICH] 대폭 풍부해진 주간 카드 스타일 */
+    /* 주간 카드 스타일 */
     .weekly-slot {
       flex-shrink: 0;
       width: 114px;
@@ -408,7 +406,6 @@
     .w-ampm-icon {
       font-size: 14px;
     }
-    /* 온도 스펙트럼 바 */
     .w-temp-bar-wrap {
       display: flex;
       align-items: center;
@@ -1237,7 +1234,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.82);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       z-index: 4000;
@@ -1251,18 +1248,21 @@
       display: flex;
       opacity: 1;
     }
+
+    /* ★ [v7.5] 높이를 88vh로 끌어올려 상단 공백을 메운 시트 */
     .modal-sheet {
-      background: rgba(28, 28, 30, 0.98);
-      border-top: 0.5px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px 24px 0 0;
+      background: rgba(24, 24, 28, 0.98);
+      border-top: 0.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 26px 26px 0 0;
       width: 100%;
       max-width: 540px;
-      max-height: 85vh;
-      padding: 20px 20px calc(24px + env(safe-area-inset-bottom, 16px)) 20px;
+      height: 86vh;
+      max-height: 88vh;
+      padding: 16px 18px calc(24px + env(safe-area-inset-bottom, 16px)) 18px;
       overflow-y: auto;
       transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 -10px 45px rgba(0, 0, 0, 0.95);
     }
     .modal-overlay.active .modal-sheet {
       transform: translateY(0);
@@ -1271,15 +1271,15 @@
       width: 36px;
       height: 4px;
       border-radius: 2px;
-      background: rgba(255, 255, 255, 0.2);
-      margin: 0 auto 16px auto;
+      background: rgba(255, 255, 255, 0.25);
+      margin: 0 auto 12px auto;
     }
     .sheet-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
       border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
     }
     .sheet-title {
@@ -1307,14 +1307,115 @@
       color: var(--text-secondary);
       line-height: 1.7;
     }
-    .sheet-clause {
-      margin-bottom: 16px;
+
+    /* ★ [v7.5 신규] 상단 여백을 채우는 대형 비주얼 기상 스테이지 카드 */
+    .day-hero-stage {
+      position: relative;
+      border-radius: 20px;
+      padding: 16px 14px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      border: 0.5px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .clause-title {
+    .day-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .day-hero-main-txt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .day-hero-icon {
+      font-size: 38px;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+    }
+    .day-hero-state-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFF;
+      line-height: 1.2;
+    }
+    .day-hero-temp-sub {
       font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ★ 듀얼 원형 게이지 랩 */
+    .day-hero-gauges {
+      display: flex;
+      gap: 10px;
+      justify-content: space-around;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(14px);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 10px 8px;
+    }
+    .gauge-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .radial-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-size: 12px;
+      font-weight: 800;
+      color: #FFF;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .gauge-label-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .gauge-title {
+      font-size: 11px;
       font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 4px;
+      color: #FFF;
+    }
+    .gauge-desc {
+      font-size: 9px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ★ 고도별 구름 관통 다이어그램 */
+    .day-cross-section-box {
+      background: rgba(0,0,0,0.35);
+      border: 0.5px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .cross-section-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #FFF;
+    }
+    .cross-section-tag {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 6px;
     }
 
     #statlab-badge {
@@ -1389,7 +1490,7 @@
     </div>
   </div>
 
-  <!-- AI 주간 산행 추천 배너 (주간 탭 활성 시 자동 노출) -->
+  <!-- AI 주간 산행 추천 배너 -->
   <div id="weekly-ai-banner" class="weekly-ai-banner" style="display:none;">
     <span>✨</span>
     <span id="weekly-ai-text">이번 주 최적 산행일과 주의 요일을 분석하고 있습니다...</span>
@@ -1676,7 +1777,7 @@
     </div>
   </div>
 
-  <!-- ★ [v7.4 신규] 요일별 상세 산악 리포트 모달 시트 -->
+  <!-- ★ [v7.5 VISUAL PRO] 대형 비주얼 스테이지 & 게이지가 탑재된 상세 리포트 모달 -->
   <div id="day-detail-modal" class="modal-overlay" onclick="handleDayDetailOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -1692,7 +1793,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v7.4 (RICH BETA)</span>
+    <span>STATLAB v7.5 (VISUAL PRO)</span>
   </div>
 
 <script>
@@ -1761,6 +1862,7 @@ window.switchForecastView=function(mode){
   }
 };
 
+// ★ [v7.5 신규] 상단 여백을 완벽하게 채우는 비주얼 스테이지 & 듀얼 원형 게이지 모달 렌더링
 window.openDayDetailModal=function(idx){
   const item = cachedWeeklyCalculatedData[idx];
   if(!item) return;
@@ -1768,51 +1870,146 @@ window.openDayDetailModal=function(idx){
   const bodyEl = document.getElementById('day-detail-modal-body');
   titleEl.innerText = `${item.dateStr} (${item.dayName}) · ${currentMt.name} 정밀 리포트`;
 
-  bodyEl.innerHTML = `
-    <div style="background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 12px; margin-bottom: 12px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <span style="font-size:14px; font-weight:800; color:#FFF;">산행 적합도 평가</span>
-        <span style="${item.safetyStyle}; font-size:11px; font-weight:800; padding:2px 8px; border-radius:6px;">${item.safetyLabel}</span>
+  // 날씨 상태별 헤더 배경 그라디언트 테마
+  let heroTheme = 'background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);';
+  if(item.summitPrecip >= 10 || item.rainProb >= 70){
+    heroTheme = 'background: linear-gradient(135deg, rgba(69, 10, 10, 0.9) 0%, rgba(20, 24, 38, 0.98) 100%); border-color: rgba(255, 69, 58, 0.4);';
+  } else if(item.csScore >= 75){
+    heroTheme = 'background: linear-gradient(135deg, rgba(88, 28, 135, 0.85) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(191, 90, 242, 0.45);';
+  } else if(item.rainProb <= 20 && item.summitPrecip === 0){
+    heroTheme = 'background: linear-gradient(135deg, rgba(120, 53, 15, 0.8) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(255, 214, 10, 0.4);';
+  }
+
+  // 듀얼 게이지 색상
+  const safeColor = item.safetyScore >= 80 ? '#30D158' : (item.safetyScore >= 50 ? '#FF9F0A' : '#FF453A');
+  const safeDeg = Math.round((item.safetyScore / 100) * 360);
+  const csDeg = Math.round((item.csScore / 100) * 360);
+
+  // 예상 운저고도 vs 정상 위치 판별
+  let crossSectionHtml = '';
+  if(item.summitPrecip >= 5 || item.rainProb >= 70){
+    crossSectionHtml = `
+      <div class="cross-section-left">
+        <span>⛰️ 정상 ${currentMt.ele}m</span>
+        <span style="color:var(--text-tertiary);">|</span>
+        <span>운저 ${item.estCloudBase}m</span>
       </div>
-      <div style="font-size:12px; color:var(--text-primary); line-height:1.6;">${item.safetyDesc}</div>
+      <span class="cross-section-tag" style="background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid var(--accent-red);">
+        비구름 속 완전 갇힘 (운무 100%)
+      </span>
+    `;
+  } else if(item.csScore >= 70){
+    crossSectionHtml = `
+      <div class="cross-section-left">
+        <span>⛰️ 정상 ${currentMt.ele}m</span>
+        <span style="color:var(--text-tertiary);">|</span>
+        <span>운해층 ${item.estCloudBase}m</span>
+      </div>
+      <span class="cross-section-tag" style="background:rgba(191,90,242,0.25); color:#E5B8FF; border:0.5px solid #BF5AF2;">
+        구름바다 위 돌출 (특급 조망 🌊)
+      </span>
+    `;
+  } else {
+    crossSectionHtml = `
+      <div class="cross-section-left">
+        <span>⛰️ 정상 ${currentMt.ele}m</span>
+        <span style="color:var(--text-tertiary);">|</span>
+        <span>상공 시야 개방</span>
+      </div>
+      <span class="cross-section-tag" style="background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid var(--accent-green);">
+        시야 양호 (시정 15km+)
+      </span>
+    `;
+  }
+
+  bodyEl.innerHTML = `
+    <!-- ★ 상단 대형 비주얼 스테이지 -->
+    <div class="day-hero-stage" style="${heroTheme}">
+      <div class="day-hero-top">
+        <div class="day-hero-main-txt">
+          <span class="day-hero-icon">${item.icon}</span>
+          <div>
+            <div class="day-hero-state-title">${item.statusText}</div>
+            <div class="day-hero-temp-sub">정상 기온 <strong style="color:var(--accent-cyan);">${item.summitMin}°C</strong> ~ <strong style="color:#FF9F0A;">${item.summitMax}°C</strong></div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <span style="${item.safetyStyle}; font-size:11px; font-weight:800; padding:3px 9px; border-radius:8px;">${item.safetyLabel}</span>
+          <div style="font-size:9px; color:var(--text-tertiary); margin-top:4px;">예보 신뢰도 ${item.confidence}%</div>
+        </div>
+      </div>
+
+      <!-- 듀얼 원형 확률 게이지 -->
+      <div class="day-hero-gauges">
+        <div class="gauge-item">
+          <div class="radial-circle" style="background: conic-gradient(${safeColor} ${safeDeg}deg, rgba(255,255,255,0.12) 0deg); border: 2px solid rgba(0,0,0,0.8);">
+            <div style="position:absolute; inset:5px; background:#1C1C1E; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+              <span style="color:${safeColor};">${item.safetyScore}%</span>
+            </div>
+          </div>
+          <div class="gauge-label-col">
+            <span class="gauge-title">산행 안전 지수</span>
+            <span class="gauge-desc">${item.safetyScore>=80?'기상 최적 상태':(item.safetyScore>=50?'변동 대비 필요':'기상 악화 경보')}</span>
+          </div>
+        </div>
+
+        <div style="width:0.5px; height:36px; background:rgba(255,255,255,0.15); align-self:center;"></div>
+
+        <div class="gauge-item">
+          <div class="radial-circle" style="background: conic-gradient(#BF5AF2 ${csDeg}deg, rgba(255,255,255,0.12) 0deg); border: 2px solid rgba(0,0,0,0.8);">
+            <div style="position:absolute; inset:5px; background:#1C1C1E; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+              <span style="color:#E5B8FF;">${item.csScore}%</span>
+            </div>
+          </div>
+          <div class="gauge-label-col">
+            <span class="gauge-title">운해 조망 확률</span>
+            <span class="gauge-desc">${item.csScore>=75?'골든타임 추천':(item.csScore>=50?'부분 운무 예상':'대기 혼합 미달')}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 고도별 구름 단면 다이어그램 -->
+      <div class="day-cross-section-box">
+        ${crossSectionHtml}
+      </div>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
-      <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
-        <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">정상 기온 범위</div>
-        <div style="font-size:15px; font-weight:800; color:#FFF; margin-top:2px;">
-          <span style="color:var(--accent-cyan);">${item.summitMin}°C</span> ~ <span style="color:#FF9F0A;">${item.summitMax}°C</span>
-        </div>
-        <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">새벽 복사냉각 보정</div>
-      </div>
+    <!-- 산행 적합도 해설 -->
+    <div style="background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 12px; margin-bottom: 12px;">
+      <div style="font-size:12px; font-weight:800; color:#FFF; margin-bottom:4px;">산악 기상관 종합 판정</div>
+      <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">${item.safetyDesc}</div>
+    </div>
 
+    <!-- 4대 수치 그리드 -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
       <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
         <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">능선 최대 돌풍</div>
         <div style="font-size:15px; font-weight:800; color:${item.maxGust>=13?'var(--accent-red)':'#FFF'}; margin-top:2px;">
           ${item.maxGust} m/s
         </div>
-        <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">${item.maxGust>=13?'강풍 주의보 수준':'비교적 안정'}</div>
+        <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">${item.maxGust>=13?'암릉 바람 주의보':'안전 보행 가능'}</div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
+        <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">지형성 일강우량</div>
+        <div style="font-size:15px; font-weight:800; color:${item.summitPrecip>=5?'var(--accent-red)':'#FFF'}; margin-top:2px;">
+          ${item.summitPrecip} mm
+        </div>
+        <div style="font-size:10px; color:var(--text-tertiary); margin-top:2px;">강수확률 ${item.rainProb}%</div>
       </div>
     </div>
 
-    <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; margin-bottom: 12px;">
-      <div style="font-size:11px; font-weight:700; color:#FFF; margin-bottom:6px;">오전 vs 오후 상세 흐름</div>
+    <!-- 오전 vs 오후 타임라인 -->
+    <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
+      <div style="font-size:11px; font-weight:700; color:#FFF; margin-bottom:8px;">오전 vs 오후 상세 흐름</div>
       <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary);">
         <span>🌅 오전 (06~12시): <strong>${item.amIcon} ${item.amText}</strong></span>
-        <span>강수확률: <strong>${item.rainProb}%</strong></span>
+        <span>안정성: <strong>${item.rainProb<=20?'양호':'다소 불안'}</strong></span>
       </div>
-      <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-top:4px;">
+      <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-top:6px;">
         <span>☀️ 오후 (12~18시): <strong>${item.pmIcon} ${item.pmText}</strong></span>
-        <span>지형성 강우: <strong>${item.summitPrecip} mm</strong></span>
+        <span>하산 권장: <strong>${item.summitPrecip>=10?'14시 이전':'일몰 전'}</strong></span>
       </div>
-    </div>
-
-    <div style="background: linear-gradient(135deg, rgba(191,90,242,0.15) 0%, rgba(20,20,30,0.4) 100%); border: 0.5px solid rgba(191,90,242,0.3); border-radius: 12px; padding: 10px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:11px; font-weight:700; color:#E5B8FF;">雲海(운해) 파노라마 잠재력</span>
-        <span style="font-size:12px; font-weight:800; color:#FFF;">${item.csScore}%</span>
-      </div>
-      <div style="font-size:11px; color:rgba(235,235,245,0.8); margin-top:4px; line-height:1.5;">${item.csReportText}</div>
     </div>
   `;
 
@@ -2244,7 +2441,7 @@ function compute5PhysicsMountainWeather(P){
   };
 }
 
-// ★ [v7.4 RICH] 7일 전용 산악 복합 물리 공식 및 풍부한 데이터 생성
+// 7일 전용 산악 복합 물리 공식 및 심층 파라미터 계산
 function compute7DayAlpineForecast(data, ele){
   if(!data || !data.daily || !data.daily.time || data.daily.time.length < 7) return [];
   const daily = data.daily;
@@ -2260,7 +2457,6 @@ function compute7DayAlpineForecast(data, ele){
     const code = daily.weather_code[i] ?? 0;
     const wInfo = decodeWmoCode(code);
 
-    // 1. 산악 일교차 극값(최고/최저) 복사냉각 보정
     const baseMin = daily.temperature_2m_min[i] ?? 10.0;
     const baseMax = daily.temperature_2m_max[i] ?? 20.0;
     
@@ -2277,27 +2473,23 @@ function compute7DayAlpineForecast(data, ele){
     summitMin = Math.round(summitMin);
     summitMax = Math.round(summitMax);
 
-    // 2. 지형성 일별 강우량 증폭
     const basePrecip = daily.precipitation_sum[i] ?? 0.0;
     const summitPrecip = calculateOrographicPrecipitation(basePrecip, ele, 800);
     const rainProb = daily.precipitation_probability_max[i] ?? 0;
 
-    // 3. 능선 최대 돌풍 계산
     const baseMaxGust = daily.wind_gusts_10m_max ? (daily.wind_gusts_10m_max[i] * 0.2777) : 6.0;
     const summitMaxGust = parseFloat((baseMaxGust * 1.55).toFixed(1));
 
-    // 4. 오전 vs 오후 분할 기상 추정
     let amCode = code, pmCode = code;
     if(hourly && hourly.time && hourly.time.length >= (i+1)*24){
-      const amIdx = i * 24 + 9;  // 오전 09시
-      const pmIdx = i * 24 + 15; // 오후 15시
+      const amIdx = i * 24 + 9;
+      const pmIdx = i * 24 + 15;
       amCode = hourly.weather_code[amIdx] ?? code;
       pmCode = hourly.weather_code[pmIdx] ?? code;
     }
     const amInfo = decodeWmoCode(amCode);
     const pmInfo = decodeWmoCode(pmCode);
 
-    // 5. 일별 운해 잠재력 지수
     let csScore = 15;
     if(code <= 2 && rainProb <= 20) csScore += 45;
     if((daily.wind_speed_10m_max[i] || 3.0) <= 4.0) csScore += 25;
@@ -2314,17 +2506,29 @@ function compute7DayAlpineForecast(data, ele){
       csStyle = 'background: rgba(100,210,255,0.18); color: var(--accent-cyan);';
     }
 
-    // 6. 산행 안전 등급 평가 (신호등 배지)
-    let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid rgba(48,209,88,0.4);', sDesc = '쾌청하고 바람이 안정되어 산행하기 가장 좋습니다.';
+    // 산행 안전 점수 (0 ~ 100점)
+    let safeScore = 95;
     if(summitPrecip >= 10 || rainProb >= 70 || summitMaxGust >= 14){
+      safeScore = Math.max(15, Math.round(35 - (summitPrecip * 1.2)));
+    } else if(summitPrecip > 1 || rainProb >= 40 || summitMaxGust >= 10){
+      safeScore = Math.max(45, Math.round(65 - (summitMaxGust * 1.5)));
+    } else if(summitMin <= 2){
+      safeScore = 60;
+    }
+
+    let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid rgba(48,209,88,0.4);', sDesc = '맑고 바람이 안정되어 탁 트인 산행을 즐기기에 가장 좋습니다.';
+    if(safeScore < 40){
       sLabel = '🔴 위험';
       sStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid rgba(255,69,58,0.45);';
       sDesc = `호우(${summitPrecip}mm) 및 능선 돌풍(${summitMaxGust}m/s) 위험으로 산행 자제를 강력 권장합니다.`;
-    } else if(summitPrecip > 1 || rainProb >= 40 || summitMaxGust >= 10 || summitMin <= 2){
+    } else if(safeScore < 75){
       sLabel = '🟡 주의';
       sStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid rgba(255,159,10,0.4);';
       sDesc = `기상 변동성 또는 저온·미끄럼 구간이 예상되므로 방수·방한 장비를 철저히 준비하세요.`;
     }
+
+    // 예상 운저고도 추정
+    let estCloudBase = (summitPrecip >= 5 || rainProb >= 70) ? 380 : (csScore >= 70 ? 550 : 1400);
 
     const confVal = Math.max(50, Math.round(95 - i * 6.5));
 
@@ -2347,7 +2551,8 @@ function compute7DayAlpineForecast(data, ele){
       csScore: csScore,
       csLabel: csLabel,
       csStyle: csStyle,
-      csReportText: csScore >= 75 ? '골짜기 포화 역전층이 형성되어 환상적인 구름바다 조망이 완성될 확률이 극히 높습니다.' : '대기 혼합으로 부분적인 운무만 예상됩니다.',
+      estCloudBase: estCloudBase,
+      safetyScore: safeScore,
       safetyLabel: sLabel,
       safetyStyle: sStyle,
       safetyDesc: sDesc,
@@ -2365,7 +2570,6 @@ function render7DayWeeklyTrack(data){
 
   cachedWeeklyCalculatedData = compute7DayAlpineForecast(data, currentMt.ele);
 
-  // 상단 AI 요약 문구 도출
   let bestDay = cachedWeeklyCalculatedData[1];
   let worstDay = null;
   cachedWeeklyCalculatedData.forEach(d => {
@@ -2380,7 +2584,6 @@ function render7DayWeeklyTrack(data){
     aiBannerText.innerHTML = txt;
   }
 
-  // 전체 주간 기온 중 최소/최대값 산출 (게이지 바 정규화용)
   let allMin = Math.min(...cachedWeeklyCalculatedData.map(d => d.summitMin));
   let allMax = Math.max(...cachedWeeklyCalculatedData.map(d => d.summitMax));
   if(allMax === allMin) allMax = allMin + 10;
@@ -2390,7 +2593,6 @@ function render7DayWeeklyTrack(data){
     slot.className = `weekly-slot ${day.isWeekend ? 'weekend' : ''}`;
     slot.onclick = () => openDayDetailModal(idx);
 
-    // 애플 스타일 온도 막대 바 계산
     const leftPercent = Math.max(0, Math.min(80, Math.round(((day.summitMin - allMin) / (allMax - allMin)) * 100)));
     const widthPercent = Math.max(20, Math.min(100 - leftPercent, Math.round(((day.summitMax - day.summitMin) / (allMax - allMin)) * 100)));
 
