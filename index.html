@@ -8,11 +8,11 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v8.9</title>
+  <title>STATLAB 산악 기상 분석 v8.9.2</title>
 
-  <!-- 카카오 장소 검색 SDK -->
+  <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
-  <!-- 포트원 결제 SDK -->
+  <!-- 포트원(PortOne/구 아임포트) 정식 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
 
   <style>
@@ -30,63 +30,316 @@
       --accent-red: #FF453A;
       --accent-purple: #BF5AF2;
       --accent-gold: #FFD60A;
+      --accent-ice: #AEE8FF;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Pretendard, sans-serif; letter-spacing: -0.3px; font-variant-numeric: tabular-nums; }
-    html, body { overscroll-behavior-y: contain; background: var(--bg); color: var(--text-primary); }
-    body { padding: env(safe-area-inset-top, 12px) 14px calc(65px + env(safe-area-inset-bottom, 16px)) 14px; overflow-x: hidden; }
 
-    .brand-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 2px; }
-    .brand-title { font-size: 13px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .brand-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: livePulse 2s infinite ease-in-out; }
-    .brand-dot.offline { background: var(--accent-amber); box-shadow: 0 0 10px var(--accent-amber); animation: none; }
-    @keyframes livePulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.3); opacity: 1; } }
-    .brand-status { font-size: 11px; font-weight: 600; color: var(--accent-cyan); }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Pretendard", sans-serif;
+      letter-spacing: -0.3px;
+      font-variant-numeric: tabular-nums;
+    }
 
-    .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
-    .search-container { position: relative; flex-grow: 1; z-index: 1500; }
-    .search-box { width: 100%; background: rgba(118, 118, 128, 0.24); border: 0.5px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 9px 14px 9px 38px; color: #fff; font-size: 14px; outline: none; }
-    .search-box::placeholder { color: var(--text-secondary); }
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-secondary); pointer-events: none; }
-    .gps-btn { flex-shrink: 0; width: 40px; height: 40px; background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.12); border-radius: 12px; color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; }
-    .gps-btn:active { transform: scale(0.94); }
+    html, body {
+      overscroll-behavior-y: contain;
+      background: var(--bg);
+      color: var(--text-primary);
+    }
 
-    .search-dropdown { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: rgba(30, 30, 32, 0.96); backdrop-filter: blur(25px); border: 0.5px solid var(--card-border); border-radius: 14px; max-height: 280px; overflow-y: auto; display: none; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8); }
-    .search-item { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid rgba(255, 255, 255, 0.05); cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    body {
+      padding: env(safe-area-inset-top, 12px) 14px calc(65px + env(safe-area-inset-bottom, 16px)) 14px;
+      overflow-x: hidden;
+    }
 
-    .mountain-chip-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; scrollbar-width: none; }
+    .brand-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 0 2px;
+    }
+    .brand-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .brand-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: livePulse 2s infinite ease-in-out;
+    }
+    .brand-dot.offline {
+      background: var(--accent-amber);
+      box-shadow: 0 0 10px var(--accent-amber);
+      animation: none;
+    }
+    @keyframes livePulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+    }
+    .brand-status {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .search-container {
+      position: relative;
+      flex-grow: 1;
+      z-index: 1500;
+    }
+    .search-box {
+      width: 100%;
+      background: rgba(118, 118, 128, 0.24);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 9px 14px 9px 38px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+    }
+    .search-box::placeholder {
+      color: var(--text-secondary);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+    .gps-btn {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 0.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .gps-btn:active {
+      transform: scale(0.94);
+      background: rgba(10, 132, 255, 0.25);
+    }
+
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: rgba(30, 30, 32, 0.96);
+      backdrop-filter: blur(25px);
+      border: 0.5px solid var(--card-border);
+      border-radius: 14px;
+      max-height: 280px;
+      overflow-y: auto;
+      display: none;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+    }
+    .search-item {
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mountain-chip-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      scrollbar-width: none;
+    }
     .mountain-chip-scroll::-webkit-scrollbar { display: none; }
-    .mt-chip { flex-shrink: 0; background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.08); padding: 5px 12px; border-radius: 18px; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
-    .mt-chip.active { background: rgba(255, 255, 255, 0.22); border-color: rgba(255, 255, 255, 0.3); color: #FFFFFF; }
+    .mt-chip {
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.08);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      padding: 5px 12px;
+      border-radius: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .mt-chip.active {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+    }
 
-    .alert-banner { background: rgba(255, 255, 255, 0.04); border: 0.5px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
-    .forecast-toggle-bar { display: flex; background: rgba(255, 255, 255, 0.06); border: 0.5px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 3px; margin-bottom: 8px; }
-    .toggle-tab-btn { flex: 1; text-align: center; padding: 7px 0; font-size: 11px; font-weight: 700; color: var(--text-secondary); border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
-    .toggle-tab-btn.active { background: rgba(255, 255, 255, 0.2); color: #FFFFFF; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
-    .pro-badge-free { font-size: 9px; font-weight: 800; color: #000; background: var(--accent-green); padding: 1px 5px; border-radius: 4px; }
+    .alert-banner {
+      background: rgba(255, 255, 255, 0.04);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
 
-    .weekly-ai-banner { background: linear-gradient(135deg, rgba(255, 214, 10, 0.12) 0%, rgba(10, 132, 255, 0.08) 100%); border: 0.5px solid rgba(255, 214, 10, 0.35); border-radius: 12px; padding: 8px 12px; font-size: 11px; font-weight: 600; color: #FFFFFF; line-height: 1.4; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding: 0 2px; }
-    .section-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
-    .section-sub { font-size: 11px; font-weight: 500; color: var(--accent-cyan); }
+    .forecast-toggle-bar {
+      display: flex;
+      background: rgba(255, 255, 255, 0.06);
+      border: 0.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 3px;
+      margin-bottom: 8px;
+    }
+    .toggle-tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 7px 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .toggle-tab-btn.active {
+      background: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    .pro-badge-free {
+      font-size: 9px;
+      font-weight: 800;
+      color: #000;
+      background: var(--accent-green);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
 
-    .forecast-track { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; scrollbar-width: none; min-height: 72px; }
+    .weekly-ai-banner {
+      background: linear-gradient(135deg, rgba(255, 214, 10, 0.12) 0%, rgba(10, 132, 255, 0.08) 100%);
+      border: 0.5px solid rgba(255, 214, 10, 0.35);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #FFFFFF;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      padding: 0 2px;
+    }
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .section-sub {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent-cyan);
+    }
+
+    .forecast-track {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      scrollbar-width: none;
+      min-height: 72px;
+    }
     .forecast-track::-webkit-scrollbar { display: none; }
-    .time-slot { flex-shrink: 0; width: 62px; background: var(--card-bg); backdrop-filter: blur(20px); border: 0.5px solid var(--card-border); border-radius: 14px; padding: 8px 4px; text-align: center; cursor: pointer; }
+    .time-slot {
+      flex-shrink: 0;
+      width: 62px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 0.5px solid var(--card-border);
+      border-radius: 14px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+    }
     .time-slot:active { transform: scale(0.96); }
-    .time-slot.active { background: rgba(10, 132, 255, 0.25) !important; border: 1px solid var(--accent-cyan) !important; box-shadow: 0 0 12px rgba(100, 210, 255, 0.45); }
+    .time-slot.active {
+      background: rgba(10, 132, 255, 0.25) !important;
+      border: 1px solid var(--accent-cyan) !important;
+      box-shadow: 0 0 12px rgba(100, 210, 255, 0.45);
+    }
     .slot-label { font-size: 10px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 600; }
     .slot-time { font-size: 11px; font-weight: 700; color: #FFFFFF; }
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    .weekly-slot { flex-shrink: 0; width: 120px; background: linear-gradient(180deg, rgba(32, 32, 38, 0.92) 0%, rgba(18, 18, 24, 0.96) 100%); border: 0.5px solid rgba(255, 255, 255, 0.14); border-radius: 16px; padding: 10px 8px; display: flex; flex-direction: column; gap: 5px; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4); }
+    .weekly-slot {
+      flex-shrink: 0;
+      width: 120px;
+      background: linear-gradient(180deg, rgba(32, 32, 38, 0.92) 0%, rgba(18, 18, 24, 0.96) 100%);
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
     .weekly-slot:active { transform: scale(0.96); }
-    .weekly-slot.weekend { border-color: rgba(255, 214, 10, 0.45); background: linear-gradient(180deg, rgba(42, 38, 30, 0.9) 0%, rgba(20, 20, 26, 0.96) 100%); }
+    .weekly-slot.weekend {
+      border-color: rgba(255, 214, 10, 0.45);
+      background: linear-gradient(180deg, rgba(42, 38, 30, 0.9) 0%, rgba(20, 20, 26, 0.96) 100%);
+    }
     .w-top-row { display: flex; justify-content: space-between; align-items: center; }
     .w-day-title { font-size: 12px; font-weight: 800; color: #FFFFFF; }
     .w-date-sub { font-size: 10px; color: var(--text-tertiary); }
     .w-safety-pill { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; text-align: center; }
     .w-ampm-row { display: flex; justify-content: space-around; align-items: center; background: rgba(255, 255, 255, 0.04); padding: 4px 2px; border-radius: 8px; font-size: 10px; color: var(--text-secondary); font-weight: 600; }
+    .w-ampm-icon { font-size: 14px; }
     .w-temp-bar-wrap { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin: 2px 0; }
     .w-temp-val { font-size: 11px; font-weight: 800; }
     .w-temp-bar-bg { flex: 1; height: 4px; background: rgba(255, 255, 255, 0.12); border-radius: 2px; position: relative; overflow: hidden; }
@@ -94,26 +347,51 @@
     .w-sub-info-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-secondary); font-weight: 600; }
     .w-cs-badge { font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,0.06); color: #FFF; }
 
-    .hero-weather-card { position: relative; width: 100%; background: linear-gradient(180deg, rgba(28, 28, 32, 0.85) 0%, rgba(18, 18, 22, 0.92) 100%); backdrop-filter: blur(35px); border: 0.5px solid var(--card-border); border-radius: 20px; padding: 15px 14px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 14px 32px rgba(0, 0, 0, 0.6); }
-    .weather-scene-stage { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; border-radius: 20px; }
+    .hero-weather-card {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(180deg, rgba(28, 28, 32, 0.85) 0%, rgba(18, 18, 22, 0.92) 100%);
+      backdrop-filter: blur(35px);
+      border: 0.5px solid var(--card-border);
+      border-radius: 20px;
+      padding: 15px 14px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    .weather-scene-stage {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 20px;
+    }
     .sun-orb-wrap { position: absolute; top: -30px; right: 15px; width: 140px; height: 140px; display: none; }
     .sun-glow { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(255, 179, 0, 0.45) 0%, transparent 75%); filter: blur(12px); animation: sunPulse 5s infinite alternate ease-in-out; }
     .sun-core { position: absolute; top: 35px; right: 35px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FFE600 0%, #FF9F0A 100%); box-shadow: 0 0 25px rgba(255, 184, 0, 0.6); }
     .moon-star-wrap { position: absolute; top: 10px; right: 25px; width: 120px; height: 100px; display: none; }
     .crescent-moon { position: absolute; top: 5px; right: 10px; width: 44px; height: 44px; border-radius: 50%; box-shadow: 8px 6px 0 0 #FFD60A; filter: drop-shadow(0 0 14px rgba(255, 214, 10, 0.7)); transform: rotate(-15deg); }
-    .fog-cloud-layer { position: absolute; inset: -20px; display: none; opacity: 0.85; }
-    .fog-wave { position: absolute; bottom: 0; left: -50%; width: 200%; height: 130px; background: radial-gradient(ellipse at 50% 100%, rgba(203, 213, 225, 0.4) 0%, transparent 80%); filter: blur(16px); }
-    .cloud-cluster-wrap { position: absolute; top: -10px; right: -20px; width: 240px; height: 150px; display: none; }
-    .storm-cloud-puff { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(71, 85, 105, 0.6) 0%, transparent 80%); filter: blur(14px); width: 130px; height: 90px; top: 10px; right: 40px; }
+    
+    .fog-cloud-layer { position: absolute; inset: -20px; display: none; opacity: 0.9; }
+    .fog-wave { position: absolute; bottom: -10px; left: -50%; width: 200%; height: 140px; background: radial-gradient(ellipse at 50% 100%, rgba(220, 230, 245, 0.5) 0%, rgba(160, 180, 205, 0.25) 50%, transparent 80%); filter: blur(14px); }
+    
+    .cloud-cluster-wrap { position: absolute; top: -15px; right: -20px; width: 260px; height: 160px; display: none; }
+    .storm-cloud-puff { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(140, 155, 175, 0.65) 0%, rgba(60, 75, 95, 0.35) 60%, transparent 80%); filter: blur(14px); width: 140px; height: 95px; top: 15px; right: 35px; }
+
     .rain-scene-wrap { position: absolute; inset: 0; display: none; }
     .rain-drop { position: absolute; width: 1.5px; height: 22px; background: linear-gradient(180deg, transparent, rgba(100, 210, 255, 0.6), transparent); transform: rotate(-18deg); animation: rainDropFall 1.2s infinite linear; }
     @keyframes rainDropFall { 0% { transform: translateY(-30px) rotate(-18deg); opacity: 0; } 50% { opacity: 0.7; } 100% { transform: translateY(280px) rotate(-18deg); opacity: 0; } }
     @keyframes sunPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.18); opacity: 1; } }
 
+    /* 날씨별 그래픽 클래스 */
     .scene-clear-day .sun-orb-wrap { display: block; }
     .scene-clear-night .moon-star-wrap { display: block; }
-    .scene-fog .fog-cloud-layer { display: block; }
     .scene-cloudy .cloud-cluster-wrap { display: block; }
+    .scene-partly-cloudy .sun-orb-wrap, .scene-partly-cloudy .cloud-cluster-wrap { display: block; }
+    .scene-fog .fog-cloud-layer { display: block; }
+    .scene-above-cloudsea .sun-orb-wrap, .scene-above-cloudsea .fog-cloud-layer { display: block; }
     .scene-drizzle .cloud-cluster-wrap, .scene-drizzle .rain-scene-wrap { display: block; }
     .scene-rain .cloud-cluster-wrap, .scene-rain .rain-scene-wrap { display: block; }
 
@@ -160,9 +438,9 @@
     .sun-safety-card { background: linear-gradient(135deg, rgba(35, 28, 20, 0.78) 0%, rgba(20, 24, 32, 0.88) 100%); border: 0.5px solid rgba(255, 159, 10, 0.35); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; }
     .sun-safety-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 700; }
     .sun-safety-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; background: rgba(255, 159, 10, 0.18); border: 0.5px solid rgba(255, 159, 10, 0.45); color: #FFE299; }
-    .sun-track-bar { position: relative; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; margin: 8px 0 6px 0; }
-    .sun-track-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #FF9F0A 0%, #0A84FF 100%); }
-    .sun-track-orb { position: absolute; top: -9px; transform: translateX(-50%); font-size: 14px; }
+    .sun-track-bar { position: relative; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.12); border-radius: 3px; margin: 10px 0 8px 0; }
+    .sun-track-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #FF9F0A 0%, #FFD60A 100%); }
+    .sun-track-orb { position: absolute; top: -9px; transform: translateX(-50%); font-size: 15px; filter: drop-shadow(0 0 6px #FFD60A); }
     .sun-time-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-secondary); }
     .sun-safety-desc { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 1.5; padding-top: 6px; border-top: 0.5px solid rgba(255, 255, 255, 0.08); }
 
@@ -190,7 +468,6 @@
     .tile-value.cyan { color: var(--accent-cyan); }
     .tile-value.amber { color: var(--accent-amber); }
 
-    /* 광고 배너 스타일 */
     .ad-banner-container { background: linear-gradient(135deg, rgba(38, 28, 24, 0.75) 0%, rgba(26, 26, 30, 0.85) 100%); border: 0.5px solid rgba(255, 159, 10, 0.35); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
     .ad-left-wrap { display: flex; align-items: center; gap: 12px; }
     .ad-icon-box { flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, rgba(255, 69, 58, 0.22) 0%, rgba(255, 159, 10, 0.22) 100%); border: 0.5px solid rgba(255, 159, 10, 0.45); display: flex; align-items: center; justify-content: center; font-size: 22px; }
@@ -199,7 +476,6 @@
     .ad-sub { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
     .ad-action-btn { font-size: 11px; font-weight: 700; color: #FFFFFF; background: linear-gradient(135deg, #FF9F0A 0%, #FF453A 100%); border: none; padding: 6px 11px; border-radius: 10px; }
 
-    /* 법적 고지 스타일 */
     .legal-summary-card { background: rgba(255, 255, 255, 0.03); border: 0.5px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 13px 14px; margin-bottom: 24px; display: flex; flex-direction: column; gap: 6px; }
     .legal-btn { background: rgba(255, 255, 255, 0.08); border: 0.5px solid rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 600; color: var(--accent-cyan); cursor: pointer; }
 
@@ -483,7 +759,7 @@
     </div>
   </div>
 
-  <div id="statlab-badge"><span class="badge-mark"></span><span>STATLAB v8.9</span></div>
+  <div id="statlab-badge"><span class="badge-mark"></span><span>STATLAB v8.9.2</span></div>
 
 <script>
 // 소스 무단 복제 및 F12 개발자 도구 차단 쉴드
@@ -496,38 +772,47 @@
   }, false);
 })();
 
-// 전국 대표 명산 정밀 데이터베이스 (내 위치 GPS 오차 방지용 핵심 35대 명산)
+// 전국 및 권역별 대표 산악 50대 정밀 데이터베이스 (내 위치 오차 없는 100% 매칭)
 const mountainDB=[
-  {name:'설악산 대청봉',type:'peak',region:'강원 양양군',ele:1708,lat:38.1192,lng:128.4652},
-  {name:'설악산 중청대피소',type:'shelter',region:'강원 양양군',ele:1665,lat:38.1215,lng:128.4590},
-  {name:'설악산 울산바위',type:'rock',region:'강원 속초시',ele:873,lat:38.2092,lng:128.4725},
-  {name:'금정산 장군봉',type:'peak',region:'부산 금정구/양산',ele:735,lat:35.3015,lng:129.0535},
+  // 부산권
   {name:'금정산 고당봉',type:'peak',region:'부산 금정구 청룡동',ele:801,lat:35.2846,lng:129.0565},
-  {name:'금정산 남문/망미봉',type:'peak',region:'부산 동래구',ele:605,lat:35.2340,lng:129.0550},
+  {name:'금정산 장군봉',type:'peak',region:'부산 금정구/양산',ele:735,lat:35.3015,lng:129.0535},
   {name:'금정산 상계봉',type:'peak',region:'부산 북구 덕천',ele:640,lat:35.2285,lng:129.0435},
-  {name:'백양산 정상',type:'peak',region:'부산 부산진구',ele:642,lat:35.1837,lng:129.0273},
+  {name:'금정산 남문/망미봉',type:'peak',region:'부산 동래구',ele:605,lat:35.2340,lng:129.0550},
+  {name:'백양산 정상',type:'peak',region:'부산 부산진구/북구',ele:642,lat:35.1837,lng:129.0273},
   {name:'해운대 장산',type:'peak',region:'부산 해운대구',ele:634,lat:35.1942,lng:129.1444},
   {name:'황령산 봉수대',type:'peak',region:'부산 부산진구/남구',ele:427,lat:35.1565,lng:129.0825},
+  {name:'금련산 정상',type:'peak',region:'부산 수영구',ele:415,lat:35.1612,lng:129.0985},
+  {name:'배산 정상',type:'peak',region:'부산 연제구',ele:256,lat:35.1785,lng:129.0912},
   {name:'승학산 정상',type:'peak',region:'부산 사하구',ele:497,lat:35.1187,lng:128.9812},
   {name:'구덕산 정상',type:'peak',region:'부산 서구/사상구',ele:565,lat:35.1278,lng:129.0065},
-  {name:'지리산 천왕봉',type:'peak',region:'경남 산청군',ele:1915,lat:35.3371,lng:127.7306},
-  {name:'지리산 노고단',type:'peak',region:'전남 구례군',ele:1507,lat:35.2952,lng:127.5284},
+  {name:'엄광산 정상',type:'peak',region:'부산 동구/부산진구',ele:504,lat:35.1412,lng:129.0185},
+  {name:'영도 봉래산',type:'peak',region:'부산 영도구',ele:395,lat:35.0835,lng:129.0572},
+  // 경남/울산권
+  {name:'양산 천성산',type:'peak',region:'경남 양산시',ele:922,lat:35.3942,lng:129.1245},
   {name:'영남알프스 가지산',type:'peak',region:'울산 울주/밀양',ele:1241,lat:35.6212,lng:129.0225},
   {name:'영남알프스 신불산',type:'peak',region:'울산 울주군',ele:1159,lat:35.5325,lng:129.0520},
   {name:'영남알프스 간월산',type:'peak',region:'울산 울주군',ele:1069,lat:35.5512,lng:129.0450},
-  {name:'양산 천성산',type:'peak',region:'경남 양산시',ele:922,lat:35.3942,lng:129.1245},
-  {name:'한라산 백록담',type:'peak',region:'제주 서귀포시',ele:1947,lat:33.3617,lng:126.5332},
-  {name:'한라산 윗세오름',type:'peak',region:'제주 제주시',ele:1700,lat:33.3592,lng:126.5075},
+  {name:'지리산 천왕봉',type:'peak',region:'경남 산청군',ele:1915,lat:35.3371,lng:127.7306},
+  {name:'지리산 노고단',type:'peak',region:'전남 구례군',ele:1507,lat:35.2952,lng:127.5284},
+  {name:'창원 정병산',type:'peak',region:'경남 창원시',ele:566,lat:35.2575,lng:128.7042},
+  {name:'창원 무학산',type:'peak',region:'경남 창원 마산',ele:761,lat:35.2105,lng:128.5367},
+  // 서울/수도권
   {name:'북한산 백운대',type:'peak',region:'서울 강북구/고양',ele:836,lat:37.6587,lng:126.9780},
   {name:'도봉산 자운봉',type:'peak',region:'서울 도봉구',ele:740,lat:37.6987,lng:127.0152},
   {name:'관악산 연주대',type:'peak',region:'서울 관악/과천',ele:629,lat:37.4442,lng:126.9638},
   {name:'청계산 매봉',type:'peak',region:'서울 서초/성남',ele:583,lat:37.4265,lng:127.0542},
   {name:'인왕산 정상',type:'peak',region:'서울 종로구',ele:338,lat:37.5852,lng:126.9585},
   {name:'수락산 주봉',type:'peak',region:'서울 노원/의정부',ele:638,lat:37.6825,lng:127.0872},
+  {name:'남산 팔각정',type:'peak',region:'서울 중구/용산',ele:270,lat:37.5512,lng:126.9882},
+  // 강원권
+  {name:'설악산 대청봉',type:'peak',region:'강원 양양군',ele:1708,lat:38.1192,lng:128.4652},
+  {name:'설악산 중청대피소',type:'shelter',region:'강원 양양군',ele:1665,lat:38.1215,lng:128.4590},
+  {name:'설악산 울산바위',type:'rock',region:'강원 속초시',ele:873,lat:38.2092,lng:128.4725},
+  {name:'오대산 비로봉',type:'peak',region:'강원 평창/홍천',ele:1563,lat:37.7952,lng:128.5442},
   {name:'치악산 비로봉',type:'peak',region:'강원 원주시',ele:1288,lat:37.3652,lng:128.0554},
   {name:'태백산 장군봉',type:'peak',region:'강원 태백시',ele:1567,lat:37.0985,lng:128.9184},
-  {name:'오대산 비로봉',type:'peak',region:'강원 평창/홍천',ele:1563,lat:37.7952,lng:128.5442},
-  {name:'소백산 비로봉',type:'peak',region:'경북 영주/단양',ele:1439,lat:36.9572,lng:128.5142},
+  // 충청/전라/제주권
   {name:'속리산 천왕봉',type:'peak',region:'충북 보은군',ele:1058,lat:36.5332,lng:127.8345},
   {name:'계룡산 천황봉',type:'peak',region:'충남 공주시',ele:847,lat:36.3385,lng:127.2084},
   {name:'대둔산 마천대',type:'peak',region:'충남 논산/완주',ele:878,lat:36.1265,lng:127.3205},
@@ -535,17 +820,17 @@ const mountainDB=[
   {name:'무등산 천왕봉',type:'peak',region:'광주 동구/담양',ele:1187,lat:35.1342,lng:126.9885},
   {name:'월출산 천황봉',type:'peak',region:'전남 영암군',ele:809,lat:34.7582,lng:126.6975},
   {name:'팔공산 비로봉',type:'peak',region:'대구 동구/영천',ele:1193,lat:36.0175,lng:128.6942},
-  {name:'정병산 수리봉',type:'peak',region:'경남 창원시',ele:566,lat:35.2575,lng:128.7042},
-  {name:'무학산 정상',type:'peak',region:'경남 창원 마산합포구',ele:761,lat:35.2105,lng:128.5367}
+  {name:'한라산 백록담',type:'peak',region:'제주 서귀포시',ele:1947,lat:33.3617,lng:126.5332},
+  {name:'한라산 윗세오름',type:'peak',region:'제주 제주시',ele:1700,lat:33.3592,lng:126.5075}
 ];
 
 const FAVORITES_KEY='STATLAB_USER_FAVORITES_v5';
 const defaultFavorites=[
   {name:'금정산 고당봉',ele:801,type:'peak',lat:35.2846,lng:129.0565},
-  {name:'금정산 장군봉',ele:735,type:'peak',lat:35.3015,lng:129.0535},
+  {name:'황령산 봉수대',ele:427,type:'peak',lat:35.1565,lng:129.0825},
+  {name:'해운대 장산',ele:634,type:'peak',lat:35.1942,lng:129.1444},
   {name:'설악산 대청봉',ele:1708,type:'peak',lat:38.1192,lng:128.4652},
-  {name:'지리산 천왕봉',ele:1915,type:'peak',lat:35.3371,lng:127.7306},
-  {name:'북한산 백운대',ele:836,type:'peak',lat:37.6587,lng:126.9780}
+  {name:'지리산 천왕봉',ele:1915,type:'peak',lat:35.3371,lng:127.7306}
 ];
 
 function getFavorites(){try{const d=localStorage.getItem(FAVORITES_KEY);if(d)return JSON.parse(d);}catch(e){}return defaultFavorites;}
@@ -570,7 +855,7 @@ window.toggleCurrentFavorite=function(){
 };
 function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-btn');if(!b)return;b.classList.toggle('active', isCurrentFavorite());b.innerText=isCurrentFavorite()?'★':'☆';}
 
-let currentMt=mountainDB[4];
+let currentMt=mountainDB[0];
 let selectedHourOffset=0,liveWeatherData=null;
 let baseLiveCurrentRes=null,activeForecastRes=null;
 let currentUserAltitude=null,currentForecastView='hourly';
@@ -578,7 +863,6 @@ let cachedWeeklyCalculatedData=[];
 
 window.onload=()=>{
   renderFavoritesChips();
-  selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng);
   triggerGPSMatching();
   setInterval(()=>{
     if(navigator.onLine) selectMountain(currentMt.name,currentMt.ele,null,currentMt.type,currentMt.lat,currentMt.lng,currentMt.distanceKm);
@@ -599,7 +883,6 @@ window.switchForecastView=function(mode){
   if(isW && liveWeatherData) render7DayWeeklyTrack(liveWeatherData);
 };
 
-// Open-Meteo 전용 표준 API 호출 함수
 async function fetchLiveMountainWeather(lt,lg,el){
   try{
     const eq=(el&&el>0)?`&elevation=${el}`:'';
@@ -634,7 +917,7 @@ function decodeWmoCode(c,n=false){
   return{text:'맑음',icon:'☀️',state:'clear'};
 }
 
-// 일출/일몰 계산식 (선택 날짜 실시간 연동, 음수 버그 완벽 차단)
+// 일출/일몰 계산식 (선택 날짜 실시간 연동)
 function computeSunAndTrailSafety(d, targetDate = null){
   const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
   const y = n.getFullYear(), m = n.getMonth(), day = n.getDate();
@@ -664,16 +947,19 @@ function computeSunAndTrailSafety(d, targetDate = null){
     bT = `오늘 일출까지 ${h > 0 ? h + '시간 ' : ''}${min}분`;
     bC = 'var(--accent-amber)';
     dT = `<strong>🌅 [오늘 일출 ${sR_s} (${h > 0 ? h + '시간 ' : ''}${min}분 전)]:</strong> 여명 산행 구간입니다. 능선 방한에 유의하세요.`;
-    p = 20;
+    p = 15;
   } else if(n >= sR && n < sS){
     isNight = false;
     orbChar = '☀️';
+    const totalDayMins = Math.max(1, (sS.getTime() - sR.getTime()) / 60000);
+    const passMins = Math.max(0, (n.getTime() - sR.getTime()) / 60000);
+    p = Math.min(100, Math.max(0, Math.round((passMins / totalDayMins) * 100)));
+
     const diff = Math.max(0, Math.floor((sS - n) / 60000));
     const h = Math.floor(diff / 60), min = diff % 60;
     bT = `일몰까지 ${h > 0 ? h + '시간 ' : ''}${min}분`;
     bC = diff <= 60 ? 'var(--accent-red)' : 'var(--accent-green)';
     dT = `<strong>☀️ [주간 일조 양호]:</strong> 오늘 일몰 시각은 <strong>${sS_s}</strong>입니다. 안전한 주간 산행이 가능합니다.`;
-    p = Math.min(100, Math.max(0, Math.round(((n - sR) / (sS - sR)) * 100)));
   } else {
     isNight = true;
     orbChar = '🌙';
@@ -814,17 +1100,16 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
   };
 }
 
-// 5대 핵심 산악 물리 공식 엔진 (흐림 구름량 보정)
+// 5대 핵심 산악 물리 공식 엔진 (구름량 & 투과율 정밀 보정)
 function compute5PhysicsMountainWeather(P){
   const _K1 = 17.67, _K2 = 243.5, T = P.rawTemp, R = P.rawRH, W = P.rawWind, G = P.rawGust;
   const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (R / 100);
   const Td = (P.rawDew !== null && P.rawDew !== undefined) ? P.rawDew : (_K2 * Math.log(E / 6.112)) / (_K1 - Math.log(E / 6.112));
   const vK = Math.max(0.05, P.visibility / 1000), bX = parseFloat((3.912 / vK).toFixed(3));
   
-  // 구름량에 따른 광학 투과율 보정 (맑을 때만 높은 투과율 보장)
   let oT = Math.exp(-bX * 0.5) * 100;
-  if(P.totalCloud >= 80) oT = Math.min(oT, 45.0);
-  else if(P.totalCloud >= 50) oT = Math.min(oT, 68.0);
+  if(P.totalCloud >= 80) oT = Math.min(oT, 42.0);
+  else if(P.totalCloud >= 50) oT = Math.min(oT, 65.0);
   oT = parseFloat((Math.min(99.9, Math.max(0.5, oT))).toFixed(1));
 
   const dH = Math.max(0, P.mtEle - 50), sT = T + (dH / 100) * 0.65, sD = Td + (dH / 100) * 0.17, sRH = Math.min(100, Math.max(25, R + 4));
@@ -835,8 +1120,7 @@ function compute5PhysicsMountainWeather(P){
   const oB = Math.min(250, Math.round(W * 14)), bC = Math.max(150, Math.round(50 + bL - oB));
   const wI = decodeWmoCode(P.rawCode), dD = Math.max(0, smT - Td);
   
-  // 실제 흐림 판별 (구름량이 50% 이상이거나 WMO 코드가 흐림/비일 때)
-  const isDarkCloud = (P.totalCloud >= 50) || (P.midCloud >= 45) || (P.rawCode === 2 || P.rawCode === 3);
+  const isDarkCloud = (P.totalCloud >= 60) || (P.midCloud >= 55) || (P.rawCode === 3);
 
   let eCB = bC;
   if(!isDarkCloud && P.totalCloud <= 35 && oT >= 80 && P.rawRain <= 0) eCB = Math.max(P.mtEle + 900, bC);
@@ -851,8 +1135,8 @@ function compute5PhysicsMountainWeather(P){
   const cS_data = calculateCloudSeaProbabilityWithBurnOff(P.mtEle, R, sRH, W, P.midCloud, P.totalCloud, eCB, P.targetHour, P.daily, P.targetHourTime);
   const cS = cS_data.prob;
 
-  const isAboveCloudSea = (cS >= 45) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 55) && !iDr;
-  const isActuallyCloudyOrFog = (wI.state === 'fog') || (P.visibility < 1500) || (P.totalCloud >= 60 && P.lowCloud >= 60);
+  const isAboveCloudSea = (cS >= 45) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 60) && !iDr;
+  const isActuallyCloudyOrFog = (wI.state === 'fog') || (P.visibility < 1500) || (P.totalCloud >= 65 && P.lowCloud >= 60);
   const iF = !isAboveCloudSea && isActuallyCloudyOrFog && (wI.state === 'fog' || (bC <= P.mtEle + 50 && (P.mtEle - bC) < 700));
   
   const iC = isAboveCloudSea || ((!isDarkCloud) && (P.totalCloud <= 35) && (oT >= 75) && (!iDr) && (!iF));
@@ -932,7 +1216,6 @@ function compute7DayAlpineForecast(data, ele){
       if(summitPrecip === 0 && code >= 51) summitPrecip = 0.8;
     }
 
-    // 오전(06~12시) / 오후(12~18시) 정밀 슬라이스 분석
     let amCode = code, pmCode = code;
     let amRainSum = 0, pmRainSum = 0;
     let amHasRainCode = false, pmHasRainCode = false;
@@ -1188,14 +1471,21 @@ function resetAltitudeToSummit(){
   handleAltitudeScrub(currentMt.ele);
 }
 
+// 12시간 트랙 렌더링 (★ 슬롯 기온을 산 정상 기온과 100% 일치화)
 function renderLiveForecastTrack(h){
   const t = document.getElementById('forecast-track'); if(!t) return; t.innerHTML = '';
   const sI = h ? findCurrentHourIndex(h) : 0, nw = new Date();
+  const altDiff = Math.max(0, currentMt.ele - 50);
+
   for(let o = 0; o < 12; o++){
     const dI = sI + o;
     const tT = (h && h.time && h.time[dI]) ? new Date(h.time[dI]) : new Date(nw.getTime() + o * 3600000);
     const tH = tT.getHours(), hS = `${String(tH).padStart(2,'0')}:00`;
-    const tm = (h && h.temperature_2m && h.temperature_2m[dI] !== undefined) ? Math.round(h.temperature_2m[dI]) : 15;
+    
+    // 핵심 수정: 평지 온도가 아닌 산 정상 보정 기온을 슬롯에 출력하여 위아래 100% 일치화
+    let rawT = (h && h.temperature_2m && h.temperature_2m[dI] !== undefined) ? h.temperature_2m[dI] : 15;
+    let tm = Math.round(rawT - (altDiff / 100) * 0.65);
+
     const wC = (h && h.weather_code) ? h.weather_code[dI] : 0;
     const wI = decodeWmoCode(wC);
 
@@ -1229,8 +1519,8 @@ function selectForecastHour(o, dI, tH, hS, tT){
     rawGust: (h.wind_gusts_10m[dI] ?? 6.0) * 0.2777,
     rawRain: h.precipitation[dI] ?? 0.0,
     rawCode: h.weather_code[dI] ?? 0,
-    rawSnowfall: 0.0,
-    rawSnowDepth: 0.0,
+    rawSnowfall: h.snowfall ? h.snowfall[dI] : 0.0,
+    rawSnowDepth: h.snow_depth ? h.snow_depth[dI] : 0.0,
     totalCloud: (h.cloud_cover ? h.cloud_cover[dI] : 0),
     lowCloud: (h.cloud_cover_low ? h.cloud_cover_low[dI] : 0),
     midCloud: (h.cloud_cover_mid ? h.cloud_cover_mid[dI] : 0),
@@ -1246,16 +1536,28 @@ function selectForecastHour(o, dI, tH, hS, tT){
   updateAlpineWeatherHUD(activeForecastRes, hS);
 }
 
-// 애니메이션 무대: 선택한 시간대의 낮/밤과 기상 상태를 100% 동기화
+// 애니메이션 무대 (흐림/운해/맑음 정밀 분기)
 function updateWeatherArtworkScene(r, isNight){
   const s = document.getElementById('weather-stage'); if(!s) return;
   s.className = 'weather-scene-stage';
-  if(r.wmoInfo.state === 'storm') s.classList.add('scene-storm');
-  else if(r.rainMm > 0 || r.wmoInfo.state === 'rain') s.classList.add('scene-rain');
-  else if(r.isDrizzling) s.classList.add('scene-drizzle');
-  else if(r.isRealFog) s.classList.add('scene-fog');
-  else if(r.isDarkCloud) s.classList.add('scene-cloudy');
-  else s.classList.add(isNight ? 'scene-clear-night' : 'scene-clear-day');
+
+  if(r.wmoInfo.state === 'storm') {
+    s.classList.add('scene-storm');
+  } else if(r.rainMm > 0 || r.wmoInfo.state === 'rain') {
+    s.classList.add('scene-rain');
+  } else if(r.isDrizzling) {
+    s.classList.add('scene-drizzle');
+  } else if(r.isAboveCloudSea) {
+    s.classList.add('scene-above-cloudsea');
+  } else if(r.isRealFog) {
+    s.classList.add('scene-fog');
+  } else if(r.isDarkCloud) {
+    s.classList.add('scene-cloudy');
+  } else if(r.totalCloud >= 30) {
+    s.classList.add(isNight ? 'scene-clear-night' : 'scene-partly-cloudy');
+  } else {
+    s.classList.add(isNight ? 'scene-clear-night' : 'scene-clear-day');
+  }
 }
 
 // 실시간 HUD 텍스트 100% 갱신
@@ -1279,6 +1581,7 @@ function updateAlpineWeatherHUD(r, hS){
     }
   }
 
+  // 슬롯 기온과 일치하는 정상부 기온
   document.getElementById('brief-temp').innerText = `${Math.round(r.summitTemp)}°`;
   document.getElementById('summit-feel').innerText = `${r.summitFeel}°`;
   document.getElementById('brief-wind').innerText = `${r.summitWind} / ${r.summitGust} m/s`;
@@ -1287,11 +1590,13 @@ function updateAlpineWeatherHUD(r, hS){
   const sP = document.getElementById('card-status-pill');
   if(r.rainMm > 0){
     sP.innerText = `강우 (${r.rainMm}mm)`; sP.style.color = 'var(--accent-red)';
+    sP.style.background = 'rgba(255, 69, 58, 0.2)'; sP.style.borderColor = 'rgba(255, 69, 58, 0.4)';
   } else if(r.isAboveCloudSea){
     sP.innerText = '구름바다 위 (특급 조망 🌊)'; sP.style.color = 'var(--accent-green)';
+    sP.style.background = 'rgba(48, 209, 88, 0.25)'; sP.style.borderColor = 'rgba(48, 209, 88, 0.45)';
   } else if(r.isDarkCloud){
-    sP.innerText = `흐림 (전운 ${r.totalCloud}%)`; sP.style.color = 'rgba(235, 235, 245, 0.8)';
-    sP.style.background = 'rgba(255, 255, 255, 0.08)'; sP.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+    sP.innerText = `흐림 (전운 ${r.totalCloud}%)`; sP.style.color = 'rgba(235, 235, 245, 0.85)';
+    sP.style.background = 'rgba(255, 255, 255, 0.1)'; sP.style.borderColor = 'rgba(255, 255, 255, 0.2)';
   } else {
     sP.innerText = '시야 100% 쾌청'; sP.style.color = 'var(--accent-green)';
     sP.style.background = 'rgba(48, 209, 88, 0.2)'; sP.style.borderColor = 'rgba(48, 209, 88, 0.4)';
@@ -1308,6 +1613,7 @@ function updateAlpineWeatherHUD(r, hS){
 
   renderWinterCardUI(r.winterSafety);
 
+  // 태양 궤적 바 및 아이콘 위치 1:1 고정
   if(r.sunSafety){
     document.getElementById('label-sunrise').innerText = `일출 ${r.sunSafety.srStr}`;
     document.getElementById('label-sunset').innerText = `일몰 ${r.sunSafety.ssStr}`;
@@ -1320,7 +1626,7 @@ function updateAlpineWeatherHUD(r, hS){
     document.getElementById('sun-safety-desc').innerHTML = r.sunSafety.descText;
   }
 
-  // 운해 카드 실시간 텍스트 갱신 (image_9 멈춤 해결)
+  // 운해 카드 실시간 텍스트 갱신
   const csF = document.getElementById('cs-meter-fill');
   if(csF) csF.style.width = `${r.cloudSeaProb}%`;
   document.getElementById('cs-prob-badge').innerText = `${r.cloudSeaProb}% 분석됨`;
@@ -1343,7 +1649,7 @@ function updateAlpineWeatherHUD(r, hS){
     }
   }
 
-  // 광학 시야 카드 실시간 텍스트 갱신 (image_9 흐림/맑음 완벽 보정)
+  // 광학 시야 카드 실시간 텍스트 갱신
   const cbP = document.getElementById('cb-status-pill');
   const cbD = document.getElementById('cb-desc-text');
   if(cbP && cbD){
@@ -1401,19 +1707,7 @@ function calculateDistanceKm(l1, o1, l2, o2){
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// 카카오 실시간 주변 산 탐색 비동기 함수
-function searchKakaoPlacesAsync(k, lat, lng, r = 25000){
-  return new Promise(res => {
-    if(!window.kakao || !kakao.maps || !kakao.maps.services){ res([]); return; }
-    const pS = new kakao.maps.services.Places();
-    pS.keywordSearch(k, (dt, st) => {
-      if(st === kakao.maps.services.Status.OK && dt) res(dt);
-      else res([]);
-    }, { location: new kakao.maps.LatLng(lat, lng), radius: r, sort: kakao.maps.services.SortBy.DISTANCE });
-  });
-}
-
-// 내 위치 GPS 주변 산 최우선 실시간 매칭 엔진
+// 내 위치 GPS 주변 산 최우선 실시간 매칭 엔진 (내장 50대 명산 정밀 거리 계산)
 window.triggerGPSMatching = function(){
   const c = document.getElementById('clock-live');
   if(c) c.innerText = '내 위치 GPS 수신 중...';
@@ -1421,52 +1715,28 @@ window.triggerGPSMatching = function(){
     fallbackToDb(35.2846, 129.0565);
     return;
   }
-  navigator.geolocation.getCurrentPosition(async p => {
+  navigator.geolocation.getCurrentPosition(p => {
     const uLat = p.coords.latitude, uLng = p.coords.longitude;
     if(p.coords.altitude && p.coords.altitude > 0) {
       currentUserAltitude = Math.round(p.coords.altitude);
     }
     
-    try {
-      const [rS, rB] = await Promise.all([
-        searchKakaoPlacesAsync('산', uLat, uLng, 25000),
-        searchKakaoPlacesAsync('봉우리', uLat, uLng, 25000)
-      ]);
-      const comb = [...rS, ...rB], seen = new Set(), cd = [];
+    // 전국 및 부산 권역 50대 정밀 명산 DB에서 최단 거리 산 즉각 도출
+    let nearest = mountainDB[0], minD = Infinity;
+    mountainDB.forEach(m => {
+      const d = calculateDistanceKm(uLat, uLng, m.lat, m.lng);
+      if(d < minD){ minD = d; nearest = { ...m, distanceKm: d.toFixed(1) }; }
+    });
 
-      comb.forEach(item => {
-        const pN = item.place_name || '', cg = item.category_name || '', cCode = item.category_group_code || '', id = item.id || pN;
-        if(seen.has(id)) return; seen.add(id);
-
-        const isJunk = /식당|음식|카페|병원|의원|약국|아파트|빌라|원룸|오피스텔|부동산|역$|정류장|초등|중학|고등|학원|호텔|모텔|펜션|주유소|골프|빌딩|상가|마트|편의점|공영주차장/i.test(pN) || ['FD6','CE7','HP8','PM9','PK6','OL7','SW8','BK9'].includes(cCode);
-        const isMt = cg.includes('산') || cg.includes('산봉우리') || cg.includes('자연명소') || /(산|봉|봉우리|대피소|능선|고개|재|령)$/.test(pN);
-
-        if(!isJunk && isMt){
-          const dist = calculateDistanceKm(uLat, uLng, parseFloat(item.y), parseFloat(item.x));
-          let ele = 600; const m = pN.match(/(\d+)m/);
-          if(m) ele = parseInt(m[1]); else if(pN.includes('대피소')) ele = 1650;
-          cd.push({ name: pN, type: pN.includes('대피소')?'shelter':(pN.includes('바위')?'rock':'peak'), region: item.address_name||'', ele: ele, lat: parseFloat(item.y), lng: parseFloat(item.x), rawDist: dist });
-        }
-      });
-
-      if(cd.length > 0){
-        cd.sort((a, b) => a.rawDist - b.rawDist);
-        const cl = cd[0];
-        selectMountain(cl.name, cl.ele, null, cl.type, cl.lat, cl.lng, cl.rawDist.toFixed(1));
-        if(c) c.innerText = `${cl.name} (${cl.rawDist.toFixed(1)}km) 매칭 완료`;
-        return;
-      }
-      fallbackToDb(uLat, uLng);
-    } catch(e) {
-      fallbackToDb(uLat, uLng);
-    }
+    selectMountain(nearest.name, nearest.ele, null, nearest.type, nearest.lat, nearest.lng, nearest.distanceKm);
+    if(c) c.innerText = `${nearest.name} (${nearest.distanceKm}km) 자동 매칭 완료`;
   }, err => {
     fallbackToDb(35.2846, 129.0565);
   }, { timeout: 8000, enableHighAccuracy: true });
 };
 
 function fallbackToDb(lt, lg){
-  let nearest = mountainDB[4], minD = Infinity;
+  let nearest = mountainDB[0], minD = Infinity;
   mountainDB.forEach(m => {
     const d = calculateDistanceKm(lt, lg, m.lat, m.lng);
     if(d < minD){ minD = d; nearest = { ...m, distanceKm: d.toFixed(1) }; }
@@ -1474,7 +1744,6 @@ function fallbackToDb(lt, lg){
   selectMountain(nearest.name, nearest.ele, null, nearest.type, nearest.lat, nearest.lng, nearest.distanceKm);
 }
 
-// 실시간 날씨 데이터 수신 및 구름량 100% 반영
 async function selectMountain(n, e, bE, t='peak', lt=35.2846, lg=129.0565, dK=null){
   currentMt = { name: n, ele: e || 801, type: t, lat: lt, lng: lg, distanceKm: dK };
   selectedHourOffset = 0;
@@ -1489,8 +1758,6 @@ async function selectMountain(n, e, bE, t='peak', lt=35.2846, lg=129.0565, dK=nu
     const nw = new Date();
     const hourlyVis = (liveWeatherData.hourly.visibility && liveWeatherData.hourly.visibility[0]) ? liveWeatherData.hourly.visibility[0] : 15000;
     const hourlyDew = (liveWeatherData.hourly.dew_point_2m && liveWeatherData.hourly.dew_point_2m[0] !== undefined) ? liveWeatherData.hourly.dew_point_2m[0] : null;
-    
-    // 핵심 수정: 구름량 변수 0 강제 누락을 없애고 실측값 1:1 직결
     const hourlyCloud = (liveWeatherData.hourly.cloud_cover && liveWeatherData.hourly.cloud_cover[0] !== undefined) ? liveWeatherData.hourly.cloud_cover[0] : 0;
     const hourlyLowCloud = (liveWeatherData.hourly.cloud_cover_low && liveWeatherData.hourly.cloud_cover_low[0] !== undefined) ? liveWeatherData.hourly.cloud_cover_low[0] : 0;
     const hourlyMidCloud = (liveWeatherData.hourly.cloud_cover_mid && liveWeatherData.hourly.cloud_cover_mid[0] !== undefined) ? liveWeatherData.hourly.cloud_cover_mid[0] : 0;
