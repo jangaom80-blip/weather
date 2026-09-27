@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v9.3 Bulletproof Master</title>
+  <title>STATLAB 산악 기상 분석 v9.4 Full-Legal Master</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -828,9 +828,10 @@
       margin-left: 8px;
     }
 
+    /* 법적 고지 요약 카드 */
     .legal-summary-card {
       background: rgba(255, 255, 255, 0.03);
-      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border: 0.5px solid rgba(255, 255, 255, 0.09);
       border-radius: 16px;
       padding: 13px 14px;
       margin-bottom: 24px;
@@ -841,19 +842,20 @@
     .legal-top-line { display: flex; justify-content: space-between; align-items: center; }
     .legal-title { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; }
     .legal-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
+      background: rgba(10, 132, 255, 0.15);
+      border: 0.5px solid rgba(10, 132, 255, 0.35);
       border-radius: 8px;
-      padding: 4px 8px;
+      padding: 4px 10px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--accent-cyan);
       cursor: pointer;
       transition: all 0.2s ease;
     }
-    .legal-btn:active { transform: scale(0.96); background: rgba(100, 210, 255, 0.2); }
+    .legal-btn:active { transform: scale(0.96); background: rgba(100, 210, 255, 0.25); }
     .legal-brief-text { font-size: 10px; color: var(--text-tertiary); line-height: 1.6; }
 
+    /* 모달 기본 구조 */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -889,65 +891,87 @@
     .sheet-close-btn { background: rgba(255, 255, 255, 0.1); border: none; width: 28px; height: 28px; border-radius: 50%; color: #FFFFFF; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .sheet-content { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
 
-    .day-hero-stage {
-      position: relative;
-      border-radius: 20px;
-      padding: 16px 14px;
-      margin-bottom: 14px;
-      overflow: hidden;
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    /* 법적 고지 전문 전용 타이포그래피 */
+    .sheet-clause {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+    }
+    .sheet-clause:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .clause-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .clause-badge {
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: rgba(10, 132, 255, 0.2);
+      color: var(--accent-cyan);
+      border: 0.5px solid rgba(10, 132, 255, 0.4);
+    }
+    .clause-text {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 6px;
+    }
+    .clause-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 6px 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 5px;
     }
-    .day-hero-top { display: flex; justify-content: space-between; align-items: center; }
-    .day-hero-main-txt { display: flex; align-items: center; gap: 8px; }
-    .day-hero-icon { font-size: 38px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
-    .day-hero-state-title { font-size: 18px; font-weight: 800; color: #FFF; line-height: 1.2; }
-    .day-hero-temp-sub { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-top: 2px; }
-
-    .day-hero-gauges {
-      display: flex;
-      gap: 10px;
-      justify-content: space-around;
-      background: rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(14px);
-      border: 0.5px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 10px 8px;
-    }
-    .gauge-item { display: flex; align-items: center; gap: 8px; }
-    .radial-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      font-size: 12px;
-      font-weight: 800;
-      color: #FFF;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
-    .gauge-label-col { display: flex; flex-direction: column; gap: 2px; }
-    .gauge-title { font-size: 11px; font-weight: 700; color: #FFF; }
-    .gauge-desc { font-size: 9px; color: var(--text-secondary); font-weight: 500; }
-
-    .day-cross-section-box {
-      background: rgba(0,0,0,0.35);
-      border: 0.5px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .clause-list li {
       font-size: 11px;
-      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      position: relative;
+      padding-left: 14px;
     }
-    .cross-section-left { display: flex; align-items: center; gap: 6px; color: #FFF; }
-    .cross-section-tag { font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 6px; }
+    .clause-list li::before {
+      content: "•";
+      position: absolute;
+      left: 2px;
+      color: var(--accent-cyan);
+    }
+    .emergency-box {
+      background: rgba(255, 69, 58, 0.12);
+      border: 0.5px solid rgba(255, 69, 58, 0.35);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #FFFFFF;
+      line-height: 1.5;
+    }
+    .emergency-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .emergency-item {
+      background: rgba(0, 0, 0, 0.45);
+      padding: 6px 8px;
+      border-radius: 8px;
+      font-size: 10.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
     #statlab-badge {
       position: fixed;
@@ -1252,16 +1276,18 @@
     <div class="ad-action-btn">플레이스</div>
   </div>
 
+  <!-- 법적 면책 공고 요약 카드 -->
   <div class="legal-summary-card">
     <div class="legal-top-line">
       <span class="legal-title">STATLAB Legal & Disclaimer</span>
       <button class="legal-btn" onclick="openLegalModal()">약관 및 면책 전문 보기</button>
     </div>
     <div class="legal-brief-text">
-      본 시스템은 수치 시뮬레이션 모델 및 기상청 관측망 기반 산행 참고용 서비스입니다.
+      본 시스템은 기상청(KMA) 지상관측망 실측과 유럽·미국·독일 수치 시뮬레이션 모델을 결합한 산악 보조 지표입니다. 기상청 공식 기상특보를 대체하지 않으며, 산행 안전에 대한 최종 판단 책임은 본인에게 있습니다.
     </div>
   </div>
 
+  <!-- 서비스 이용약관 및 법적 면책 공고 전문 모달 바텀시트 -->
   <div id="legal-modal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -1270,10 +1296,93 @@
         <button class="sheet-close-btn" onclick="closeLegalModal()">✕</button>
       </div>
       <div class="sheet-content">
+        
         <div class="sheet-clause">
-          <div class="clause-title">1. 기상 데이터 성격 및 시뮬레이션 한계</div>
-          본 서비스는 실측 관측값과 다중 앙상블 수치 시뮬레이션을 결합한 추정치이므로 돌발 악천후 시 즉시 하산하세요.
+          <div class="clause-title">
+            <span class="clause-badge">제1조</span>
+            <span>기상 데이터의 성격 및 수치 모델의 한계</span>
+          </div>
+          <div class="clause-text">
+            본 서비스(STATLAB)에서 제공하는 고도별 기온, 체감온도, 능선 풍속, 지형성 강수량, 운저고도 및 운해(雲海) 파노라마 지수는 기상청(KMA) 지상 관측소(AWS) 실측치와 유럽중기예보센터(ECMWF), 미국 국립해양대기청(NOAA GFS), 독일 기상청(ICON)의 다중 수치예보 모델 및 자체 대기 열역학 알고리즘을 융합한 <strong>"산악 수치 시뮬레이션 추정치"</strong>입니다.
+          </div>
+          <ul class="clause-list">
+            <li>본 정보는 대한민국 기상청에서 공식 발표하는 기상특보(호우·태풍·대설·강풍·한파 경보 등) 및 재난안전 통보를 법적으로 대체할 수 없습니다.</li>
+            <li>대기 경계층 내 카오스적 특성 및 지형적 난류로 인해 실제 현장 기상과 국지적 차이가 발생할 수 있습니다.</li>
+          </ul>
         </div>
+
+        <div class="sheet-clause">
+          <div class="clause-title">
+            <span class="clause-badge">제2조</span>
+            <span>산악 돌발 기상 및 안전 책임의 한계</span>
+          </div>
+          <div class="clause-text">
+            산악 지형은 급격한 기류 변화, 협곡 돌풍, 일사량에 따른 급격한 기온 강하, 국지성 낙뢰 및 농무(濃霧)가 불시에 발생할 수 있는 위험 환경입니다.
+          </div>
+          <ul class="clause-list">
+            <li>본 서비스의 예보 및 지표를 신뢰하여 발생한 산행 결정, 코스 선정, 일정 진행에 따른 일체의 조난, 안전사고, 신체적 상해 및 재산상 손해에 대해 서비스 제공자는 법적 책임을 지지 않습니다.</li>
+            <li>산행의 최종 판단과 위험 부담에 대한 모든 책임은 이용자 본인에게 있습니다.</li>
+          </ul>
+        </div>
+
+        <div class="sheet-clause">
+          <div class="clause-title">
+            <span class="clause-badge">제3조</span>
+            <span>등산객 필수 안전 수칙 및 즉시 하산 의무</span>
+          </div>
+          <div class="clause-text">
+            등산객은 산행 전 반드시 다음 안전 지침을 준수해야 하며, 위험 징후 포착 시 즉시 산행을 중단해야 합니다.
+          </div>
+          <ul class="clause-list">
+            <li><strong>즉시 하산 의무:</strong> 앱 내 '강우 경보', '순간돌풍 주의' 활성화 또는 현장에서 비구름 관통, 천둥·번개, 시야 10m 이내 안개 확인 시 가장 가까운 대피소나 능선 아래로 즉각 하산하십시오.</li>
+            <li><strong>일몰 전 하산 완료:</strong> 본 앱의 '안전 하산 인디케이터'를 참고하여 일몰 시각 최소 1~2시간 전에 하산을 완료하고, 항시 헤드랜턴 및 여분 배터리를 휴대하십시오.</li>
+            <li><strong>동절기 안전 장구:</strong> '블랙아이스 경보' 또는 기온 3°C 이하 구간에서는 암릉 살얼음에 대비해 아이젠, 방한 스패츠, 방풍 보온의류를 필히 착용하십시오.</li>
+          </ul>
+        </div>
+
+        <div class="sheet-clause">
+          <div class="clause-title">
+            <span class="clause-badge">제4조</span>
+            <span>통신 음영지역 및 데이터 지연에 관한 면책</span>
+          </div>
+          <div class="clause-text">
+            산악 깊은 계곡, 정상 능선 등의 LTE/5G 이동통신 음영 지역에서는 외부 기상 API와의 실시간 동기화가 지연되어 직전 캐시 데이터가 표출될 수 있습니다. 데이터 갱신 시각을 항시 확인하시기 바랍니다.
+          </div>
+        </div>
+
+        <div class="sheet-clause">
+          <div class="clause-title">
+            <span class="clause-badge">제5조</span>
+            <span>위치 정보 및 지적 재산권 보호</span>
+          </div>
+          <div class="clause-text">
+            내 위치 기반 최근접 산악 레이더 스캔(GPS) 기능은 이용자 스마트폰 브라우저 내에서만 단발성으로 연산되며, 어떠한 개인 위치 정보도 서버에 수집·저장되지 않습니다. 본 서비스에 구현된 12대 산악 물리 연산 알고리즘 및 UI는 지적재산권의 보호를 받습니다.
+          </div>
+        </div>
+
+        <!-- 비상 연락망 박스 -->
+        <div class="emergency-box">
+          <strong>🚨 산악 비상 연락처 및 긴급 구조 요청</strong>
+          <div class="emergency-grid">
+            <div class="emergency-item">
+              <span style="color:var(--text-tertiary);">소방청 산악구조대</span>
+              <strong style="color:var(--accent-red); font-size:12px;">국번없이 119</strong>
+            </div>
+            <div class="emergency-item">
+              <span style="color:var(--text-tertiary);">경찰청 긴급신고</span>
+              <strong style="color:var(--accent-cyan); font-size:12px;">국번없이 112</strong>
+            </div>
+            <div class="emergency-item">
+              <span style="color:var(--text-tertiary);">국립공원공단 비상안전</span>
+              <strong style="color:#FFFFFF; font-size:12px;">1670-9201</strong>
+            </div>
+            <div class="emergency-item">
+              <span style="color:var(--text-tertiary);">기상청 날씨안내</span>
+              <strong style="color:var(--accent-gold); font-size:12px;">국번없이 131</strong>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1291,7 +1400,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v9.3 BULLETPROOF</span>
+    <span>STATLAB v9.4 FULL-LEGAL</span>
   </div>
 
 <script>
@@ -1338,7 +1447,7 @@ async function fetchKmaLiveObservation(lat, lng) {
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rawUrl)}`;
     
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1800); // 1.8초 내 미응답 시 자동 건너뜀
+    const timeoutId = setTimeout(() => controller.abort(), 1800);
 
     const res = await fetch(proxyUrl, { signal: controller.signal });
     clearTimeout(timeoutId);
@@ -1364,10 +1473,9 @@ async function fetchKmaLiveObservation(lat, lng) {
   }
 }
 
-// [공식 3] 100% 무오류 Open-Meteo 1차 기본 호출 (400 원천 제거: 정규 8개 변수만 지정)
+// [공식 3] 100% 무오류 Open-Meteo 1차 기본 호출 (정규 8개 변수 지정)
 async function fetchPrimaryAlpineWeather(lt, lg) {
   try {
-    // current에는 Open-Meteo가 공식 승인한 8개 변수만 지정 (절대 400 에러 안 남)
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=7`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("HTTP " + res.status);
@@ -1380,7 +1488,7 @@ async function fetchPrimaryAlpineWeather(lt, lg) {
   }
 }
 
-// [공식 4] 백그라운드 3대 앙상블 비동기 수신 (정식 모델명: ecmwf_ifs025, gfs_seamless, icon_seamless)
+// [공식 4] 백그라운드 3대 앙상블 비동기 수신 (ECMWF, GFS, ICON)
 async function fetchEnsembleDailyWeather(lt, lg) {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}&models=ecmwf_ifs025,gfs_seamless,icon_seamless&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max&timezone=Asia%2FTokyo&forecast_days=7`;
@@ -1656,7 +1764,7 @@ window.triggerGPSMatching=function(){
 
 function fallbackToDb(lt,lg){const t=findNearestMountainFromDb(lt,lg);selectMountain(t.name,t.ele,null,t.type,t.lat,t.lng,t.distanceKm);}
 
-const CACHE_PREFIX='STATLAB_CACHE_v93_';
+const CACHE_PREFIX='STATLAB_CACHE_v94_';
 function saveMountainCache(n,rH,rC,cR,rD){try{localStorage.setItem(CACHE_PREFIX+n,JSON.stringify({name:n,rawHourly:rH,rawCurrent:rC,computedRes:cR,rawDaily:rD,timestamp:Date.now()}));}catch(e){} }
 function getMountainCache(n){try{const d=localStorage.getItem(CACHE_PREFIX+n);if(d)return JSON.parse(d);}catch(e){}return null;}
 
@@ -1891,9 +1999,9 @@ function compute7DayAlpineForecast(data, ele){
 
     const baseMin = extractDailyVal(daily, 'temperature_2m_min', i, 18.0);
     const baseMax = extractDailyVal(daily, 'temperature_2m_max', i, 24.0);
-    const baseWind = extractDailyVal(daily, 'wind_speed_10m_max', i, 3.5);
+    const baseWind = extractDailyVal(daily, 'wind_speed_10m_max', i, 12.0) * 0.2777;
     const summitWind = parseFloat((baseWind * (1 + 0.35 * (ele / 1000))).toFixed(1));
-    const baseMaxGust = extractDailyVal(daily, 'wind_gusts_10m_max', i, 6.0) * 0.2777;
+    const baseMaxGust = extractDailyVal(daily, 'wind_gusts_10m_max', i, 20.0) * 0.2777;
     const summitMaxGust = parseFloat((baseMaxGust * 1.55).toFixed(1));
 
     const froudeNumber = parseFloat((summitWind / (0.011 * Math.max(50, altDiff))).toFixed(2));
@@ -2361,7 +2469,6 @@ function renderFullAlpineWeather(data, ele, pointType, distKm, isKmaRaining = fa
   let codeVal = cur.weather_code !== undefined ? cur.weather_code : (h.weather_code ? h.weather_code[curIdx] : 0);
   const cloudVal = cur.cloud_cover !== undefined ? cur.cloud_cover : (h.cloud_cover ? h.cloud_cover[curIdx] : 80);
 
-  // Non-current 변수는 hourly에서 안전하게 추출
   const lowCloudVal = (h.cloud_cover_low && h.cloud_cover_low[curIdx] !== undefined) ? h.cloud_cover_low[curIdx] : 70;
   const midCloudVal = (h.cloud_cover_mid && h.cloud_cover_mid[curIdx] !== undefined) ? h.cloud_cover_mid[curIdx] : 50;
   const visVal = (h.visibility && h.visibility[curIdx] !== undefined) ? h.visibility[curIdx] : 8000;
@@ -2417,7 +2524,7 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.2078, lg=129.08
   document.getElementById('clock-live').innerText = '실시간 기상 데이터 수신 중...';
   renderLiveForecastTrack(null);
 
-  // [STEP 1] 100% 무오류 1차 API 즉각 수신 (0.2초 내 화면 렌더링 완료)
+  // [STEP 1] 100% 무오류 1차 API 즉각 수신 (0.2초 내 화면 렌더링)
   const primData = await fetchPrimaryAlpineWeather(lt, lg);
   if (primData && primData.hourly) {
     liveWeatherData = primData;
@@ -2425,7 +2532,6 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.2078, lg=129.08
     const nw = new Date();
     document.getElementById('clock-live').innerText = `${nw.getHours().toString().padStart(2, '0')}:${nw.getMinutes().toString().padStart(2, '0')} 동기화 완료`;
   } else {
-    // 네트워크 장애 시 오프라인 캐시 복원
     const cached = getMountainCache(n);
     if (cached && cached.computedRes) {
       baseLiveCurrentRes = cached.computedRes;
@@ -2436,7 +2542,7 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.2078, lg=129.08
     }
   }
 
-  // [STEP 2] KMA 관측소 실측 & 3대 앙상블 비동기 병렬 백그라운드 동기화 (화면 멈춤 0%)
+  // [STEP 2] KMA 관측소 실측 & 3대 앙상블 비동기 병렬 백그라운드 동기화
   Promise.allSettled([
     fetchKmaLiveObservation(lt, lg),
     fetchEnsembleDailyWeather(lt, lg)
