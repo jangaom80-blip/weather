@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v9.7 Natural Master</title>
+  <title>STATLAB 산악 기상 분석 v9.8 Perfect Master</title>
 
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -54,7 +54,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       padding: 0 2px;
     }
     .brand-title {
@@ -92,48 +92,6 @@
       display: flex;
       align-items: center;
       gap: 5px;
-    }
-
-    /* 차분한 다크 톤으로 정돈된 실시간 보정 바 */
-    .rain-override-bar {
-      background: rgba(255, 255, 255, 0.05);
-      border: 0.5px solid rgba(255, 255, 255, 0.14);
-      border-radius: 12px;
-      padding: 7px 12px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .rain-override-bar.active {
-      background: linear-gradient(90deg, rgba(255, 69, 58, 0.25) 0%, rgba(10, 132, 255, 0.25) 100%);
-      border-color: rgba(255, 69, 58, 0.5);
-    }
-    .rain-override-bar:active { transform: scale(0.98); }
-    .rain-override-text {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .rain-override-bar.active .rain-override-text { color: #FFF; font-weight: 700; }
-    .rain-override-btn {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--text-secondary);
-      transition: all 0.2s ease;
-    }
-    .rain-override-bar.active .rain-override-btn {
-      background: var(--accent-blue);
-      color: #FFF;
-      font-weight: 800;
     }
 
     .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
@@ -469,7 +427,9 @@
     .hero-content-front { position: relative; z-index: 3; }
     .hero-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
     .hero-location-wrap { display: flex; flex-direction: column; }
-    .hero-title-line { display: flex; align-items: center; gap: 6px; }
+    
+    /* ★★★ 산 이름 라인 & 내 GPS 고도 배지 인라인 통합 ★★★ */
+    .hero-title-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .hero-mt-name {
       font-size: 21px;
       font-weight: 800;
@@ -487,28 +447,31 @@
       transition: all 0.2s ease;
     }
     .fav-star-btn.active { color: var(--accent-gold); filter: drop-shadow(0 0 6px rgba(255, 214, 10, 0.6)); }
+
+    /* 산 이름 바로 옆 상시 표출되는 내 고도 배지 */
+    .gps-alt-badge-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(10, 132, 255, 0.18);
+      border: 0.5px solid rgba(100, 210, 255, 0.45);
+      color: var(--accent-cyan);
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 8px;
+      font-size: 10.5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
     .hero-mt-sub {
       font-size: 11px;
       color: var(--text-secondary);
       font-weight: 500;
-      margin-top: 2px;
+      margin-top: 3px;
       display: flex;
       align-items: center;
       gap: 6px;
-      flex-wrap: wrap;
       text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
-    }
-    .gps-alt-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      background: rgba(10, 132, 255, 0.2);
-      border: 0.5px solid rgba(10, 132, 255, 0.45);
-      color: var(--accent-cyan);
-      font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 6px;
-      font-size: 10px;
     }
     .hero-temp-wrap { text-align: right; }
     .hero-temp {
@@ -526,9 +489,9 @@
       padding: 3px 8px;
       border-radius: 8px;
       margin-top: 5px;
-      background: rgba(48, 209, 88, 0.2);
-      color: var(--accent-green);
-      border: 0.5px solid rgba(48, 209, 88, 0.4);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(235, 235, 245, 0.9);
+      border: 0.5px solid rgba(255, 255, 255, 0.18);
       backdrop-filter: blur(12px);
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
@@ -1013,15 +976,6 @@
     <div id="clock-live" class="brand-status">기상 동기화 중...</div>
   </div>
 
-  <!-- 차분하게 톤다운된 보정 바 (필요 시에만 토글) -->
-  <div id="rain-override-bar" class="rain-override-bar" onclick="toggleManualRainOverride()">
-    <div class="rain-override-text">
-      <span>💧</span>
-      <span id="rain-override-label">현장 실시간 비 감지 보정</span>
-    </div>
-    <div id="rain-override-btn" class="rain-override-btn">비 보정 켜기</div>
-  </div>
-
   <div class="search-row">
     <div class="search-container">
       <span class="search-icon">🔍</span>
@@ -1099,13 +1053,14 @@
     <div class="hero-content-front">
       <div class="hero-top-row">
         <div class="hero-location-wrap">
+          <!-- ★★★ 산 이름 바로 옆에 내 현재 GPS 고도 배지 인라인 상시 배치 ★★★ -->
           <div class="hero-title-line">
-            <div id="card-peak-title" class="hero-mt-name">금정산 고당봉</div>
+            <span id="card-peak-title" class="hero-mt-name">금정산 고당봉</span>
             <button id="fav-toggle-btn" class="fav-star-btn active" onclick="toggleCurrentFavorite()" title="즐겨찾기 토글">★</button>
+            <span id="user-gps-alt-pill" class="gps-alt-badge-inline">📍 내 고도 45m</span>
           </div>
           <div id="card-peak-ele" class="hero-mt-sub">
             <span id="card-peak-desc">해발 801m · 정상부 분석</span>
-            <span id="user-gps-alt-pill" class="gps-alt-badge" style="display:none;">📍 내 GPS 고도 --m</span>
           </div>
         </div>
         <div class="hero-temp-wrap">
@@ -1217,7 +1172,7 @@
       <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
     </div>
 
-    <div id="cs-burnoff-banner" class="cs-burnoff-timer-banner">
+    <div id="cs-burnoff-timer-banner" class="cs-burnoff-timer-banner">
       <div class="cs-timer-label">
         <span id="cs-timer-icon">⏳</span>
         <span id="cs-timer-title">운해 소멸 타이머</span>
@@ -1403,7 +1358,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v9.7 NATURAL</span>
+    <span>STATLAB v9.8 MASTER</span>
   </div>
 
 <script>
@@ -1555,29 +1510,10 @@ function updateFavoriteBtnState(){const b=document.getElementById('fav-toggle-bt
 let currentMt=mountainDB[0]; // 금정산 고당봉 801m 기본
 let selectedHourOffset=0, liveWeatherData=null;
 let baseLiveCurrentRes=null, activeForecastRes=null;
-let _lastHapticZ=0, currentUserAltitude=null;
+let _lastHapticZ=0;
+let currentUserAltitude = 45; // 기본 GPS 고도 초기값 (수신 즉시 갱신)
 let currentForecastView='hourly';
 let cachedWeeklyCalculatedData=[];
-let isManualRainOverride = false;
-
-window.toggleManualRainOverride = function(){
-  isManualRainOverride = !isManualRainOverride;
-  const bar = document.getElementById('rain-override-bar');
-  const label = document.getElementById('rain-override-label');
-  const btn = document.getElementById('rain-override-btn');
-  if(isManualRainOverride){
-    bar.classList.add('active');
-    label.innerText = '⚡ [현장 실시간 비 감지 활성화]: 강우 모드 가동 중';
-    btn.innerText = '보정 끄기';
-  } else {
-    bar.classList.remove('active');
-    label.innerText = '현장 실시간 비 감지 보정';
-    btn.innerText = '비 보정 켜기';
-  }
-  if(currentMt){
-    selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
-  }
-};
 
 window.switchForecastView=function(mode){
   const banner = document.getElementById('weekly-ai-banner');
@@ -1729,12 +1665,19 @@ function searchKakaoPlacesAsync(k,lat,lng,r=18000){
   });
 }
 
+// GPS 연동 및 내 고도 실시간 갱신
 window.triggerGPSMatching=function(){
   if(!navigator.geolocation){ fallbackToDb(35.2846,129.0565); return; }
   navigator.geolocation.getCurrentPosition(async p=>{
     const uLat=p.coords.latitude,uLng=p.coords.longitude;
-    if(p.coords.altitude!==null&&!isNaN(p.coords.altitude)&&p.coords.altitude>0)currentUserAltitude=Math.round(p.coords.altitude);
-    else currentUserAltitude=null;
+    if(p.coords.altitude!==null&&!isNaN(p.coords.altitude)&&p.coords.altitude>0){
+      currentUserAltitude = Math.round(p.coords.altitude);
+    } else {
+      currentUserAltitude = 45; // GPS 고도 센서 미탑재 시 지표면 안전 고도
+    }
+    const altPill = document.getElementById('user-gps-alt-pill');
+    if(altPill) altPill.innerText = `📍 내 고도 ${currentUserAltitude}m`;
+
     try{
       const [rS,rB]=await Promise.all([searchKakaoPlacesAsync('산',uLat,uLng,18000),searchKakaoPlacesAsync('봉',uLat,uLng,18000)]);
       const comb=[...rS,...rB],seen=new Set(),cd=[];
@@ -1759,7 +1702,7 @@ window.triggerGPSMatching=function(){
 
 function fallbackToDb(lt,lg){const t=findNearestMountainFromDb(lt,lg);selectMountain(t.name,t.ele,null,t.type,t.lat,t.lng,t.distanceKm);}
 
-const CACHE_PREFIX='STATLAB_CACHE_v97_';
+const CACHE_PREFIX='STATLAB_CACHE_v98_';
 function saveMountainCache(n,rH,rC,cR,rD){try{localStorage.setItem(CACHE_PREFIX+n,JSON.stringify({name:n,rawHourly:rH,rawCurrent:rC,computedRes:cR,rawDaily:rD,timestamp:Date.now()}));}catch(e){} }
 function getMountainCache(n){try{const d=localStorage.getItem(CACHE_PREFIX+n);if(d)return JSON.parse(d);}catch(e){}return null;}
 
@@ -1846,7 +1789,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
     else { bT = `일몰까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`; bC = 'var(--accent-green)'; dT = `<strong>☀️ [주간 일조 확보]:</strong> 일몰 시각은 ${sS_s}입니다. 안전한 주간 산행이 가능합니다.`; }
   } else {
     isNight = true; orbChar = '🌙';
-    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS_prev.getTime()) / (sR_next.getTime() - sS_prev.getTime())) * 100)));
+    p = Math.min(100, Math.max(0, Math.round(((n.getTime() - sS.getTime()) / (sR_next.getTime() - sS.getTime())) * 100)));
     const mTN = Math.max(0, Math.floor((sR_next.getTime() - n.getTime()) / 60000));
     const hR = Math.floor(mTN / 60), rM = mTN % 60;
     bT = `내일 일출까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`; bC = 'var(--accent-purple)';
@@ -1861,11 +1804,9 @@ function calculateCanopyFriction(currentAlt, summitAlt){
   return (r < 0.65) ? (0.40 + 0.35 * (r / 0.65)) : (0.75 + 0.25 * ((r - 0.65) / 0.35));
 }
 
-function calculateQuantumPrecipitation(baseRain, alt, cloudBase, summitRH, totalCloud, popMax, isManualOverride){
-  if(isManualOverride) return 1.2;
-  if(!baseRain || baseRain <= 0){
-    return 0.0;
-  }
+// 순수 강우 물리 계산 (가짜 비 합성 완전 배제)
+function calculateQuantumPrecipitation(baseRain, alt, cloudBase, summitRH, totalCloud, popMax){
+  if(!baseRain || baseRain <= 0) return 0.0;
   const inCloud = (cloudBase && alt >= cloudBase);
   const altFactor = 1.0 + Math.max(0, (alt - 10) / 1000) * 0.45;
   const inCloudFactor = inCloud ? 1.3 : 1.0;
@@ -1907,36 +1848,44 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
   return { shouldShow: true, badgeText: '방한 장비 권장', badgeStyle: 'background: rgba(255,255,255,0.08); color: var(--text-secondary); border: 0.5px solid rgba(255,255,255,0.18);', iceRiskText: '저온 한랭', snowValText: '0 cm', descHtml: `<strong>[능선 저온 주의]:</strong> 기온이 ${temp}°C까지 떨어집니다. 방풍 자켓을 챙기세요.` };
 }
 
-// 5대 산악 물리 연산 통합 엔진 (구름량 및 WMO 정확 반영)
+// ★★★ [수정 2] 에스피-마그누스 정규 대기물리 운저고도(LCL) 연산 (현실적인 500~800m 안착) ★★★
 function compute5PhysicsMountainWeather(P){
   const _K1 = 17.67, _K2 = 243.5;
   const T = P.rawTemp ?? 20.0;
-  const R = isManualRainOverride ? 98 : (P.rawRH ?? 75);
+  const R = Math.min(100, Math.max(10, P.rawRH ?? 70));
   const W = P.rawWind ?? 2.5;
   const G = P.rawGust ?? 4.0;
-  const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (Math.max(5, R) / 100);
-  const Td = (P.rawDew !== null && P.rawDew !== undefined && !isManualRainOverride) 
+
+  // 마그누스 공식 기반 정밀 이슬점(Td) 계산
+  const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T));
+  const E = eS * (R / 100);
+  const Td = (P.rawDew !== null && P.rawDew !== undefined) 
     ? P.rawDew 
     : (_K2 * Math.log(Math.max(0.01, E / 6.112))) / (_K1 - Math.log(Math.max(0.01, E / 6.112)));
+  
   const vK = Math.max(0.05, (P.visibility || 10000) / 1000), bX = parseFloat((3.912 / vK).toFixed(3));
   const dH = Math.max(0, P.mtEle - 10), sT = T, sD = Td;
   
-  const spread = Math.max(0.1, sT - sD);
-  let bL = Math.max(150, Math.round(125 * spread));
-  
-  const hasActualRain = (P.rawRain > 0) || (P.rawCode >= 51 && P.rawCode <= 67) || isManualRainOverride;
+  // 에스피 공식: LCL = 125 * (T - Td) + 기저평지고도(20m)
+  const spread = Math.max(0.5, sT - sD);
+  let lclHeight = Math.round(125 * spread) + 20;
+
+  // 실제 비가 올 때만 구름이 산 표면 근처로 하강, 맑거나 흐릴 때는 정상 대기 상공(500~900m)에 형성
+  const hasActualRain = (P.rawRain > 0) || (P.rawCode >= 51 && P.rawCode <= 67);
   if(hasActualRain){
-    bL = Math.max(30, Math.min(bL, P.mtEle - 20));
+    lclHeight = Math.max(50, Math.min(lclHeight, P.mtEle - 30));
+  } else {
+    lclHeight = Math.max(450, lclHeight); // 비가 안 오는 날은 최소 450m 이상 정상 상공에 형성
   }
 
-  let smT = P.mtEle <= bL ? sT - (0.0098 * dH) : (sT - (0.0098 * Math.max(0, bL - 10) + 0.0055 * (P.mtEle - bL)));
+  let smT = P.mtEle <= lclHeight ? sT - (0.0098 * dH) : (sT - (0.0098 * Math.max(0, lclHeight - 10) + 0.0055 * (P.mtEle - lclHeight)));
   smT = parseFloat(smT.toFixed(1));
   const eS_summit = 6.112 * Math.exp((_K1 * smT) / (_K2 + smT));
-  const summitRH = isManualRainOverride ? 99 : Math.min(100, Math.max(R, Math.round((E / eS_summit) * 100)));
+  const summitRH = Math.min(100, Math.max(R, Math.round((E / eS_summit) * 100)));
   
-  const effectiveCloudBase = bL;
+  const effectiveCloudBase = lclHeight;
   const isMountainInCloud = (P.mtEle >= effectiveCloudBase);
-  const summitRain = calculateQuantumPrecipitation(P.rawRain, P.mtEle, effectiveCloudBase, summitRH, P.totalCloud, P.popMax || 40, isManualRainOverride);
+  const summitRain = calculateQuantumPrecipitation(P.rawRain, P.mtEle, effectiveCloudBase, summitRH, P.totalCloud, P.popMax || 40);
   const hasRain = (summitRain > 0) || hasActualRain;
 
   let wI = decodeWmoCode(P.rawCode);
@@ -1973,7 +1922,7 @@ function compute5PhysicsMountainWeather(P){
     cloudSeaProb: cS, cloudSeaPhase: cS_data.phase, cloudSeaTimerText: cS_data.timerText, cloudSeaBadgeStyle: cS_data.badgeStyle,
     sunSafety: computeSunAndTrailSafety(P.daily, P.targetHourTime),
     winterSafety: evaluateWinterTrailConditions(smT, summitRH, summitRain, P.rawCode),
-    _rawParams: P, _baseLclM: bL
+    _rawParams: P, _baseLclM: lclHeight
   };
 }
 
@@ -1997,7 +1946,7 @@ function compute7DayAlpineForecast(data, ele){
     const ensemblePop = Math.round(ecmwfPop * 0.45 + gfsPop * 0.30 + iconPop * 0.25);
     const ensemblePrecip = parseFloat((ecmwfPrecip * 0.45 + gfsPrecip * 0.30 + iconPrecip * 0.25).toFixed(1));
     const rainVoteCount = (ecmwfCode >= 51 ? 1 : 0) + (gfsCode >= 51 ? 1 : 0) + (iconCode >= 51 ? 1 : 0);
-    const hasRain = (rainVoteCount >= 2 || ensemblePop >= 55 || ensemblePrecip >= 1.0 || (i === 0 && isManualRainOverride));
+    const hasRain = (rainVoteCount >= 2 || ensemblePop >= 55 || ensemblePrecip >= 1.0);
     const finalCode = hasRain ? 61 : (ecmwfCode || gfsCode || extractDailyVal(daily, 'weather_code', i, 0));
     const wInfo = decodeWmoCode(finalCode);
 
@@ -2146,6 +2095,7 @@ function render7DayWeeklyTrack(data){
   });
 }
 
+// 고도 프로파일러(스크러버) 연동
 window.handleAltitudeScrub = function(z){
   const r = activeForecastRes || baseLiveCurrentRes;
   if(!r) return;
@@ -2171,7 +2121,7 @@ window.handleAltitudeScrub = function(z){
   sF = parseFloat(sF.toFixed(1));
   
   const iC = (tZ >= r.effectiveCloudBase);
-  const scrubRain = calculateQuantumPrecipitation(p.rawRain, tZ, r.effectiveCloudBase, 80, p.totalCloud, p.popMax || 40, isManualRainOverride);
+  const scrubRain = calculateQuantumPrecipitation(p.rawRain, tZ, r.effectiveCloudBase, 80, p.totalCloud, p.popMax || 40);
   const isSummit = (tZ === currentMt.ele);
 
   document.getElementById('scrubber-current-label').innerText = `${tZ}m (${isSummit ? '정상' : (tZ <= 150 ? '들머리 (숲)' : '중턱 능선')})`;
@@ -2181,12 +2131,12 @@ window.handleAltitudeScrub = function(z){
   document.getElementById('brief-wind').innerText = `${sW} / ${sG} m/s`;
 
   const sP = document.getElementById('card-status-pill');
-  if(scrubRain > 0 || isManualRainOverride){
-    document.getElementById('brief-rain').innerText = `${scrubRain || 1.2} mm`;
+  if(scrubRain > 0){
+    document.getElementById('brief-rain').innerText = `${scrubRain} mm`;
     sP.style.background = 'rgba(255, 69, 58, 0.25)';
     sP.style.borderColor = 'rgba(255, 69, 58, 0.5)';
     sP.style.color = 'var(--accent-red)';
-    sP.innerText = `강우 중 (${scrubRain || 1.2}mm) 🌧️`;
+    sP.innerText = `강우 중 (${scrubRain}mm) 🌧️`;
   } else if(iC && r.isRealFog){
     document.getElementById('brief-rain').innerText = '0 mm';
     sP.style.background = 'rgba(255,159,10,0.25)';
@@ -2229,19 +2179,18 @@ function renderWinterCardUI(w){
   document.getElementById('winter-desc').innerHTML = w.descHtml;
 }
 
-// 구름량에 따른 자연스러운 아트워크 렌더링 (태양 숨김 처리)
 function updateWeatherArtworkScene(r, n){
   const s = document.getElementById('weather-stage');
   if(!s) return;
   s.className = 'weather-scene-stage';
-  if(r.rainMm > 0 || isManualRainOverride) {
+  if(r.rainMm > 0) {
     s.classList.add('scene-rain');
   } else if(r.isRealFog) {
     s.classList.add('scene-fog');
   } else if(r.isDarkCloud) {
-    s.classList.add('scene-cloudy'); // 구름 많은 날엔 태양을 끄고 구름 레이어 활성화
+    s.classList.add('scene-cloudy');
   } else {
-    s.classList.add(n ? 'scene-clear-night' : 'scene-clear-day'); // 완전히 맑을 때만 태양 표출
+    s.classList.add(n ? 'scene-clear-night' : 'scene-clear-day');
   }
 }
 
@@ -2254,17 +2203,21 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
   updateFavoriteBtnState();
   document.getElementById('card-peak-title').innerText = currentMt.name;
   document.getElementById('card-peak-desc').innerText = `해발 ${currentMt.ele}m · 정상부 분석`;
+  
+  // 내 GPS 고도 배지 인라인 상시 갱신
+  const altPill = document.getElementById('user-gps-alt-pill');
+  if(altPill) altPill.innerText = `📍 내 고도 ${currentUserAltitude}m`;
 
   document.getElementById('brief-temp').innerText = `${Math.round(r.summitTemp)}°`;
   document.getElementById('summit-feel').innerText = `${r.summitFeel}°`;
   document.getElementById('brief-wind').innerText = `${r.summitWind} / ${r.summitGust} m/s`;
   
-  if(r.rainMm > 0 || isManualRainOverride){
-    document.getElementById('brief-rain').innerText = `${r.rainMm || 1.2} mm`;
+  if(r.rainMm > 0){
+    document.getElementById('brief-rain').innerText = `${r.rainMm} mm`;
     sP.style.background = 'rgba(255, 69, 58, 0.25)';
     sP.style.borderColor = 'rgba(255, 69, 58, 0.5)';
     sP.style.color = 'var(--accent-red)';
-    sP.innerText = `강우 중 (${r.rainMm || 1.2}mm) 🌧️`;
+    sP.innerText = `강우 중 (${r.rainMm}mm) 🌧️`;
     if(alertText && alertTag){
       alertText.innerText = '산악 비구름 관통 · 빗길 미끄럼 주의';
       alertTag.innerText = '강우 경보';
@@ -2305,7 +2258,8 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
     }
   }
 
-  const maxScaleAlt = Math.max(1000, currentMt.ele * 1.2);
+  // 정상 미터바 및 운저 마커 스케일 연동
+  const maxScaleAlt = Math.max(1000, Math.max(currentMt.ele * 1.2, r.effectiveCloudBase * 1.1));
   document.getElementById('meter-mt-label').innerText = `정상 ${currentMt.ele}m`;
   document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(5, Math.round((currentMt.ele / maxScaleAlt) * 100)))}%`;
   document.getElementById('meter-cloud-line').style.left = `${Math.min(98, Math.max(5, Math.round((r.effectiveCloudBase / maxScaleAlt) * 100)))}%`;
@@ -2349,14 +2303,14 @@ function updateAlpineWeatherHUD(r, hS, iN, pT, iO=false, dK=null){
     : (r.cloudSeaProb >= 60 ? `<strong>[${hS} 운해 형성 우수]:</strong> 골짜기 수증기 포화로 구름바다 조망 확률이 높습니다.` : `<strong>[${hS} 대기 혼합]:</strong> 운해 형성 가능성이 낮습니다.`);
 
   const cbP = document.getElementById('cb-status-pill'), cbD = document.getElementById('cb-desc-text');
-  if(r.rainMm > 0 || isManualRainOverride){
+  if(r.rainMm > 0){
     cbP.style.color = 'var(--accent-red)';
     cbP.innerText = `강우 구름대 (투과율 ${r.opticalTrans}%)`;
     cbD.innerHTML = `<strong>${hS}:</strong> 산악 비구름대가 정상을 완전히 관통 중입니다. 시야가 차단되었으며 방수 장비가 필수입니다.`;
   } else {
     cbP.style.color = 'var(--accent-green)';
     cbP.innerText = `시야 양호 (투과율 ${r.opticalTrans}%)`;
-    cbD.innerHTML = `구름층(${r.effectiveCloudBase}m)이 정상 상공에 위치하며 광학 투과율 ${r.opticalTrans}%로 조망이 양호합니다.`;
+    cbD.innerHTML = `구름층(${r.effectiveCloudBase}m)이 형성되어 있으며 광학 투과율 ${r.opticalTrans}%로 조망이 양호합니다.`;
   }
 
   document.getElementById('summit-temp').innerText = `${r.summitTemp} °C`;
@@ -2392,7 +2346,7 @@ function renderLiveForecastTrack(h){
     let wC = codeArr[dI] !== undefined ? codeArr[dI] : 0;
     let pVal = precipArr[dI] !== undefined ? precipArr[dI] : 0;
     
-    let ic = isManualRainOverride ? '🌧️' : ((pVal > 0 || (wC >= 51 && wC <= 67)) ? '🌧️' : ((cloudArr[dI] >= 50 || wC === 3) ? '☁️' : (cloudArr[dI] >= 25 ? '⛅' : '☀️')));
+    let ic = (pVal > 0 || (wC >= 51 && wC <= 67)) ? '🌧️' : ((cloudArr[dI] >= 50 || wC === 3) ? '☁️' : (cloudArr[dI] >= 25 ? '⛅' : '☀️'));
 
     const sl = document.createElement('div');
     sl.className = `time-slot ${o === selectedHourOffset ? 'active' : ''}`;
