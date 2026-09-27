@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v8.1</title>
+  <title>STATLAB 산악 기상 분석 v8.2 Complete</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -1772,7 +1772,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v8.1 (EASY VIEW)</span>
+    <span>STATLAB v8.2 COMPLETE</span>
   </div>
 
 <script>
@@ -1841,7 +1841,6 @@ window.switchForecastView=function(mode){
   }
 };
 
-// ★ [v8.1] 일반인 눈높이 3초 직관 리포트 모달
 window.openDayDetailModal=function(idx){
   const item = cachedWeeklyCalculatedData[idx];
   if(!item) return;
@@ -1863,7 +1862,6 @@ window.openDayDetailModal=function(idx){
   const csDeg = Math.round((item.csScore / 100) * 360);
 
   bodyEl.innerHTML = `
-    <!-- 상단 대형 비주얼 카드 -->
     <div class="day-hero-stage" style="${heroTheme}">
       <div class="day-hero-top">
         <div class="day-hero-main-txt">
@@ -1879,7 +1877,6 @@ window.openDayDetailModal=function(idx){
         </div>
       </div>
 
-      <!-- 듀얼 원형 게이지 -->
       <div class="day-hero-gauges">
         <div class="gauge-item">
           <div class="radial-circle" style="background: conic-gradient(${safeColor} ${safeDeg}deg, rgba(255,255,255,0.12) 0deg); border: 2px solid rgba(0,0,0,0.8);">
@@ -1908,7 +1905,6 @@ window.openDayDetailModal=function(idx){
         </div>
       </div>
 
-      <!-- 시야 및 풍경 단면 태그 -->
       <div class="day-cross-section-box">
         <div class="cross-section-left">
           <span>⛰️ 정상 ${currentMt.ele}m</span>
@@ -1921,7 +1917,6 @@ window.openDayDetailModal=function(idx){
       </div>
     </div>
 
-    <!-- ★ [v8.1] 일반인 눈높이 3초 직관 브리핑 카드 -->
     <div style="background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 12px; margin-bottom: 12px;">
       <div style="font-size:13px; font-weight:800; color:#FFF; margin-bottom:8px;">등산객 핵심 행동 요령</div>
       <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.5;">
@@ -1931,7 +1926,6 @@ window.openDayDetailModal=function(idx){
       </div>
     </div>
 
-    <!-- 핵심 수치 2칸 그리드 -->
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:12px;">
       <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px;">
         <div style="font-size:10px; color:var(--text-secondary); font-weight:600;">능선 최대 돌풍</div>
@@ -1950,7 +1944,6 @@ window.openDayDetailModal=function(idx){
       </div>
     </div>
 
-    <!-- 오전 vs 오후 타임라인 -->
     <div style="background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px;">
       <div style="font-size:11px; font-weight:700; color:#FFF; margin-bottom:8px;">오전 vs 오후 상세 흐름</div>
       <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary);">
@@ -1966,6 +1959,7 @@ window.openDayDetailModal=function(idx){
 
   document.getElementById('day-detail-modal').classList.add('active');
   document.body.style.overflow='hidden';
+  history.pushState({modalOpen:'dayDetail'},'');
 };
 
 window.closeDayDetailModal=function(){
@@ -1977,13 +1971,13 @@ window.handleDayDetailOverlayClick=function(e){if(e.target.id==='day-detail-moda
 window.openLegalModal=function(){
   document.getElementById('legal-modal').classList.add('active');
   document.body.style.overflow='hidden';
-  history.pushState({modalOpen:true},'');
+  history.pushState({modalOpen:'legal'},'');
 };
 window.closeLegalModal=function(){
   document.getElementById('legal-modal').classList.remove('active');
   document.body.style.overflow='auto';
 };
-window.addEventListener('popstate',function(e){
+window.addEventListener('popstate',function(){
   const m=document.getElementById('legal-modal');
   if(m&&m.classList.contains('active')){
     m.classList.remove('active');
@@ -2031,7 +2025,7 @@ window.triggerGPSMatching=function(){
       if(cd.length>0){cd.sort((a,b)=>a.rawDist-b.rawDist);const cl=cd[0];selectMountain(cl.name,cl.ele,null,cl.type,cl.lat,cl.lng,cl.distanceKm);return;}
       fallbackToDb(uLat,uLng);
     }catch(e){fallbackToDb(uLat,uLng);}
-  },e=>{fallbackToDb(35.2846,129.0565);},{timeout:6000,enableHighAccuracy:true});
+  },()=>{fallbackToDb(35.2846,129.0565);},{timeout:6000,enableHighAccuracy:true});
 };
 
 function fallbackToDb(lt,lg){const t=findNearestMountainFromDb(lt,lg);selectMountain(t.name,t.ele,null,t.type,t.lat,t.lng,t.distanceKm);}
@@ -2073,7 +2067,6 @@ function findCurrentHourIndex(h){
   return bI;
 }
 
-// ★ [v8.1 완벽 수정] 날짜 기준 동기화로 마이너스 시간 오류 원천 차단
 function computeSunAndTrailSafety(d, targetDate = null){
   const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
   const nDateStr = `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
@@ -2406,7 +2399,7 @@ function compute5PhysicsMountainWeather(P){
   };
 }
 
-// ★★★ [v8.1 SAM-Engine: 일반인 직관화 100% 반영] ★★★
+// ★ [v8.2 개선] 모순 없는 시간 분기형 타이틀 매핑 엔진
 function compute7DayAlpineForecast(data, ele){
   if(!data || !data.daily || !data.daily.time || data.daily.time.length < 7) return [];
   const daily = data.daily;
@@ -2487,7 +2480,7 @@ function compute7DayAlpineForecast(data, ele){
     if(basePrecip > 0 && i > 0 && daily.precipitation_sum[i-1] > 2.0) csScore += 15;
     csScore = Math.min(95, Math.max(10, Math.round(csScore * damping)));
 
-    // ★ [v8.1 핵심] 일반인이 3초 만에 이해하는 직관적인 타이틀 & 풍경 태그
+    // ★★★ [v8.2 시간 분기형 타이틀 매핑 핵심 로직] ★★★
     let plainTitle = '쾌청 맑음';
     let plainAction = '산행 강력 추천 (최적)';
     let plainSight = '시야 15km+ 뻥 뚫린 파노라마 조망 가능';
@@ -2497,24 +2490,33 @@ function compute7DayAlpineForecast(data, ele){
     let viewTagStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green); border:0.5px solid var(--accent-green);';
     let cardMiniBadge = '☀️ 쾌청조망';
 
-    if(dayHasRain && summitPrecip >= 5){
-      plainTitle = '비바람 / 호우 주의';
-      plainAction = '🚨 산행 자제 강력 권장 (악천후)';
-      plainSight = '짙은 비구름 속으로 사방이 하얗게 차단됨 (조망 없음)';
-      plainWear = '방수 겉옷(고어텍스) 필수, 배낭 방수커버';
-      viewSummary = `운저 420m (구름 속 관통)`;
-      viewTagText = '비바람 곰탕 (조망 불가 ⚠️)';
-      viewTagStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid var(--accent-red);';
-      cardMiniBadge = '🌧️ 비바람주의';
-    } else if(dayHasRain){
-      plainTitle = '안개비 & 곰탕 뷰';
-      plainAction = '⚠️ 산행 주의 (방수 및 미끄럼 대비)';
-      plainSight = '흩날리는 안개비와 운무로 조망이 거의 보이지 않습니다.';
-      plainWear = '방수 바람막이 및 접지력 좋은 등산화';
-      viewSummary = `운저 500m (운무 유입)`;
-      viewTagText = '곰탕 뷰 (조망 없음 🌫️)';
+    if(!amHasRain && pmHasRain){
+      plainTitle = '오전 쾌청 ➔ 오후 안개비·곰탕';
+      plainAction = '⚡ 오전 산행 적극 추천 (12시 전 하산 완료!)';
+      plainSight = '오전엔 시야 15km 시원하게 트이나, 낮 12시부터 안개비로 차단됨';
+      plainWear = '방수 바람막이 필수 지참, 점심 전 하산 권장';
+      viewSummary = '오전 쾌청 ➔ 오후 운무 유입';
+      viewTagText = '오전 쾌청 / 오후 곰탕';
       viewTagStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid var(--accent-amber);';
-      cardMiniBadge = '🌦️ 곰탕/안개비';
+      cardMiniBadge = '⛅➔🌧️ 오후비·주의';
+    } else if(amHasRain && !pmHasRain){
+      plainTitle = '오전 안개비 ➔ 오후 맑게 갬';
+      plainAction = '오후 12시 이후 산행 권장';
+      plainSight = '오전엔 짙은 운무, 오후 비 갠 뒤 시야 회복 및 운해 가능성';
+      plainWear = '방수 등산화 및 여벌 양말';
+      viewSummary = '오후 시야 트임 회복';
+      viewTagText = '오후 시야 회복 🌤️';
+      viewTagStyle = 'background:rgba(100,210,255,0.2); color:var(--accent-cyan); border:0.5px solid var(--accent-cyan);';
+      cardMiniBadge = '🌧️➔🌤️ 오후갬';
+    } else if(amHasRain && pmHasRain){
+      plainTitle = summitPrecip >= 5 ? '종일 비바람 / 호우 주의' : '종일 안개비 & 곰탕 뷰';
+      plainAction = '🚨 산행 자제 권장 (미끄럼 위험)';
+      plainSight = '짙은 비구름 속으로 사방이 완전히 차단되어 조망 없음';
+      plainWear = '방수 겉옷(고어텍스) 필수, 배낭 방수커버';
+      viewSummary = '운저 420m (비구름 관통)';
+      viewTagText = '종일 곰탕 (조망 불가 ⚠️)';
+      viewTagStyle = 'background:rgba(255,69,58,0.22); color:var(--accent-red); border:0.5px solid var(--accent-red);';
+      cardMiniBadge = '🌧️ 종일비·주의';
     } else if(csScore >= 75){
       plainTitle = '특급 운해(구름바다)';
       plainAction = '✨ 일출 산행 적극 추천';
@@ -2524,18 +2526,9 @@ function compute7DayAlpineForecast(data, ele){
       viewTagText = '구름바다 대박 🌊';
       viewTagStyle = 'background:rgba(191,90,242,0.25); color:#E5B8FF; border:0.5px solid #BF5AF2;';
       cardMiniBadge = '🌊 운해대박';
-    } else if(code >= 45 && code <= 48){
-      plainTitle = '짙은 안개 (곰탕 뷰)';
-      plainAction = '산행 보통 (길 찾기 유의)';
-      plainSight = '사방이 하얗게 가려져 정상 뷰가 전혀 안 보입니다.';
-      plainWear = '시야가 좁으므로 밝은 옷 착용 권장';
-      viewSummary = '정상부 운무 포화';
-      viewTagText = '시야 차단 (곰탕 뷰 🌫️)';
-      viewTagStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber); border:0.5px solid var(--accent-amber);';
-      cardMiniBadge = '🌫️ 곰탕뷰';
     } else if(code >= 2){
       plainTitle = '마른 흐림 (비 안 옴)';
-      plainAction = '산행 양호 (걷기 시원한 날)';
+      plainAction = '산행 양호 (걷기 시원한 날씨)';
       plainSight = '하늘은 흐리지만 비는 오지 않아 시원하게 등산 가능';
       plainWear = '적당한 통기성 등산복';
       viewSummary = '구름 아래 시야 트임';
@@ -3099,6 +3092,7 @@ window.handleMountainSearch=function(k){
           const ex=[];
           dt.forEach(p=>{
             const pN=p.place_name,cg=p.category_name||'';
+            // ★ [수정 완료] LaTeX 치환 오류를 정규 파이프(|)로 복원
             if(!lM.some(x=>x.name===pN)&&!/아파트|빌라|부동산|역$\vert{}정류장\vert{}식당\vert{}카페\vert{}병원/i.test(pN)&&!/주거\vert{}교통\vert{}쇼핑\vert{}음식/i.test(cg)&&(/(산\vert{}봉\vert{}바위\vert{}대피소\vert{}능선\vert{}령)$/.test(pN)||cg.includes('산'))){
               let eE=650;const m=pN.match(/(\d+)m/);
               if(m)eE=parseInt(m[1]);else if(pN.includes('대피소'))eE=1250;
