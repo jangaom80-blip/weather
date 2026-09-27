@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v8.2 Complete</title>
+  <title>STATLAB 산악 기상 분석 v8.3 Ultimate</title>
 
   <!-- 카카오 공식 장소/산악 지오코딩 검색 SDK -->
   <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd3700902efcb45ab6ee8c1baf09338a&libraries=services"></script>
@@ -343,7 +343,6 @@
     .slot-icon { font-size: 15px; margin: 3px 0; }
     .slot-temp { font-size: 12px; font-weight: 700; color: #FFFFFF; }
 
-    /* 주간 카드 스타일 */
     .weekly-slot {
       flex-shrink: 0;
       width: 116px;
@@ -358,9 +357,7 @@
       transition: all 0.2s ease;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
-    .weekly-slot:active {
-      transform: scale(0.96);
-    }
+    .weekly-slot:active { transform: scale(0.96); }
     .weekly-slot.weekend {
       border-color: rgba(255, 214, 10, 0.45);
       background: linear-gradient(180deg, rgba(42, 38, 30, 0.9) 0%, rgba(20, 20, 26, 0.96) 100%);
@@ -403,9 +400,7 @@
       align-items: center;
       gap: 1px;
     }
-    .w-ampm-icon {
-      font-size: 14px;
-    }
+    .w-ampm-icon { font-size: 14px; }
     .w-temp-bar-wrap {
       display: flex;
       align-items: center;
@@ -517,26 +512,10 @@
     @keyframes flashPulse { 0%, 93%, 97%, 100% { opacity: 0; } 94% { opacity: 0.45; } 96% { opacity: 0.7; } }
     @keyframes snowFall { 0% { transform: translateY(-20px) translateX(0); opacity: 0; } 30% { opacity: 0.8; } 100% { transform: translateY(280px) translateX(25px); opacity: 0; } }
 
-    .hero-content-front {
-      position: relative;
-      z-index: 3;
-    }
-
-    .hero-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-    .hero-location-wrap {
-      display: flex;
-      flex-direction: column;
-    }
-    .hero-title-line {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .hero-content-front { position: relative; z-index: 3; }
+    .hero-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .hero-location-wrap { display: flex; flex-direction: column; }
+    .hero-title-line { display: flex; align-items: center; gap: 6px; }
     .hero-mt-name {
       font-size: 21px;
       font-weight: 800;
@@ -580,9 +559,7 @@
       border-radius: 6px;
       font-size: 10px;
     }
-    .hero-temp-wrap {
-      text-align: right;
-    }
+    .hero-temp-wrap { text-align: right; }
     .hero-temp {
       font-size: 36px;
       font-weight: 800;
@@ -720,9 +697,7 @@
       cursor: pointer;
       transition: transform 0.1s ease;
     }
-    .altitude-slider::-webkit-slider-thumb:active {
-      transform: scale(1.25);
-    }
+    .altitude-slider::-webkit-slider-thumb:active { transform: scale(1.25); }
     .scrubber-ticks {
       display: flex;
       justify-content: space-between;
@@ -738,11 +713,7 @@
       padding-top: 10px;
       text-align: center;
     }
-    .spec-item {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
+    .spec-item { display: flex; flex-direction: column; gap: 3px; }
     .spec-item:nth-child(2) {
       border-left: 0.5px solid rgba(255, 255, 255, 0.1);
       border-right: 0.5px solid rgba(255, 255, 255, 0.1);
@@ -812,21 +783,9 @@
       padding: 8px 10px;
       border-radius: 10px;
     }
-    .winter-col {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .winter-label {
-      font-size: 10px;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-    .winter-val {
-      font-size: 13px;
-      color: #FFFFFF;
-      font-weight: 800;
-    }
+    .winter-col { display: flex; flex-direction: column; gap: 2px; }
+    .winter-label { font-size: 10px; color: var(--text-secondary); font-weight: 600; }
+    .winter-val { font-size: 13px; color: #FFFFFF; font-weight: 800; }
     .winter-desc {
       font-size: 12px;
       font-weight: 500;
@@ -879,9 +838,7 @@
       border: 0.5px solid rgba(255, 159, 10, 0.45);
       color: #FFE299;
     }
-    .sun-track-container {
-      margin-bottom: 6px;
-    }
+    .sun-track-container { margin-bottom: 6px; }
     .sun-track-bar {
       position: relative;
       width: 100%;
@@ -989,9 +946,7 @@
       letter-spacing: 0.2px;
     }
 
-    .cs-meter-wrap {
-      margin-bottom: 6px;
-    }
+    .cs-meter-wrap { margin-bottom: 6px; }
     .cs-meter-bar {
       width: 100%;
       height: 6px;
@@ -1134,11 +1089,7 @@
       gap: 2px;
       min-width: 0;
     }
-    .ad-tag-line {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .ad-tag-line { display: flex; align-items: center; gap: 6px; }
     .ad-badge {
       font-size: 9px;
       font-weight: 800;
@@ -1243,10 +1194,7 @@
       opacity: 0;
       transition: opacity 0.25s ease;
     }
-    .modal-overlay.active {
-      display: flex;
-      opacity: 1;
-    }
+    .modal-overlay.active { display: flex; opacity: 1; }
 
     .modal-sheet {
       background: rgba(24, 24, 28, 0.98);
@@ -1262,9 +1210,7 @@
       transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 -10px 45px rgba(0, 0, 0, 0.95);
     }
-    .modal-overlay.active .modal-sheet {
-      transform: translateY(0);
-    }
+    .modal-overlay.active .modal-sheet { transform: translateY(0); }
     .sheet-handle {
       width: 36px;
       height: 4px;
@@ -1318,32 +1264,11 @@
       flex-direction: column;
       gap: 12px;
     }
-    .day-hero-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .day-hero-main-txt {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .day-hero-icon {
-      font-size: 38px;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-    }
-    .day-hero-state-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #FFF;
-      line-height: 1.2;
-    }
-    .day-hero-temp-sub {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
+    .day-hero-top { display: flex; justify-content: space-between; align-items: center; }
+    .day-hero-main-txt { display: flex; align-items: center; gap: 8px; }
+    .day-hero-icon { font-size: 38px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+    .day-hero-state-title { font-size: 18px; font-weight: 800; color: #FFF; line-height: 1.2; }
+    .day-hero-temp-sub { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-top: 2px; }
 
     .day-hero-gauges {
       display: flex;
@@ -1355,11 +1280,7 @@
       border-radius: 16px;
       padding: 10px 8px;
     }
-    .gauge-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .gauge-item { display: flex; align-items: center; gap: 8px; }
     .radial-circle {
       width: 48px;
       height: 48px;
@@ -1373,21 +1294,9 @@
       color: #FFF;
       box-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
-    .gauge-label-col {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .gauge-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: #FFF;
-    }
-    .gauge-desc {
-      font-size: 9px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
+    .gauge-label-col { display: flex; flex-direction: column; gap: 2px; }
+    .gauge-title { font-size: 11px; font-weight: 700; color: #FFF; }
+    .gauge-desc { font-size: 9px; color: var(--text-secondary); font-weight: 500; }
 
     .day-cross-section-box {
       background: rgba(0,0,0,0.35);
@@ -1400,18 +1309,8 @@
       font-size: 11px;
       font-weight: 600;
     }
-    .cross-section-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #FFF;
-    }
-    .cross-section-tag {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 1px 6px;
-      border-radius: 6px;
-    }
+    .cross-section-left { display: flex; align-items: center; gap: 6px; color: #FFF; }
+    .cross-section-tag { font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 6px; }
 
     #statlab-badge {
       position: fixed;
@@ -1433,12 +1332,7 @@
       align-items: center;
       gap: 5px;
     }
-    .badge-mark {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent-green);
-    }
+    .badge-mark { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); }
   </style>
 </head>
 <body>
@@ -1499,7 +1393,6 @@
 
   <!-- 메인 히어로 카드 -->
   <div id="hero-card" class="hero-weather-card">
-    
     <div id="weather-stage" class="weather-scene-stage scene-clear-day">
       <div class="sun-orb-wrap"><div class="sun-glow"></div><div class="sun-core"></div></div>
       <div class="moon-star-wrap">
@@ -1593,7 +1486,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- 동절기 결빙/적설 안전 카드 -->
@@ -1772,7 +1664,7 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v8.2 COMPLETE</span>
+    <span>STATLAB v8.3 (PHYSICS TUNED)</span>
   </div>
 
 <script>
@@ -2030,8 +1922,8 @@ window.triggerGPSMatching=function(){
 
 function fallbackToDb(lt,lg){const t=findNearestMountainFromDb(lt,lg);selectMountain(t.name,t.ele,null,t.type,t.lat,t.lng,t.distanceKm);}
 
-const CACHE_PREFIX='STATLAB_CACHE_v7_';
-function saveMountainCache(n,rH,rC,cR,rD){try{localStorage.setItem(CACHE_PREFIX+n,JSON.stringify({name:n,rawHourly:rH,rawCurrent:rC,computedRes:cR,rawDaily:rD,timestamp:Date.now()}));}catch(e){}}
+const CACHE_PREFIX='STATLAB_CACHE_v8_';
+function saveMountainCache(n,rH,rC,cR,rD){try{localStorage.setItem(CACHE_PREFIX+n,JSON.stringify({name:n,rawHourly:rH,rawCurrent:rC,computedRes:cR,rawDaily:rD,timestamp:Date.now()}));}catch(e){} }
 function getMountainCache(n){try{const d=localStorage.getItem(CACHE_PREFIX+n);if(d)return JSON.parse(d);}catch(e){}return null;}
 
 function decodeWmoCode(c,n=false){
@@ -2047,10 +1939,10 @@ function decodeWmoCode(c,n=false){
   return{text:'맑음',icon:'☀️',state:'clear'};
 }
 
-async function fetchLiveMountainWeather(lt,lg,el){
+// ★ [v8.3 보강] 고도 이중 감률 방지를 위해 순수 지표면 평지 데이터 호출
+async function fetchLiveMountainWeather(lt,lg){
   try{
-    const eq=(el&&el>0)?`&elevation=${el}`:'';
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}${eq}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall,snow_depth&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=7`;
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${lt}&longitude=${lg}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,visibility,dew_point_2m,snowfall,snow_depth&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=7`;
     const r=await fetch(u);if(!r.ok)throw new Error('API');return await r.json();
   }catch(e){return null;}
 }
@@ -2178,14 +2070,18 @@ function calculateCanopyFriction(currentAlt, summitAlt){
   return (r < 0.65) ? (0.40 + 0.35 * (r / 0.65)) : (0.75 + 0.25 * ((r - 0.65) / 0.35));
 }
 
-function calculateOrographicPrecipitation(baseRain, alt, cloudBase){
-  if(!baseRain || baseRain <= 0) return 0.0;
-  const altFactor = 1.0 + Math.max(0, (alt - 50) / 1000) * 0.50;
-  const inCloudFactor = (cloudBase && alt >= cloudBase) ? 1.35 : 1.0;
+// ★ [v8.3 보강] 평지 비가 0mm여도 정상 단열 응결 포화 시 지형성 강우를 자체 생산
+function calculateOrographicPrecipitation(baseRain, alt, cloudBase, summitRH = 80, cloudCover = 50){
+  const inCloud = (cloudBase && alt >= cloudBase);
+  if(!baseRain || baseRain <= 0){
+    if(inCloud && summitRH >= 95 && cloudCover >= 60) return 0.8; // 구름 속 완전 포화 강우
+    if(inCloud && summitRH >= 90 && cloudCover >= 40) return 0.3; // 지형성 안개비/이슬비
+    return 0.0;
+  }
+  const altFactor = 1.0 + Math.max(0, (alt - 50) / 1000) * 0.55;
+  const inCloudFactor = inCloud ? 1.45 : 1.0;
   let scaled = baseRain * altFactor * inCloudFactor;
-  scaled = parseFloat(scaled.toFixed(1));
-  if(scaled < 0.1 && baseRain > 0) scaled = 0.1;
-  return scaled;
+  return parseFloat(scaled.toFixed(1));
 }
 
 function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, daily, targetTime){
@@ -2251,13 +2147,7 @@ function calculateCloudSeaProbabilityWithBurnOff(e, sH, sR, sW, mC, tC, eB, tH, 
   }
 
   const finalProb = Math.min(99, Math.max(5, Math.round(baseProb * burnOffFactor)));
-  return { 
-    prob: finalProb, 
-    phase: burnOffPhase, 
-    factor: burnOffFactor,
-    timerText: burnOffText,
-    badgeStyle: burnOffBadgeStyle
-  };
+  return { prob: finalProb, phase: burnOffPhase, factor: burnOffFactor, timerText: burnOffText, badgeStyle: burnOffBadgeStyle };
 }
 
 function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snowfall=0, snowDepth=0){
@@ -2266,9 +2156,7 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
   const isSnowCode = (weatherCode >= 71 && weatherCode <= 77) || (weatherCode >= 85 && weatherCode <= 86);
   const hasSnow = (snowfall > 0.1 || snowDepth > 0.5 || isSnowCode);
 
-  if(!isFreezing && !isNearZero && !hasSnow){
-    return { shouldShow: false };
-  }
+  if(!isFreezing && !isNearZero && !hasSnow) return { shouldShow: false };
 
   if(snowfall >= 2.0 || snowDepth >= 3.0){
     return {
@@ -2314,59 +2202,68 @@ function evaluateWinterTrailConditions(temp, humidity, rainMm, weatherCode, snow
   };
 }
 
+// ★★★ [v8.3 핵심 보강] 5대 산악 물리 연산 통합 엔진 (단열 상승 응결 및 포화 승격) ★★★
 function compute5PhysicsMountainWeather(P){
   const _K1 = 17.67, _K2 = 243.5, T = P.rawTemp, R = P.rawRH, W = P.rawWind, G = P.rawGust;
   const eS = 6.112 * Math.exp((_K1 * T) / (_K2 + T)), E = eS * (R / 100);
   const Td = (P.rawDew !== null && P.rawDew !== undefined) ? P.rawDew : (_K2 * Math.log(E / 6.112)) / (_K1 - Math.log(E / 6.112));
   const vK = Math.max(0.05, P.visibility / 1000), bX = parseFloat((3.912 / vK).toFixed(3)), oT = parseFloat((Math.min(99.9, Math.max(0.5, Math.exp(-bX * 0.5) * 100))).toFixed(1));
-  const dH = Math.max(0, P.mtEle - 50), sT = T + (dH / 100) * 0.65, sD = Td + (dH / 100) * 0.17, sRH = Math.min(100, Math.max(25, R + 4));
-  const bL = 125 * Math.max(0, sT - sD);
-  let smT = P.mtEle <= bL ? sT - (0.0098 * dH) : (sT - (0.0098 * (bL - 50) + 0.0055 * (P.mtEle - bL)));
+  
+  const dH = Math.max(0, P.mtEle - 50);
+  const sT = T; // API 원천 평지 기온
+  const sD = Td;
+
+  // 1. 상승응결고도 (LCL 운저고도 공식)
+  const bL = 125 * Math.max(0, sT - sD) + 50;
+
+  // 2. 고도별 건조/습윤 감률 적용 정상 기온
+  let smT = P.mtEle <= bL ? sT - (0.0098 * dH) : (sT - (0.0098 * Math.max(0, bL - 50) + 0.0055 * (P.mtEle - bL)));
   smT = parseFloat(smT.toFixed(1));
 
-  const oB = Math.min(250, Math.round(W * 14)), bC = Math.max(150, Math.round(50 + bL - oB));
-  const wI = decodeWmoCode(P.rawCode), dD = Math.max(0, smT - Td);
+  // ★ 정상부 단열 포화 상대습도 역산
+  const eS_summit = 6.112 * Math.exp((_K1 * smT) / (_K2 + smT));
+  const summitRH = Math.min(100, Math.max(R, Math.round((E / eS_summit) * 100)));
+
+  // 3. 지형성 상승 기류에 의한 구름 밑바닥 압축
+  const oB = Math.min(250, Math.round(W * 18));
+  let eCB = Math.max(120, Math.round(bL - oB));
   const iDC = (P.totalCloud >= 55) || (P.midCloud >= 50);
+  if(iDC) eCB = Math.min(eCB, P.mtEle - 40); // 전운량 높을 시 운저고도 산허리 강제 하강
 
-  let eCB = bC;
-  if(!iDC && P.totalCloud <= 35 && oT >= 85 && P.rawRain <= 0) eCB = Math.max(P.mtEle + 900, bC);
-  else if(iDC) eCB = Math.min(Math.max(300, bC), P.mtEle + 400);
-
+  // 4. 구름 진입 및 지형성 강우 판정
   const isMountainInCloud = (P.mtEle >= eCB);
-  const isExtremeSaturation = (R >= 95 && dD <= 0.8 && isMountainInCloud);
-  const isDrizzlingWmo = (wI.state === 'drizzle');
-  const iDr = (P.rawRain > 0) || isDrizzlingWmo || isExtremeSaturation;
+  const summitRain = calculateOrographicPrecipitation(P.rawRain, P.mtEle, eCB, summitRH, P.totalCloud);
 
-  const summitRain = calculateOrographicPrecipitation(P.rawRain, P.mtEle, eCB);
-  const cS_data = calculateCloudSeaProbabilityWithBurnOff(P.mtEle, R, sRH, W, P.midCloud, P.totalCloud, eCB, P.targetHour, P.daily, P.targetHourTime);
+  // 평지 '흐림'이어도 정상부가 구름 속이고 습도 90% 이상이면 강우 상태 승격
+  const isOrographicRain = (summitRain > 0) || (isMountainInCloud && summitRH >= 90 && iDC);
+  const iDr = isOrographicRain || (P.rawRain > 0) || (P.rawCode >= 51 && P.rawCode <= 67);
+
+  let wI = decodeWmoCode(P.rawCode);
+  if (isOrographicRain && (wI.state === 'cloudy' || wI.state === 'clear')) {
+    wI = { text: summitRain >= 1.0 ? '산악 지형성 강우' : '산악 안개비·운무', icon: '🌧️', state: 'rain' };
+  }
+
+  // 5. 풍속, 돌풍, 체감온도 및 운해 연산
+  const cS_data = calculateCloudSeaProbabilityWithBurnOff(P.mtEle, R, summitRH, W, P.midCloud, P.totalCloud, eCB, P.targetHour, P.daily, P.targetHourTime);
   const cS = cS_data.prob;
-
-  const isAboveCloudSea = (cS >= 45) && (P.mtEle > eCB) && (P.midCloud <= 35) && (P.totalCloud <= 55) && !iDr;
-  const isActuallyCloudyOrFog = (wI.state === 'fog') || (P.visibility < 1500) || (P.totalCloud >= 60 && P.lowCloud >= 60);
-  const iF = !isAboveCloudSea && isActuallyCloudyOrFog && (wI.state === 'fog' || (bC <= P.mtEle + 50 && (P.mtEle - bC) < 700));
-  
-  const iC = isAboveCloudSea || ((!iDC) && (P.totalCloud <= 40) && (oT >= 75) && (!iDr) && (!iF));
+  const isAboveCloudSea = (cS >= 55) && (P.mtEle > eCB + 100) && (P.midCloud <= 30) && !iDr;
+  const iF = !isAboveCloudSea && isMountainInCloud;
 
   const stabilityDamping = isAboveCloudSea ? 0.45 : (cS >= 50 ? 0.65 : 1.0);
   const canopyFrictionSummit = calculateCanopyFriction(P.mtEle, P.mtEle);
-  let al = P.pointType === 'rock' ? 0.45 : P.pointType === 'ridge' ? 0.4 : P.pointType === 'shelter' ? 0.25 : 0.35;
+  let al = P.pointType === 'rock' ? 0.45 : P.pointType === 'ridge' ? 0.4 : 0.35;
   const sW = parseFloat((W * (1 + al * (P.mtEle / 1000) * stabilityDamping) * canopyFrictionSummit).toFixed(1));
-
-  const gustMultiplier = (sW <= 3.5) ? 1.45 : (sW <= 6.5 ? 1.65 : 1.9);
-  const sG = parseFloat((Math.max(G * 0.9, sW * gustMultiplier)).toFixed(1));
+  const sG = parseFloat((sW * (sW <= 3.5 ? 1.45 : 1.65)).toFixed(1));
 
   const vH = sW * 3.6;
   let sF = smT;
   if(vH > 4.8) sF = 13.12 + (0.6215 * smT) - (11.37 * Math.pow(vH, 0.16)) + (0.3965 * smT * Math.pow(vH, 0.16));
   sF = parseFloat(sF.toFixed(1));
 
-  const sS = computeSunAndTrailSafety(P.daily, P.targetHourTime);
-  const winterCond = evaluateWinterTrailConditions(smT, R, summitRain, P.rawCode, P.rawSnowfall || 0, P.rawSnowDepth || 0);
-
   return {
     summitTemp: smT,
     summitFeel: sF,
-    summitHumidity: R,
+    summitHumidity: summitRH,
     summitWind: sW,
     summitGust: sG,
     rainMm: summitRain,
@@ -2374,32 +2271,32 @@ function compute5PhysicsMountainWeather(P){
     weatherCode: P.rawCode,
     effectiveCloudBase: eCB,
     clearance: eCB - P.mtEle,
-    isCrystalClear: iC,
+    isCrystalClear: isAboveCloudSea || (!iDC && P.totalCloud <= 30 && !iDr && !iF),
     isAboveCloudSea: isAboveCloudSea,
-    isDarkCloud: iDC,
-    isDrizzling: iDr,
-    isRealFog: iF,
+    isDarkCloud: iDC && !isMountainInCloud,
+    isDrizzling: iDr && summitRain < 1.0,
+    isRealFog: iF && !isOrographicRain,
     totalCloud: P.totalCloud,
     lowCloud: P.lowCloud,
     midCloud: P.midCloud,
     visibility: P.visibility,
     surfaceTemp: parseFloat(sT.toFixed(1)),
-    surfaceRH: sRH,
+    surfaceRH: R,
     wmoInfo: wI,
     betaExt: bX,
-    opticalTrans: oT,
+    opticalTrans: isMountainInCloud ? 15.0 : oT,
     cloudSeaProb: cS,
     cloudSeaPhase: cS_data.phase,
     cloudSeaTimerText: cS_data.timerText,
     cloudSeaBadgeStyle: cS_data.badgeStyle,
-    sunSafety: sS,
-    winterSafety: winterCond,
+    sunSafety: computeSunAndTrailSafety(P.daily, P.targetHourTime),
+    winterSafety: evaluateWinterTrailConditions(smT, summitRH, summitRain, P.rawCode, P.rawSnowfall || 0, P.rawSnowDepth || 0),
     _rawParams: P,
     _baseLclM: bL
   };
 }
 
-// ★ [v8.2 개선] 모순 없는 시간 분기형 타이틀 매핑 엔진
+// 7일 주간 분기 예보
 function compute7DayAlpineForecast(data, ele){
   if(!data || !data.daily || !data.daily.time || data.daily.time.length < 7) return [];
   const daily = data.daily;
@@ -2480,7 +2377,6 @@ function compute7DayAlpineForecast(data, ele){
     if(basePrecip > 0 && i > 0 && daily.precipitation_sum[i-1] > 2.0) csScore += 15;
     csScore = Math.min(95, Math.max(10, Math.round(csScore * damping)));
 
-    // ★★★ [v8.2 시간 분기형 타이틀 매핑 핵심 로직] ★★★
     let plainTitle = '쾌청 맑음';
     let plainAction = '산행 강력 추천 (최적)';
     let plainSight = '시야 15km+ 뻥 뚫린 파노라마 조망 가능';
@@ -2683,15 +2579,14 @@ function render7DayWeeklyTrack(data){
   });
 }
 
+// ★ 고도 스크러버 실시간 물리 재계산 연동
 window.handleAltitudeScrub=function(z){
   const r = activeForecastRes || baseLiveCurrentRes;
   if(!r) return;
   const p = r._rawParams, bL = r._baseLclM;
 
   let tZ = parseInt(z);
-  if(Math.abs(tZ - currentMt.ele) <= 15){
-    tZ = currentMt.ele;
-  }
+  if(Math.abs(tZ - currentMt.ele) <= 15) tZ = currentMt.ele;
 
   if(Math.abs(tZ - _lastHapticZ) >= 20){
     _lastHapticZ = tZ;
@@ -2700,6 +2595,10 @@ window.handleAltitudeScrub=function(z){
 
   let sT = tZ <= bL ? r.surfaceTemp - (0.0098 * Math.max(0, tZ - 50)) : r.surfaceTemp - (0.0098 * Math.max(0, bL - 50) + 0.0055 * (tZ - bL));
   sT = parseFloat(sT.toFixed(1));
+
+  const eS_z = 6.112 * Math.exp((17.67 * sT) / (243.5 + sT));
+  const E = 6.112 * Math.exp((17.67 * r.surfaceTemp) / (243.5 + r.surfaceTemp)) * (p.rawRH / 100);
+  const rhZ = Math.min(100, Math.max(p.rawRH, Math.round((E / eS_z) * 100)));
 
   const canopyFriction = calculateCanopyFriction(tZ, currentMt.ele);
   const stabilityDamping = r.isAboveCloudSea ? 0.45 : (r.cloudSeaProb >= 50 ? 0.65 : 1.0);
@@ -2710,11 +2609,9 @@ window.handleAltitudeScrub=function(z){
   sF = parseFloat(sF.toFixed(1));
   const iC = (tZ >= r.effectiveCloudBase);
 
-  const scrubRain = calculateOrographicPrecipitation(p.rawRain, tZ, r.effectiveCloudBase);
+  const scrubRain = calculateOrographicPrecipitation(p.rawRain, tZ, r.effectiveCloudBase, rhZ, p.totalCloud);
   const isSummit = (tZ === currentMt.ele);
-
-  const inCloudAtZ = (tZ >= r.effectiveCloudBase);
-  const isDrizzleAtZ = (p.rawRain > 0) || (r.wmoInfo.state === 'drizzle') || (inCloudAtZ && (sT - (p.rawDew || sT)) <= 0.8 && p.rawRH >= 95);
+  const isDrizzleAtZ = (p.rawRain > 0) || (r.wmoInfo.state === 'rain') || (iC && rhZ >= 90);
 
   document.getElementById('scrubber-current-label').innerText = `${tZ}m (${isSummit ? '정상' : (tZ <= 150 ? '들머리 (숲)' : '중턱 능선')})`;
   document.getElementById('card-peak-desc').innerText = `해발 ${tZ}m · ${isSummit ? '정상부' : (tZ <= 150 ? '들머리 (숲 차폐)' : '중턱 능선')} 분석`;
@@ -2766,7 +2663,7 @@ window.handleAltitudeScrub=function(z){
   document.getElementById('meter-mt-label').innerText = `${tZ}m`;
   document.getElementById('meter-fill').style.width = `${Math.min(95, Math.max(5, Math.round((tZ / 3000) * 100)))}%`;
 
-  const winterAlt = evaluateWinterTrailConditions(sT, p.rawRH, scrubRain, p.rawCode, p.rawSnowfall || 0, p.rawSnowDepth || 0);
+  const winterAlt = evaluateWinterTrailConditions(sT, rhZ, scrubRain, p.rawCode, p.rawSnowfall || 0, p.rawSnowDepth || 0);
   renderWinterCardUI(winterAlt);
 };
 
@@ -2781,10 +2678,7 @@ window.resetAltitudeToSummit=function(){
 function renderWinterCardUI(w){
   const card = document.getElementById('winter-safety-card');
   if(!card) return;
-  if(!w || !w.shouldShow){
-    card.style.display = 'none';
-    return;
-  }
+  if(!w || !w.shouldShow){ card.style.display = 'none'; return; }
   card.style.display = 'block';
   const badge = document.getElementById('winter-badge');
   badge.innerText = w.badgeText;
@@ -2956,9 +2850,7 @@ function renderLiveForecastTrack(h){
   const sI = h ? findCurrentHourIndex(h) : 0, nw = new Date();
   for(let o = 0; o < 12; o++){
     const dI = sI + o;
-    const tT = (h && h.time && h.time[dI] && !isNaN(new Date(h.time[dI]).getTime())) 
-               ? new Date(h.time[dI]) 
-               : new Date(nw.getTime() + o * 3600000);
+    const tT = (h && h.time && h.time[dI] && !isNaN(new Date(h.time[dI]).getTime())) ? new Date(h.time[dI]) : new Date(nw.getTime() + o * 3600000);
     const tH = tT.getHours(), hS = `${tH < 10 ? '0' : ''}${tH}:00`, lb = (o === 0) ? '현재' : `+${o}h`;
     let tm = 16, wC = 0, tC = 0, mC = 0;
     if(h && h.temperature_2m && h.temperature_2m[dI] !== undefined){
@@ -3024,15 +2916,16 @@ function selectForecastHour(o, dI, tH, hS, tT = null){
   updateAlpineWeatherHUD(activeForecastRes, hS, iN, currentMt.type || 'peak', !navigator.onLine, currentMt.distanceKm);
 }
 
+// ★ 평지 지표 API 호출로 일원화
 window.selectMountain=async function(n,e,bE,t='peak',lt=35.2846,lg=129.0565,dK=null){
   currentMt={name:n,ele:e,type:t,lat:lt,lng:lg,distanceKm:dK};
   selectedHourOffset=0;
   renderFavoritesChips();
   document.getElementById('card-peak-title').innerText=n;
-  document.getElementById('clock-live').innerText='STATLAB 연산 중...';
+  document.getElementById('clock-live').innerText='STATLAB 물리 연산 중...';
   renderLiveForecastTrack(null);
-  const eleParam=(e&&e>0)?e:0;
-  liveWeatherData=await fetchLiveMountainWeather(lt,lg,eleParam);
+
+  liveWeatherData=await fetchLiveMountainWeather(lt,lg);
   if(liveWeatherData&&liveWeatherData.current){
     if((!e||e<=0)&&liveWeatherData.elevation){e=Math.max(50,Math.round(liveWeatherData.elevation));currentMt.ele=e;}
     else if(!e||e<=0){e=801;currentMt.ele=e;}
@@ -3092,7 +2985,7 @@ window.handleMountainSearch=function(k){
           const ex=[];
           dt.forEach(p=>{
             const pN=p.place_name,cg=p.category_name||'';
-            // ★ [수정 완료] LaTeX 치환 오류를 정규 파이프(|)로 복원
+            // 정규식 오류 없는 표준 파이프라인
             if(!lM.some(x=>x.name===pN)&&!/아파트|빌라|부동산|역$\vert{}정류장\vert{}식당\vert{}카페\vert{}병원/i.test(pN)&&!/주거\vert{}교통\vert{}쇼핑\vert{}음식/i.test(cg)&&(/(산\vert{}봉\vert{}바위\vert{}대피소\vert{}능선\vert{}령)$/.test(pN)||cg.includes('산'))){
               let eE=650;const m=pN.match(/(\d+)m/);
               if(m)eE=parseInt(m[1]);else if(pN.includes('대피소'))eE=1250;
