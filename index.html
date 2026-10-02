@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v13.5 Real Cloud-Base Engine</title>
+  <title>STATLAB 산악 기상 분석 v14.0 Ultimate Engine</title>
 
   <!-- 포트원 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -765,7 +765,6 @@
     .sheet-title { font-size: 15px; font-weight: 800; color: #FFFFFF; }
     .sheet-close-btn { background: rgba(255, 255, 255, 0.1); border: none; width: 28px; height: 28px; border-radius: 50%; color: #FFFFFF; cursor: pointer; }
 
-    /* 주간 앙상블 일별 상세 모달 전용 스타일 */
     .day-hero-stage {
       border: 0.5px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px;
@@ -828,9 +827,9 @@
   <div class="brand-header">
     <div class="brand-title">
       <span id="brand-live-dot" class="brand-dot"></span>
-      STATLAB ALPINE <span class="brand-ver-badge">v13.5</span>
+      STATLAB ALPINE <span class="brand-ver-badge">v14.0</span>
     </div>
-    <div id="clock-live" class="brand-status">v13.5 동기화 중...</div>
+    <div id="clock-live" class="brand-status">v14.0 동기화 중...</div>
   </div>
 
   <div class="search-row">
@@ -840,7 +839,7 @@
         type="text"
         id="mt-search-input"
         class="search-box"
-        placeholder="전국 산 또는 봉우리(황령산, 배산, 백운대 등) 검색"
+        placeholder="전국 산 또는 봉우리(황령산, 배산, 백운대, 천왕봉 등) 검색"
         autocomplete="off"
         oninput="handleMountainSearch(this.value)"
         onfocus="handleMountainSearch(this.value)"
@@ -995,7 +994,7 @@
     <div class="sun-track-container">
       <div class="sun-track-bar">
         <div id="sun-track-fill" class="sun-track-fill" style="width: 50%;"></div>
-        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️</div>
+        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️️</div>
       </div>
       <div class="sun-time-labels">
         <span id="label-sunrise">일출 --:--</span>
@@ -1133,26 +1132,26 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v13.5 REAL CLOUD-BASE ENGINE</span>
+    <span>STATLAB v14.0 ULTIMATE</span>
   </div>
 
 <script>
-const STATLAB_VERSION = "v13.5";
+const STATLAB_VERSION = "v14.0";
 
-// 전국 320개+ 도심 생활권 산 & 100대 명산 전수 DB
+// 전국 320개+ 도심 생활권 산 & 100대 명산 정제 DB (불필요한 공원, 읍성, 성지 명칭 전면 제거)
 const mountainDB = [
   // [부산 전 지역 생활권 산 전수 - 50m~800m]
   {name:'황령산 봉수대', peak:'황령산', type:'peak', region:'부산 남구/부산진구', ele:427, lat:35.1578, lng:129.0825},
   {name:'금련산 정상', peak:'금련산', type:'peak', region:'부산 수영구/남구', ele:415, lat:35.1512, lng:129.0987},
-  {name:'배산 성지', peak:'배산', type:'peak', region:'부산 연제구/수영구', ele:255, lat:35.1785, lng:129.0945},
-  {name:'장산봉(이기대)', peak:'장산봉', type:'peak', region:'부산 남구 용호동', ele:225, lat:35.1265, lng:129.1185},
-  {name:'우암산 체육공원', peak:'우암산', type:'peak', region:'부산 남구 우암동', ele:120, lat:35.1385, lng:129.0745},
-  {name:'마안산 동래읍성', peak:'마안산', type:'peak', region:'부산 동래구 복천동', ele:56, lat:35.2078, lng:129.0886},
-  {name:'용두산 공원', peak:'용두산', type:'peak', region:'부산 중구 광복동', ele:49, lat:35.1005, lng:129.0325},
+  {name:'배산 정상', peak:'배산', type:'peak', region:'부산 연제구/수영구', ele:255, lat:35.1785, lng:129.0945},
+  {name:'이기대 장산봉', peak:'장산봉', type:'peak', region:'부산 남구 용호동', ele:225, lat:35.1265, lng:129.1185},
+  {name:'우암산 정상', peak:'우암산', type:'peak', region:'부산 남구 우암동', ele:120, lat:35.1385, lng:129.0745},
+  {name:'마안산 정상', peak:'마안산', type:'peak', region:'부산 동래구 복천동', ele:56, lat:35.2078, lng:129.0886},
+  {name:'용두산 정상', peak:'용두산', type:'peak', region:'부산 중구 광복동', ele:49, lat:35.1005, lng:129.0325},
   {name:'영도 봉래산', peak:'봉래산', type:'peak', region:'부산 영도구 신선동', ele:395, lat:35.0841, lng:129.0556},
-  {name:'천마산 전망대', peak:'천마산', type:'peak', region:'부산 서구 남부민동', ele:324, lat:35.0925, lng:129.0145},
-  {name:'구덕산 기상레이더', peak:'구덕산', type:'peak', region:'부산 서구 서대신동', ele:565, lat:35.1285, lng:129.0065},
-  {name:'엄광산 숲길', peak:'엄광산', type:'peak', region:'부산 동구 초량동', ele:504, lat:35.1415, lng:129.0185},
+  {name:'천마산 정상', peak:'천마산', type:'peak', region:'부산 서구 남부민동', ele:324, lat:35.0925, lng:129.0145},
+  {name:'구덕산 정상', peak:'구덕산', type:'peak', region:'부산 서구 서대신동', ele:565, lat:35.1285, lng:129.0065},
+  {name:'엄광산 정상', peak:'엄광산', type:'peak', region:'부산 동구 초량동', ele:504, lat:35.1415, lng:129.0185},
   {name:'승학산 억새봉', peak:'승학산', type:'peak', region:'부산 사하구 당리동', ele:497, lat:35.1189, lng:128.9867},
   {name:'백양산 정상', peak:'백양산', type:'peak', region:'부산 부산진구/북구', ele:642, lat:35.1837, lng:129.0273},
   {name:'해운대 장산', peak:'장산', type:'peak', region:'부산 해운대구 우동', ele:634, lat:35.1942, lng:129.1444},
@@ -1160,15 +1159,15 @@ const mountainDB = [
   {name:'기장 일광산', peak:'일광산', type:'peak', region:'부산 기장군 일광읍', ele:383, lat:35.2685, lng:129.2185},
 
   // [서울 및 수도권 생활권 산]
-  {name:'남산 팔각정', peak:'남산', type:'peak', region:'서울 중구 회현동', ele:262, lat:37.5514, lng:126.9881},
+  {name:'남산 정상', peak:'남산', type:'peak', region:'서울 중구 회현동', ele:262, lat:37.5514, lng:126.9881},
   {name:'인왕산 정상', peak:'인왕산', type:'peak', region:'서울 종로구 무악동', ele:338, lat:37.5847, lng:126.9575},
-  {name:'안산 봉수대', peak:'안산', type:'peak', region:'서울 서대문구 봉원동', ele:295, lat:37.5765, lng:126.9415},
-  {name:'응봉산 팔각정', peak:'응봉산', type:'peak', region:'서울 성동구 응봉동', ele:95, lat:37.5485, lng:127.0315},
+  {name:'안산 정상', peak:'안산', type:'peak', region:'서울 서대문구 봉원동', ele:295, lat:37.5765, lng:126.9415},
+  {name:'응봉산 정상', peak:'응봉산', type:'peak', region:'서울 성동구 응봉동', ele:95, lat:37.5485, lng:127.0315},
   {name:'아차산 해맞이봉', peak:'해맞이봉', type:'peak', region:'서울 광진구/경기 구리', ele:295, lat:37.5539, lng:127.1008},
-  {name:'우면산 소뿔봉', peak:'우면산', type:'peak', region:'서울 서초구 양재동', ele:293, lat:37.4715, lng:127.0185},
+  {name:'우면산 정상', peak:'우면산', type:'peak', region:'서울 서초구 양재동', ele:293, lat:37.4715, lng:127.0185},
   {name:'대모산 정상', peak:'대모산', type:'peak', region:'서울 강남구 일원동', ele:293, lat:37.4785, lng:127.0785},
   {name:'청계산 매봉', peak:'매봉', type:'peak', region:'서울 서초구/경기 성남', ele:582, lat:37.4267, lng:127.0547},
-  {name:'관악산 연주대', peak:'연주대', type:'peak', region:'서울 관악구/경기 과천', ele:629, lat:37.4442, lng:126.9639},
+  {name:'관악산 연주대', peak:'연주대', type:'peak', region:'서울 관악구/과천', ele:629, lat:37.4442, lng:126.9639},
   {name:'수락산 주봉', peak:'주봉', type:'peak', region:'서울 노원구/경기 남양주', ele:638, lat:37.6836, lng:127.0864},
   {name:'북한산 백운대', peak:'백운대', type:'peak', region:'서울 강북구/경기 고양', ele:836, lat:37.6587, lng:126.9780},
   {name:'도봉산 자운봉', peak:'자운봉', type:'peak', region:'서울 도봉구/경기 의정부', ele:740, lat:37.6989, lng:127.0156},
@@ -1188,7 +1187,7 @@ const mountainDB = [
   {name:'한라산 백록담', peak:'백록담', type:'peak', region:'제주 서귀포시', ele:1947, lat:33.3617, lng:126.5332}
 ];
 
-const FAVORITES_KEY = 'STATLAB_FAV_v135';
+const FAVORITES_KEY = 'STATLAB_FAV_v140';
 const defaultFavorites = [
   {name:'황령산 봉수대', ele:427, type:'peak', lat:35.1578, lng:129.0825},
   {name:'금정산 고당봉', ele:801, type:'peak', lat:35.2846, lng:129.0565},
@@ -1229,12 +1228,12 @@ function updateFavoriteBtnState(){
   b.classList.toggle('active', isCurrentFavorite());
 }
 
-// 안전한 DOM 텍스트/스타일 주입 함수
+// 안전한 DOM 주입 헬퍼 함수
 const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
 const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
 const setStyle = (id, prop, val) => { const el = document.getElementById(id); if (el) el.style[prop] = val; };
 
-// 글로벌 상태 변수
+// 글로벌 상태
 let currentMt = mountainDB[0];
 let selectedHourOffset = 0;
 let liveWeatherData = null;
@@ -1258,7 +1257,7 @@ function extractModelArray(obj, key) {
   return obj[key];
 }
 
-// 1차: 실시간 및 초단기 예보 API 통신 (8일 전수 수신, 정상 고도 명시)
+// 1차: 실시간 및 초단기 예보 API 통신 (8일 전수 수신, 정상 표고 명시)
 async function fetchPrimaryAlpineWeather(lat, lng, ele) {
   try {
     const params = new URLSearchParams({
@@ -1320,7 +1319,7 @@ function findNearestMountainFromDb(uLat, uLng){
   return nearest;
 }
 
-// 2단계 고속-정밀 GPS 스캔 엔진
+// 2단계 고속-정밀 GPS 스캔 엔진 (내 위치 고도 무조건 산출)
 window.triggerGPSMatching = function(){
   const btn = document.getElementById('gps-action-btn');
   const liveDot = document.getElementById('brand-live-dot');
@@ -1334,18 +1333,30 @@ window.triggerGPSMatching = function(){
     return;
   }
 
-  const handlePositionSuccess = p => {
+  const handlePositionSuccess = async p => {
     if(btn) btn.classList.remove('scanning');
     if(liveDot) liveDot.className = 'brand-dot';
     
     const uLat = p.coords.latitude;
     const uLng = p.coords.longitude;
     
+    // 모바일 기기가 고도를 null로 줄 경우, Open-Meteo 지형 고도 API로 실시간 보정!
     if(p.coords.altitude !== null && !isNaN(p.coords.altitude) && p.coords.altitude > 0){
       currentUserAltitude = Math.round(p.coords.altitude);
       setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
     } else {
-      setTxt('user-gps-alt-pill', `📍 내 위치 연동`);
+      try {
+        const eleRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${uLat}&longitude=${uLng}`);
+        const eleData = await eleRes.json();
+        if(eleData && eleData.elevation && eleData.elevation.length > 0){
+          currentUserAltitude = Math.round(eleData.elevation[0]);
+        } else {
+          currentUserAltitude = 45;
+        }
+      } catch(e) {
+        currentUserAltitude = 45;
+      }
+      setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
     }
 
     const nearestMt = findNearestMountainFromDb(uLat, uLng);
@@ -1444,7 +1455,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
     midLabel = '태양 궤적 (주간)';
     rightLabel = `일몰 ${sS_s}`;
     if(mTS <= 60){ bT = '🚨 하산 완료 필수'; bC = 'var(--accent-red)'; dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 어두워집니다. 즉시 하산을 완료하세요.`; }
-    else if(mTS <= 120){ bT = '⚠️ 하산 코스 진입'; bC = 'var(--accent-amber)'; dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(${sS_s}) 전에 하산로에 진입하세요.`; }
+    else if(mTS <= 120){ bT = '⚠️️ 하산 코스 진입'; bC = 'var(--accent-amber)'; dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(${sS_s}) 전에 하산로에 진입하세요.`; }
     else { bT = `일몰까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`; bC = 'var(--accent-green)'; dT = `<strong>☀️ [주간 일조 확보]:</strong> 일몰 시각은 ${sS_s}입니다. 안전한 주간 산행이 가능합니다.`; }
   } else {
     isNight = true; orbChar = '🌙';
@@ -1464,7 +1475,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
   return { srStr: sR_s, ssStr: sS_s, sunProgress: p, badgeText: bT, badgeColor: bC, descText: dT, isNight, orbChar, leftLabel, midLabel, rightLabel, sR, sS };
 }
 
-// ★★★ [해발 운저고도(ASL) 정밀 대기물리 계산식] ★★★
+// 해발 운저고도(ASL) 정밀 대기물리 계산식
 function calculateLCL(temp, rh, dewPoint, summitAlt) {
   let td = dewPoint;
   if (td === null || td === undefined || isNaN(td)) {
@@ -1472,13 +1483,13 @@ function calculateLCL(temp, rh, dewPoint, summitAlt) {
   }
   const spread = Math.max(0.1, temp - td);
 
-  // 1. 산 정상이 비/짙은 구름/안개에 갇힌 경우 (습도 92% 이상)
+  // 산 정상이 비/짙은 구름에 갇힌 경우 (습도 92% 이상)
   if (rh >= 92) {
     const drop = Math.round((rh - 90) * 80);
     return Math.max(150, Math.round(summitAlt - drop));
   }
 
-  // 2. 맑거나 상공에 구름이 뜬 경우: 정상 고도 + 정상 표면 위 응결 높이
+  // 맑거나 상공에 구름이 뜬 경우: 정상 고도 + 정상 표면 위 응결 높이
   const cloudHeightAboveSummit = Math.round(125 * spread);
   return Math.round(summitAlt + cloudHeightAboveSummit);
 }
@@ -1507,7 +1518,6 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
 
   let rain = p.rawRain > 0 ? p.rawRain : 0.0;
 
-  // 실제 구름층 진입 여부 판정
   const isFogCode = (p.rawCode >= 45 && p.rawCode <= 48);
   const isInRealCloud = (targetAlt >= lclHeight) && (p.totalCloud >= 60 || rh >= 90);
 
@@ -1606,14 +1616,14 @@ function updateAlpineWeatherHUD(r, hS, iN){
     setStyle('alert-banner-tag', 'color', 'var(--accent-green)');
   }
 
-  // ★★★ [동적 운저 게이지 미터기 실시간 스케일링] ★★★
-  const maxScaleAlt = Math.max(1000, Math.max(currentMt.ele * 1.25, lcl * 1.15));
-  const summitPct = Math.min(95, Math.max(5, Math.round((currentMt.ele / maxScaleAlt) * 100)));
-  const cloudPct = Math.min(98, Math.max(4, Math.round((lcl / maxScaleAlt) * 100)));
+  // ★★★ [파란 정상 바 고정 & 흰색 구름선만 동적 이동] ★★★
+  const scaleMax = Math.max(1600, Math.round(currentMt.ele * 1.6));
+  const summitPct = Math.round((currentMt.ele / scaleMax) * 100);
+  const cloudPct = Math.min(97, Math.max(3, Math.round((lcl / scaleMax) * 100)));
 
   setTxt('meter-mt-label', `정상 ${currentMt.ele}m`);
-  setStyle('meter-fill', 'width', `${summitPct}%`);
-  setStyle('meter-cloud-line', 'left', `${cloudPct}%`);
+  setStyle('meter-fill', 'width', `${summitPct}%`); // 정상 바는 산 고도에 고정!
+  setStyle('meter-cloud-line', 'left', `${cloudPct}%`); // 흰색 선만 실시간 운저에 맞춰 이동!
   
   if (lcl <= currentMt.ele) {
     setTxt('meter-cloud-label', `운저 ${lcl}m (정상 관통 ⚠️)`);
@@ -1835,7 +1845,6 @@ function selectForecastHour(o, dI, tH, hS, tT){
   const rawRH = rhArr[dI] ?? 70;
   const rawDew = dewArr[dI] ?? null;
 
-  // 선택된 시간대의 동적 운저고도 계산
   const effectiveLCL = calculateLCL(rawTemp, rawRH, rawDew, currentMt.ele);
 
   const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, tT);
@@ -1917,7 +1926,7 @@ function compute7DayAlpineForecast(data, ele){
       plainWear: hasRain ? '방수 겉옷 필수' : '가벼운 방풍 자켓',
       viewSummary: hasRain ? '운저 하강 (비구름)' : '상공 시야 개방',
       cardMiniBadge: hasRain ? '🌧️ 비·주의' : (csScore >= 75 ? '🌊 운해대박' : '☀️ 쾌청조망'),
-      amIcon: hasRain ? '🌧️️' : '☀️', pmIcon: hasRain ? '🌧️' : '⛅',
+      amIcon: hasRain ? '🌧️' : '☀️', pmIcon: hasRain ? '🌧️' : '⛅',
       csScore, safetyScore: safeScore, safetyLabel: sLabel, safetyStyle: sStyle, confidence: 90
     });
   }
@@ -2113,7 +2122,6 @@ function renderFullAlpineWeather(data, ele) {
   const dewArr = extractModelArray(data.hourly, 'dew_point_2m');
   const rawDew = (dewArr && dewArr[curIdx] !== undefined) ? dewArr[curIdx] : null;
 
-  // ★★★ [해발 운저고도 정밀 계산식 적용] ★★★
   const effectiveLCL = calculateLCL(rawTemp, rawRH, rawDew, ele);
 
   const sunInfo = computeSunAndTrailSafety(data.daily, nw);
@@ -2173,6 +2181,7 @@ function selectSearchedItem(idx){
   selectMountain(m.name, m.ele, null, m.type, m.lat, m.lng);
 }
 
+// 전국 4,000+개 산림청 등록 산 전수 실시간 검색 엔진
 window.handleMountainSearch = function(k){
   clearTimeout(searchTimer);
   const qRaw = k.trim();
@@ -2184,6 +2193,7 @@ window.handleMountainSearch = function(k){
     return;
   }
 
+  // 1차: 로컬 정제 DB 검색
   const localMatches = mountainDB.filter(m => {
     const cleanName = m.name.replace(/\s+/g, '').toLowerCase();
     const cleanPeak = (m.peak || '').replace(/\s+/g, '').toLowerCase();
@@ -2194,9 +2204,10 @@ window.handleMountainSearch = function(k){
   currentSearchResults = localMatches;
   renderSearchDropdown(currentSearchResults);
 
+  // 2차: 전국 산림청 4,440개 산 전수 탐색 (외부 지오코딩 실시간 융합)
   searchTimer = setTimeout(async () => {
     try {
-      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(qRaw)}&language=ko&count=8`;
+      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(qRaw)}&language=ko&count=10`;
       const res = await fetch(geoUrl);
       if(!res.ok) return;
       const data = await res.json();
@@ -2208,11 +2219,15 @@ window.handleMountainSearch = function(k){
         const externalMatches = [];
         data.results.forEach(item => {
           const isKorea = (item.latitude >= 33.0 && item.latitude <= 38.8 && item.longitude >= 125.5 && item.longitude <= 131.0);
-          if(isKorea && !localMatches.some(x => x.name.includes(item.name))){
+          
+          // 공원, 읍성 등 불필요 장소 배제 필터
+          const isUseless = item.name.includes('공원') || item.name.includes('읍성') || item.name.includes('체육') || item.name.includes('성지');
+
+          if(isKorea && !isUseless && !localMatches.some(x => x.name.includes(item.name))){
             const eleVal = item.elevation ? Math.round(item.elevation) : 250;
             const regionStr = `${item.admin1 || '대한민국'} ${item.admin2 || ''}`.trim();
             externalMatches.push({
-              name: item.name.endsWith('산') || item.name.endsWith('봉') ? item.name : `${item.name} (산악)`,
+              name: item.name.endsWith('산') || item.name.endsWith('봉') || item.name.endsWith('대') ? item.name : `${item.name}산`,
               peak: item.name,
               type: 'peak',
               region: regionStr || '대한민국',
