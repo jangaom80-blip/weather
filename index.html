@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v13.0 Dynamic Cloud</title>
+  <title>STATLAB 산악 기상 분석 v13.5 Real Cloud-Base Engine</title>
 
   <!-- 포트원 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -676,7 +676,6 @@
     .cs-timer-label { color: #FFFFFF; font-weight: 700; display: flex; align-items: center; gap: 5px; }
     .cs-timer-badge { font-weight: 800; padding: 2px 7px; border-radius: 6px; font-size: 10px; }
 
-    /* 운해 게이지 바 및 텍스트 복원 */
     .cs-meter-wrap { margin-bottom: 6px; }
     .cs-meter-bar { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
     .cs-meter-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #64D2FF 0%, #BF5AF2 60%, #FF9F0A 100%); transition: width 0.6s ease; }
@@ -829,9 +828,9 @@
   <div class="brand-header">
     <div class="brand-title">
       <span id="brand-live-dot" class="brand-dot"></span>
-      STATLAB ALPINE <span class="brand-ver-badge">v13.0</span>
+      STATLAB ALPINE <span class="brand-ver-badge">v13.5</span>
     </div>
-    <div id="clock-live" class="brand-status">v13.0 동기화 중...</div>
+    <div id="clock-live" class="brand-status">v13.5 동기화 중...</div>
   </div>
 
   <div class="search-row">
@@ -1134,11 +1133,11 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v13.0 DYNAMIC CLOUD</span>
+    <span>STATLAB v13.5 REAL CLOUD-BASE ENGINE</span>
   </div>
 
 <script>
-const STATLAB_VERSION = "v13.0";
+const STATLAB_VERSION = "v13.5";
 
 // 전국 320개+ 도심 생활권 산 & 100대 명산 전수 DB
 const mountainDB = [
@@ -1189,7 +1188,7 @@ const mountainDB = [
   {name:'한라산 백록담', peak:'백록담', type:'peak', region:'제주 서귀포시', ele:1947, lat:33.3617, lng:126.5332}
 ];
 
-const FAVORITES_KEY = 'STATLAB_FAV_v130';
+const FAVORITES_KEY = 'STATLAB_FAV_v135';
 const defaultFavorites = [
   {name:'황령산 봉수대', ele:427, type:'peak', lat:35.1578, lng:129.0825},
   {name:'금정산 고당봉', ele:801, type:'peak', lat:35.2846, lng:129.0565},
@@ -1235,7 +1234,7 @@ const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el
 const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
 const setStyle = (id, prop, val) => { const el = document.getElementById(id); if (el) el.style[prop] = val; };
 
-// 글로벌 상태
+// 글로벌 상태 변수
 let currentMt = mountainDB[0];
 let selectedHourOffset = 0;
 let liveWeatherData = null;
@@ -1465,17 +1464,23 @@ function computeSunAndTrailSafety(d, targetDate = null){
   return { srStr: sR_s, ssStr: sS_s, sunProgress: p, badgeText: bT, badgeColor: bC, descText: dT, isNight, orbChar, leftLabel, midLabel, rightLabel, sR, sS };
 }
 
-// ★★★ [운저고도 물리 공식 완전 복원] ★★★
-// Espen 공식: LCL = 125 * (T - Td) + 지표해발고도
-function calculateLCL(temp, rh, dewPoint, baseAlt) {
+// ★★★ [해발 운저고도(ASL) 정밀 대기물리 계산식] ★★★
+function calculateLCL(temp, rh, dewPoint, summitAlt) {
   let td = dewPoint;
   if (td === null || td === undefined || isNaN(td)) {
     td = temp - ((100 - rh) / 5);
   }
-  const spread = Math.max(0.2, temp - td);
-  // 지표면 위 응결 높이 + 기저 해발고도
-  let lcl = Math.round(125 * spread) + Math.max(10, baseAlt * 0.1);
-  return Math.max(150, Math.round(lcl));
+  const spread = Math.max(0.1, temp - td);
+
+  // 1. 산 정상이 비/짙은 구름/안개에 갇힌 경우 (습도 92% 이상)
+  if (rh >= 92) {
+    const drop = Math.round((rh - 90) * 80);
+    return Math.max(150, Math.round(summitAlt - drop));
+  }
+
+  // 2. 맑거나 상공에 구름이 뜬 경우: 정상 고도 + 정상 표면 위 응결 높이
+  const cloudHeightAboveSummit = Math.round(125 * spread);
+  return Math.round(summitAlt + cloudHeightAboveSummit);
 }
 
 // 정상 실제 기온 기준 슬라이더 하강 시 온난화 수식 (+0.65℃/100m)
@@ -1502,7 +1507,7 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
 
   let rain = p.rawRain > 0 ? p.rawRain : 0.0;
 
-  // 실제 구름층 진입 여부 판정 (운저고도와 실제 대기 포화도 대조)
+  // 실제 구름층 진입 여부 판정
   const isFogCode = (p.rawCode >= 45 && p.rawCode <= 48);
   const isInRealCloud = (targetAlt >= lclHeight) && (p.totalCloud >= 60 || rh >= 90);
 
@@ -1601,16 +1606,13 @@ function updateAlpineWeatherHUD(r, hS, iN){
     setStyle('alert-banner-tag', 'color', 'var(--accent-green)');
   }
 
-  // ★★★ [동적 운저 게이지 미터기 완전 연동] ★★★
-  // 정상 고도와 실시간 운저고도 중 더 높은 쪽을 기준으로 스케일 설정
+  // ★★★ [동적 운저 게이지 미터기 실시간 스케일링] ★★★
   const maxScaleAlt = Math.max(1000, Math.max(currentMt.ele * 1.25, lcl * 1.15));
   const summitPct = Math.min(95, Math.max(5, Math.round((currentMt.ele / maxScaleAlt) * 100)));
   const cloudPct = Math.min(98, Math.max(4, Math.round((lcl / maxScaleAlt) * 100)));
 
   setTxt('meter-mt-label', `정상 ${currentMt.ele}m`);
   setStyle('meter-fill', 'width', `${summitPct}%`);
-  
-  // 흰색 구름선 위치 실시간 이동!
   setStyle('meter-cloud-line', 'left', `${cloudPct}%`);
   
   if (lcl <= currentMt.ele) {
@@ -1681,7 +1683,7 @@ function updateAlpineWeatherHUD(r, hS, iN){
     setHtml('cb-desc-text', `운저고도가 정상 상공(${lcl}m)에 위치하여 대기 투과율이 높고 파노라마 조망이 매우 양호합니다.`);
   }
 
-  // 모듈러 그리드 안전 업데이트 (실시간 운저고도 m 수치 연동!)
+  // 모듈러 그리드 안전 업데이트 (실시간 운저고도 m 수치 연동)
   setTxt('summit-temp', `${st.temp} °C`);
   setTxt('summit-humidity', `${st.humidity} %`);
   setTxt('summit-wind', `${st.wind} m/s`);
@@ -2052,6 +2054,13 @@ window.closeLegalModal = function(){
 window.handleModalOverlayClick = function(e){ if(e.target.id === 'legal-modal') closeLegalModal(); };
 window.handleAdClick = function(){ window.open('https://m.search.naver.com/search.naver?query=대연동+대한초밥','_blank'); };
 
+window.addEventListener('popstate',function(){
+  const m=document.getElementById('legal-modal');
+  if(m&&m.classList.contains('active')){ m.classList.remove('active'); document.body.style.overflow='auto'; }
+  const d=document.getElementById('day-detail-modal');
+  if(d&&d.classList.contains('active')){ d.classList.remove('active'); document.body.style.overflow='auto'; }
+});
+
 window.switchForecastView = function(mode){
   const banner = document.getElementById('weekly-ai-banner');
   if(mode === 'weekly'){
@@ -2100,12 +2109,11 @@ function renderFullAlpineWeather(data, ele) {
   const rawCode = cur.weather_code !== undefined ? cur.weather_code : 0;
   const rawCloud = cur.cloud_cover !== undefined ? cur.cloud_cover : 20;
 
-  // 실시간 이슬점 온도 추출
   const curIdx = findCurrentHourIndex(data.hourly);
   const dewArr = extractModelArray(data.hourly, 'dew_point_2m');
   const rawDew = (dewArr && dewArr[curIdx] !== undefined) ? dewArr[curIdx] : null;
 
-  // ★★★ [실시간 동적 운저고도 계산 엔진 가동] ★★★
+  // ★★★ [해발 운저고도 정밀 계산식 적용] ★★★
   const effectiveLCL = calculateLCL(rawTemp, rawRH, rawDew, ele);
 
   const sunInfo = computeSunAndTrailSafety(data.daily, nw);
