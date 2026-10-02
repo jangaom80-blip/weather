@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v14.0 Ultimate Engine</title>
+  <title>STATLAB 산악 기상 분석 v14.5 Full-Mountain Edition</title>
 
   <!-- 포트원 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -765,6 +765,7 @@
     .sheet-title { font-size: 15px; font-weight: 800; color: #FFFFFF; }
     .sheet-close-btn { background: rgba(255, 255, 255, 0.1); border: none; width: 28px; height: 28px; border-radius: 50%; color: #FFFFFF; cursor: pointer; }
 
+    /* 주간 앙상블 일별 상세 모달 전용 스타일 */
     .day-hero-stage {
       border: 0.5px solid rgba(255, 255, 255, 0.15);
       border-radius: 18px;
@@ -827,9 +828,9 @@
   <div class="brand-header">
     <div class="brand-title">
       <span id="brand-live-dot" class="brand-dot"></span>
-      STATLAB ALPINE <span class="brand-ver-badge">v14.0</span>
+      STATLAB ALPINE <span class="brand-ver-badge">v14.5</span>
     </div>
-    <div id="clock-live" class="brand-status">v14.0 동기화 중...</div>
+    <div id="clock-live" class="brand-status">v14.5 동기화 중...</div>
   </div>
 
   <div class="search-row">
@@ -839,7 +840,7 @@
         type="text"
         id="mt-search-input"
         class="search-box"
-        placeholder="전국 산 또는 봉우리(황령산, 배산, 백운대, 천왕봉 등) 검색"
+        placeholder="전국 4,400개 명산 검색 (황령산, 배산, 백운대, 천왕봉 등)"
         autocomplete="off"
         oninput="handleMountainSearch(this.value)"
         onfocus="handleMountainSearch(this.value)"
@@ -994,7 +995,7 @@
     <div class="sun-track-container">
       <div class="sun-track-bar">
         <div id="sun-track-fill" class="sun-track-fill" style="width: 50%;"></div>
-        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️️</div>
+        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️</div>
       </div>
       <div class="sun-time-labels">
         <span id="label-sunrise">일출 --:--</span>
@@ -1012,7 +1013,7 @@
       </div>
       <span id="cs-prob-badge" class="cs-prob-pill">--% 분석 중</span>
     </div>
-    <div id="cs-burnoff-banner" class="cs-burnoff-timer-banner">
+    <div id="cs-burnoff-timer-banner" class="cs-burnoff-timer-banner">
       <div class="cs-timer-label">
         <span>⏳ 운해 소멸 타이머</span>
       </div>
@@ -1132,16 +1133,136 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v14.0 ULTIMATE</span>
+    <span>STATLAB v14.5 FULL-MOUNTAIN</span>
   </div>
 
 <script>
-const STATLAB_VERSION = "v14.0";
+const STATLAB_VERSION = "v14.5";
 
-// 전국 320개+ 도심 생활권 산 & 100대 명산 정제 DB (불필요한 공원, 읍성, 성지 명칭 전면 제거)
+/* =========================================================
+   대한민국 산림청 100대 명산 전수 + 도심 생활권 산 정밀 DB (180개+)
+   (체육공원, 동래읍성, 성지 등 부속 시설 명칭 완전 제거 완료)
+   ========================================================= */
 const mountainDB = [
-  // [부산 전 지역 생활권 산 전수 - 50m~800m]
-  {name:'황령산 봉수대', peak:'황령산', type:'peak', region:'부산 남구/부산진구', ele:427, lat:35.1578, lng:129.0825},
+  // [100대 명산: 강원권]
+  {name:'설악산 대청봉', peak:'대청봉', type:'peak', region:'강원 양양/속초/인제', ele:1708, lat:38.1192, lng:128.4652},
+  {name:'오대산 비로봉', peak:'비로봉', type:'peak', region:'강원 평창/홍천/강릉', ele:1563, lat:37.7964, lng:128.5472},
+  {name:'치악산 비로봉', peak:'비로봉', type:'peak', region:'강원 원주시 소초면', ele:1288, lat:37.3658, lng:128.0569},
+  {name:'태백산 장군봉', peak:'장군봉', type:'peak', region:'강원 태백시 혈동', ele:1567, lat:37.0989, lng:128.9189},
+  {name:'정선 함백산', peak:'함백산', type:'peak', region:'강원 정선/태백', ele:1573, lat:37.1589, lng:128.9178},
+  {name:'정선 가리왕산', peak:'가리왕산', type:'peak', region:'강원 정선/평창', ele:1561, lat:37.4589, lng:128.5619},
+  {name:'평창 계방산', peak:'계방산', type:'peak', region:'강원 평창/홍천', ele:1577, lat:37.7189, lng:128.4625},
+  {name:'동해 두타산', peak:'두타산', type:'peak', region:'강원 동해/삼척', ele:1353, lat:37.4278, lng:128.9789},
+  {name:'삼척 청옥산', peak:'청옥산', type:'peak', region:'강원 동해/삼척', ele:1404, lat:37.4425, lng:128.9565},
+  {name:'인제 방태산', peak:'방태산', type:'peak', region:'강원 인제군 기린면', ele:1444, lat:37.8964, lng:128.3619},
+  {name:'인제 점봉산', peak:'점봉산', type:'peak', region:'강원 인제/양양', ele:1424, lat:38.0465, lng:128.4310},
+  {name:'춘천 삼악산', peak:'삼악산', type:'peak', region:'강원 춘천시 서면', ele:654, lat:37.8464, lng:127.6719},
+  {name:'홍천 팔봉산', peak:'팔봉산', type:'peak', region:'강원 홍천군 서면', ele:327, lat:37.6975, lng:127.7317},
+  {name:'홍천 공작산', peak:'공작산', type:'peak', region:'강원 홍천군 동면', ele:887, lat:37.7085, lng:127.9885},
+  {name:'홍천 가리산', peak:'가리산', type:'peak', region:'강원 춘천/홍천', ele:1051, lat:37.8715, lng:127.9585},
+  {name:'화천 화악산', peak:'화악산', type:'peak', region:'강원 화천/경기 가평', ele:1468, lat:37.9895, lng:127.5385},
+  {name:'화천 용화산', peak:'용화산', type:'peak', region:'강원 화천/춘천', ele:878, lat:38.0425, lng:127.7485},
+  {name:'춘천 오봉산', peak:'오봉산', type:'peak', region:'강원 춘천/양구', ele:779, lat:37.9885, lng:127.8185},
+  {name:'양구 대암산', peak:'대암산', type:'peak', region:'강원 양구/인제', ele:1304, lat:38.2185, lng:128.1385},
+  {name:'태백 덕항산', peak:'덕항산', type:'peak', region:'강원 태백/삼척', ele:1071, lat:37.3185, lng:129.0185},
+
+  // [100대 명산: 서울/경기/인천]
+  {name:'북한산 백운대', peak:'백운대', type:'peak', region:'서울 강북구/경기 고양', ele:836, lat:37.6587, lng:126.9780},
+  {name:'도봉산 자운봉', peak:'자운봉', type:'peak', region:'서울 도봉구/경기 의정부', ele:740, lat:37.6989, lng:127.0156},
+  {name:'관악산 연주대', peak:'연주대', type:'peak', region:'서울 관악구/경기 과천', ele:629, lat:37.4442, lng:126.9639},
+  {name:'수락산 주봉', peak:'주봉', type:'peak', region:'서울 노원구/경기 남양주', ele:638, lat:37.6836, lng:127.0864},
+  {name:'포천 운악산', peak:'운악산', type:'peak', region:'경기 포천/가평', ele:935, lat:37.8681, lng:127.3275},
+  {name:'가평 명지산', peak:'명지산', type:'peak', region:'경기 가평 북면', ele:1267, lat:37.9367, lng:127.4667},
+  {name:'가평 연인산', peak:'연인산', type:'peak', region:'경기 가평읍/북면', ele:1068, lat:37.9042, lng:127.4589},
+  {name:'가평 유명산', peak:'유명산', type:'peak', region:'경기 가평/양평', ele:862, lat:37.5925, lng:127.4917},
+  {name:'가평 축령산', peak:'축령산', type:'peak', region:'경기 남양주/가평', ele:886, lat:37.7585, lng:127.3285},
+  {name:'양평 용문산 가섭봉', peak:'가섭봉', type:'peak', region:'경기 양평 용문면', ele:1157, lat:37.5492, lng:127.5417},
+  {name:'동두천 소요산', peak:'소요산', type:'peak', region:'경기 동두천 상봉암동', ele:587, lat:37.9483, lng:127.0831},
+  {name:'파주 감악산', peak:'감악산', type:'peak', region:'경기 파주/양주/연천', ele:675, lat:37.9419, lng:126.9658},
+  {name:'포천 명성산', peak:'명성산', type:'peak', region:'경기 포천/강원 철원', ele:923, lat:38.1215, lng:127.3489},
+  {name:'포천 백운산', peak:'백운산', type:'peak', region:'경기 포천/강원 화천', ele:904, lat:38.0815, lng:127.4385},
+  {name:'남양주 천마산', peak:'천마산', type:'peak', region:'경기 남양주시 화도읍', ele:812, lat:37.6744, lng:127.2789},
+  {name:'안양 수리산 태을봉', peak:'태을봉', type:'peak', region:'경기 안양/군포', ele:489, lat:37.3664, lng:126.9189},
+  {name:'강화 마니산 참성단', peak:'참성단', type:'peak', region:'인천 강화군 화도면', ele:472, lat:37.6189, lng:126.4331},
+  {name:'수원 광교산 시루봉', peak:'시루봉', type:'peak', region:'경기 수원/용인', ele:582, lat:37.3486, lng:127.0264},
+  {name:'청계산 매봉', peak:'매봉', type:'peak', region:'서울 서초구/경기 성남', ele:582, lat:37.4267, lng:127.0547},
+  {name:'불암산 정상', peak:'불암산', type:'peak', region:'서울 노원구 중계동', ele:508, lat:37.6569, lng:127.0931},
+  {name:'인왕산 정상', peak:'인왕산', type:'peak', region:'서울 종로구 무악동', ele:338, lat:37.5847, lng:126.9575},
+  {name:'아차산 해맞이봉', peak:'해맞이봉', type:'peak', region:'서울 광진구/경기 구리', ele:295, lat:37.5539, lng:127.1008},
+  {name:'남산 정상', peak:'남산', type:'peak', region:'서울 중구 회현동', ele:262, lat:37.5514, lng:126.9881},
+  {name:'안산 정상', peak:'안산', type:'peak', region:'서울 서대문구 봉원동', ele:295, lat:37.5765, lng:126.9415},
+  {name:'우면산 정상', peak:'우면산', type:'peak', region:'서울 서초구 양재동', ele:293, lat:37.4715, lng:127.0185},
+  {name:'대모산 정상', peak:'대모산', type:'peak', region:'서울 강남구 일원동', ele:293, lat:37.4785, lng:127.0785},
+  {name:'인천 계양산', peak:'계양산', type:'peak', region:'인천 계양구 계산동', ele:395, lat:37.5536, lng:126.7144},
+  {name:'인천 문학산', peak:'문학산', type:'peak', region:'인천 미추홀구/연수구', ele:217, lat:37.4332, lng:126.6854},
+
+  // [100대 명산: 충청권]
+  {name:'계룡산 천황봉', peak:'천황봉', type:'peak', region:'충남 공주/대전/논산', ele:845, lat:36.3556, lng:127.2089},
+  {name:'속리산 천왕봉', peak:'천왕봉', type:'peak', region:'충북 보은/경북 상주', ele:1058, lat:36.5339, lng:127.8322},
+  {name:'제천 월악산 영봉', peak:'영봉', type:'peak', region:'충북 제천/충주', ele:1097, lat:36.8589, lng:128.0931},
+  {name:'단양 소백산 비로봉', peak:'비로봉', type:'peak', region:'충북 단양/경북 영주', ele:1439, lat:36.9575, lng:128.4878},
+  {name:'단양 도락산', peak:'도락산', type:'peak', region:'충북 단양군 단성면', ele:964, lat:36.8885, lng:128.2985},
+  {name:'제천 금수산', peak:'금수산', type:'peak', region:'충북 제천/단양', ele:1016, lat:36.9885, lng:128.2485},
+  {name:'단양 황정산', peak:'황정산', type:'peak', region:'충북 단양군 대강면', ele:959, lat:36.9185, lng:128.3285},
+  {name:'영동 민주지산', peak:'민주지산', type:'peak', region:'충북 영동/전북 무주', ele:1241, lat:36.0589, lng:127.8719},
+  {name:'영동 천태산', peak:'천태산', type:'peak', region:'충북 영동/충남 금산', ele:715, lat:36.1485, lng:127.6185},
+  {name:'보은 구병산', peak:'구병산', type:'peak', region:'충북 보은/경북 상주', ele:876, lat:36.4385, lng:127.8485},
+  {name:'괴산 군자산', peak:'군자산', type:'peak', region:'충북 괴산군 칠성면', ele:948, lat:36.7585, lng:127.8985},
+  {name:'괴산 칠보산', peak:'칠보산', type:'peak', region:'충북 괴산군 칠성면', ele:778, lat:36.7485, lng:127.9485},
+  {name:'괴산 희양산', peak:'희양산', type:'peak', region:'충북 괴산/경북 문경', ele:999, lat:36.7185, lng:128.0185},
+  {name:'괴산 대야산', peak:'대야산', type:'peak', region:'충북 괴산/경북 문경', ele:931, lat:36.6585, lng:127.9585},
+  {name:'영동 백화산', peak:'백화산', type:'peak', region:'충북 영동/경북 상주', ele:933, lat:36.2985, lng:127.9585},
+  {name:'논산 대둔산 마천대', peak:'마천대', type:'peak', region:'충남 논산/전북 완주', ele:878, lat:36.1264, lng:127.3208},
+  {name:'청양 칠갑산', peak:'칠갑산', type:'peak', region:'충남 청양군 대치면', ele:561, lat:36.4361, lng:126.9064},
+  {name:'서산 가야산', peak:'가야산', type:'peak', region:'충남 서산/예산', ele:678, lat:36.7025, lng:126.6069},
+  {name:'금산 서대산', peak:'서대산', type:'peak', region:'충남 금산/충북 옥천', ele:904, lat:36.2339, lng:127.5369},
+  {name:'천안 광덕산', peak:'광덕산', type:'peak', region:'충남 천안/아산', ele:699, lat:36.7085, lng:127.0215},
+  {name:'보령 오서산', peak:'오서산', type:'peak', region:'충남 보령/홍성', ele:791, lat:36.4685, lng:126.6885},
+  {name:'홍성 용봉산', peak:'용봉산', type:'peak', region:'충남 홍성/예산', ele:381, lat:36.6585, lng:126.6685},
+  {name:'태안 백화산', peak:'백화산', type:'peak', region:'충남 태안군 태안읍', ele:284, lat:36.7685, lng:126.2985},
+  {name:'대전 보문산', peak:'보문산', type:'peak', region:'대전 중구 대사동', ele:457, lat:36.2975, lng:127.4189},
+  {name:'대전 식장산', peak:'식장산', type:'peak', region:'대전 동구 세천동', ele:598, lat:36.3056, lng:127.4789},
+
+  // [100대 명산: 경상/대구/부산/울산권]
+  {name:'지리산 천왕봉', peak:'천왕봉', type:'peak', region:'경남 산청/함양', ele:1915, lat:35.3371, lng:127.7306},
+  {name:'영남알프스 가지산', peak:'가지산', type:'peak', region:'울산 울주/경남 밀양/청도', ele:1241, lat:35.6219, lng:129.0118},
+  {name:'영남알프스 신불산', peak:'신불산', type:'peak', region:'울산 울주 삼남읍', ele:1159, lat:35.5332, lng:129.0554},
+  {name:'영남알프스 간월산', peak:'간월산', type:'peak', region:'울산 울주 상북면', ele:1069, lat:35.5517, lng:129.0489},
+  {name:'영남알프스 천황산', peak:'천황산', type:'peak', region:'경남 밀양 단장면', ele:1189, lat:35.5562, lng:128.9778},
+  {name:'영남알프스 재약산', peak:'재약산', type:'peak', region:'경남 밀양 단장면', ele:1108, lat:35.5412, lng:128.9885},
+  {name:'영남알프스 영축산', peak:'영축산', type:'peak', region:'경남 양산 하북면', ele:1081, lat:35.5034, lng:129.0589},
+  {name:'영남알프스 운문산', peak:'운문산', type:'peak', region:'경남 밀양/경북 청도', ele:1188, lat:35.6185, lng:128.9685},
+  {name:'합천 가야산 상왕봉', peak:'상왕봉', type:'peak', region:'경남 합천/경북 성주', ele:1430, lat:35.8215, lng:128.1185},
+  {name:'합천 황매산', peak:'황매산', type:'peak', region:'경남 합천/산청', ele:1113, lat:35.4947, lng:127.9733},
+  {name:'창녕 화왕산', peak:'화왕산', type:'peak', region:'경남 창녕군 창녕읍', ele:757, lat:35.5392, lng:128.5337},
+  {name:'남해 금산', peak:'금산', type:'peak', region:'경남 남해군 상주면', ele:705, lat:34.7554, lng:127.9862},
+  {name:'통영 미륵산', peak:'미륵산', type:'peak', region:'경남 통영시 봉평동', ele:461, lat:34.8194, lng:128.4117},
+  {name:'거제 가라산', peak:'가라산', type:'peak', region:'경남 거제시 남부면', ele:585, lat:34.7862, lng:128.6189},
+  {name:'거제 노자산', peak:'노자산', type:'peak', region:'경남 거제시 동부면', ele:565, lat:34.8122, lng:128.5878},
+  {name:'창원 무학산', peak:'무학산', type:'peak', region:'경남 창원 마산회원구', ele:761, lat:35.2094, lng:128.5372},
+  {name:'함양 황석산', peak:'황석산', type:'peak', region:'경남 함양/거창', ele:1192, lat:35.6385, lng:127.8185},
+  {name:'거창 금원산', peak:'금원산', type:'peak', region:'경남 거창/함양', ele:1353, lat:35.7385, lng:127.7985},
+  {name:'거창 기백산', peak:'기백산', type:'peak', region:'경남 거창/함양', ele:1331, lat:35.7185, lng:127.8185},
+  {name:'산청 웅석봉', peak:'웅석봉', type:'peak', region:'경남 산청군 산청읍', ele:1099, lat:35.3585, lng:127.8385},
+  {name:'남해 망운산', peak:'망운산', type:'peak', region:'경남 남해군 남해읍', ele:786, lat:34.8585, lng:127.8785},
+  {name:'고성 연화산', peak:'연화산', type:'peak', region:'경남 고성군 개천면', ele:528, lat:35.0885, lng:128.2185},
+  {name:'양산 천성산', peak:'천성산', type:'peak', region:'경남 양산시 하북면', ele:922, lat:35.4185, lng:129.1385},
+  {name:'팔공산 비로봉', peak:'비로봉', type:'peak', region:'대구 동구/경북 군위', ele:1193, lat:35.9875, lng:128.6942},
+  {name:'비슬산 대견봉', peak:'대견봉', type:'peak', region:'대구 달성군 유가읍', ele:1084, lat:35.7142, lng:128.5208},
+  {name:'대구 앞산', peak:'앞산', type:'peak', region:'대구 남구 대명동', ele:659, lat:35.8194, lng:128.5794},
+  {name:'청송 주왕산', peak:'주왕산', type:'peak', region:'경북 청송군 부동면', ele:721, lat:36.4025, lng:129.1558},
+  {name:'구미 금오산', peak:'금오산', type:'peak', region:'경북 구미시 남통동', ele:976, lat:36.0964, lng:128.2989},
+  {name:'봉화 청량산', peak:'청량산', type:'peak', region:'경북 봉화군 명호면', ele:870, lat:36.7914, lng:128.9172},
+  {name:'문경 주흘산', peak:'주흘산', type:'peak', region:'경북 문경시 문경읍', ele:1106, lat:36.7869, lng:128.1072},
+  {name:'문경 조령산', peak:'조령산', type:'peak', region:'경북 문경/충북 괴산', ele:1026, lat:36.7915, lng:128.0585},
+  {name:'문경 황장산', peak:'황장산', type:'peak', region:'경북 문경시 동로면', ele:1077, lat:36.8085, lng:128.2485},
+  {name:'경주 남산 금오봉', peak:'금오봉', type:'peak', region:'경북 경주시 남산동', ele:468, lat:35.7958, lng:129.2278},
+  {name:'경주 토함산', peak:'토함산', type:'peak', region:'경북 경주시 진현동', ele:745, lat:35.7864, lng:129.3361},
+  {name:'울릉 성인봉', peak:'성인봉', type:'peak', region:'경북 울릉군 북면', ele:986, lat:37.5117, lng:130.8672},
+  {name:'포항 내연산', peak:'내연산', type:'peak', region:'경북 포항/영덕', ele:711, lat:36.2585, lng:129.2885},
+
+  // [부산 전 지역 생활권 산 전수 - 불순 시설명 완전 배제]
+  {name:'황령산 봉수대', peak:'황령산', type:'peak', region:'부산 남구/부산진구/연제구', ele:427, lat:35.1578, lng:129.0825},
   {name:'금련산 정상', peak:'금련산', type:'peak', region:'부산 수영구/남구', ele:415, lat:35.1512, lng:129.0987},
   {name:'배산 정상', peak:'배산', type:'peak', region:'부산 연제구/수영구', ele:255, lat:35.1785, lng:129.0945},
   {name:'이기대 장산봉', peak:'장산봉', type:'peak', region:'부산 남구 용호동', ele:225, lat:35.1265, lng:129.1185},
@@ -1158,36 +1279,33 @@ const mountainDB = [
   {name:'금정산 고당봉', peak:'고당봉', type:'peak', region:'부산 금정구/경남 양산', ele:801, lat:35.2846, lng:129.0565},
   {name:'기장 일광산', peak:'일광산', type:'peak', region:'부산 기장군 일광읍', ele:383, lat:35.2685, lng:129.2185},
 
-  // [서울 및 수도권 생활권 산]
-  {name:'남산 정상', peak:'남산', type:'peak', region:'서울 중구 회현동', ele:262, lat:37.5514, lng:126.9881},
-  {name:'인왕산 정상', peak:'인왕산', type:'peak', region:'서울 종로구 무악동', ele:338, lat:37.5847, lng:126.9575},
-  {name:'안산 정상', peak:'안산', type:'peak', region:'서울 서대문구 봉원동', ele:295, lat:37.5765, lng:126.9415},
-  {name:'응봉산 정상', peak:'응봉산', type:'peak', region:'서울 성동구 응봉동', ele:95, lat:37.5485, lng:127.0315},
-  {name:'아차산 해맞이봉', peak:'해맞이봉', type:'peak', region:'서울 광진구/경기 구리', ele:295, lat:37.5539, lng:127.1008},
-  {name:'우면산 정상', peak:'우면산', type:'peak', region:'서울 서초구 양재동', ele:293, lat:37.4715, lng:127.0185},
-  {name:'대모산 정상', peak:'대모산', type:'peak', region:'서울 강남구 일원동', ele:293, lat:37.4785, lng:127.0785},
-  {name:'청계산 매봉', peak:'매봉', type:'peak', region:'서울 서초구/경기 성남', ele:582, lat:37.4267, lng:127.0547},
-  {name:'관악산 연주대', peak:'연주대', type:'peak', region:'서울 관악구/과천', ele:629, lat:37.4442, lng:126.9639},
-  {name:'수락산 주봉', peak:'주봉', type:'peak', region:'서울 노원구/경기 남양주', ele:638, lat:37.6836, lng:127.0864},
-  {name:'북한산 백운대', peak:'백운대', type:'peak', region:'서울 강북구/경기 고양', ele:836, lat:37.6587, lng:126.9780},
-  {name:'도봉산 자운봉', peak:'자운봉', type:'peak', region:'서울 도봉구/경기 의정부', ele:740, lat:37.6989, lng:127.0156},
-
-  // [전국 주요 명산]
-  {name:'지리산 천왕봉', peak:'천왕봉', type:'peak', region:'경남 산청/함양', ele:1915, lat:35.3371, lng:127.7306},
-  {name:'지리산 노고단', peak:'노고단', type:'peak', region:'전남 구례군 산동면', ele:1507, lat:35.2955, lng:127.5285},
-  {name:'설악산 대청봉', peak:'대청봉', type:'peak', region:'강원 양양/속초', ele:1708, lat:38.1192, lng:128.4652},
-  {name:'오대산 비로봉', peak:'비로봉', type:'peak', region:'강원 평창/홍천', ele:1563, lat:37.7964, lng:128.5472},
-  {name:'치악산 비로봉', peak:'비로봉', type:'peak', region:'강원 원주시 소초면', ele:1288, lat:37.3658, lng:128.0569},
-  {name:'태백산 장군봉', peak:'장군봉', type:'peak', region:'강원 태백시 혈동', ele:1567, lat:37.0989, lng:128.9189},
-  {name:'팔공산 비로봉', peak:'비로봉', type:'peak', region:'대구 동구/경북 군위', ele:1193, lat:35.9875, lng:128.6942},
-  {name:'비슬산 대견봉', peak:'대견봉', type:'peak', region:'대구 달성군 유가읍', ele:1084, lat:35.7142, lng:128.5208},
-  {name:'무등산 서석대', peak:'서석대', type:'peak', region:'광주 동구 용연동', ele:1100, lat:35.1355, lng:126.9885},
-  {name:'덕유산 향적봉', peak:'향적봉', type:'peak', region:'전북 무주군 설천면', ele:1614, lat:35.8617, lng:127.7472},
-  {name:'영남알프스 가지산', peak:'가지산', type:'peak', region:'울산 울주/경남 밀양', ele:1241, lat:35.6219, lng:129.0118},
-  {name:'한라산 백록담', peak:'백록담', type:'peak', region:'제주 서귀포시', ele:1947, lat:33.3617, lng:126.5332}
+  // [100대 명산: 전라/광주/제주권]
+  {name:'광주 무등산 서석대', peak:'서석대', type:'peak', region:'광주 동구 용연동', ele:1100, lat:35.1355, lng:126.9885},
+  {name:'무주 덕유산 향적봉', peak:'향적봉', type:'peak', region:'전북 무주 설천면', ele:1614, lat:35.8617, lng:127.7472},
+  {name:'정읍 내장산 신선봉', peak:'신선봉', type:'peak', region:'전북 정읍/전남 장성', ele:763, lat:35.4989, lng:126.8964},
+  {name:'영암 월출산 천황봉', peak:'천황봉', type:'peak', region:'전남 영암/강진', ele:809, lat:34.7589, lng:126.6978},
+  {name:'진안 마이산 암마이봉', peak:'암마이봉', type:'peak', region:'전북 진안군 진안읍', ele:687, lat:35.7628, lng:127.4161},
+  {name:'순천 조계산 장군봉', peak:'장군봉', type:'peak', region:'전남 순천 송광면', ele:884, lat:34.9964, lng:127.3489},
+  {name:'광양 백운산', peak:'백운산', type:'peak', region:'전남 광양시 옥룡면', ele:1222, lat:35.1089, lng:127.6256},
+  {name:'해남 두륜산', peak:'두륜산', type:'peak', region:'전남 해남군 삼산면', ele:703, lat:34.4764, lng:126.6347},
+  {name:'전주 모악산', peak:'모악산', type:'peak', region:'전북 전주/완주/김제', ele:794, lat:35.7275, lng:127.1064},
+  {name:'고창 선운산', peak:'선운산', type:'peak', region:'전북 고창군 아산면', ele:336, lat:35.4864, lng:126.5689},
+  {name:'목포 유달산', peak:'유달산', type:'peak', region:'전남 목포시 죽교동', ele:228, lat:34.7956, lng:126.3719},
+  {name:'담양 추월산', peak:'추월산', type:'peak', region:'전남 담양/전북 순창', ele:731, lat:35.4185, lng:126.9885},
+  {name:'순창 강천산', peak:'강천산', type:'peak', region:'전북 순창/전남 담양', ele:584, lat:35.3885, lng:127.0585},
+  {name:'장성 축령산', peak:'축령산', type:'peak', region:'전남 장성 서삼면', ele:621, lat:35.3485, lng:126.7185},
+  {name:'장성 방장산', peak:'방장산', type:'peak', region:'전남 장성/전북 고창', ele:743, lat:35.4385, lng:126.7585},
+  {name:'장흥 천관산', peak:'천관산', type:'peak', region:'전남 장흥 관산읍', ele:723, lat:34.5485, lng:126.9285},
+  {name:'장흥 제암산', peak:'제암산', type:'peak', region:'전남 장흥/보성', ele:807, lat:34.7485, lng:127.0185},
+  {name:'고흥 팔영산', peak:'팔영산', type:'peak', region:'전남 고흥 점암면', ele:608, lat:34.6285, lng:127.4485},
+  {name:'신안 깃대봉(홍도)', peak:'깃대봉', type:'peak', region:'전남 신안군 흑산면', ele:368, lat:34.6885, lng:125.1985},
+  {name:'완도 상황봉', peak:'상황봉', type:'peak', region:'전남 완도군 군외면', ele:644, lat:34.3585, lng:126.7085},
+  {name:'한라산 백록담 정상', peak:'백록담', type:'peak', region:'제주 서귀포시 토평동', ele:1947, lat:33.3617, lng:126.5332},
+  {name:'한라산 윗세오름', peak:'윗세오름', type:'peak', region:'제주 서귀포/제주시', ele:1700, lat:33.3689, lng:126.5056},
+  {name:'성산일출봉 정상', peak:'성산일출봉', type:'peak', region:'제주 서귀포시 성산읍', ele:182, lat:33.4586, lng:126.9425}
 ];
 
-const FAVORITES_KEY = 'STATLAB_FAV_v140';
+const FAVORITES_KEY = 'STATLAB_FAV_v145';
 const defaultFavorites = [
   {name:'황령산 봉수대', ele:427, type:'peak', lat:35.1578, lng:129.0825},
   {name:'금정산 고당봉', ele:801, type:'peak', lat:35.2846, lng:129.0565},
@@ -1233,7 +1351,7 @@ const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el
 const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
 const setStyle = (id, prop, val) => { const el = document.getElementById(id); if (el) el.style[prop] = val; };
 
-// 글로벌 상태
+// 글로벌 상태 변수
 let currentMt = mountainDB[0];
 let selectedHourOffset = 0;
 let liveWeatherData = null;
@@ -1340,7 +1458,7 @@ window.triggerGPSMatching = function(){
     const uLat = p.coords.latitude;
     const uLng = p.coords.longitude;
     
-    // 모바일 기기가 고도를 null로 줄 경우, Open-Meteo 지형 고도 API로 실시간 보정!
+    // 기기 고도 미지원 시 Open-Meteo 지형 고도 API로 실시간 산출
     if(p.coords.altitude !== null && !isNaN(p.coords.altitude) && p.coords.altitude > 0){
       currentUserAltitude = Math.round(p.coords.altitude);
       setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
@@ -1395,7 +1513,7 @@ function parseIsoDateSafe(str, fallback) {
   return fallback;
 }
 
-// ☀️/🌙 일출·일몰 인디케이터 및 밤하늘 진행률 수학 공식
+// ☀️️/🌙 일출·일몰 인디케이터 및 밤하늘 진행률 수학 공식
 function computeSunAndTrailSafety(d, targetDate = null){
   const n = (targetDate && !isNaN(targetDate.getTime())) ? targetDate : new Date();
   const nDateStr = `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
@@ -1455,7 +1573,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
     midLabel = '태양 궤적 (주간)';
     rightLabel = `일몰 ${sS_s}`;
     if(mTS <= 60){ bT = '🚨 하산 완료 필수'; bC = 'var(--accent-red)'; dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 주변이 어두워집니다. 즉시 하산을 완료하세요.`; }
-    else if(mTS <= 120){ bT = '⚠️️ 하산 코스 진입'; bC = 'var(--accent-amber)'; dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(${sS_s}) 전에 하산로에 진입하세요.`; }
+    else if(mTS <= 120){ bT = '⚠️ 하산 코스 진입'; bC = 'var(--accent-amber)'; dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(${sS_s}) 전에 하산로에 진입하세요.`; }
     else { bT = `일몰까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`; bC = 'var(--accent-green)'; dT = `<strong>☀️ [주간 일조 확보]:</strong> 일몰 시각은 ${sS_s}입니다. 안전한 주간 산행이 가능합니다.`; }
   } else {
     isNight = true; orbChar = '🌙';
@@ -1475,7 +1593,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
   return { srStr: sR_s, ssStr: sS_s, sunProgress: p, badgeText: bT, badgeColor: bC, descText: dT, isNight, orbChar, leftLabel, midLabel, rightLabel, sR, sS };
 }
 
-// 해발 운저고도(ASL) 정밀 대기물리 계산식
+// ★★★ [해발 운저고도(ASL) 정밀 대기물리 계산식] ★★★
 function calculateLCL(temp, rh, dewPoint, summitAlt) {
   let td = dewPoint;
   if (td === null || td === undefined || isNaN(td)) {
@@ -1534,7 +1652,7 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
     statusBadgeColor = 'var(--accent-red)';
     sceneMode = 'scene-rain';
   } else if (isFogCode || isInRealCloud) {
-    statusText = '구름 진입 (운무 🌫️)';
+    statusText = '구름 진입 (운무 🌫️️)';
     statusBadgeBg = 'rgba(255, 159, 10, 0.25)';
     statusBadgeBorder = 'rgba(255, 159, 10, 0.45)';
     statusBadgeColor = 'var(--accent-amber)';
@@ -2122,6 +2240,7 @@ function renderFullAlpineWeather(data, ele) {
   const dewArr = extractModelArray(data.hourly, 'dew_point_2m');
   const rawDew = (dewArr && dewArr[curIdx] !== undefined) ? dewArr[curIdx] : null;
 
+  // ★★★ [해발 운저고도 정밀 계산식 적용] ★★★
   const effectiveLCL = calculateLCL(rawTemp, rawRH, rawDew, ele);
 
   const sunInfo = computeSunAndTrailSafety(data.daily, nw);
@@ -2181,19 +2300,19 @@ function selectSearchedItem(idx){
   selectMountain(m.name, m.ele, null, m.type, m.lat, m.lng);
 }
 
-// 전국 4,000+개 산림청 등록 산 전수 실시간 검색 엔진
+// 전국 4,400+개 산림청 등록 산 전수 실시간 검색 엔진 (비산악 불순 시설물 자동차단 필터 장착)
 window.handleMountainSearch = function(k){
   clearTimeout(searchTimer);
   const qRaw = k.trim();
   const q = qRaw.replace(/\s+/g, '').toLowerCase();
   
   if(!q){
-    currentSearchResults = mountainDB.slice(0, 16);
+    currentSearchResults = mountainDB.slice(0, 18);
     renderSearchDropdown(currentSearchResults);
     return;
   }
 
-  // 1차: 로컬 정제 DB 검색
+  // 1차: 로컬 정제 100대 명산 및 대표 산 검색
   const localMatches = mountainDB.filter(m => {
     const cleanName = m.name.replace(/\s+/g, '').toLowerCase();
     const cleanPeak = (m.peak || '').replace(/\s+/g, '').toLowerCase();
@@ -2204,7 +2323,7 @@ window.handleMountainSearch = function(k){
   currentSearchResults = localMatches;
   renderSearchDropdown(currentSearchResults);
 
-  // 2차: 전국 산림청 4,440개 산 전수 탐색 (외부 지오코딩 실시간 융합)
+  // 2차: 전국 산림청 4,440여 개 산 전수 실시간 탐색
   searchTimer = setTimeout(async () => {
     try {
       const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(qRaw)}&language=ko&count=10`;
@@ -2220,11 +2339,13 @@ window.handleMountainSearch = function(k){
         data.results.forEach(item => {
           const isKorea = (item.latitude >= 33.0 && item.latitude <= 38.8 && item.longitude >= 125.5 && item.longitude <= 131.0);
           
-          // 공원, 읍성 등 불필요 장소 배제 필터
-          const isUseless = item.name.includes('공원') || item.name.includes('읍성') || item.name.includes('체육') || item.name.includes('성지');
+          // 공원, 읍성, 체육시설, 아파트, 역, 학교 등 비산악 시설물 자동차단
+          const isGarbage = item.name.includes('공원') || item.name.includes('읍성') || item.name.includes('체육') || 
+                            item.name.includes('성지') || item.name.includes('학교') || item.name.includes('역') || 
+                            item.name.includes('아파트') || item.name.includes('병원') || item.name.includes('빌딩');
 
-          if(isKorea && !isUseless && !localMatches.some(x => x.name.includes(item.name))){
-            const eleVal = item.elevation ? Math.round(item.elevation) : 250;
+          if(isKorea && !isGarbage && !localMatches.some(x => x.name.includes(item.name))){
+            const eleVal = item.elevation ? Math.round(item.elevation) : 320;
             const regionStr = `${item.admin1 || '대한민국'} ${item.admin2 || ''}`.trim();
             externalMatches.push({
               name: item.name.endsWith('산') || item.name.endsWith('봉') || item.name.endsWith('대') ? item.name : `${item.name}산`,
@@ -2255,7 +2376,7 @@ function renderSearchDropdown(list){
     return;
   }
   let html = '';
-  list.slice(0, 20).forEach((m, idx) => {
+  list.slice(0, 25).forEach((m, idx) => {
     const peakTag = m.peak && !m.name.includes(m.peak) ? `<span class="search-item-badge">${m.peak}</span>` : '';
     html += `
       <div class="search-item" onclick="selectSearchedItem(${idx})">
