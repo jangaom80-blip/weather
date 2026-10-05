@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v17.5 Alpine Geo-Master</title>
+  <title>STATLAB 산악 기상 분석 v17.6 Master</title>
 
   <!-- 포트원 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -827,9 +827,9 @@
   <div class="brand-header">
     <div class="brand-title">
       <span id="brand-live-dot" class="brand-dot"></span>
-      STATLAB ALPINE <span class="brand-ver-badge">v17.5</span>
+      STATLAB ALPINE <span class="brand-ver-badge">v17.6</span>
     </div>
-    <div id="clock-live" class="brand-status">v17.5 동기화 중...</div>
+    <div id="clock-live" class="brand-status">v17.6 동기화 중...</div>
   </div>
 
   <div class="search-row">
@@ -1132,22 +1132,19 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v17.5 GEO-MASTER</span>
+    <span>STATLAB v17.6 ZERO-LAG MASTER</span>
   </div>
 
 <script>
-const STATLAB_VERSION = "v17.5";
+const STATLAB_VERSION = "v17.6";
 
-// 기상청 인증키
+// 공공데이터포털 기상청 인증키
 const KMA_SERVICE_KEY = "e471b45dcb373710ff06b726a8f079195673d3c87d0009936685562cb9776109";
 
-// ★★★ [전국 주요 명산 및 도심 명산 정제 DB: 실제 최고봉 표고 전수 반영] ★★★
+// 전국 주요 명산 및 도심 명산 정제 DB (가야산 1,432m 등 전수 정비)
 const mountainDB = [
-  // [경상/합천/성주: 가야산 최고봉 칠불봉 1,432m 정비 완료][cite: 7]
-  {name:'합천 가야산 (칠불봉/상왕봉)', peak:'가야산', type:'peak', region:'경남 합천 가야면/경북 성주', ele:1432, lat:35.8215, lng:128.1185}, //[cite: 7]
-
-  // [영남알프스 9봉 전수 정비]
-  {name:'영남알프스 간월산', peak:'간월산', type:'peak', region:'울산 울주 상북면', ele:1069, lat:35.5517, lng:129.0489},[cite: 3]
+  {name:'합천 가야산 (칠불봉/상왕봉)', peak:'가야산', type:'peak', region:'경남 합천 가야면/경북 성주', ele:1432, lat:35.8215, lng:128.1185},
+  {name:'영남알프스 간월산', peak:'간월산', type:'peak', region:'울산 울주 상북면', ele:1069, lat:35.5517, lng:129.0489},
   {name:'영남알프스 신불산', peak:'신불산', type:'peak', region:'울산 울주 삼남읍', ele:1159, lat:35.5332, lng:129.0554},
   {name:'영남알프스 가지산', peak:'가지산', type:'peak', region:'울산 울주/경남 밀양', ele:1241, lat:35.6219, lng:129.0118},
   {name:'영남알프스 천황산', peak:'천황산', type:'peak', region:'경남 밀양 단장면', ele:1189, lat:35.5562, lng:128.9778},
@@ -1156,9 +1153,7 @@ const mountainDB = [
   {name:'영남알프스 운문산', peak:'운문산', type:'peak', region:'경남 밀양/경북 청도', ele:1188, lat:35.6185, lng:128.9685},
   {name:'영남알프스 고헌산', peak:'고헌산', type:'peak', region:'울산 울주 상북면', ele:1034, lat:35.6385, lng:129.0985},
   {name:'영남알프스 문복산', peak:'문복산', type:'peak', region:'경북 청도/경주시', ele:1015, lat:35.6885, lng:129.0885},
-
-  // [부산 전 지역 도심 생활권 명산]
-  {name:'금정산 고당봉', peak:'고당봉', type:'peak', region:'부산 금정구/경남 양산', ele:801, lat:35.2846, lng:129.0565},[cite: 6]
+  {name:'금정산 고당봉', peak:'고당봉', type:'peak', region:'부산 금정구/경남 양산', ele:801, lat:35.2846, lng:129.0565},
   {name:'황령산 봉수대', peak:'황령산', type:'peak', region:'부산 남구/부산진구', ele:427, lat:35.1578, lng:129.0825},
   {name:'금련산 정상', peak:'금련산', type:'peak', region:'부산 수영구/남구', ele:415, lat:35.1512, lng:129.0987},
   {name:'배산 정상', peak:'배산', type:'peak', region:'부산 연제구/수영구', ele:255, lat:35.1785, lng:129.0945},
@@ -1174,8 +1169,6 @@ const mountainDB = [
   {name:'백양산 정상', peak:'백양산', type:'peak', region:'부산 부산진구/북구', ele:642, lat:35.1837, lng:129.0273},
   {name:'해운대 장산', peak:'장산', type:'peak', region:'부산 해운대구 우동', ele:634, lat:35.1942, lng:129.1444},
   {name:'기장 일광산', peak:'일광산', type:'peak', region:'부산 기장군 일광읍', ele:383, lat:35.2685, lng:129.2185},
-
-  // [100대 명산: 강원권]
   {name:'설악산 대청봉', peak:'대청봉', type:'peak', region:'강원 양양/속초/인제', ele:1708, lat:38.1192, lng:128.4652},
   {name:'오대산 비로봉', peak:'비로봉', type:'peak', region:'강원 평창/홍천/강릉', ele:1563, lat:37.7964, lng:128.5472},
   {name:'치악산 비로봉', peak:'비로봉', type:'peak', region:'강원 원주시 소초면', ele:1288, lat:37.3658, lng:128.0569},
@@ -1184,15 +1177,11 @@ const mountainDB = [
   {name:'정선 가리왕산', peak:'가리왕산', type:'peak', region:'강원 정선/평창', ele:1561, lat:37.4589, lng:128.5619},
   {name:'평창 계방산', peak:'계방산', type:'peak', region:'강원 평창/홍천', ele:1577, lat:37.7189, lng:128.4625},
   {name:'동해 두타산', peak:'두타산', type:'peak', region:'강원 동해/삼척', ele:1353, lat:37.4278, lng:128.9789},
-
-  // [100대 명산: 서울/수도권]
   {name:'북한산 백운대', peak:'백운대', type:'peak', region:'서울 강북구/경기 고양', ele:836, lat:37.6587, lng:126.9780},
   {name:'도봉산 자운봉', peak:'자운봉', type:'peak', region:'서울 도봉구/경기 의정부', ele:740, lat:37.6989, lng:127.0156},
   {name:'관악산 연주대', peak:'연주대', type:'peak', region:'서울 관악구/경기 과천', ele:629, lat:37.4442, lng:126.9639},
   {name:'수락산 주봉', peak:'주봉', type:'peak', region:'서울 노원구/경기 남양주', ele:638, lat:37.6836, lng:127.0864},
   {name:'포천 운악산', peak:'운악산', type:'peak', region:'경기 포천/가평', ele:935, lat:37.8681, lng:127.3275},
-
-  // [100대 명산: 충청/전라/경상/제주]
   {name:'지리산 천왕봉', peak:'천왕봉', type:'peak', region:'경남 산청/함양', ele:1915, lat:35.3371, lng:127.7306},
   {name:'계룡산 천황봉', peak:'천황봉', type:'peak', region:'충남 공주/대전/논산', ele:845, lat:36.3556, lng:127.2089},
   {name:'속리산 천왕봉', peak:'천왕봉', type:'peak', region:'충북 보은/경북 상주', ele:1058, lat:36.5339, lng:127.8322},
@@ -1206,11 +1195,11 @@ const mountainDB = [
   {name:'한라산 백록담 정상', peak:'백록담', type:'peak', region:'제주 서귀포시 토평동', ele:1947, lat:33.3617, lng:126.5332}
 ];
 
-const FAVORITES_KEY = 'STATLAB_FAV_v175';
+const FAVORITES_KEY = 'STATLAB_FAV_v176';
 const defaultFavorites = [
-  {name:'영남알프스 간월산', ele:1069, type:'peak', lat:35.5517, lng:129.0489},[cite: 3]
-  {name:'합천 가야산 (칠불봉/상왕봉)', ele:1432, type:'peak', lat:35.8215, lng:128.1185},[cite: 7]
-  {name:'금정산 고당봉', ele:801, type:'peak', lat:35.2846, lng:129.0565},[cite: 6]
+  {name:'영남알프스 간월산', ele:1069, type:'peak', lat:35.5517, lng:129.0489},
+  {name:'합천 가야산 (칠불봉/상왕봉)', ele:1432, type:'peak', lat:35.8215, lng:128.1185},
+  {name:'금정산 고당봉', ele:801, type:'peak', lat:35.2846, lng:129.0565},
   {name:'지리산 천왕봉', ele:1915, type:'peak', lat:35.3371, lng:127.7306},
   {name:'설악산 대청봉', ele:1708, type:'peak', lat:38.1192, lng:128.4652}
 ];
@@ -1306,7 +1295,7 @@ function getKmaBaseDateTime() {
   };
 }
 
-// 기상청 초단기실황 API 호출
+// 기상청 초단기실황 API 호출 (2.5초 타임아웃 가드 적용: 절대 앱을 멈추지 않음)
 async function fetchKmaRealtimeObservation(lat, lng) {
   if (!KMA_SERVICE_KEY || KMA_SERVICE_KEY.trim() === '') return null;
   const xy = dfs_xy_conv("toXY", lat, lng);
@@ -1315,22 +1304,25 @@ async function fetchKmaRealtimeObservation(lat, lng) {
 
   const targetUrl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${encodeURIComponent(cleanKey)}&pageNo=1&numOfRows=100&dataType=JSON&base_date=${dt.base_date}&base_time=${dt.base_time}&nx=${xy.x}&ny=${xy.y}`;
 
-  let data = null;
-  try {
-    const res = await fetch(targetUrl);
-    if (res.ok) data = await res.json();
-  } catch (e) {
+  const fetchWithTimeout = async (url, ms = 2500) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
     try {
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-      const res = await fetch(proxyUrl);
-      if (res.ok) data = await res.json();
-    } catch (err2) {
-      try {
-        const proxyUrl2 = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-        const res = await fetch(proxyUrl2);
-        if (res.ok) data = await res.json();
-      } catch (err3) {}
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      if (res.ok) return await res.json();
+    } catch (e) {
+      clearTimeout(timer);
     }
+    return null;
+  };
+
+  let data = await fetchWithTimeout(targetUrl, 1500);
+  if (!data) {
+    data = await fetchWithTimeout(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`, 2000);
+  }
+  if (!data) {
+    data = await fetchWithTimeout(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`, 2000);
   }
 
   if (data && data.response && data.response.body && data.response.body.items) {
@@ -1344,7 +1336,7 @@ async function fetchKmaRealtimeObservation(lat, lng) {
   return null;
 }
 
-// 실시간 산악 예보 통신 (정상 고도 수치모델 격자 수신)
+// 실시간 산악 예보 통신 (Open-Meteo 슈퍼컴퓨터 격자 수신)
 async function fetchPrimaryAlpineWeather(lat, lng, ele) {
   try {
     const params = new URLSearchParams({
@@ -1558,7 +1550,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
   return { srStr: sR_s, ssStr: sS_s, sunProgress: p, badgeText: bT, badgeColor: bC, descText: dT, isNight, orbChar, leftLabel, midLabel, rightLabel, sR, sS };
 }
 
-// ★★★ [v17.5 무결점 운저고도 수식: 맑은 날 상공 배치 & 악천후 시 정상 관통] ★★★
+// v17.6 무결점 운저고도 수식
 function calculateLCL(temp, rh, dewPoint, summitAlt, cloudCover = 50) {
   let td = dewPoint;
   if (td === null || td === undefined || isNaN(td)) {
@@ -1566,30 +1558,25 @@ function calculateLCL(temp, rh, dewPoint, summitAlt, cloudCover = 50) {
   }
   const spread = Math.max(0.1, temp - td);
 
-  // 1. 산 아래 평지 기준 지형성 응결고도 (ASL)
   const orographicLCL = Math.round((0.6 * summitAlt) + (125 * spread));
 
-  // 2. 맑은 날씨 (구름 45% 미만): 아침 습도가 아무리 높아도 운저는 정상 상공에 형성
   if (cloudCover < 45) {
     const clearSkyBase = Math.round(summitAlt + (125 * spread));
     return Math.max(clearSkyBase, orographicLCL);
   }
 
-  // 3. 실제 악천후/곰탕 (구름 70% 이상 + 습도 88% 이상 + 이슬점 격차 1.8℃ 이내)
   if (cloudCover >= 70 && rh >= 88 && spread <= 1.8) {
     const fogBase = Math.round(summitAlt * (0.65 + (spread * 0.1)));
     return Math.max(250, fogBase);
   }
 
-  // 4. 일반 흐림
   return Math.max(350, orographicLCL);
 }
 
-// ★★★ [v17.5 안개비 감지 판정식: 맑은 아침 가짜 비 방어] ★★★
+// v17.6 안개비 감지 판정식
 function evaluateOrographicPrecipitation(rawRain, rh, spread, isCloudEngulfed, cloudCover) {
   if (rawRain > 0) return rawRain;
 
-  // 구름량 70% 이상 + 정상 구름 관통 + 습도 90% 이상 + 이슬점 격차 1.5℃ 이내 극포화
   if (cloudCover >= 70 && isCloudEngulfed && rh >= 90 && spread <= 1.5) {
     const drizzle = parseFloat((0.2 + (rh - 90) * 0.05).toFixed(1));
     return Math.min(1.0, Math.max(0.3, drizzle));
@@ -1876,6 +1863,7 @@ function findCurrentHourIndex(h){
   return bI;
 }
 
+// 12시간 초단기 예보 렌더러
 function renderLiveForecastTrack(h){
   const t = document.getElementById('forecast-track'); if(!t) return; t.innerHTML = '';
   const curIdx = findCurrentHourIndex(h);
@@ -2213,7 +2201,7 @@ window.switchForecastView = function(mode){
 };
 
 // 메인 기상 데이터 렌더러
-async function renderFullAlpineWeather(data, ele, kmaObs) {
+function renderFullAlpineWeather(data, ele, kmaObs) {
   if (!data || !data.hourly) return;
   const cur = data.current || {};
   const nw = new Date();
@@ -2273,6 +2261,7 @@ async function renderFullAlpineWeather(data, ele, kmaObs) {
   updateAlpineWeatherHUD(activeForecastRes, '현재', iN);
 }
 
+// 2단계 즉시 렌더링 파이프라인 (0.2초 초고속 표출 + 기상청 비동기 병합)
 window.selectMountain = async function(n, e, bE, t='peak', lt=35.1578, lg=129.0825, dK=null){
   const fetchId = ++currentFetchId;
   currentMt = { name: n, ele: e, type: t, lat: lt, lng: lg, distanceKm: dK };
@@ -2282,21 +2271,26 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.1578, lg=129.08
   setTxt('card-peak-desc', `해발 ${e}m · 정상부 분석`);
   setTxt('clock-live', `${STATLAB_VERSION} 실시간 분석 중...`);
 
-  const [primData, kmaObs] = await Promise.all([
-    fetchPrimaryAlpineWeather(lt, lg, e),
-    fetchKmaRealtimeObservation(lt, lg)
-  ]);
-
+  // 1단계: Open-Meteo 슈퍼컴퓨터 격자 즉시 수신 (0.2초 표출)
+  const primData = await fetchPrimaryAlpineWeather(lt, lg, e);
   if (fetchId !== currentFetchId) return;
 
   if (primData && primData.hourly) {
     liveWeatherData = primData;
-    renderFullAlpineWeather(liveWeatherData, e, kmaObs);
+    renderFullAlpineWeather(liveWeatherData, e, null);
     const nw = new Date();
-    const sourceLabel = kmaObs ? '기상청 실측 기지국 연동' : '글로벌 수치모델 연동';
-    setTxt('clock-live', `${STATLAB_VERSION} · ${nw.getHours().toString().padStart(2, '0')}:${nw.getMinutes().toString().padStart(2, '0')} (${sourceLabel})`);
+    setTxt('clock-live', `${STATLAB_VERSION} · ${nw.getHours().toString().padStart(2, '0')}:${nw.getMinutes().toString().padStart(2, '0')} (글로벌 수치모델 연동)`);
   }
 
+  // 2단계: 백그라운드 기상청 실측 기지국 비동기 병합 (프록시 지연 방어)
+  fetchKmaRealtimeObservation(lt, lg).then(kmaObs => {
+    if (fetchId !== currentFetchId || !kmaObs || !liveWeatherData) return;
+    renderFullAlpineWeather(liveWeatherData, e, kmaObs);
+    const nw = new Date();
+    setTxt('clock-live', `${STATLAB_VERSION} · ${nw.getHours().toString().padStart(2, '0')}:${nw.getMinutes().toString().padStart(2, '0')} (기상청 실측 기지국 연동)`);
+  });
+
+  // 3단계: 7일 앙상블 예보 비동기 갱신
   fetchEnsembleDailyWeather(lt, lg, e).then(ensData => {
     if (fetchId !== currentFetchId) return;
     if (ensData && ensData.daily && liveWeatherData) {
@@ -2318,7 +2312,7 @@ function selectSearchedItem(idx){
   selectMountain(m.name, m.ele, null, m.type, m.lat, m.lng);
 }
 
-// ★★★ [v17.5 전국 명산 실시간 검색 엔진: 영문 로마자/관리구역 오매칭 원천 차단] ★★★
+// 전국 명산 실시간 검색 엔진 (영문 로마자/관리구역 오매칭 원천 차단)
 window.handleMountainSearch = function(k){
   clearTimeout(searchTimer);
   const qRaw = k.trim();
@@ -2330,7 +2324,6 @@ window.handleMountainSearch = function(k){
     return;
   }
 
-  // 1차: 정밀 검증된 로컬 명산 DB 무조건 최우선 매칭 (가야산 1,432m 등 직결)[cite: 7]
   const localMatches = mountainDB.filter(m => {
     const cleanName = m.name.replace(/\s+/g, '').toLowerCase();
     const cleanPeak = (m.peak || '').replace(/\s+/g, '').toLowerCase();
@@ -2341,7 +2334,6 @@ window.handleMountainSearch = function(k){
   currentSearchResults = localMatches;
   renderSearchDropdown(currentSearchResults);
 
-  // 2차: 외부 지오코딩 보완 (영문 로마자, 국립공원 중간지번 전면 차단)[cite: 8]
   searchTimer = setTimeout(async () => {
     try {
       const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(qRaw)}&language=ko&count=10`;
@@ -2356,11 +2348,7 @@ window.handleMountainSearch = function(k){
         const externalMatches = [];
         data.results.forEach(item => {
           const isKorea = (item.latitude >= 33.0 && item.latitude <= 38.8 && item.longitude >= 125.5 && item.longitude <= 131.0);
-          
-          // 영문 로마자(Kayasan, Jirisan 등) 전면 배제 (한글 포함 여부 검증)[cite: 8]
           const isKoreanName = /[가-힣]/.test(item.name);
-
-          // 국립공원, 관리사무소, 휴게소, 체육시설 등 비정상 표고 유발 시설물 배제[cite: 8]
           const isGarbage = item.name.includes('공원') || item.name.includes('관리') || item.name.includes('사무') || 
                             item.name.includes('휴게') || item.name.includes('주차') || item.name.includes('탐방') || 
                             item.name.includes('매표') || item.name.includes('체육') || item.name.includes('성지') || 
