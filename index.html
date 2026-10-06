@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v18.0 Master</title>
+  <title>STATLAB 산악 기상 분석 v19.0 Master</title>
 
   <!-- 포트원 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -827,9 +827,9 @@
   <div class="brand-header">
     <div class="brand-title">
       <span id="brand-live-dot" class="brand-dot"></span>
-      STATLAB ALPINE <span class="brand-ver-badge">v18.0</span>
+      STATLAB ALPINE <span class="brand-ver-badge">v19.0</span>
     </div>
-    <div id="clock-live" class="brand-status">v18.0 동기화 중...</div>
+    <div id="clock-live" class="brand-status">v19.0 동기화 중...</div>
   </div>
 
   <div class="search-row">
@@ -899,12 +899,12 @@
       <div class="hero-top-row">
         <div class="hero-location-wrap">
           <div class="hero-title-line">
-            <span id="card-peak-title" class="hero-mt-name">영남알프스 간월산</span>
+            <span id="card-peak-title" class="hero-mt-name">한라산 백록담 정상</span>
             <button id="fav-toggle-btn" class="fav-star-btn active" onclick="toggleCurrentFavorite()">★</button>
             <span id="user-gps-alt-pill" class="gps-alt-badge-inline">📍 내 위치 연동</span>
           </div>
           <div id="card-peak-ele" class="hero-mt-sub">
-            <span id="card-peak-desc">해발 1069m · 정상부 분석</span>
+            <span id="card-peak-desc">해발 1947m · 정상부 분석</span>
           </div>
         </div>
         <div class="hero-temp-wrap">
@@ -914,7 +914,7 @@
       </div>
 
       <div class="altitude-meter-box">
-        <div id="meter-mt-label" class="meter-label-left">정상 1069m</div>
+        <div id="meter-mt-label" class="meter-label-left">정상 1947m</div>
         <div class="meter-visual-track">
           <div id="meter-fill" class="meter-fill-summit" style="width: 62%;"></div>
           <div id="meter-cloud-line" class="meter-marker-cloud" style="left: 75%;"></div>
@@ -926,7 +926,7 @@
         <div class="scrubber-header">
           <div class="scrubber-title">
             <span>고도 프로파일러</span>
-            <span id="scrubber-current-label" class="scrubber-val-pill">1069m (정상)</span>
+            <span id="scrubber-current-label" class="scrubber-val-pill">1947m (정상)</span>
           </div>
           <button class="scrubber-reset-btn" onclick="resetAltitudeToSummit()">정상 앵커</button>
         </div>
@@ -935,15 +935,15 @@
           id="altitude-slider"
           class="altitude-slider"
           min="10"
-          max="1069"
-          value="1069"
+          max="1947"
+          value="1947"
           step="5"
           oninput="handleAltitudeScrub(this.value)"
         />
         <div class="scrubber-ticks">
           <span>들머리 10m</span>
-          <span id="scrubber-mid-tick">중턱 535m</span>
-          <span id="scrubber-summit-tick">정상 1069m</span>
+          <span id="scrubber-mid-tick">중턱 974m</span>
+          <span id="scrubber-summit-tick">정상 1947m</span>
         </div>
       </div>
 
@@ -957,7 +957,7 @@
           <span id="brief-wind" class="spec-val" style="color: var(--accent-amber);">-- / -- m/s</span>
         </div>
         <div class="spec-item">
-          <span class="spec-label">강수량</span>
+          <span class="spec-label">강수량 (정상부)</span>
           <span id="brief-rain" class="spec-val" style="color: var(--accent-cyan);">0 mm</span>
         </div>
       </div>
@@ -994,7 +994,7 @@
     <div class="sun-track-container">
       <div class="sun-track-bar">
         <div id="sun-track-fill" class="sun-track-fill" style="width: 50%;"></div>
-        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️</div>
+        <div id="sun-track-orb" class="sun-track-orb" style="left: 50%;">☀️️</div>
       </div>
       <div class="sun-time-labels">
         <span id="label-sunrise">일출 --:--</span>
@@ -1132,16 +1132,16 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v18.0 OROGRAPHIC MASTER</span>
+    <span>STATLAB v19.0 PRECISION MASTER</span>
   </div>
 
 <script>
-const STATLAB_VERSION = "v18.0";
+const STATLAB_VERSION = "v19.0";
 
 // 공공데이터포털 기상청 인증키
 const KMA_SERVICE_KEY = "e471b45dcb373710ff06b726a8f079195673d3c87d0009936685562cb9776109";
 
-// 전국 명산 정제 DB (한라산 1,947m, 가야산 1,432m 등 전수 정비)
+// 전국 명산 정제 DB (한라산 1,947m, 가야산 1,432m 등 전수 정비 완료)
 const mountainDB = [
   {name:'한라산 백록담 정상', peak:'백록담', type:'peak', region:'제주 서귀포시/제주시', ele:1947, lat:33.3617, lng:126.5332},
   {name:'합천 가야산 (칠불봉/상왕봉)', peak:'가야산', type:'peak', region:'경남 합천 가야면/경북 성주', ele:1432, lat:35.8215, lng:128.1185},
@@ -1195,11 +1195,11 @@ const mountainDB = [
   {name:'양산 천성산 원효봉', peak:'천성산', type:'peak', region:'경남 양산시 하북면', ele:922, lat:35.4185, lng:129.1385}
 ];
 
-const FAVORITES_KEY = 'STATLAB_FAV_v180';
+const FAVORITES_KEY = 'STATLAB_FAV_v190';
 const defaultFavorites = [
   {name:'한라산 백록담 정상', ele:1947, type:'peak', lat:33.3617, lng:126.5332},
-  {name:'영남알프스 간월산', ele:1069, type:'peak', lat:35.5517, lng:129.0489},
   {name:'합천 가야산 (칠불봉/상왕봉)', ele:1432, type:'peak', lat:35.8215, lng:128.1185},
+  {name:'영남알프스 간월산', ele:1069, type:'peak', lat:35.5517, lng:129.0489},
   {name:'금정산 고당봉', ele:801, type:'peak', lat:35.2846, lng:129.0565},
   {name:'지리산 천왕봉', ele:1915, type:'peak', lat:35.3371, lng:127.7306}
 ];
@@ -1295,7 +1295,7 @@ function getKmaBaseDateTime() {
   };
 }
 
-// 기상청 초단기실황 API 호출 (2초 타임아웃 가드로 절대 화면을 멈추지 않음)
+// 기상청 초단기실황 API 호출 (논블로킹 타임아웃 가드)
 async function fetchKmaRealtimeObservation(lat, lng) {
   if (!KMA_SERVICE_KEY || KMA_SERVICE_KEY.trim() === '') return null;
   const xy = dfs_xy_conv("toXY", lat, lng);
@@ -1333,7 +1333,7 @@ async function fetchKmaRealtimeObservation(lat, lng) {
   return null;
 }
 
-// 실시간 산악 예보 통신 (Open-Meteo 모델 정상 해발고도 격자 수신)
+// 실시간 산악 예보 통신 (정상 표고 고정 격자 수신)
 async function fetchPrimaryAlpineWeather(lat, lng, ele) {
   try {
     const params = new URLSearchParams({
@@ -1356,7 +1356,7 @@ async function fetchPrimaryAlpineWeather(lat, lng, ele) {
   }
 }
 
-// 7일 앙상블 예보 통신
+// 7일 주간 앙상블 예보 통신
 async function fetchEnsembleDailyWeather(lat, lng, ele) {
   try {
     const params = new URLSearchParams({
@@ -1414,7 +1414,7 @@ window.triggerGPSMatching = function(){
   setTxt('clock-live', '위성 GPS 최근접 산 레이더 가동 중...');
 
   if(!navigator.geolocation){
-    fallbackToDb(35.5517, 129.0489);
+    fallbackToDb(33.3617, 126.5332);
     return;
   }
 
@@ -1458,7 +1458,7 @@ window.triggerGPSMatching = function(){
         err => {
           if(btn) btn.classList.remove('scanning');
           if(liveDot) liveDot.className = 'brand-dot';
-          fallbackToDb(35.5517, 129.0489);
+          fallbackToDb(33.3617, 126.5332);
         },
         { timeout: 10000, enableHighAccuracy: true, maximumAge: 30000 }
       );
@@ -1530,7 +1530,7 @@ function computeSunAndTrailSafety(d, targetDate = null){
     const mTS = Math.max(0, Math.floor((sS.getTime() - n.getTime()) / 60000));
     const hR = Math.floor(mTS / 60), rM = mTS % 60;
     if(mTS <= 60){ bT = '🚨 하산 완료 필수'; bC = 'var(--accent-red)'; dT = `<strong>🚨 [일몰 ${mTS}분 전]:</strong> 곧 어두워집니다. 즉시 하산을 완료하세요.`; }
-    else if(mTS <= 120){ bT = '⚠️ 하산 코스 진입'; bC = 'var(--accent-amber)'; dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(${sS_s}) 전 하산로에 진입하세요.`; }
+    else if(mTS <= 120){ bT = '⚠️️ 하산 코스 진입'; bC = 'var(--accent-amber)'; dT = `<strong>⚠️ [일몰 ${hR > 0 ? hR + '시간 ' : ''}${rM}분 전]:</strong> 일몰 시각(${sS_s}) 전 하산로에 진입하세요.`; }
     else { bT = `일몰까지 ${hR > 0 ? hR + '시간 ' : ''}${rM}분`; bC = 'var(--accent-green)'; dT = `<strong>☀️ [주간 일조 확보]:</strong> 일몰 시각은 ${sS_s}입니다. 안전한 주간 산행이 가능합니다.`; }
   } else {
     isNight = true; orbChar = '🌙';
@@ -1547,18 +1547,61 @@ function computeSunAndTrailSafety(d, targetDate = null){
   return { srStr: sR_s, ssStr: sS_s, sunProgress: p, badgeText: bT, badgeColor: bC, descText: dT, isNight, orbChar, leftLabel, midLabel, rightLabel, sR, sS };
 }
 
-// ★★★ [v18.0 산악 지형성 응결고도(Orographic LCL) 핵심 물리식] ★★★
-function calculateLCL(baseTemp, baseRH, summitAlt) {
-  // 평지/들머리 수증기 포화 격차
+// ★★★ [v19.0 지형성 운저고도(Orographic LCL) 정밀 역산식] ★★★
+function calculateLCL(baseTemp, baseRH, summitAlt, cloudCover = 50) {
   const spread = Math.max(0.1, (100 - baseRH) / 5);
-  // 산 밑바닥 기저고도 (제주 해변 50m, 내륙 평지 120m)
+  // 지표 기저면 고도 (해변 60m ~ 내륙 평지 150m)
   const baseAlt = Math.min(150, Math.round(summitAlt * 0.08));
-  // 공기가 능선을 치고 오르며 응결되는 고도 (해발 기준)
-  let lcl = Math.round(baseAlt + (125 * spread));
-  return Math.max(120, lcl);
+  let plainLCL = Math.round(baseAlt + (125 * spread));
+
+  // 맑은 날(구름 40% 미만)에는 대기 역전층이 없어 운저가 정상 상공에 배치됨
+  if (cloudCover < 40) {
+    return Math.max(Math.round(summitAlt + 350), plainLCL);
+  }
+
+  // 구름이 많고 습도가 높으면 사면 강제 상승기류에 의해 응결고도가 급격히 낮아짐
+  if (cloudCover >= 70 && baseRH >= 75) {
+    const forcedLCL = Math.round(summitAlt * (0.50 + spread * 0.08));
+    return Math.max(200, Math.min(plainLCL, forcedLCL));
+  }
+
+  return Math.max(300, plainLCL);
 }
 
-// 고도 프로파일러 및 능선 물리 연산 (정상 구름 관통 판정)
+// ★★★ [v19.0 정상부 정밀 강수 역학 엔진: 피더-시더 증폭 & 안개비 포집] ★★★
+function calculateAlpinePrecipitation(rawRain, summitAlt, targetAlt, lclHeight, rh, windSpeed) {
+  const altRatio = Math.min(1.0, targetAlt / Math.max(1, summitAlt));
+
+  // 1. 피더-시더(Feeder-Seeder) 지형성 강수 증폭 (이미 비구름이 유입된 경우)
+  if (rawRain > 0) {
+    // 능선 바람이 강할수록 사면 상승기류가 강해져 응결 및 빗방울 성장 가속 (최대 1.8배)
+    const windUpslopeFactor = Math.min(1.8, 1.0 + (windSpeed * 0.045));
+    // 고도가 올라갈수록 기압 강하 및 수증기 집중으로 강수량 증폭 (최대 2.3배)
+    const orographicEnhancement = 1.0 + (altRatio * 0.8 * windUpslopeFactor);
+    return parseFloat((rawRain * orographicEnhancement).toFixed(1));
+  }
+
+  // 2. 지형성 구름 물방울 수평 포집 (구름 관통 시 발생하는 안개비/이슬비)
+  // 모델 강우량이 0mm라도 정상이 구름 속에 잠겨 있고 고습도 포화 상태인 경우
+  const isInCloud = (targetAlt >= lclHeight);
+  if (isInCloud) {
+    // 구름 속 침투 깊이 (구름 기저면에서 얼마나 높이 들어갔는가)
+    const penetrationDepth = Math.max(0, targetAlt - lclHeight);
+    const penetrationRatio = Math.min(1.0, penetrationDepth / 600); // 600m 이상 침투 시 최대 포집
+
+    // 상대습도 85% 이상부터 포집 시작, 90% 이상은 주룩주룩 젖는 안개비
+    if (rh >= 85) {
+      const rhSaturation = (rh - 85) / 15; // 0.0 ~ 1.0
+      const windInterception = Math.min(0.35, windSpeed * 0.035); // 바람에 의한 수증기 충돌량
+      const drizzleRate = 0.25 + (rhSaturation * 0.45) + (penetrationRatio * 0.25) + windInterception;
+      return parseFloat(Math.min(1.2, drizzleRate).toFixed(1));
+    }
+  }
+
+  return 0.0;
+}
+
+// 고도 프로파일러 및 능선 물리 연산
 function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, isSummit = false, isNight = false) {
   const p = baseParams;
   const diffFromSummit = summitAlt - targetAlt;
@@ -1566,7 +1609,6 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
   let t = p.rawTemp + (diffFromSummit / 100) * 0.65;
   t = parseFloat(t.toFixed(1));
 
-  // 고도가 올라갈수록 단열 팽창으로 상대습도 급상승
   let rh = Math.max(30, Math.min(100, Math.round(p.rawRH - (diffFromSummit / 100) * 1.8)));
 
   const summitRatio = Math.max(0, Math.min(1.0, targetAlt / summitAlt));
@@ -1581,15 +1623,10 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
   }
   feel = parseFloat(feel.toFixed(1));
 
-  // ★★★ [정상 구름 진입(곰탕) 조건: 목표 고도가 운저고도 이상일 때] ★★★
+  // 정밀 강수 역학 계산
+  const calculatedRain = calculateAlpinePrecipitation(p.rawRain, summitAlt, targetAlt, lclHeight, rh, w);
   const isInCloud = (targetAlt >= lclHeight);
-  let rain = p.rawRain;
-
-  // 정상이 구름 속에 갇혀 있고 고습도 포화 상태면 안개비/미세강수 자동 생성
-  if (isInCloud && rh >= 88 && rain === 0) {
-    rain = parseFloat((0.2 + (rh - 88) * 0.04).toFixed(1));
-    rain = Math.min(1.0, Math.max(0.3, rain));
-  }
+  const isFogCode = (p.rawCode >= 45 && p.rawCode <= 48);
 
   let statusText = isNight ? '시야 쾌청 (야간 🌙)' : '시야 쾌청 ☀️';
   let statusBadgeBg = 'rgba(48, 209, 88, 0.2)';
@@ -1597,19 +1634,19 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
   let statusBadgeColor = 'var(--accent-green)';
   let sceneMode = isNight ? 'scene-clear-night' : 'scene-clear-day';
 
-  if (rain > 0 && isInCloud) {
-    statusText = `구름 진입 (안개비 ${rain}mm 🌧️)`;
+  if (calculatedRain > 0 && isInCloud) {
+    statusText = `구름 진입 (안개비 ${calculatedRain}mm 🌧️)`;
     statusBadgeBg = 'rgba(255, 69, 58, 0.25)';
     statusBadgeBorder = 'rgba(255, 69, 58, 0.5)';
     statusBadgeColor = 'var(--accent-red)';
     sceneMode = 'scene-rain';
-  } else if (rain > 0) {
-    statusText = `강우 중 (${rain}mm) 🌧️`;
+  } else if (calculatedRain > 0) {
+    statusText = `강우 중 (${calculatedRain}mm) 🌧️`;
     statusBadgeBg = 'rgba(255, 69, 58, 0.25)';
     statusBadgeBorder = 'rgba(255, 69, 58, 0.5)';
     statusBadgeColor = 'var(--accent-red)';
     sceneMode = 'scene-rain';
-  } else if (isInCloud) {
+  } else if (isInCloud || isFogCode) {
     statusText = '구름 진입 (운무 🌫️)';
     statusBadgeBg = 'rgba(255, 159, 10, 0.25)';
     statusBadgeBorder = 'rgba(255, 159, 10, 0.45)';
@@ -1636,7 +1673,7 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
   }
 
   return {
-    alt: targetAlt, temp: t, feel: feel, humidity: rh, wind: w, gust: g, rain: rain,
+    alt: targetAlt, temp: t, feel: feel, humidity: rh, wind: w, gust: g, rain: calculatedRain,
     statusText, statusBg: statusBadgeBg, statusBorder: statusBadgeBorder, statusColor: statusBadgeColor,
     sceneMode, isInCloud
   };
@@ -1850,6 +1887,7 @@ function renderLiveForecastTrack(h){
   const codeArr = extractModelArray(h, 'weather_code');
   const precipArr = extractModelArray(h, 'precipitation');
   const cloudArr = extractModelArray(h, 'cloud_cover');
+  const windArr = extractModelArray(h, 'wind_speed_10m');
 
   let sR_hour = 6, sS_hour = 18;
   if(liveWeatherData && liveWeatherData.daily && liveWeatherData.daily.sunrise && liveWeatherData.daily.sunrise[0]){
@@ -1872,24 +1910,24 @@ function renderLiveForecastTrack(h){
     let pVal = precipArr[dI] !== undefined ? precipArr[dI] : 0;
     let cVal = cloudArr[dI] !== undefined ? cloudArr[dI] : 20;
     let rhVal = rhArr[dI] !== undefined ? rhArr[dI] : 60;
+    let wVal = windArr[dI] !== undefined ? windArr[dI] : 2.5;
 
-    // 슬롯별 지형성 운저고도 산출
+    // 슬롯별 운저 및 정밀 강수량 산출
     const baseGroundTemp = rawT + (currentMt.ele / 100) * 0.65;
     const baseGroundRH = Math.max(30, rhVal - 15);
-    const slotLCL = calculateLCL(baseGroundTemp, baseGroundRH, currentMt.ele);
+    const slotLCL = calculateLCL(baseGroundTemp, baseGroundRH, currentMt.ele, cVal);
+    const slotRain = calculateAlpinePrecipitation(pVal, currentMt.ele, currentMt.ele, slotLCL, rhVal, wVal);
     const isCloud = (currentMt.ele >= slotLCL);
 
     const isNightSlot = (tH < sR_hour || tH >= sS_hour);
 
     let ic = '☀️';
-    if (pVal > 0 || (wC >= 51 && wC <= 67)) {
+    if (slotRain > 0 || (wC >= 51 && wC <= 67)) {
       ic = '🌧️';
     } else if (wC >= 71 && wC <= 77) {
       ic = '❄️';
-    } else if (isCloud && rhVal >= 88) {
-      ic = '🌧️'; // 안개비
     } else if (isCloud) {
-      ic = '🌫️'; // 운무
+      ic = '🌫️';
     } else if (cVal >= 50 || wC === 3) {
       ic = '☁️';
     } else if (cVal >= 20) {
@@ -1938,7 +1976,7 @@ function selectForecastHour(o, dI, tH, hS, tT){
 
   const baseGroundTemp = rawTemp + (currentMt.ele / 100) * 0.65;
   const baseGroundRH = Math.max(30, rawRH - 15);
-  const effectiveLCL = calculateLCL(baseGroundTemp, baseGroundRH, currentMt.ele);
+  const effectiveLCL = calculateLCL(baseGroundTemp, baseGroundRH, currentMt.ele, rawCloud);
 
   const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, tT);
   const summitState = evaluateAltitudePhysics(currentMt.ele, currentMt.ele, {
@@ -2204,7 +2242,7 @@ function renderFullAlpineWeather(data, ele, kmaObs) {
   let rawCode = cur.weather_code !== undefined ? cur.weather_code : 0;
   let rawCloud = cur.cloud_cover !== undefined ? cur.cloud_cover : 20;
 
-  // 기상청 평지 센서가 수신되면 평지 기온 및 이슬점을 기반으로 산악 운저고도 정밀 역산
+  // 기상청 평지 센서 수신 시 역산에 활용
   let baseGroundTemp = rawTemp + (ele / 100) * 0.65;
   let baseGroundRH = Math.max(30, rawRH - 15);
 
@@ -2218,8 +2256,8 @@ function renderFullAlpineWeather(data, ele, kmaObs) {
     }
   }
 
-  // 산악 지형성 응결고도 산출
-  const effectiveLCL = calculateLCL(baseGroundTemp, baseGroundRH, ele);
+  // 지형성 운저고도 산출
+  const effectiveLCL = calculateLCL(baseGroundTemp, baseGroundRH, ele, rawCloud);
 
   const sunInfo = computeSunAndTrailSafety(data.daily, nw);
   const summitState = evaluateAltitudePhysics(ele, ele, {
@@ -2238,7 +2276,7 @@ function renderFullAlpineWeather(data, ele, kmaObs) {
   updateAlpineWeatherHUD(activeForecastRes, '현재', iN);
 }
 
-// 2단계 즉시 렌더링 파이프라인 (0.2초 초고속 표출 + 기상청 비동기 병합)
+// 2단계 즉시 렌더링 파이프라인
 window.selectMountain = async function(n, e, bE, t='peak', lt=35.1578, lg=129.0825, dK=null){
   const fetchId = ++currentFetchId;
   currentMt = { name: n, ele: e, type: t, lat: lt, lng: lg, distanceKm: dK };
@@ -2248,7 +2286,6 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.1578, lg=129.08
   setTxt('card-peak-desc', `해발 ${e}m · 정상부 분석`);
   setTxt('clock-live', `${STATLAB_VERSION} 실시간 분석 중...`);
 
-  // 1단계: Open-Meteo 슈퍼컴퓨터 격자 즉시 수신 (0.2초 표출)
   const primData = await fetchPrimaryAlpineWeather(lt, lg, e);
   if (fetchId !== currentFetchId) return;
 
@@ -2259,7 +2296,6 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.1578, lg=129.08
     setTxt('clock-live', `${STATLAB_VERSION} · ${nw.getHours().toString().padStart(2, '0')}:${nw.getMinutes().toString().padStart(2, '0')} (수치모델 고도 격자)`);
   }
 
-  // 2단계: 백그라운드 기상청 실측 기지국 비동기 병합 (프록시 지연 방어)
   fetchKmaRealtimeObservation(lt, lg).then(kmaObs => {
     if (fetchId !== currentFetchId || !kmaObs || !liveWeatherData) return;
     renderFullAlpineWeather(liveWeatherData, e, kmaObs);
@@ -2267,7 +2303,6 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.1578, lg=129.08
     setTxt('clock-live', `${STATLAB_VERSION} · ${nw.getHours().toString().padStart(2, '0')}:${nw.getMinutes().toString().padStart(2, '0')} (기상청 실측망 병합)`);
   });
 
-  // 3단계: 7일 앙상블 예보 비동기 갱신
   fetchEnsembleDailyWeather(lt, lg, e).then(ensData => {
     if (fetchId !== currentFetchId) return;
     if (ensData && ensData.daily && liveWeatherData) {
@@ -2289,7 +2324,7 @@ function selectSearchedItem(idx){
   selectMountain(m.name, m.ele, null, m.type, m.lat, m.lng);
 }
 
-// 전국 명산 실시간 검색 엔진 (영문 로마자/국립공원 지번 오매칭 원천 차단)
+// 전국 명산 실시간 검색 엔진
 window.handleMountainSearch = function(k){
   clearTimeout(searchTimer);
   const qRaw = k.trim();
@@ -2301,7 +2336,6 @@ window.handleMountainSearch = function(k){
     return;
   }
 
-  // 1차: 정밀 검증된 로컬 명산 DB 무조건 최우선 매칭 (가야산 1,432m 등 직결)
   const localMatches = mountainDB.filter(m => {
     const cleanName = m.name.replace(/\s+/g, '').toLowerCase();
     const cleanPeak = (m.peak || '').replace(/\s+/g, '').toLowerCase();
@@ -2312,7 +2346,6 @@ window.handleMountainSearch = function(k){
   currentSearchResults = localMatches;
   renderSearchDropdown(currentSearchResults);
 
-  // 2차: 외부 지오코딩 보완 (영문 로마자, 국립공원 중간지번 전면 차단)
   searchTimer = setTimeout(async () => {
     try {
       const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(qRaw)}&language=ko&count=10`;
