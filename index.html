@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v23.0 National High-Precision</title>
+  <title>STATLAB 산악 기상 분석 v23.1 Master</title>
 
   <!-- 포트원 결제 SDK -->
   <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
@@ -830,9 +830,9 @@
   <div class="brand-header">
     <div class="brand-title">
       <span id="brand-live-dot" class="brand-dot"></span>
-      STATLAB ALPINE <span class="brand-ver-badge">v23.0</span>
+      STATLAB ALPINE <span class="brand-ver-badge">v23.1</span>
     </div>
-    <div id="clock-live" class="brand-status">v23.0 동기화 중...</div>
+    <div id="clock-live" class="brand-status">v23.1 동기화 중...</div>
   </div>
 
   <div class="search-row">
@@ -1135,11 +1135,11 @@
 
   <div id="statlab-badge">
     <span class="badge-mark"></span>
-    <span>STATLAB v23.0 PRECISION MASTER</span>
+    <span>STATLAB v23.1 ZERO-ERROR MASTER</span>
   </div>
 
 <script>
-const STATLAB_VERSION = "v23.0";
+const STATLAB_VERSION = "v23.1";
 
 // 공공데이터포털 기상청 인증키
 const KMA_SERVICE_KEY = "e471b45dcb373710ff06b726a8f079195673d3c87d0009936685562cb9776109";
@@ -1151,7 +1151,7 @@ const mountainDB = [
   {name:'합천 가야산 (칠불봉/상왕봉)', peak:'가야산', type:'peak', region:'경남 합천 가야면/경북 성주', ele:1432, lat:35.8215, lng:128.1185},
   {name:'지리산 천왕봉', peak:'천왕봉', type:'peak', region:'경남 산청/함양', ele:1915, lat:35.3371, lng:127.7306},
   {name:'설악산 대청봉', peak:'대청봉', type:'peak', region:'강원 양양/속초/인제', ele:1708, lat:38.1192, lng:128.4652},
-  {name:'영남알프스 간월산', peak:'간월산', type:'peak', region:'울산 울주 상북면', ele:1069, lat:35.5517, lng:129.0489}[cite: 3],
+  {name:'영남알프스 간월산', peak:'간월산', type:'peak', region:'울산 울주 상북면', ele:1069, lat:35.5517, lng:129.0489},
   {name:'영남알프스 신불산', peak:'신불산', type:'peak', region:'울산 울주 삼남읍', ele:1159, lat:35.5332, lng:129.0554},
   {name:'영남알프스 가지산', peak:'가지산', type:'peak', region:'울산 울주/경남 밀양', ele:1241, lat:35.6219, lng:129.0118},
   {name:'영남알프스 천황산', peak:'천황산', type:'peak', region:'경남 밀양 단장면', ele:1189, lat:35.5562, lng:128.9778},
@@ -1232,11 +1232,11 @@ const mountainDB = [
   {name:'남해 금산 망대', peak:'금산', type:'peak', region:'경남 남해군 상주면', ele:705, lat:34.7512, lng:127.9885}
 ];
 
-const FAVORITES_KEY = 'STATLAB_FAV_v230';
+const FAVORITES_KEY = 'STATLAB_FAV_v231';
 const defaultFavorites = [
   {name:'한라산 백록담 정상', ele:1947, type:'peak', lat:33.3617, lng:126.5332},
   {name:'합천 가야산 (칠불봉/상왕봉)', ele:1432, type:'peak', lat:35.8215, lng:128.1185},
-  {name:'영남알프스 간월산', ele:1069, type:'peak', lat:35.5517, lng:129.0489}[cite: 3],
+  {name:'영남알프스 간월산', ele:1069, type:'peak', lat:35.5517, lng:129.0489},
   {name:'금정산 고당봉', ele:801, type:'peak', lat:35.2846, lng:129.0565},
   {name:'지리산 천왕봉', ele:1915, type:'peak', lat:35.3371, lng:127.7306}
 ];
@@ -1283,7 +1283,7 @@ let liveWeatherData = null;
 let activeForecastRes = null;
 let baseLiveCurrentRes = null;
 let _lastHapticZ = 0;
-let currentUserAltitude = 45; // 기본 고도 초기화 (절대 공백/미표시 방지)
+let currentUserAltitude = 45; // 초기 표고 안전값
 let currentForecastView = 'hourly';
 let cachedWeeklyCalculatedData = [];
 let currentFetchId = 0;
@@ -1437,7 +1437,7 @@ function findNearestMountainFromDb(uLat, uLng){
   return nearest;
 }
 
-// GPS 연동 및 내 고도 실시간 갱신 엔진 (절대 미표시 없음)
+// GPS 연동 및 내 고도 실시간 갱신 엔진
 window.triggerGPSMatching = function(){
   const btn = document.getElementById('gps-action-btn');
   const liveDot = document.getElementById('brand-live-dot');
@@ -1458,7 +1458,6 @@ window.triggerGPSMatching = function(){
     const uLat = p.coords.latitude;
     const uLng = p.coords.longitude;
     
-    // 모바일 브라우저가 coords.altitude를 제공하지 않을 경우 지형 elevation API로 즉시 보정
     if(p.coords.altitude !== null && !isNaN(p.coords.altitude) && p.coords.altitude > 0){
       currentUserAltitude = Math.round(p.coords.altitude);
       setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
@@ -2036,6 +2035,7 @@ function selectForecastHour(o, dI, tH, hS, tT, kmaObs = null){
   }
 
   const effectiveLCL = calculateOrographicLCL(baseGroundTemp, baseGroundRH, currentMt.ele);
+
   const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, tT);
   const summitState = evaluateAltitudePhysics(currentMt.ele, currentMt.ele, {
     baseGroundTemp,
@@ -2283,15 +2283,15 @@ window.switchForecastView = function(mode){
   }
 };
 
-// ★★★ 메인 기상 렌더러 (트랙 생성 즉시 0번째 슬롯 자동 실행으로 무클릭 무결점 갱신) ★★★
+// 메인 기상 렌더러 (트랙 생성 즉시 0번째 슬롯 자동 실행으로 무클릭 무결점 갱신)
 function renderFullAlpineWeather(data, ele, kmaObs) {
   if (!data || !data.hourly) return;
   const curIdx = findCurrentHourIndex(data.hourly);
   
-  // 1. 12시간 트랙 슬롯들 생성
+  // 1. 12시간 트랙 슬롯 생성
   renderLiveForecastTrack(data.hourly, kmaObs);
 
-  // 2. 다른 산으로 전환 시 클릭을 기다리지 않고 현재(0번째) 슬롯 즉각 자동 트리거!
+  // 2. 다른 산 전환 시 클릭을 기다리지 않고 현재(0번째) 슬롯 즉각 자동 트리거!
   const nw = new Date();
   const tT = (data.hourly.time && data.hourly.time[curIdx]) ? new Date(data.hourly.time[curIdx]) : nw;
   const tH = tT.getHours();
@@ -2364,7 +2364,7 @@ function selectSearchedItem(idx){
   selectMountain(m.name, m.ele, null, m.type || 'peak', m.lat, m.lng);
 }
 
-// 전국 명산 및 작은산 실시간 검색 엔진 (인라인 200개 + Photon OSM 전수 탐색)
+// 전국 명산 및 작은산 실시간 검색 엔진 (초고속 병렬 매칭)
 window.handleMountainSearch = function(k){
   clearTimeout(searchTimer);
   const qRaw = k.trim();
@@ -2376,7 +2376,7 @@ window.handleMountainSearch = function(k){
     return;
   }
 
-  // 1차: 로컬 정제 DB 매칭 (가야산, 한라산, 윤산, 구덕산, 배산 등 200여 개 즉시 0.001초 노출)
+  // 1차: 인라인 200개 명산 즉시 매칭 (0.001초)
   const localMatches = mountainDB.filter(m => {
     const cleanName = m.name.replace(/\s+/g, '').toLowerCase();
     const cleanPeak = (m.peak || '').replace(/\s+/g, '').toLowerCase();
@@ -2387,53 +2387,42 @@ window.handleMountainSearch = function(k){
   currentSearchResults = localMatches;
   renderSearchDropdown(currentSearchResults);
 
-  // 2차: 외부 OpenStreetMap(Photon) & 지오코딩 실시간 탐색 (전국 모든 작은산 탐색)
+  // 2차: 외부 지오코딩 실시간 탐색 (작은산, 봉우리 전수 탐색)
   searchTimer = setTimeout(async () => {
     try {
-      // Photon API: OpenStreetMap 기반 전 세계/한국 봉우리 무료 탐색
-      const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(qRaw)}&limit=15`;
-      const res = await fetch(photonUrl);
+      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(qRaw)}&language=ko&count=10`;
+      const res = await fetch(geoUrl);
       if(!res.ok) return;
       const data = await res.json();
       
       const input = document.getElementById('mt-search-input');
       if (input && input.value.trim() !== qRaw) return;
 
-      if(data && data.features && data.features.length > 0){
+      if(data && data.results && data.results.length > 0){
         const externalMatches = [];
-        for (const feat of data.features) {
-          const p = feat.properties || {};
-          const coords = feat.geometry ? feat.geometry.coordinates : null;
-          if (!coords || coords.length < 2) continue;
+        data.results.forEach(item => {
+          const isKorea = (item.latitude >= 33.0 && item.latitude <= 38.8 && item.longitude >= 125.0 && item.longitude <= 131.5);
+          const isKoreanName = /[가-힣]/.test(item.name);
+          const isGarbage = item.name.includes('공원') || item.name.includes('관리') || item.name.includes('사무') || 
+                            item.name.includes('휴게') || item.name.includes('주차') || item.name.includes('탐방') || 
+                            item.name.includes('매표') || item.name.includes('체육') || item.name.includes('성지') || 
+                            item.name.includes('학교') || item.name.includes('아파트') || item.name.includes('병원') || 
+                            item.name.includes('빌딩');
 
-          const lng = parseFloat(coords[0]);
-          const lat = parseFloat(coords[1]);
-          const isKorea = (lat >= 33.0 && lat <= 38.8 && lng >= 125.0 && lng <= 131.5);
-          const nameStr = (p.name || '').trim();
-
-          // 한국 지명이고 기존 로컬 DB에 없는 경우
-          if(isKorea && nameStr && !localMatches.some(x => x.name.includes(nameStr))){
-            let eleVal = 350; // 기본 임시 고도
-            try {
-              const eleCheck = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lng}`);
-              const eleData = await eleCheck.json();
-              if (eleData && eleData.elevation && eleData.elevation[0]) {
-                eleVal = Math.round(eleData.elevation[0]);
-              }
-            } catch(e) {}
-
-            const regionStr = `${p.city || p.county || p.state || '대한민국'}`.trim();
+          if(isKorea && isKoreanName && !isGarbage && !localMatches.some(x => x.name.includes(item.name))){
+            const eleVal = (item.elevation && item.elevation > 50) ? Math.round(item.elevation) : 380;
+            const regionStr = `${item.admin1 || '대한민국'} ${item.admin2 || ''}`.trim();
             externalMatches.push({
-              name: nameStr.endsWith('산') || nameStr.endsWith('봉') || nameStr.endsWith('대') ? nameStr : `${nameStr}산`,
-              peak: nameStr,
+              name: item.name.endsWith('산') || item.name.endsWith('봉') || item.name.endsWith('대') ? item.name : `${item.name}산`,
+              peak: item.name,
               type: 'peak',
-              region: regionStr,
+              region: regionStr || '대한민국',
               ele: eleVal,
-              lat: lat,
-              lng: lng
+              lat: parseFloat(item.latitude),
+              lng: parseFloat(item.longitude)
             });
           }
-        }
+        });
         if(externalMatches.length > 0){
           currentSearchResults = localMatches.concat(externalMatches);
           renderSearchDropdown(currentSearchResults);
