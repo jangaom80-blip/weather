@@ -202,11 +202,17 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      transition: all 0.2s ease;
     }
     .mt-chip.active {
       background: rgba(255, 255, 255, 0.22);
       border-color: rgba(255, 255, 255, 0.3);
       color: #FFFFFF;
+    }
+    .mt-chip.nearest {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      background: rgba(10, 132, 255, 0.15);
     }
 
     .alert-banner {
@@ -244,6 +250,7 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
+      transition: all 0.2s ease;
     }
     .toggle-tab-btn.active {
       background: rgba(255, 255, 255, 0.2);
@@ -392,15 +399,15 @@
     .sun-core { position: absolute; top: 35px; right: 35px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #FFE600 0%, #FF9F0A 100%); box-shadow: 0 0 25px rgba(255, 184, 0, 0.6); }
 
     .moon-star-wrap { position: absolute; top: 10px; right: 25px; width: 120px; height: 100px; display: none; }
-    .crescent-moon { position: absolute; top: 5px; right: 10px; width: 44px; height: 44px; border-radius: 50%; box-shadow: 8px 6px 0 0 #FFD60A; filter: drop-shadow(0 0 14px rgba(255, 214, 10, 0.7)); transform: rotate(-15deg); animation: moonGlow 6s infinite alternate ease-in-out; }
-    .twinkle-star { position: absolute; background: #FFFFFF; border-radius: 50%; box-shadow: 0 0 6px #FFFFFF; animation: starTwinkle 3s infinite ease-in-out; }
+    .crescent-moon { position: absolute; top: 5px; right: 10px; width: 44px; height: 44px; border-radius: 50%; box-shadow: 8px 6px 0 0 #FFD60A; filter: drop-shadow(0 0 14px rgba(255, 214, 10, 0.7)); transform: rotate(-15deg); }
+    .twinkle-star { position: absolute; background: #FFFFFF; border-radius: 50%; box-shadow: 0 0 6px #FFFFFF; }
 
     .cloud-cluster-wrap { position: absolute; top: -10px; right: -20px; width: 240px; height: 150px; display: none; }
-    .storm-cloud-puff { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(148, 163, 184, 0.45) 0%, rgba(71, 85, 105, 0.2) 60%, transparent 80%); filter: blur(14px); }
+    .storm-cloud-puff { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(148, 163, 184, 0.45) 0%, transparent 80%); filter: blur(14px); }
     .puff-1 { width: 130px; height: 90px; top: 10px; right: 40px; animation: puffSway 10s infinite alternate ease-in-out; }
     .puff-2 { width: 150px; height: 100px; top: 30px; right: 0px; animation: puffSway 12s infinite alternate ease-in-out 1s; }
 
-    /* [23.3 곰탕 애니메이션 필터 100% 복원] */
+    /* [자욱한 곰탕 안개 애니메이션 씬 100% 원형 복각] */
     .gomtang-mist-wrap {
       position: absolute;
       inset: 0;
@@ -415,8 +422,6 @@
     .rain-drop { position: absolute; width: 1.5px; height: 22px; background: linear-gradient(180deg, transparent, rgba(100, 210, 255, 0.8), transparent); transform: rotate(-18deg); animation: rainDropFall 1.2s infinite linear; }
 
     @keyframes sunPulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.15); opacity: 1; } }
-    @keyframes moonGlow { 0% { filter: drop-shadow(0 0 8px rgba(255, 214, 10, 0.5)); } 100% { filter: drop-shadow(0 0 16px rgba(255, 214, 10, 0.9)); } }
-    @keyframes starTwinkle { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
     @keyframes puffSway { 0% { transform: translate(0, 0); } 100% { transform: translate(-8px, 6px); } }
     @keyframes rainDropFall { 0% { transform: translateY(-20px) rotate(-18deg); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(180px) rotate(-18deg); opacity: 0; } }
 
@@ -457,7 +462,7 @@
     .hero-specs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 0.5px solid rgba(255, 255, 255, 0.1); padding-top: 10px; text-align: center; }
     .spec-item { display: flex; flex-direction: column; gap: 3px; }
     .spec-item:nth-child(2) { border-left: 0.5px solid rgba(255, 255, 255, 0.1); border-right: 0.5px solid rgba(255, 255, 255, 0.1); }
-    .spec-label { font-size: 10px; font-weight: 600; color: var(--text-secondary); }
+    .spec-label { font-size: 10px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; }
     .spec-val { font-size: 13px; font-weight: 700; color: #FFFFFF; }
 
     .winter-safety-card { background: linear-gradient(135deg, rgba(16, 28, 45, 0.88) 0%, rgba(10, 18, 30, 0.95) 100%); border: 0.5px solid rgba(174, 232, 255, 0.45); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; }
@@ -492,13 +497,13 @@
 
     .cloudbase-summary-card { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: 18px; padding: 13px 14px; margin-bottom: 10px; }
     .cb-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .cb-card-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+    .cb-card-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; }
     .cb-card-tag { font-size: 11px; font-weight: 700; color: var(--accent-cyan); }
     .cb-card-desc { font-size: 12px; font-weight: 500; color: var(--text-primary); line-height: 1.5; }
 
     .modular-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
     .grid-tile { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: 16px; padding: 13px 12px; display: flex; flex-direction: column; justify-content: space-between; }
-    .tile-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .tile-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; }
     .tile-data-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px; }
     .tile-data-row:last-child { margin-bottom: 0; }
     .tile-label { color: var(--text-secondary); }
@@ -735,7 +740,7 @@
       <div class="winter-title">
         <span id="winter-main-title">동절기 등산로 결빙 & 적설 안전</span>
       </div>
-      <span id="winter-badge" class="winter-pill" style="background: rgba(100,210,255,0.2); color: var(--accent-cyan);">분석 중</span>
+      <span id="winter-badge" class="winter-pill" style="background: rgba(100,210,255,0.2); color: var(--accent-cyan); border: 0.5px solid var(--accent-cyan);">분석 중</span>
     </div>
     <div class="winter-data-grid">
       <div class="winter-col">
@@ -886,7 +891,7 @@
     </div>
   </div>
 
-  <!-- 7일 앙상블 상세 모달 (원형 다이얼 게이지 + 강수량/우천확률 100% 보존) -->
+  <!-- 7일 앙상블 상세 모달 -->
   <div id="day-detail-modal" class="modal-overlay" onclick="handleDayDetailOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -944,7 +949,7 @@ const mountainDB = [
   {name:'영남알프스 고헌산', peak:'고헌산', type:'peak', region:'울산 울주 상북면', ele:1034, lat:35.6385, lng:129.0985},
   {name:'영남알프스 문복산', peak:'문복산', type:'peak', region:'경북 청도/경주시', ele:1015, lat:35.6885, lng:129.0885},
 
-  // 3. 수도권 명산
+  // 3. 수도권 명산 전수 보존
   {name:'북한산 백운대', peak:'백운대', type:'peak', region:'서울 강북구/경기 고양', ele:836, lat:37.6587, lng:126.9780},
   {name:'도봉산 자운봉', peak:'자운봉', type:'peak', region:'서울 도봉구/경기 의정부', ele:740, lat:37.6989, lng:127.0156},
   {name:'관악산 연주대', peak:'연주대', type:'peak', region:'서울 관악구/경기 과천', ele:629, lat:37.4442, lng:126.9639},
@@ -1073,10 +1078,25 @@ const defaultFavorites = [
 
 function getFavorites(){ try{const d=localStorage.getItem(FAVORITES_KEY); if(d)return JSON.parse(d);}catch(e){} return defaultFavorites; }
 function saveFavorites(l){ try{localStorage.setItem(FAVORITES_KEY,JSON.stringify(l));}catch(e){} }
-function renderFavoritesChips(){
+
+// [내 주변 산 동적 칩 + 즐겨찾기 칩 렌더러]
+function renderFavoritesChips(nearestList = []){
   const c = document.getElementById('mountain-chip-scroll'); if(!c)return;
-  const f = getFavorites(); c.innerHTML = '';
+  c.innerHTML = '';
+  
+  // 1. 내 주변 가장 가까운 산 칩 (동적 생성)
+  nearestList.forEach(m => {
+    const d = document.createElement('div');
+    d.className = `mt-chip nearest ${m.name === currentMt.name ? 'active' : ''}`;
+    d.innerHTML = `<span>📍 ${m.name} (${m.distanceKm}km)</span>`;
+    d.onclick = () => selectMountain(m.name, m.ele, d, m.type || 'peak', m.lat, m.lng, m.distanceKm);
+    c.appendChild(d);
+  });
+
+  // 2. 즐겨찾기 산 칩
+  const f = getFavorites();
   f.forEach(m => {
+    if(nearestList.some(x => x.name === m.name)) return; // 중복 제거
     const d = document.createElement('div');
     d.className = `mt-chip ${m.name === currentMt.name ? 'active' : ''}`;
     d.innerHTML = `<span>${m.name}</span>`;
@@ -1084,6 +1104,7 @@ function renderFavoritesChips(){
     c.appendChild(d);
   });
 }
+
 function isCurrentFavorite(){ return getFavorites().some(m => m.name === currentMt.name); }
 window.toggleCurrentFavorite = function(){
   let f = getFavorites();
@@ -1120,7 +1141,7 @@ let currentFetchId = 0;
 let currentSearchResults = [];
 let searchTimer = null;
 
-// [하버사인 정밀 거리 공식 (km)]
+// [하버사인 정밀 구면 거리 계산 공식 (km)]
 function calculateDistanceKm(l1, o1, l2, o2){
   const R = 6371;
   const dL = (l2 - l1) * Math.PI / 180;
@@ -1129,28 +1150,24 @@ function calculateDistanceKm(l1, o1, l2, o2){
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// 125개 마스터 DB 내 최단거리 산 탐색
-function findNearestMountainFromDb(uLat, uLng){
-  let nearest = mountainDB[0];
-  let minDist = Infinity;
-  for(let i = 0; i < mountainDB.length; i++){
-    const d = calculateDistanceKm(uLat, uLng, mountainDB[i].lat, mountainDB[i].lng);
-    if(d < minDist){
-      minDist = d;
-      nearest = { ...mountainDB[i], distanceKm: d.toFixed(1), rawDist: d };
-    }
-  }
-  return nearest;
+// 125개 마스터 DB 내 최단거리 상위 N개 탐색
+function findNearestMountainsFromDb(uLat, uLng, topCount = 3){
+  const mapped = mountainDB.map(m => {
+    const d = calculateDistanceKm(uLat, uLng, m.lat, m.lng);
+    return { ...m, distanceKm: d.toFixed(1), rawDist: d };
+  });
+  mapped.sort((a, b) => a.rawDist - b.rawDist);
+  return mapped.slice(0, topCount);
 }
 
 // [GPS 감지 원본 100% 전수 복원: 2단계 재시도 + 고도 API + 최근접 산 자동 연결]
-window.triggerGPSMatching = function(){
+window.triggerGPSMatching = function(isAuto = false){
   const btn = document.getElementById('gps-action-btn');
   const liveDot = document.getElementById('brand-live-dot');
   
   if(btn) btn.classList.add('scanning');
   if(liveDot) liveDot.className = 'brand-dot searching';
-  setTxt('clock-live', 'GPS 고도 센서 & 최근접 산 탐색 중...');
+  if(!isAuto) setTxt('clock-live', 'GPS 고도 센서 & 최근접 산 탐색 중...');
 
   if(!navigator.geolocation){
     fallbackToDb(35.2846, 129.0565);
@@ -1182,23 +1199,25 @@ window.triggerGPSMatching = function(){
       setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
     }
 
-    const nearestMt = findNearestMountainFromDb(uLat, uLng);
-    if(nearestMt){
-      selectMountain(nearestMt.name, nearestMt.ele, null, nearestMt.type, nearestMt.lat, nearestMt.lng, nearestMt.distanceKm);
-      setTxt('clock-live', `📍 최근접 ${nearestMt.name} (${nearestMt.distanceKm}km) 자동 연결`);
+    const nearestList = findNearestMountainsFromDb(uLat, uLng, 3);
+    if(nearestList && nearestList.length > 0){
+      const primary = nearestList[0];
+      renderFavoritesChips(nearestList);
+      selectMountain(primary.name, primary.ele, null, primary.type, primary.lat, primary.lng, primary.distanceKm);
+      setTxt('clock-live', `📍 최근접 ${primary.name} (${primary.distanceKm}km) 자동 연결`);
     }
   };
 
   navigator.geolocation.getCurrentPosition(
     handlePositionSuccess,
     () => {
-      // 1차 실패 시 2차 고정밀 재시도
+      // 1차 타임아웃 시 2차 고정밀 재시도 (원본 10초 타임아웃 100% 보존)
       navigator.geolocation.getCurrentPosition(
         handlePositionSuccess,
         err => {
           if(btn) btn.classList.remove('scanning');
           if(liveDot) liveDot.className = 'brand-dot';
-          fallbackToDb(35.2846, 129.0565);
+          if(!isAuto) fallbackToDb(35.2846, 129.0565);
         },
         { timeout: 10000, enableHighAccuracy: true, maximumAge: 30000 }
       );
@@ -1210,7 +1229,9 @@ window.triggerGPSMatching = function(){
 function fallbackToDb(lt, lg){
   currentUserAltitude = 50;
   setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
-  const t = findNearestMountainFromDb(lt, lg);
+  const nearestList = findNearestMountainsFromDb(lt, lg, 3);
+  const t = nearestList[0];
+  renderFavoritesChips(nearestList);
   selectMountain(t.name, t.ele, null, t.type, t.lat, t.lng, t.distanceKm);
 }
 
@@ -2085,7 +2106,6 @@ window.openDayDetailModal = function(idx){
       <div class="trail-action-row"><span class="trail-action-tag">행동 가이드:</span><span style="color:#FFFFFF; font-weight:600;">${item.plainAction}</span></div>
       <div class="trail-action-row"><span class="trail-action-tag">산악 시야:</span><span style="color:var(--text-secondary);">${item.plainSight}</span></div>
       <div class="trail-action-row"><span class="trail-action-tag">추천 복장:</span><span style="color:var(--text-secondary);">${item.plainWear}</span></div>
-      <div class="trail-action-row"><span class="trail-action-tag">순간 돌풍:</span><span style="color:var(--accent-amber); font-weight:700;">최대 ${item.maxGust} m/s</span></div>
     </div>
   `;
   setHtml('day-detail-modal-body', html);
@@ -2190,11 +2210,11 @@ window.selectMountain = async function(n, e, bE, t='peak', lt=35.2846, lg=129.05
   });
 };
 
-// [진입 시 초기화: 원본 동일 유지]
+// [진입 시 초기화: 원본 동일 유지 + 백그라운드 GPS 최근접 산 자동 연결]
 window.onload = () => {
   renderFavoritesChips();
   selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng);
-  triggerGPSMatching();
+  triggerGPSMatching(true);
   setInterval(()=>{
     if(navigator.onLine) selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
   }, 300000);
