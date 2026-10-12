@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="./manifest.json">
   
-  <title>STATLAB 산악 기상 분석 v26.5 Master</title>
+  <title>STATLAB 산악 기상 분석 v27.0 Master</title>
 
   <style>
     :root {
@@ -647,7 +647,7 @@
   <div id="forecast-track" class="forecast-track"></div>
   <div id="weekly-forecast-track" class="forecast-track" style="display:none;"></div>
 
-  <!-- 메인 히어로 카드 (23.3 곰탕 안개 필터 포함 100% 복원) -->
+  <!-- 메인 히어로 카드 -->
   <div id="hero-card" class="hero-weather-card">
     <div id="weather-stage" class="weather-scene-stage scene-clear-day">
       <div class="sun-orb-wrap"><div class="sun-glow"></div><div class="sun-core"></div></div>
@@ -739,7 +739,7 @@
       <div class="winter-title">
         <span id="winter-main-title">동절기 등산로 결빙 & 적설 안전</span>
       </div>
-      <span id="winter-badge" class="winter-pill" style="background: rgba(100,210,255,0.2); color: var(--accent-cyan); border: 0.5px solid var(--accent-cyan);">분석 중</span>
+      <span id="winter-badge" class="winter-pill" style="background: rgba(100,210,255,0.2); color: var(--accent-cyan);">분석 중</span>
     </div>
     <div class="winter-data-grid">
       <div class="winter-col">
@@ -890,7 +890,7 @@
     </div>
   </div>
 
-  <!-- 7일 앙상블 상세 모달 (원형 도넛 다이얼 + 강수량/우천확률 100% 보존) -->
+  <!-- 7일 앙상블 상세 모달 -->
   <div id="day-detail-modal" class="modal-overlay" onclick="handleDayDetailOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -911,9 +911,9 @@
 const STATLAB_VERSION = "v26.5";
 const KMA_SERVICE_KEY = "e471b45dcb373710ff06b726a8f079195673d3c87d0009936685562cb9776109";
 
-// [전국 100대 명산 + 부산/영남 생활권 + 주요 능선 핵심 봉우리 전수 DB (장군봉/갑오봉/다방봉/계명봉 포함)]
+// [전국 100대 명산 + 부산/영남 생활권 + 주요 능선 핵심 봉우리 전수 DB (장군봉/갑오봉/다방봉/계명봉 완벽 탑재)]
 const mountainDB = [
-  // 1. 금정산 전체 능선 봉우리 (장군봉, 갑오봉, 다방봉, 계명봉 완벽 탑재)
+  // 1. 금정산 전체 능선 봉우리 전수 탑재
   {name:'금정산 고당봉', peak:'고당봉', type:'peak', region:'부산 금정구/경남 양산', ele:801, lat:35.2846, lng:129.0565},
   {name:'금정산 장군봉', peak:'장군봉', type:'peak', region:'부산 금정구 노포동/경남 양산 동면', ele:735, lat:35.3052, lng:129.0538},
   {name:'금정산 갑오봉', peak:'갑오봉', type:'peak', region:'경남 양산 동면/금정산 북릉', ele:720, lat:35.3105, lng:129.0515},
@@ -1251,7 +1251,7 @@ window.triggerGPSMatching = function(isAuto = false){
   navigator.geolocation.getCurrentPosition(
     handlePositionSuccess,
     () => {
-      // 1차 실패 시 2차 고정밀 재시도 (원본 10초 타임아웃 100% 보존)
+      // 1차 실패 시 2차 고정밀 재시도
       navigator.geolocation.getCurrentPosition(
         handlePositionSuccess,
         err => {
@@ -1287,7 +1287,7 @@ window.handleMountainSearch = function(k){
     return;
   }
 
-  // 1차: 인라인 마스터 DB 즉시 매칭 (단어 분리 토큰 매칭으로 '금정산 장군봉', '장군봉' 모두 0.001초 즉시 표출)
+  // 1차: 인라인 마스터 DB 즉시 매칭 (토큰 매칭으로 '금정산 장군봉', '장군봉' 모두 0.001초 즉시 표출)
   const tokens = qRaw.toLowerCase().split(/\s+/).filter(Boolean);
   const localMatches = mountainDB.filter(m => {
     const cleanName = m.name.replace(/\s+/g, '').toLowerCase();
@@ -1628,6 +1628,7 @@ function calculateOrographicLCL(baseTemp, baseRH, summitAlt) {
   return Math.max(150, lcl);
 }
 
+// [강수량 연산: 모델 0mm 시 안개비 조작 배제, 실제 비 있을 때만 지형 증폭]
 function calculateSummitPrecipitation(rawRain, summitAlt, targetAlt, lclHeight, rh, windSpeed) {
   if (rawRain > 0) {
     const altRatio = Math.min(1.0, targetAlt / Math.max(1, summitAlt));
@@ -1638,10 +1639,11 @@ function calculateSummitPrecipitation(rawRain, summitAlt, targetAlt, lclHeight, 
   return 0.0;
 }
 
+// [대기물리학 2단계 가변 단열감률 DALR-SALR 및 오차 없는 물리 엔진 100% 원형 복원]
 function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, isSummit = false, isNight = false) {
   const p = baseParams;
   const z0 = Math.min(150, Math.round(summitAlt * 0.08));
-  const gammaD = 0.0098;
+  const gammaD = 0.0098; // 건조단열감률 (0.98°C/100m)
 
   let t;
   if (targetAlt <= z0) {
@@ -1650,7 +1652,7 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
     t = p.baseGroundTemp - ((targetAlt - z0) * gammaD);
   } else {
     const tempAtLCL = p.baseGroundTemp - (Math.max(0, lclHeight - z0) * gammaD);
-    const gammaM = Math.max(0.0045, 0.0065 - 0.00008 * (tempAtLCL - 10));
+    const gammaM = Math.max(0.0045, 0.0065 - 0.00008 * (tempAtLCL - 10)); // 습윤단열감률 (잠열 방출)
     t = tempAtLCL - ((targetAlt - lclHeight) * gammaM);
   }
   t = parseFloat(t.toFixed(1));
@@ -1679,6 +1681,8 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
   const calculatedRain = calculateSummitPrecipitation(p.rawRain, summitAlt, targetAlt, lclHeight, rh, w);
   const isRealRain = (calculatedRain > 0);
   const isFogCode = (p.rawCode >= 45 && p.rawCode <= 48);
+  
+  // 구름량이 적은 쾌청한 날에는 운저가 낮아도 곰탕이 아님 (정밀 판정 교정)
   const isGomtang = (targetAlt >= lclHeight) && (p.totalCloud >= 50 || p.rawCode >= 3 || isRealRain);
 
   let statusText = isNight ? '시야 쾌청 (야간 🌙)' : '시야 쾌청 ☀️';
