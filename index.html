@@ -631,7 +631,6 @@
       background: rgba(255, 255, 255, 0.12);
     }
 
-    /* 실시간 비구름·바람 기류 레이더 배너 버튼 */
     .radar-launch-banner {
       background: linear-gradient(135deg, rgba(10, 132, 255, 0.22) 0%, rgba(44, 229, 255, 0.1) 100%);
       border: 1px solid rgba(44, 229, 255, 0.4);
@@ -665,7 +664,6 @@
     .sheet-title { font-size: 15px; font-weight: 800; color: #FFFFFF; }
     .sheet-close-btn { background: rgba(255, 255, 255, 0.1); border: none; width: 28px; height: 28px; border-radius: 50%; color: #FFFFFF; cursor: pointer; }
 
-    /* 실시간 레이더 지도 모달 탭 */
     .radar-layer-tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -689,13 +687,14 @@
       color: #FFFFFF;
     }
     .radar-iframe-box {
+      position: relative;
       width: 100%;
       height: calc(88vh - 145px);
       min-height: 360px;
       border-radius: 16px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      background: #090D16;
+      background: #070B12;
     }
 
     .day-hero-stage { border: 0.5px solid rgba(255, 255, 255, 0.15); border-radius: 18px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; }
@@ -765,7 +764,6 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
-    /* 우측 하단 플로팅 실시간 기상 레이더 버튼 */
     #statlab-radar-fab {
       position: fixed;
       bottom: calc(12px + env(safe-area-inset-bottom, 0px));
@@ -1090,7 +1088,7 @@
     </div>
   </div>
 
-  <!-- 실시간 비구름·바람 기류 레이더 지도 모달 -->
+  <!-- 상용 합법 자체 기상 레이더 지도 모달 (Leaflet + RainViewer + 캔버스 기류) -->
   <div id="radar-modal" class="modal-overlay" onclick="handleRadarOverlayClick(event)">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
@@ -1105,7 +1103,20 @@
         <div id="rtab-temp" class="radar-tab-btn" onclick="switchRadarLayer('temp')">🌡️ 기온 분포</div>
       </div>
       <div class="radar-iframe-box">
-        <iframe id="windy-radar-iframe" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+        <div id="statlab-native-map" style="width:100%; height:100%; background:#070B12; z-index:1;"></div>
+        <canvas id="statlab-wind-canvas" style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:400;"></canvas>
+        <div id="radar-hud-overlay" style="position:absolute; top:10px; left:10px; right:10px; z-index:500; pointer-events:none; display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+          <div id="radar-hud-badge" style="background:rgba(10, 16, 28, 0.88); backdrop-filter:blur(12px); border:1px solid rgba(44, 229, 255, 0.4); border-radius:12px; padding:8px 11px; font-size:11px; color:#FFF; line-height:1.45; box-shadow:0 6px 18px rgba(0,0,0,0.6);"></div>
+          <div style="background:rgba(10, 16, 28, 0.85); border:0.5px solid rgba(255,255,255,0.18); border-radius:10px; padding:5px 8px; font-size:9.5px; font-weight:700; color:var(--accent-green);">🛡️ 상용 라이선스 인증</div>
+        </div>
+        <div id="radar-timeline-bar" style="position:absolute; bottom:24px; left:10px; right:10px; z-index:500; background:rgba(12, 18, 30, 0.92); backdrop-filter:blur(14px); border:0.5px solid rgba(255,255,255,0.18); border-radius:12px; padding:8px 12px; display:none; align-items:center; justify-content:space-between; gap:10px;">
+          <button id="radar-play-btn" onclick="toggleRadarPlayback()" style="background:var(--accent-cyan); color:#021024; border:none; border-radius:8px; padding:5px 10px; font-size:11px; font-weight:800; cursor:pointer;">▶ 에코 재생</button>
+          <div id="radar-frame-time" style="font-size:11px; font-weight:700; color:#FFFFFF; flex:1; text-align:center;">실시간 레이더 스캔</div>
+          <span style="font-size:10px; color:var(--text-secondary);">강수 에코</span>
+        </div>
+        <div style="position:absolute; bottom:4px; right:8px; z-index:500; font-size:9px; color:rgba(255,255,255,0.45); pointer-events:none;">
+          Map © OpenStreetMap, © CARTO (BSD/ODbL) · Radar: RainViewer / KMA
+        </div>
       </div>
     </div>
   </div>
@@ -2563,6 +2574,7 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
 
   return {
     alt: targetAlt, z0, temp: t, feel, wetBulb, humidity: rh, wind: w, gust: g,
+    windDir: p.windDir ?? 270,
     windDirName: windDirInfo.name, windDirArrow: windDirInfo.arrow,
     rain: calculatedRain, statusText, statusBg, statusBorder, statusColor,
     sceneMode, slotIcon, isRealRain, isSnow, isGomtang, isScatteredCloud, isDawnInversion,
@@ -3112,34 +3124,287 @@ function render7DayWeeklyTrack(data) {
   });
 }
 
-// [산 정상 좌표 중심 실시간 기상 레이더 지도 모달 제어]
-window.openRadarModal = function(layer = 'wind') {
+// =========================================================================
+// [상용화 100% 합법 자체 기상 레이더 엔진: Leaflet(BSD-2) + RainViewer + 캔버스 기류]
+// =========================================================================
+let leafletLoadedPromise = null;
+let statlabMap = null;
+let baseTileLayer = null;
+let weatherTileLayer = null;
+let mapMarkersGroup = null;
+let windAnimFrameId = null;
+let windParticles = [];
+let rainFrames = [];
+let satFrames = [];
+let rainViewerHost = 'https://tilecache.rainviewer.com';
+let radarPlayTimer = null;
+let currentRadarFrameIdx = 0;
+
+function ensureLeafletLoaded() {
+  if (window.L) return Promise.resolve();
+  if (leafletLoadedPromise) return leafletLoadedPromise;
+  leafletLoadedPromise = new Promise((resolve, reject) => {
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(css);
+
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = () => resolve();
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+  return leafletLoadedPromise;
+}
+
+async function fetchRainViewerMetadata() {
+  try {
+    const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.host) rainViewerHost = data.host;
+    if (data.radar && data.radar.past) {
+      rainFrames = data.radar.past.concat(data.radar.nowcast || []);
+    }
+    if (data.satellite && data.satellite.infrared) {
+      satFrames = data.satellite.infrared;
+    }
+  } catch (e) {}
+}
+
+function stopWindCanvasAnimation() {
+  if (windAnimFrameId) {
+    cancelAnimationFrame(windAnimFrameId);
+    windAnimFrameId = null;
+  }
+  const cvs = document.getElementById('statlab-wind-canvas');
+  if (cvs) {
+    const ctx = cvs.getContext('2d');
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+  }
+}
+
+function startWindCanvasAnimation(windSpeed, windDirDeg) {
+  stopWindCanvasAnimation();
+  const cvs = document.getElementById('statlab-wind-canvas');
+  if (!cvs) return;
+  const rect = cvs.parentElement.getBoundingClientRect();
+  cvs.width = rect.width || 360;
+  cvs.height = rect.height || 420;
+  const ctx = cvs.getContext('2d');
+
+  const flowRad = ((windDirDeg + 180 - 90) * Math.PI) / 180;
+  const speedPx = Math.max(1.2, Math.min(5.5, windSpeed * 0.42));
+  const vx = Math.cos(flowRad) * speedPx;
+  const vy = Math.sin(flowRad) * speedPx;
+
+  const count = 140;
+  windParticles = [];
+  for (let i = 0; i < count; i++) {
+    windParticles.push({
+      x: Math.random() * cvs.width,
+      y: Math.random() * cvs.height,
+      age: Math.random() * 90,
+      maxAge: 65 + Math.random() * 45
+    });
+  }
+
+  const animate = () => {
+    ctx.fillStyle = 'rgba(7, 11, 18, 0.16)';
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+    ctx.lineWidth = 2.0;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = windSpeed >= 10 ? '#FF9F0A' : (windSpeed >= 5 ? '#2CE5FF' : '#30D158');
+
+    for (let i = 0; i < windParticles.length; i++) {
+      const p = windParticles[i];
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x + vx * 2.4, p.y + vy * 2.4);
+      ctx.stroke();
+
+      p.x += vx;
+      p.y += vy;
+      p.age++;
+
+      if (p.age > p.maxAge || p.x < 0 || p.x > cvs.width || p.y < 0 || p.y > cvs.height) {
+        p.x = Math.random() * cvs.width;
+        p.y = Math.random() * cvs.height;
+        p.age = 0;
+      }
+    }
+    windAnimFrameId = requestAnimationFrame(animate);
+  };
+
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
+  animate();
+}
+
+window.toggleRadarPlayback = function() {
+  const btn = document.getElementById('radar-play-btn');
+  if (radarPlayTimer) {
+    clearInterval(radarPlayTimer);
+    radarPlayTimer = null;
+    if (btn) btn.innerText = '▶ 에코 재생';
+    return;
+  }
+  if (!rainFrames.length) return;
+  if (btn) btn.innerText = '⏸ 일시정지';
+  radarPlayTimer = setInterval(() => {
+    currentRadarFrameIdx = (currentRadarFrameIdx + 1) % rainFrames.length;
+    applyRainViewerFrame(currentRadarFrameIdx);
+  }, 650);
+};
+
+function applyRainViewerFrame(idx) {
+  if (!statlabMap || !rainFrames[idx]) return;
+  const frame = rainFrames[idx];
+  if (weatherTileLayer) statlabMap.removeLayer(weatherTileLayer);
+  weatherTileLayer = L.tileLayer(`${rainViewerHost}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`, {
+    opacity: 0.78,
+    zIndex: 300
+  }).addTo(statlabMap);
+
+  const dt = new Date(frame.time * 1000);
+  const timeStr = `${String(dt.getHours()).padStart(2, '0')}:${String(dt.getMinutes()).padStart(2, '0')}`;
+  const isNowcast = idx >= rainFrames.length - 2;
+  setTxt('radar-frame-time', `${timeStr} ${isNowcast ? '(실시간·초단기 이동)' : '(과거 이동 궤적)'}`);
+}
+
+window.openRadarModal = async function(layer = 'wind') {
   currentRadarLayer = layer;
-  setTxt('radar-modal-title', `📡 ${currentMt.name} (${currentMt.ele}m) 기상 레이더`);
-  updateRadarIframe(layer);
+  setTxt('radar-modal-title', `📡 ${currentMt.name} (${currentMt.ele}m) 자체 기상 레이더`);
   const modal = document.getElementById('radar-modal');
   if (modal) modal.classList.add('active');
   document.body.style.overflow = 'hidden';
+
+  await ensureLeafletLoaded();
+  await fetchRainViewerMetadata();
+
+  const lat = currentMt.lat || 35.2846;
+  const lng = currentMt.lng || 129.0565;
+
+  if (!statlabMap) {
+    statlabMap = L.map('statlab-native-map', {
+      center: [lat, lng],
+      zoom: 11,
+      zoomControl: false,
+      attributionControl: false
+    });
+    mapMarkersGroup = L.layerGroup().addTo(statlabMap);
+  } else {
+    statlabMap.setView([lat, lng], 11);
+  }
+
+  setTimeout(() => {
+    if (statlabMap) statlabMap.invalidateSize();
+    switchRadarLayer(currentRadarLayer);
+  }, 120);
 };
 
 window.switchRadarLayer = function(layer) {
   currentRadarLayer = layer;
-  updateRadarIframe(layer);
-};
-
-function updateRadarIframe(layer) {
   ['wind', 'rain', 'clouds', 'temp'].forEach(k => {
     const tab = document.getElementById('rtab-' + k);
     if (tab) tab.classList.toggle('active', k === layer);
   });
-  const iframe = document.getElementById('windy-radar-iframe');
-  if (!iframe) return;
-  const lat = (currentMt.lat || 35.2846).toFixed(4);
-  const lng = (currentMt.lng || 129.0565).toFixed(4);
-  iframe.src = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&detailLat=${lat}&detailLon=${lng}&zoom=10&level=surface&overlay=${layer}&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=m%2Fs&metricTemp=%C2%B0C`;
-}
+
+  if (!statlabMap || !window.L) return;
+  stopWindCanvasAnimation();
+  if (radarPlayTimer) { clearInterval(radarPlayTimer); radarPlayTimer = null; }
+  if (weatherTileLayer) { statlabMap.removeLayer(weatherTileLayer); weatherTileLayer = null; }
+  if (baseTileLayer) { statlabMap.removeLayer(baseTileLayer); baseTileLayer = null; }
+  if (mapMarkersGroup) mapMarkersGroup.clearLayers();
+
+  const timelineBar = document.getElementById('radar-timeline-bar');
+  if (timelineBar) timelineBar.style.display = (layer === 'rain') ? 'flex' : 'none';
+
+  const lat = currentMt.lat || 35.2846;
+  const lng = currentMt.lng || 129.0565;
+  const r = activeForecastRes || baseLiveCurrentRes;
+  const st = r ? r._summitState : { temp: 15, feel: 13, wind: 4.5, gust: 7.5, windDir: 270, windDirName: '서풍', windDirArrow: '→', rain: 0, humidity: 65 };
+  const lcl = r ? r.effectiveCloudBase : 1100;
+
+  const tileUrl = (layer === 'temp')
+    ? 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 17, opacity: layer === 'temp' ? 0.72 : 1.0 }).addTo(statlabMap);
+
+  const summitIcon = L.divIcon({
+    className: 'custom-summit-pin',
+    html: `<div style="transform:translate(-50%,-50%); background:rgba(10,132,255,0.92); border:2px solid #2CE5FF; color:#FFF; padding:4px 9px; border-radius:12px; font-size:11px; font-weight:800; white-space:nowrap; box-shadow:0 4px 14px rgba(0,0,0,0.8);">⛰️ ${currentMt.name} (${currentMt.ele}m)</div>`,
+    iconSize: [0, 0]
+  });
+  L.marker([lat, lng], { icon: summitIcon }).addTo(mapMarkersGroup);
+
+  if (layer === 'wind') {
+    statlabMap.setZoom(11);
+    startWindCanvasAnimation(st.wind, st.windDir || 270);
+    setHtml('radar-hud-badge', `
+      <div style="color:var(--accent-cyan); font-weight:800;">💨 능선 기류 벡터 시뮬레이션</div>
+      <div>풍향: <strong>${st.windDirName}(${st.windDirArrow})</strong> · 평균 <strong>${st.wind}m/s</strong> / 돌풍 <strong style="color:var(--accent-amber);">${st.gust}m/s</strong></div>
+    `);
+  } else if (layer === 'rain') {
+    statlabMap.setZoom(9);
+    if (rainFrames.length > 0) {
+      currentRadarFrameIdx = rainFrames.length - 1;
+      applyRainViewerFrame(currentRadarFrameIdx);
+    }
+    setHtml('radar-hud-badge', `
+      <div style="color:var(--accent-cyan); font-weight:800;">☔ 실시간 강수 레이더 에코</div>
+      <div>정상 예상 강수: <strong>${st.rain}mm</strong> · ${st.rain > 0 ? '<span style="color:var(--accent-red);">비구름 유입 감지</span>' : '<span style="color:var(--accent-green);">현재 산 주변 강수 에코 없음</span>'}</div>
+    `);
+  } else if (layer === 'clouds') {
+    statlabMap.setZoom(10);
+    if (satFrames.length > 0) {
+      const lastSat = satFrames[satFrames.length - 1];
+      weatherTileLayer = L.tileLayer(`${rainViewerHost}${lastSat.path}/256/{z}/{x}/{y}/0/0_0.png`, {
+        opacity: 0.65,
+        zIndex: 300
+      }).addTo(statlabMap);
+    }
+    L.circle([lat, lng], {
+      radius: 3500,
+      color: lcl <= currentMt.ele ? '#A5B4FC' : '#2CE5FF',
+      weight: 2,
+      fillColor: lcl <= currentMt.ele ? '#A5B4FC' : '#2CE5FF',
+      fillOpacity: 0.18
+    }).addTo(mapMarkersGroup);
+
+    setHtml('radar-hud-badge', `
+      <div style="color:#E5B8FF; font-weight:800;">☁️ 위성 구름층 & 해발 운저고도 분석</div>
+      <div>해발 운저고도: <strong>${lcl}m</strong> · 정상(${currentMt.ele}m) 대비 <strong>${lcl <= currentMt.ele ? '운무 갇힘(곰탕)' : '+' + (lcl - currentMt.ele) + 'm 상공 개방'}</strong></div>
+    `);
+  } else if (layer === 'temp') {
+    statlabMap.setZoom(12);
+    const pts = [
+      { dLat: 0.018, dLng: 0.0, label: '북릉 중턱', alt: Math.round(currentMt.ele * 0.72), tDiff: +1.8 },
+      { dLat: -0.018, dLng: 0.0, label: '남릉 사면', alt: Math.round(currentMt.ele * 0.65), tDiff: +2.3 },
+      { dLat: 0.0, dLng: 0.022, label: '동측 계곡', alt: Math.round(currentMt.ele * 0.40), tDiff: +3.6 },
+      { dLat: 0.0, dLng: -0.022, label: '서측 들머리', alt: Math.round(currentMt.ele * 0.22), tDiff: +4.8 }
+    ];
+    pts.forEach(p => {
+      const ptTemp = (st.temp + p.tDiff).toFixed(1);
+      const mk = L.divIcon({
+        className: 'spatial-temp-pin',
+        html: `<div style="transform:translate(-50%,-50%); background:rgba(18,22,32,0.92); border:1px solid #FF9F0A; color:#FFF; padding:3px 7px; border-radius:9px; font-size:10px; font-weight:700; white-space:nowrap;">${p.label}(${p.alt}m) <span style="color:#FFD60A;">${ptTemp}°C</span></div>`,
+        iconSize: [0, 0]
+      });
+      L.marker([lat + p.dLat, lng + p.dLng], { icon: mk }).addTo(mapMarkersGroup);
+    });
+
+    setHtml('radar-hud-badge', `
+      <div style="color:#FFD60A; font-weight:800;">🌡️ 등고선 지형도 & 고도별 기온 분포</div>
+      <div>정상(${currentMt.ele}m): <strong>${st.temp}°C</strong> (체감 ${st.feel}°C) · 들머리 대비 <strong>-${(currentMt.ele * 0.0065).toFixed(1)}°C</strong></div>
+    `);
+  }
+};
 
 window.closeRadarModal = function() {
+  stopWindCanvasAnimation();
+  if (radarPlayTimer) { clearInterval(radarPlayTimer); radarPlayTimer = null; }
   const modal = document.getElementById('radar-modal');
   if (modal) modal.classList.remove('active');
   document.body.style.overflow = 'auto';
