@@ -3127,6 +3127,9 @@ function render7DayWeeklyTrack(data) {
 // =========================================================================
 // [상용화 100% 합법 자체 기상 레이더 엔진: Leaflet(BSD-2) + RainViewer + 캔버스 기류]
 // =========================================================================
+// =========================================================================
+// [상용화 100% 합법 자체 기상 레이더 엔진: 배경 지도 가시성 & 투명 캔버스 완벽 패치]
+// =========================================================================
 let leafletLoadedPromise = null;
 let statlabMap = null;
 let baseTileLayer = null;
@@ -3144,6 +3147,22 @@ function ensureLeafletLoaded() {
   if (window.L) return Promise.resolve();
   if (leafletLoadedPromise) return leafletLoadedPromise;
   leafletLoadedPromise = new Promise((resolve, reject) => {
+    // 산악 지형도 다크모드 필터 및 타일 깨짐 방지 전용 스타일 주입
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .leaflet-container {
+        background: #0B1320 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif !important;
+      }
+      .leaflet-tile-pane .statlab-dark-osm {
+        filter: invert(92%) hue-rotate(185deg) brightness(92%) contrast(108%);
+      }
+      .leaflet-tile-pane .statlab-topo-map {
+        filter: brightness(88%) contrast(112%) saturate(95%);
+      }
+    `;
+    document.head.appendChild(style);
+
     const css = document.createElement('link');
     css.rel = 'stylesheet';
     css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
@@ -3151,7 +3170,7 @@ function ensureLeafletLoaded() {
 
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    script.onload = () => resolve();
+    script.onload = () => setTimeout(resolve, 60);
     script.onerror = reject;
     document.head.appendChild(script);
   });
@@ -3194,27 +3213,33 @@ function startWindCanvasAnimation(windSpeed, windDirDeg) {
   cvs.height = rect.height || 420;
   const ctx = cvs.getContext('2d');
 
+  // 기상 풍향(불어오는 방향)을 실제 바람이 흘러가는 벡터로 변환
   const flowRad = ((windDirDeg + 180 - 90) * Math.PI) / 180;
-  const speedPx = Math.max(1.2, Math.min(5.5, windSpeed * 0.42));
+  const speedPx = Math.max(1.4, Math.min(5.8, windSpeed * 0.45));
   const vx = Math.cos(flowRad) * speedPx;
   const vy = Math.sin(flowRad) * speedPx;
 
-  const count = 140;
+  const count = 130;
   windParticles = [];
   for (let i = 0; i < count; i++) {
     windParticles.push({
       x: Math.random() * cvs.width,
       y: Math.random() * cvs.height,
-      age: Math.random() * 90,
-      maxAge: 65 + Math.random() * 45
+      age: Math.random() * 80,
+      maxAge: 60 + Math.random() * 45
     });
   }
 
-  const animate = () => {
-    ctx.fillStyle = 'rgba(7, 11, 18, 0.16)';
-    ctx.fillRect(0, 0, cvs.width, cvs.height);
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-    ctx.lineWidth = 2.0;
+  const animate = () => {
+    // [핵심 패치] 배경 지도를 까맣게 덮지 않고 기존 바람 궤적만 투명하게 감쇠시킴
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.88)';
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+    ctx.globalCompositeOperation = 'source-over';
+
+    ctx.lineWidth = 2.4;
     ctx.lineCap = 'round';
     ctx.strokeStyle = windSpeed >= 10 ? '#FF9F0A' : (windSpeed >= 5 ? '#2CE5FF' : '#30D158');
 
@@ -3222,7 +3247,7 @@ function startWindCanvasAnimation(windSpeed, windDirDeg) {
       const p = windParticles[i];
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
-      ctx.lineTo(p.x + vx * 2.4, p.y + vy * 2.4);
+      ctx.lineTo(p.x + vx * 2.5, p.y + vy * 2.5);
       ctx.stroke();
 
       p.x += vx;
@@ -3238,7 +3263,6 @@ function startWindCanvasAnimation(windSpeed, windDirDeg) {
     windAnimFrameId = requestAnimationFrame(animate);
   };
 
-  ctx.clearRect(0, 0, cvs.width, cvs.height);
   animate();
 }
 
@@ -3264,6 +3288,8 @@ function applyRainViewerFrame(idx) {
   if (weatherTileLayer) statlabMap.removeLayer(weatherTileLayer);
   weatherTileLayer = L.tileLayer(`${rainViewerHost}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`, {
     opacity: 0.78,
+    maxNativeZoom: 7,
+    maxZoom: 18,
     zIndex: 300
   }).addTo(statlabMap);
 
@@ -3281,7 +3307,7 @@ window.openRadarModal = async function(layer = 'wind') {
   document.body.style.overflow = 'hidden';
 
   await ensureLeafletLoaded();
-  await fetchRainViewerMetadata();
+  fetchRainViewerMetadata();
 
   const lat = currentMt.lat || 35.2846;
   const lng = currentMt.lng || 129.0565;
@@ -3289,19 +3315,25 @@ window.openRadarModal = async function(layer = 'wind') {
   if (!statlabMap) {
     statlabMap = L.map('statlab-native-map', {
       center: [lat, lng],
-      zoom: 11,
-      zoomControl: false,
+      zoom: 12,
+      zoomControl: true,
       attributionControl: false
     });
     mapMarkersGroup = L.layerGroup().addTo(statlabMap);
   } else {
-    statlabMap.setView([lat, lng], 11);
+    statlabMap.setView([lat, lng], 12);
   }
 
+  // 모달 애니메이션 직후 지도 크기 재계산 2회 보장
+  setTimeout(() => {
+    if (statlabMap) {
+      statlabMap.invalidateSize();
+      switchRadarLayer(currentRadarLayer);
+    }
+  }, 80);
   setTimeout(() => {
     if (statlabMap) statlabMap.invalidateSize();
-    switchRadarLayer(currentRadarLayer);
-  }, 120);
+  }, 300);
 };
 
 window.switchRadarLayer = function(layer) {
@@ -3327,41 +3359,73 @@ window.switchRadarLayer = function(layer) {
   const st = r ? r._summitState : { temp: 15, feel: 13, wind: 4.5, gust: 7.5, windDir: 270, windDirName: '서풍', windDirArrow: '→', rain: 0, humidity: 65 };
   const lcl = r ? r.effectiveCloudBase : 1100;
 
-  const tileUrl = (layer === 'temp')
-    ? 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
-    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-  baseTileLayer = L.tileLayer(tileUrl, { maxZoom: 17, opacity: layer === 'temp' ? 0.72 : 1.0 }).addTo(statlabMap);
+  // [배경 지도 패치] 한글 산 이름·등산로가 선명한 다크 지형도 & 등고선 지형도 적용
+  if (layer === 'temp') {
+    baseTileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 17,
+      className: 'statlab-topo-map'
+    }).addTo(statlabMap);
+  } else {
+    baseTileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      className: 'statlab-dark-osm'
+    }).addTo(statlabMap);
+  }
 
+  // 중앙 산 정상 커스텀 마커
   const summitIcon = L.divIcon({
     className: 'custom-summit-pin',
-    html: `<div style="transform:translate(-50%,-50%); background:rgba(10,132,255,0.92); border:2px solid #2CE5FF; color:#FFF; padding:4px 9px; border-radius:12px; font-size:11px; font-weight:800; white-space:nowrap; box-shadow:0 4px 14px rgba(0,0,0,0.8);">⛰️ ${currentMt.name} (${currentMt.ele}m)</div>`,
+    html: `<div style="transform:translate(-50%,-50%); background:rgba(10,132,255,0.95); border:2px solid #2CE5FF; color:#FFF; padding:5px 10px; border-radius:12px; font-size:11.5px; font-weight:800; white-space:nowrap; box-shadow:0 6px 18px rgba(0,0,0,0.85);">⛰️ ${currentMt.name} (${currentMt.ele}m)</div>`,
     iconSize: [0, 0]
   });
   L.marker([lat, lng], { icon: summitIcon }).addTo(mapMarkersGroup);
 
   if (layer === 'wind') {
-    statlabMap.setZoom(11);
-    startWindCanvasAnimation(st.wind, st.windDir || 270);
+    statlabMap.setView([lat, lng], 12);
+    // 산 정상 기준 반경 2km 능선 기류 영향권 링 표시
+    L.circle([lat, lng], {
+      radius: 2000,
+      color: '#2CE5FF',
+      weight: 1.5,
+      dashArray: '5, 5',
+      fillColor: '#0A84FF',
+      fillOpacity: 0.08
+    }).addTo(mapMarkersGroup);
+
+    setTimeout(() => startWindCanvasAnimation(st.wind, st.windDir || 270), 60);
     setHtml('radar-hud-badge', `
       <div style="color:var(--accent-cyan); font-weight:800;">💨 능선 기류 벡터 시뮬레이션</div>
       <div>풍향: <strong>${st.windDirName}(${st.windDirArrow})</strong> · 평균 <strong>${st.wind}m/s</strong> / 돌풍 <strong style="color:var(--accent-amber);">${st.gust}m/s</strong></div>
     `);
   } else if (layer === 'rain') {
-    statlabMap.setZoom(9);
+    statlabMap.setView([lat, lng], 8);
+    // 레이더 반경 스캔 링 (15km / 40km)
+    [15000, 40000].forEach(rad => {
+      L.circle([lat, lng], {
+        radius: rad,
+        color: 'rgba(44, 229, 255, 0.45)',
+        weight: 1,
+        dashArray: '4, 4',
+        fillOpacity: 0.02
+      }).addTo(mapMarkersGroup);
+    });
+
     if (rainFrames.length > 0) {
       currentRadarFrameIdx = rainFrames.length - 1;
       applyRainViewerFrame(currentRadarFrameIdx);
     }
     setHtml('radar-hud-badge', `
-      <div style="color:var(--accent-cyan); font-weight:800;">☔ 실시간 강수 레이더 에코</div>
-      <div>정상 예상 강수: <strong>${st.rain}mm</strong> · ${st.rain > 0 ? '<span style="color:var(--accent-red);">비구름 유입 감지</span>' : '<span style="color:var(--accent-green);">현재 산 주변 강수 에코 없음</span>'}</div>
+      <div style="color:var(--accent-cyan); font-weight:800;">☔ 실시간 광역 강수 레이더 에코</div>
+      <div>정상 예상 강수: <strong>${st.rain}mm</strong> · ${st.rain > 0 ? '<span style="color:var(--accent-red);">비구름 에코 유입 중</span>' : '<span style="color:var(--accent-green);">맑음 (현재 산 반경 비구름 없음)</span>'}</div>
     `);
   } else if (layer === 'clouds') {
-    statlabMap.setZoom(10);
+    statlabMap.setView([lat, lng], 10);
     if (satFrames.length > 0) {
       const lastSat = satFrames[satFrames.length - 1];
       weatherTileLayer = L.tileLayer(`${rainViewerHost}${lastSat.path}/256/{z}/{x}/{y}/0/0_0.png`, {
         opacity: 0.65,
+        maxNativeZoom: 6,
+        maxZoom: 18,
         zIndex: 300
       }).addTo(statlabMap);
     }
@@ -3370,7 +3434,7 @@ window.switchRadarLayer = function(layer) {
       color: lcl <= currentMt.ele ? '#A5B4FC' : '#2CE5FF',
       weight: 2,
       fillColor: lcl <= currentMt.ele ? '#A5B4FC' : '#2CE5FF',
-      fillOpacity: 0.18
+      fillOpacity: 0.22
     }).addTo(mapMarkersGroup);
 
     setHtml('radar-hud-badge', `
@@ -3378,18 +3442,18 @@ window.switchRadarLayer = function(layer) {
       <div>해발 운저고도: <strong>${lcl}m</strong> · 정상(${currentMt.ele}m) 대비 <strong>${lcl <= currentMt.ele ? '운무 갇힘(곰탕)' : '+' + (lcl - currentMt.ele) + 'm 상공 개방'}</strong></div>
     `);
   } else if (layer === 'temp') {
-    statlabMap.setZoom(12);
+    statlabMap.setView([lat, lng], 12);
     const pts = [
-      { dLat: 0.018, dLng: 0.0, label: '북릉 중턱', alt: Math.round(currentMt.ele * 0.72), tDiff: +1.8 },
-      { dLat: -0.018, dLng: 0.0, label: '남릉 사면', alt: Math.round(currentMt.ele * 0.65), tDiff: +2.3 },
-      { dLat: 0.0, dLng: 0.022, label: '동측 계곡', alt: Math.round(currentMt.ele * 0.40), tDiff: +3.6 },
-      { dLat: 0.0, dLng: -0.022, label: '서측 들머리', alt: Math.round(currentMt.ele * 0.22), tDiff: +4.8 }
+      { dLat: 0.016, dLng: 0.0, label: '북릉 중턱', alt: Math.round(currentMt.ele * 0.72), tDiff: +1.8 },
+      { dLat: -0.016, dLng: 0.0, label: '남릉 사면', alt: Math.round(currentMt.ele * 0.65), tDiff: +2.3 },
+      { dLat: 0.0, dLng: 0.020, label: '동측 계곡', alt: Math.round(currentMt.ele * 0.40), tDiff: +3.6 },
+      { dLat: 0.0, dLng: -0.020, label: '서측 들머리', alt: Math.round(currentMt.ele * 0.22), tDiff: +4.8 }
     ];
     pts.forEach(p => {
       const ptTemp = (st.temp + p.tDiff).toFixed(1);
       const mk = L.divIcon({
         className: 'spatial-temp-pin',
-        html: `<div style="transform:translate(-50%,-50%); background:rgba(18,22,32,0.92); border:1px solid #FF9F0A; color:#FFF; padding:3px 7px; border-radius:9px; font-size:10px; font-weight:700; white-space:nowrap;">${p.label}(${p.alt}m) <span style="color:#FFD60A;">${ptTemp}°C</span></div>`,
+        html: `<div style="transform:translate(-50%,-50%); background:rgba(18,22,32,0.94); border:1.5px solid #FF9F0A; color:#FFF; padding:4px 8px; border-radius:9px; font-size:10.5px; font-weight:700; white-space:nowrap; box-shadow:0 4px 10px rgba(0,0,0,0.7);">${p.label}(${p.alt}m) <span style="color:#FFD60A;">${ptTemp}°C</span></div>`,
         iconSize: [0, 0]
       });
       L.marker([lat + p.dLat, lng + p.dLng], { icon: mk }).addTo(mapMarkersGroup);
@@ -3685,4 +3749,4 @@ window.onload = () => {
 };
 </script>
 </body>
-</html>  
+</html>
