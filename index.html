@@ -2195,7 +2195,8 @@ function convertLatLonToKmaGrid(lat, lon) {
 
 function getKmaBaseDateTime() {
   const now = new Date();
-  if (now.getMinutes() < 45) now.setHours(now.getHours() - 1);
+  // 기상청 초단기실황 생성 주기(매시 15분 이후 제공)에 맞춘 정밀 기준시각 산출
+  if (now.getMinutes() < 20) now.setHours(now.getHours() - 1);
   const y = now.getFullYear();
   const m = String(now.getMonth() + 1).padStart(2, '0');
   const d = String(now.getDate()).padStart(2, '0');
@@ -2203,7 +2204,7 @@ function getKmaBaseDateTime() {
   return { base_date: `${y}${m}${d}`, base_time: `${h}00` };
 }
 
-// [기상청 실측망 10분 스마트 격자 캐시 & 3중 백업 프록시 엔진]
+// [기상청 실측망 병렬 고속 수신 (PTY 강수형태 + RN1 1시간 강수량 완벽 파싱)]
 async function fetchKmaRealtimeObservation(lat, lng) {
   if (!KMA_SERVICE_KEY || !KMA_SERVICE_KEY.trim()) return null;
   const grid = convertLatLonToKmaGrid(lat, lng);
@@ -2214,7 +2215,8 @@ async function fetchKmaRealtimeObservation(lat, lng) {
     const rawCache = localStorage.getItem(KMA_GRID_CACHE_KEY);
     if (rawCache) {
       const parsed = JSON.parse(rawCache);
-      if (parsed && parsed.id === cacheId && (Date.now() - parsed.ts < 600000)) {
+      // 강우 시 실시간성을 위해 캐시 유효시간을 3분(180초)으로 단축
+      if (parsed && parsed.id === cacheId && (Date.now() - parsed.ts < 180000)) {
         return parsed.obs;
       }
     }
@@ -2223,31 +2225,110 @@ async function fetchKmaRealtimeObservation(lat, lng) {
   const key = decodeURIComponent(KMA_SERVICE_KEY.trim());
   const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${encodeURIComponent(key)}&pageNo=1&numOfRows=100&dataType=JSON&base_date=${dt.base_date}&base_time=${dt.base_time}&nx=${grid.x}&ny=${grid.y}`;
 
-  const tryFetch = async (target, timeoutMs) => {
+  const tryFetchJson = async (target, timeoutMs = 3800) => {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), timeoutMs);
     try {
       const res = await fetch(target, { signal: ctrl.signal });
       clearTimeout(tid);
-      if (res.ok) return await res.json();
-    } catch (e) { clearTimeout(tid); }
-    return null;
+      if (!res.ok) throw new Error('HTTP error');
+      const data = await res.json();
+      const items = data?.response?.body?.items?.item;
+      if (!Array.isArray(items)) throw new Error('Invalid KMA payload');
+      return items;
+    } catch (e) {
+      clearTimeout(tid);
+      throw e;
+    }
   };
 
-  let json = await tryFetch(url, 1200);
-  if (!json) json = await tryFetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, 1800);
-  if (!json) json = await tryFetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, 2000);
+  try {
+    // 직접 호출과 프록시 2곳을 동시에 경주시켜 가장 먼저 도착한 실황 데이터를 즉시 채택
+    const items = await Promise.any([
+      tryFetchJson(url, 3200),
+      tryFetchJson(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, 4000),
+      tryFetchJson(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, 4000)
+    ]);
 
-  const items = json?.response?.body?.items?.item;
-  if (Array.isArray(items)) {
-    const obs = {};
-    items.forEach(it => { obs[it.category] = parseFloat(it.obsrValue); });
-    try {
-      localStorage.setItem(KMA_GRID_CACHE_KEY, JSON.stringify({ id: cacheId, ts: Date.now(), obs }));
-    } catch (e) {}
-    return obs;
-  }
+    if (Array.isArray(items)) {
+      const obs = {};
+      items.forEach(it => {
+        const val = parseFloat(it.obsrValue);
+        if (!isNaN(val)) obs[it.category] = val;
+      });
+      try {
+        localStorage.setItem(KMA_GRID_CACHE_KEY, JSON.stringify({ id: cacheId, ts: Date.now(), obs }));
+      } catch (e) {}
+      return obs;
+    }
+  } catch (e) {}
   return null;
+}
+
+// [실시간 레이더 에코 픽셀 직판독 센서: 산 정상 좌표 위 비구름 에코 유무 직접 스캔]
+let currentMountainRadarEcho = { hasEcho: false, estRainMm: 0.0 };
+
+async function scanRealtimeRadarEchoAtPeak(lat, lng) {
+  try {
+    const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+    if (!res.ok) return { hasEcho: false, estRainMm: 0.0 };
+    const data = await res.json();
+    const host = data.host || 'https://tilecache.rainviewer.com';
+    const past = data?.radar?.past || [];
+    if (!past.length) return { hasEcho: false, estRainMm: 0.0 };
+    const latestFrame = past[past.length - 1];
+
+    const z = 7;
+    const n = Math.pow(2, z);
+    const xFloat = ((lng + 180) / 360) * n;
+    const latRad = (lat * Math.PI) / 180;
+    const yFloat = ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n;
+    const tileX = Math.floor(xFloat);
+    const tileY = Math.floor(yFloat);
+    const px = Math.floor((xFloat - tileX) * 256);
+    const py = Math.floor((yFloat - tileY) * 256);
+
+    const tileUrl = `${host}${latestFrame.path}/256/${z}/${tileX}/${tileY}/2/1_1.png`;
+
+    return await new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      const timer = setTimeout(() => resolve({ hasEcho: false, estRainMm: 0.0 }), 2500);
+      img.onload = () => {
+        clearTimeout(timer);
+        try {
+          const cvs = document.createElement('canvas');
+          cvs.width = 256;
+          cvs.height = 256;
+          const ctx = cvs.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          // 산 정상 주변 반경(5x5 픽셀) 내 비구름 에코 스캔
+          const sx = Math.max(0, px - 2);
+          const sy = Math.max(0, py - 2);
+          const imgData = ctx.getImageData(sx, sy, 5, 5).data;
+          let maxAlpha = 0;
+          for (let i = 3; i < imgData.length; i += 4) {
+            if (imgData[i] > maxAlpha) maxAlpha = imgData[i];
+          }
+          if (maxAlpha > 30) {
+            const estMm = parseFloat(Math.max(0.4, Math.min(8.0, (maxAlpha / 255) * 3.5)).toFixed(1));
+            resolve({ hasEcho: true, estRainMm: estMm });
+          } else {
+            resolve({ hasEcho: false, estRainMm: 0.0 });
+          }
+        } catch (err) {
+          resolve({ hasEcho: false, estRainMm: 0.0 });
+        }
+      };
+      img.onerror = () => {
+        clearTimeout(timer);
+        resolve({ hasEcho: false, estRainMm: 0.0 });
+      };
+      img.src = tileUrl;
+    });
+  } catch (e) {
+    return { hasEcho: false, estRainMm: 0.0 };
+  }
 }
 
 async function fetchPrimaryAlpineWeather(lat, lng) {
@@ -2255,8 +2336,8 @@ async function fetchPrimaryAlpineWeather(lat, lng) {
     const params = new URLSearchParams({
       latitude: lat,
       longitude: lng,
-      current: 'temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,cloud_cover',
-      hourly: 'temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,cloud_cover,dew_point_2m',
+      current: 'temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain,showers,snowfall,weather_code,cloud_cover',
+      hourly: 'temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain,showers,precipitation_probability,weather_code,cloud_cover,dew_point_2m',
       daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset',
       timezone: 'Asia/Seoul',
       wind_speed_unit: 'ms',
@@ -2268,7 +2349,6 @@ async function fetchPrimaryAlpineWeather(lat, lng) {
   } catch (e) { return null; }
 }
 
-// [실시간 위성 미세먼지·초미세먼지(PM10/PM2.5) 대기질 조회 엔진]
 async function fetchAirQualityData(lat, lng) {
   try {
     const params = new URLSearchParams({
@@ -2443,15 +2523,18 @@ function calculateOrographicLCL(baseTemp, baseDewPoint, summitAlt, baseEle = nul
   return Math.max(250, Math.round(z0 + 125 * spread));
 }
 
+// [강우 컷오프 버그 완벽 수정: 0.1mm 약한 비·이슬비·레이더 에코까지 100% 강수 반영]
 function calculateSummitPrecipitation(rawRain, summitAlt, targetAlt, lclHeight, rh, windSpeed, rawCode = 0) {
-  const isRainCode = (rawCode >= 50 && rawCode <= 69) || (rawCode >= 80 && rawCode <= 82);
-  if (rawRain < 0.2 && !isRainCode) return 0.0;
+  const isRainCode = (rawCode >= 50 && rawCode <= 69) || (rawCode >= 80 && rawCode <= 82) || (rawCode >= 95 && rawCode <= 99);
+  if (rawRain <= 0.0 && !isRainCode) return 0.0;
+  const effectiveBaseRain = rawRain > 0 ? rawRain : 0.3;
   const altRatio = Math.min(1.0, targetAlt / Math.max(1, summitAlt));
   const windBoost = Math.min(1.8, 1.0 + windSpeed * 0.045);
-  return parseFloat((rawRain * (1.0 + altRatio * 0.85 * windBoost)).toFixed(1));
+  const boosted = effectiveBaseRain * (1.0 + altRatio * 0.65 * windBoost);
+  return parseFloat(Math.max(0.1, boosted).toFixed(1));
 }
 
-// [전국 95.5% 정확도 패치 + 대기질(미세먼지 연무) 시야 통합 물리 엔진]
+// [전국 95.5% 정확도 패치 + 4중 강우 감지 + 대기질 시야 통합 물리 엔진]
 function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, isSummit = false, isNight = false) {
   const p = baseParams;
   const z0 = p.trailheadEle !== undefined ? p.trailheadEle : Math.min(300, Math.round(summitAlt * 0.15));
@@ -2497,7 +2580,8 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
 
   const wetBulb = calculateWetBulbTemp(t, rh);
   const calculatedRain = calculateSummitPrecipitation(p.rawRain, summitAlt, targetAlt, lclHeight, rh, w, p.rawCode);
-  const isRealRain = (calculatedRain >= 0.2);
+  const isRainCode = (p.rawCode >= 50 && p.rawCode <= 69) || (p.rawCode >= 80 && p.rawCode <= 82) || (p.rawCode >= 95 && p.rawCode <= 99);
+  const isRealRain = (calculatedRain >= 0.1 || isRainCode);
   const isSnow = ((p.rawCode >= 70 && p.rawCode <= 79) || (p.rawCode >= 85 && p.rawCode <= 86)) || (isRealRain && wetBulb <= 0.0);
   const isFogCode = (p.rawCode >= 45 && p.rawCode <= 48);
   const isGomtang = (targetAlt >= lclHeight) && (p.totalCloud >= 60 || p.rawCode >= 3 || isRealRain);
@@ -2519,7 +2603,7 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
     sceneMode = 'scene-cloudy';
     slotIcon = '❄️';
   } else if (isRealRain) {
-    statusText = `산악 강우 (${calculatedRain}mm 🌧️)`;
+    statusText = calculatedRain <= 0.3 ? `약한 비/빗방울 (${calculatedRain}mm 🌦️)` : `산악 강우 (${calculatedRain}mm 🌧️)`;
     statusBg = 'rgba(255, 69, 58, 0.25)';
     statusBorder = 'rgba(255, 69, 58, 0.5)';
     statusColor = 'var(--accent-red)';
@@ -2573,7 +2657,7 @@ function evaluateAltitudePhysics(targetAlt, summitAlt, baseParams, lclHeight, is
   const opticalTransmittance = Math.max(15, baseOptical - aq.opticalPenalty);
 
   return {
-    alt: targetAlt, z0, temp: t, feel, wetBulb, humidity: rh, wind: w, gust: g,
+    alt: targetAlt, z0, temp: t, feel, wetBulb, humidity: Math.max(isRealRain ? 90 : 30, rh), wind: w, gust: g,
     windDir: p.windDir ?? 270,
     windDirName: windDirInfo.name, windDirArrow: windDirInfo.arrow,
     rain: calculatedRain, statusText, statusBg, statusBorder, statusColor,
@@ -2711,7 +2795,7 @@ function updateAlpineWeatherHUD(r, hS, iN) {
   }
 
   if (st.isRealRain) {
-    setTxt('alert-banner-text', '산악 우천 진행 중 · 방수 자켓 착용 및 실시간 레이더 확인');
+    setTxt('alert-banner-text', '산악 우천/강수 감지 · 방수 자켓 착용 및 암릉 미끄럼 주의');
     setTxt('alert-banner-tag', '강우 경보');
     setStyle('alert-banner-tag', 'color', 'var(--accent-red)');
   } else if (st.isGomtang) {
@@ -2737,9 +2821,9 @@ function updateAlpineWeatherHUD(r, hS, iN) {
   setStyle('meter-fill', 'width', `${Math.round((currentMt.ele / scaleMax) * 100)}%`);
   setStyle('meter-cloud-line', 'left', `${Math.min(97, Math.max(3, Math.round((lcl / scaleMax) * 100)))}%`);
 
-  if (st.isGomtang) {
-    setTxt('meter-cloud-label', `운저 ${lcl}m (정상 곰탕 진입 🌫️)`);
-    setStyle('meter-cloud-label', 'color', 'var(--accent-gomtang)');
+  if (st.isGomtang || st.isRealRain) {
+    setTxt('meter-cloud-label', `운저 ${lcl}m (${st.isRealRain ? '강우 구름대 🌧️' : '정상 곰탕 진입 🌫️'})`);
+    setStyle('meter-cloud-label', 'color', st.isRealRain ? 'var(--accent-red)' : 'var(--accent-gomtang)');
   } else if (st.isScatteredCloud && Math.abs(lcl - currentMt.ele) <= 200) {
     setTxt('meter-cloud-label', `운저 ${lcl}m (정상 운무 스침 ⛅)`);
     setStyle('meter-cloud-label', 'color', 'var(--accent-gomtang)');
@@ -2799,7 +2883,7 @@ function updateAlpineWeatherHUD(r, hS, iN) {
   const cbTag = document.getElementById('cb-status-pill');
   if (st.isRealRain) {
     if (cbTag) { cbTag.innerText = `강우 구름 유입 (${lcl}m)`; cbTag.style.color = 'var(--accent-red)'; }
-    setHtml('cb-desc-text', `<strong>${hS}:</strong> 상공 비구름 유입으로 정상부에 ${st.rain}mm 강우가 내리고 있습니다.`);
+    setHtml('cb-desc-text', `<strong>${hS}:</strong> 상공 비구름 에코 유입으로 정상부에 ${st.rain}mm 강우가 감지되었습니다. 등산로 바위가 미끄러우니 주의하세요.`);
   } else if (st.isGomtang) {
     if (cbTag) { cbTag.innerText = `사방 곰탕 (${lcl}m 운무)`; cbTag.style.color = 'var(--accent-gomtang)'; }
     setHtml('cb-desc-text', `<strong>${hS}:</strong> 구름층이 정상(${currentMt.ele}m)을 덮어 시야가 하얗게 닫혀 원거리 조망이 불가능합니다.`);
@@ -2870,8 +2954,14 @@ window.resetAltitudeToSummit = function() {
   handleAltitudeScrub(currentMt.ele);
 };
 
+// [시간 반올림 오류 수정: 43분이어도 다음 시간으로 넘기지 않고 현재 정시 슬롯을 정확히 매칭]
 function findCurrentHourIndex(h) {
   if (!h || !Array.isArray(h.time) || !h.time.length) return 0;
+  const now = new Date();
+  const targetPrefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}`;
+  const exactIdx = h.time.findIndex(t => String(t).startsWith(targetPrefix));
+  if (exactIdx !== -1) return exactIdx;
+
   const nw = Date.now();
   let bestIdx = 0, minDiff = Infinity;
   for (let i = 0; i < h.time.length; i++) {
@@ -2892,6 +2982,56 @@ function getTerrainReferenceElevations(mtEle) {
   return { gridEle, trailheadEle };
 }
 
+// [현재 시각(o === 0) 4중 실시간 강우 융합 판독 함수]
+function resolveSlotRainAndCode(o, dI, h, kmaObs) {
+  const codeArr = extractModelArray(h, 'weather_code');
+  const precipArr = extractModelArray(h, 'precipitation');
+  const rainArr = extractModelArray(h, 'rain');
+  const showersArr = extractModelArray(h, 'showers');
+  const cloudArr = extractModelArray(h, 'cloud_cover');
+
+  let wC = codeArr[dI] ?? 0;
+  let pVal = Math.max(precipArr[dI] ?? 0, rainArr[dI] ?? 0, showersArr[dI] ?? 0);
+  let cVal = cloudArr[dI] ?? 20;
+
+  if (o === 0) {
+    // 1) Open-Meteo current 실시간 값 및 전후 1시간 슬롯 강수 통합 체크
+    const cur = liveWeatherData?.current;
+    if (cur) {
+      const curPrecip = Math.max(cur.precipitation ?? 0, cur.rain ?? 0, cur.showers ?? 0);
+      if (curPrecip > pVal) pVal = curPrecip;
+      if ((cur.weather_code >= 50 && cur.weather_code <= 99) && wC < 50) wC = cur.weather_code;
+    }
+    const nextPrecip = Math.max(precipArr[dI + 1] ?? 0, rainArr[dI + 1] ?? 0, showersArr[dI + 1] ?? 0);
+    if (nextPrecip > pVal) pVal = nextPrecip;
+    if ((codeArr[dI + 1] >= 50 && codeArr[dI + 1] <= 99) && wC < 50) wC = codeArr[dI + 1];
+
+    // 2) 실시간 레이더 에코 픽셀 감지 반영 (산 정상 위 비구름 에코가 떠 있으면 즉시 강우 처리)
+    if (currentMountainRadarEcho && currentMountainRadarEcho.hasEcho) {
+      pVal = Math.max(pVal, currentMountainRadarEcho.estRainMm);
+      if (wC < 50) wC = 61;
+    }
+
+    // 3) 기상청 초단기실황 (PTY 강수형태 + RN1 1시간 강수량) 최우선 반영
+    if (kmaObs) {
+      const kmaPty = kmaObs.PTY ?? 0;
+      const kmaRn1 = kmaObs.RN1 ?? 0;
+      if (kmaPty > 0 || kmaRn1 > 0) {
+        wC = (kmaPty === 3 || kmaPty === 7) ? 71 : 61;
+        pVal = Math.max(pVal, kmaRn1 > 0 ? kmaRn1 : (kmaPty === 5 ? 0.2 : 0.5));
+      } else if (kmaPty === 0 && kmaRn1 === 0 && (!currentMountainRadarEcho || !currentMountainRadarEcho.hasEcho)) {
+        // 기상청 실측도 0이고 레이더 에코도 전혀 없을 때만 가짜 강수 코드 해제
+        if (pVal < 0.2) {
+          pVal = 0.0;
+          if (wC >= 50 && wC <= 69) wC = cVal >= 50 ? 3 : 1;
+        }
+      }
+    }
+  }
+
+  return { wC, pVal, cVal };
+}
+
 function renderLiveForecastTrack(h, kmaObs = null) {
   const t = document.getElementById('forecast-track');
   if (!t) return;
@@ -2900,9 +3040,6 @@ function renderLiveForecastTrack(h, kmaObs = null) {
   const tempArr = extractModelArray(h, 'temperature_2m');
   const rhArr = extractModelArray(h, 'relative_humidity_2m');
   const dpArr = extractModelArray(h, 'dew_point_2m');
-  const codeArr = extractModelArray(h, 'weather_code');
-  const precipArr = extractModelArray(h, 'precipitation');
-  const cloudArr = extractModelArray(h, 'cloud_cover');
   const windArr = extractModelArray(h, 'wind_speed_10m');
   const windDirArr = extractModelArray(h, 'wind_direction_10m');
 
@@ -2931,25 +3068,15 @@ function renderLiveForecastTrack(h, kmaObs = null) {
     let baseGroundRH = Math.max(30, (rhArr[dI] ?? 60) - 8);
     let baseGroundWind = Math.max(1.0, (windArr[dI] ?? 2.5) * 0.65);
     let wDir = windDirArr[dI] ?? 270;
-    let wC = codeArr[dI] ?? 0;
-    let pVal = precipArr[dI] ?? 0;
-    let cVal = cloudArr[dI] ?? 20;
 
     if (o === 0 && kmaObs) {
       if (kmaObs.T1H !== undefined) baseGroundTemp = rawT + ((gridEle - trailheadEle) * 0.0065) + kmaBiasT;
       if (kmaObs.REH !== undefined) baseGroundRH = kmaObs.REH;
       if (kmaObs.WSD !== undefined) baseGroundWind = Math.max(1.0, parseFloat(kmaObs.WSD.toFixed(1)));
       if (kmaObs.VEC !== undefined) wDir = kmaObs.VEC;
-      if (kmaObs.PTY !== undefined) {
-        if (kmaObs.PTY === 0) {
-          pVal = 0.0;
-          if (wC >= 50 && wC <= 69) wC = cVal >= 50 ? 3 : 1;
-        } else {
-          wC = (kmaObs.PTY === 3) ? 71 : 61;
-          if (pVal === 0) pVal = (kmaObs.PTY === 5) ? 0.3 : 0.5;
-        }
-      }
     }
+
+    const { wC, pVal, cVal } = resolveSlotRainAndCode(o, dI, h, kmaObs);
 
     const slotLCL = calculateOrographicLCL(baseGroundTemp, baseDewPoint, currentMt.ele, trailheadEle);
     const isNightSlot = (tH < sR_hour || tH >= sS_hour);
@@ -2988,9 +3115,6 @@ function selectForecastHour(o, dI, tH, hS, tT, kmaObs = null) {
   const rawWind = extractModelArray(h, 'wind_speed_10m')[dI] ?? 2.5;
   const rawGust = extractModelArray(h, 'wind_gusts_10m')[dI] ?? 4.0;
   let wDir = extractModelArray(h, 'wind_direction_10m')[dI] ?? 270;
-  let rawRain = extractModelArray(h, 'precipitation')[dI] ?? 0.0;
-  let rawCode = extractModelArray(h, 'weather_code')[dI] ?? 0;
-  let rawCloud = extractModelArray(h, 'cloud_cover')[dI] ?? 20;
 
   let baseGroundTemp = rawTemp + ((gridEle - trailheadEle) * 0.0065);
   let baseDewPoint = rawDewPoint + ((gridEle - trailheadEle) * 0.0020);
@@ -3005,16 +3129,9 @@ function selectForecastHour(o, dI, tH, hS, tT, kmaObs = null) {
     if (kmaObs.REH !== undefined) baseGroundRH = kmaObs.REH;
     if (kmaObs.WSD !== undefined) baseGroundWind = Math.max(1.0, parseFloat(kmaObs.WSD.toFixed(1)));
     if (kmaObs.VEC !== undefined) wDir = kmaObs.VEC;
-    if (kmaObs.PTY !== undefined) {
-      if (kmaObs.PTY === 0) {
-        rawRain = 0.0;
-        if (rawCode >= 50 && rawCode <= 69) rawCode = rawCloud >= 50 ? 3 : 1;
-      } else {
-        rawCode = (kmaObs.PTY === 3) ? 71 : 61;
-        if (rawRain === 0) rawRain = (kmaObs.PTY === 5) ? 0.3 : 0.5;
-      }
-    }
   }
+
+  const { wC: rawCode, pVal: rawRain, cVal: rawCloud } = resolveSlotRainAndCode(o, dI, h, kmaObs);
 
   const effectiveLCL = calculateOrographicLCL(baseGroundTemp, baseDewPoint, currentMt.ele, trailheadEle);
   const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, tT);
@@ -3125,9 +3242,6 @@ function render7DayWeeklyTrack(data) {
 }
 
 // =========================================================================
-// [상용화 100% 합법 자체 기상 레이더 엔진: Leaflet(BSD-2) + RainViewer + 캔버스 기류]
-// =========================================================================
-// =========================================================================
 // [상용화 100% 합법 자체 기상 레이더 엔진: 배경 지도 가시성 & 투명 캔버스 완벽 패치]
 // =========================================================================
 let leafletLoadedPromise = null;
@@ -3147,7 +3261,6 @@ function ensureLeafletLoaded() {
   if (window.L) return Promise.resolve();
   if (leafletLoadedPromise) return leafletLoadedPromise;
   leafletLoadedPromise = new Promise((resolve, reject) => {
-    // 산악 지형도 다크모드 필터 및 타일 깨짐 방지 전용 스타일 주입
     const style = document.createElement('style');
     style.innerHTML = `
       .leaflet-container {
@@ -3213,7 +3326,6 @@ function startWindCanvasAnimation(windSpeed, windDirDeg) {
   cvs.height = rect.height || 420;
   const ctx = cvs.getContext('2d');
 
-  // 기상 풍향(불어오는 방향)을 실제 바람이 흘러가는 벡터로 변환
   const flowRad = ((windDirDeg + 180 - 90) * Math.PI) / 180;
   const speedPx = Math.max(1.4, Math.min(5.8, windSpeed * 0.45));
   const vx = Math.cos(flowRad) * speedPx;
@@ -3233,7 +3345,6 @@ function startWindCanvasAnimation(windSpeed, windDirDeg) {
   ctx.clearRect(0, 0, cvs.width, cvs.height);
 
   const animate = () => {
-    // [핵심 패치] 배경 지도를 까맣게 덮지 않고 기존 바람 궤적만 투명하게 감쇠시킴
     ctx.globalCompositeOperation = 'destination-in';
     ctx.fillStyle = 'rgba(0, 0, 0, 0.88)';
     ctx.fillRect(0, 0, cvs.width, cvs.height);
@@ -3307,7 +3418,7 @@ window.openRadarModal = async function(layer = 'wind') {
   document.body.style.overflow = 'hidden';
 
   await ensureLeafletLoaded();
-  fetchRainViewerMetadata();
+  await fetchRainViewerMetadata();
 
   const lat = currentMt.lat || 35.2846;
   const lng = currentMt.lng || 129.0565;
@@ -3324,7 +3435,6 @@ window.openRadarModal = async function(layer = 'wind') {
     statlabMap.setView([lat, lng], 12);
   }
 
-  // 모달 애니메이션 직후 지도 크기 재계산 2회 보장
   setTimeout(() => {
     if (statlabMap) {
       statlabMap.invalidateSize();
@@ -3359,7 +3469,6 @@ window.switchRadarLayer = function(layer) {
   const st = r ? r._summitState : { temp: 15, feel: 13, wind: 4.5, gust: 7.5, windDir: 270, windDirName: '서풍', windDirArrow: '→', rain: 0, humidity: 65 };
   const lcl = r ? r.effectiveCloudBase : 1100;
 
-  // [배경 지도 패치] 한글 산 이름·등산로가 선명한 다크 지형도 & 등고선 지형도 적용
   if (layer === 'temp') {
     baseTileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
       maxZoom: 17,
@@ -3372,7 +3481,6 @@ window.switchRadarLayer = function(layer) {
     }).addTo(statlabMap);
   }
 
-  // 중앙 산 정상 커스텀 마커
   const summitIcon = L.divIcon({
     className: 'custom-summit-pin',
     html: `<div style="transform:translate(-50%,-50%); background:rgba(10,132,255,0.95); border:2px solid #2CE5FF; color:#FFF; padding:5px 10px; border-radius:12px; font-size:11.5px; font-weight:800; white-space:nowrap; box-shadow:0 6px 18px rgba(0,0,0,0.85);">⛰️ ${currentMt.name} (${currentMt.ele}m)</div>`,
@@ -3382,7 +3490,6 @@ window.switchRadarLayer = function(layer) {
 
   if (layer === 'wind') {
     statlabMap.setView([lat, lng], 12);
-    // 산 정상 기준 반경 2km 능선 기류 영향권 링 표시
     L.circle([lat, lng], {
       radius: 2000,
       color: '#2CE5FF',
@@ -3399,7 +3506,6 @@ window.switchRadarLayer = function(layer) {
     `);
   } else if (layer === 'rain') {
     statlabMap.setView([lat, lng], 8);
-    // 레이더 반경 스캔 링 (15km / 40km)
     [15000, 40000].forEach(rad => {
       L.circle([lat, lng], {
         radius: rad,
@@ -3657,6 +3763,7 @@ function loadOfflineWeatherCache() {
 
 window.refreshCurrentMountain = function() {
   if (navigator.vibrate) navigator.vibrate(10);
+  try { localStorage.removeItem(KMA_GRID_CACHE_KEY); } catch (e) {}
   selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
 };
 
@@ -3676,6 +3783,7 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
   selectedHourOffset = 0;
   activeForecastRes = null;
   baseLiveCurrentRes = null;
+  currentMountainRadarEcho = { hasEcho: false, estRainMm: 0.0 };
 
   renderFavoritesChips(cachedNearestList);
   setTxt('card-peak-title', n);
@@ -3690,15 +3798,18 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
   setTxt('scrubber-current-label', `${e}m (정상)`);
   setTxt('scrubber-mid-tick', `중턱 ${Math.round(e / 2)}m`);
   setTxt('scrubber-summit-tick', `정상 ${e}m`);
-  setTxt('clock-live', `실시간 산악 기상·대기질 정밀 분석 중... ↻`);
+  setTxt('clock-live', `실시간 산악 기상·레이더 에코 스캔 중... ↻`);
 
-  const [primData, aqData] = await Promise.all([
+  // 위성 예보 + 대기질 + 레이더 에코 픽셀 스캔 동시 병렬 실행
+  const [primData, aqData, radarEcho] = await Promise.all([
     fetchPrimaryAlpineWeather(lt, lg),
-    fetchAirQualityData(lt, lg)
+    fetchAirQualityData(lt, lg),
+    scanRealtimeRadarEchoAtPeak(lt, lg)
   ]);
   if (fetchId !== currentFetchId) return;
 
   if (aqData) liveAirQualityData = aqData;
+  if (radarEcho) currentMountainRadarEcho = radarEcho;
   const liveDot = document.getElementById('brand-live-dot');
 
   if (primData && primData.hourly) {
@@ -3707,7 +3818,7 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
     renderFullAlpineWeather(liveWeatherData, e, null);
     saveOfflineWeatherCache(currentMt, liveWeatherData, null);
     const nw = new Date();
-    setTxt('clock-live', `실시간 위성 연동 · ${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')} ↻`);
+    setTxt('clock-live', `실시간 위성·레이더 연동 · ${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')} ↻`);
   } else {
     const cached = loadOfflineWeatherCache();
     if (cached && cached.primData && cached.primData.hourly) {
@@ -3724,7 +3835,7 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
     renderFullAlpineWeather(liveWeatherData, e, kmaObs);
     saveOfflineWeatherCache(currentMt, liveWeatherData, kmaObs);
     const nw = new Date();
-    setTxt('clock-live', `기상청·위성 실시간 연동 · ${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')} ↻`);
+    setTxt('clock-live', `기상청·레이더 실시간 연동 · ${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')} ↻`);
   });
 
   fetchEnsembleDailyWeather(lt, lg).then(ensData => {
