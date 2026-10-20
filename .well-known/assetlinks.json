@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.statlab.weather",
+        "sha256_cert_fingerprints": ["DA:F8:B6:B9:3B:56:22:0E:97:A6:77:54:49:E4:8D:94:63:1D:26:08:92:DB:2E:DB:78:E9:83:00:91:3B:C1:F8"]
+      }
+    }]
