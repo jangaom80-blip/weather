@@ -1,0 +1,27 @@
+{
+  "name": "STATLAB · 실시간 산악 기상 인텔리전스",
+  "short_name": "STATLAB",
+  "description": "전국 500대 산·봉우리·섬산 정밀 기상 및 산악 자체 레이더 앱",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "ko-KR",
+  "categories": ["weather", "navigation", "sports"],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
