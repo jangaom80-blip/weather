@@ -606,6 +606,200 @@
     .tile-value.amber { color: var(--accent-amber); }
     .tile-value.green { color: var(--accent-green); }
 
+    /* ===== [하단 배치] 전국 무강수(0.0mm) 산행지 & 골든타임 추천 카드 전용 스타일 ===== */
+    .sunny-rec-card {
+      background: linear-gradient(145deg, rgba(20, 26, 38, 0.95) 0%, rgba(12, 16, 24, 0.98) 100%);
+      border: 1px solid rgba(48, 209, 88, 0.38);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.55);
+    }
+    .sunny-rec-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .sunny-rec-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .sunny-rec-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+    .sunny-scan-btn {
+      background: rgba(48, 209, 88, 0.18);
+      border: 0.5px solid var(--accent-green);
+      color: #82F5A0;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .sunny-scan-btn:active {
+      transform: scale(0.95);
+      background: rgba(48, 209, 88, 0.35);
+    }
+    .sunny-guide-notice {
+      background: rgba(48, 209, 88, 0.08);
+      border: 0.5px solid rgba(48, 209, 88, 0.28);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 10.5px;
+      color: #D1FAE5;
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+    .sunny-filter-row {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding: 4px 0 8px 0;
+      scrollbar-width: none;
+    }
+    .sunny-filter-row::-webkit-scrollbar { display: none; }
+    .sunny-chip {
+      flex-shrink: 0;
+      padding: 5px 10px;
+      border-radius: 14px;
+      font-size: 10.5px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.06);
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .sunny-chip.active {
+      background: rgba(44, 229, 255, 0.22);
+      border-color: var(--accent-cyan);
+      color: #FFFFFF;
+    }
+    .sunny-day-chip {
+      flex-shrink: 0;
+      padding: 5px 10px;
+      border-radius: 9px;
+      font-size: 10.5px;
+      font-weight: 800;
+      background: rgba(0, 0, 0, 0.45);
+      border: 0.5px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .sunny-day-chip.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-cyan);
+      color: #FFFFFF;
+    }
+    .sunny-horizontal-track {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sunny-horizontal-track::-webkit-scrollbar { display: none; }
+    .sunny-mt-item {
+      flex-shrink: 0;
+      width: 248px;
+      background: rgba(10, 14, 22, 0.92);
+      border: 0.5px solid rgba(255, 255, 255, 0.16);
+      border-radius: 15px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sunny-mt-item.allday-clear {
+      border-color: rgba(48, 209, 88, 0.45);
+    }
+    .sunny-mt-item:active {
+      transform: scale(0.97);
+      border-color: var(--accent-cyan);
+    }
+    .sunny-mt-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+    .sunny-mt-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFFFFF;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sunny-type-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .sunny-type-famous {
+      background: rgba(255, 214, 10, 0.16);
+      color: var(--accent-gold);
+      border: 0.5px solid rgba(255, 214, 10, 0.4);
+    }
+    .sunny-type-normal {
+      background: rgba(44, 229, 255, 0.15);
+      color: var(--accent-cyan);
+      border: 0.5px solid rgba(44, 229, 255, 0.38);
+    }
+    .sunny-verdict-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 7px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .verdict-allday {
+      background: rgba(48, 209, 88, 0.18);
+      color: #82F5A0;
+      border: 0.5px solid rgba(48, 209, 88, 0.4);
+    }
+    .verdict-window {
+      background: rgba(255, 159, 10, 0.18);
+      color: #FFE299;
+      border: 0.5px solid rgba(255, 159, 10, 0.4);
+    }
+    .sunny-mt-meta {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sunny-time-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 0.5px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+      padding: 7px 9px;
+      font-size: 10.5px;
+      line-height: 1.5;
+      color: #E2E8F0;
+    }
+
     .quick-safety-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1046,6 +1240,40 @@
     </div>
   </div>
 
+  <!-- ===== [하단 이동 완료] 전국 무강수(0.0mm) 명산·일반산 & 입·하산 골든타임 추천 섹션 ===== -->
+  <div id="statlab-sunny-recommender" class="sunny-rec-card">
+    <div class="sunny-rec-header">
+      <div>
+        <div class="sunny-rec-title">
+          <span>🌤️ 전국 비 안 오는 산행지 & 입·하산 골든타임</span>
+          <span class="pro-badge-free">강수 0.0mm 엄선</span>
+        </div>
+        <div class="sunny-rec-sub">산행 시간 내 예상 강수량이 0.0mm(비 소식 없음)인 산만 선별하여 권장 출발·하산 시각을 안내합니다.</div>
+      </div>
+      <button class="sunny-scan-btn" onclick="window.scanStatlabSunnyMountains()">🔄 재스캔</button>
+    </div>
+
+    <div class="sunny-guide-notice" id="sunny-summary-banner">
+      ✅ <strong>판정 기준 안내:</strong> 구름이 조금 끼더라도 <strong>실제 강수량이 0.0mm(비 없음)</strong>이고 능선 강풍이 없는 안전한 산만 추천합니다. 카드를 터치하면 위쪽 메인 기상창으로 즉시 연동됩니다.
+    </div>
+
+    <div class="sunny-filter-row">
+      <button class="sunny-day-chip active" id="sday-0" onclick="window.setStatlabSunnyDay(0)">오늘 산행</button>
+      <button class="sunny-day-chip" id="sday-1" onclick="window.setStatlabSunnyDay(1)">내일 산행</button>
+      <button class="sunny-day-chip" id="sday-2" onclick="window.setStatlabSunnyDay(2)">모레 산행</button>
+      <span style="opacity:0.25; align-self:center;">|</span>
+      <button class="sunny-chip active" id="scat-ALL" onclick="window.setStatlabSunnyFilter('ALL')">전체</button>
+      <button class="sunny-chip" id="scat-명산" onclick="window.setStatlabSunnyFilter('명산')">🏆 100대 명산</button>
+      <button class="sunny-chip" id="scat-일반산" onclick="window.setStatlabSunnyFilter('일반산')">🥾 일반·근교·섬산</button>
+      <button class="sunny-chip" id="scat-영남" onclick="window.setStatlabSunnyFilter('영남')">📍 부울경·영남</button>
+      <button class="sunny-chip" id="scat-중부" onclick="window.setStatlabSunnyFilter('중부')">📍 수도권·강원·충청·호남</button>
+    </div>
+
+    <div id="sunny-rec-track" class="sunny-horizontal-track">
+      <div style="padding:14px; font-size:11.5px; color:var(--text-secondary);">⏳ 전국 주요 명산·일반산의 무강수(0.0mm) 골든타임을 분석 중입니다...</div>
+    </div>
+  </div>
+
   <!-- 산 중심 실시간 비구름·바람 레이더 지도 호출 배너 -->
   <div class="radar-launch-banner" onclick="openRadarModal('wind')">
     <div style="display:flex; align-items:center; gap:10px;">
@@ -1182,13 +1410,12 @@
     <span class="badge-mark"></span>
     <span>📡 실시간 기상 레이더</span>
   </div>
-
 <script>
 const KMA_SERVICE_KEY = "e471b45dcb373710ff06b726a8f079195673d3c87d0009936685562cb9776109";
 const OFFLINE_CACHE_KEY = "STATLAB_OFFLINE_CACHE_PRO";
 const KMA_GRID_CACHE_KEY = "STATLAB_KMA_GRID_CACHE";
 
-// [전국 500대 산·능선 봉우리·섬산 대용량 마스터 DB - Part 1 (부울경·남해안 섬산·지리산 전수)]
+// [전국 500대 산·능선 봉우리·섬산 대용량 마스터 DB 전수 보존]
 const mountainDB = [
   // 1. 부산 금정산 전체 능선 봉우리 (12개)
   {name:'금정산 고당봉', peak:'고당봉', type:'peak', region:'부산 금정구/경남 양산', ele:801, lat:35.2846, lng:129.0565},
@@ -1413,6 +1640,7 @@ const mountainDB = [
   {name:'지리산 노고단', peak:'노고단', type:'peak', region:'전남 구례 산동면', ele:1507, lat:35.2952, lng:127.5285},
   {name:'지리산 만복대', peak:'만복대', type:'peak', region:'전북 남원 주천면/전남 구례', ele:1438, lat:35.3385, lng:127.4985},
   {name:'지리산 바래봉', peak:'바래봉', type:'peak', region:'전북 남원 운봉읍', ele:1165, lat:35.4212, lng:127.5312},
+
   // 6. 대구·경북권 명산·능선 봉우리 및 울릉도 (62개)
   {name:'대구 팔공산 비로봉', peak:'비로봉', type:'peak', region:'대구 동구/경북 영천/군위', ele:1193, lat:35.9875, lng:128.6942},
   {name:'팔공산 동봉 (미타봉)', peak:'팔공산동봉', type:'peak', region:'대구 동구 용수동', ele:1167, lat:35.9852, lng:128.7012},
@@ -2170,9 +2398,8 @@ document.addEventListener('click', e => {
 (function injectCommercialPerformancePatch() {
   const perfStyle = document.createElement('style');
   perfStyle.innerHTML = `
-    /* 모바일 GPU 과부하를 유발하는 다중 backdrop-filter를 하드웨어 가속 레이어로 최적화 */
     .time-slot, .weekly-slot, .grid-tile, .cloudbase-summary-card,
-    .sun-safety-card, .cloudsea-card, .gear-recommend-card, .winter-safety-card {
+    .sun-safety-card, .cloudsea-card, .gear-recommend-card, .winter-safety-card, .sunny-rec-card {
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
       transform: translateZ(0);
@@ -2190,7 +2417,7 @@ document.addEventListener('click', e => {
       -webkit-backdrop-filter: blur(14px) !important;
       transform: translateZ(0);
     }
-    .forecast-track, .mountain-chip-scroll {
+    .forecast-track, .mountain-chip-scroll, .sunny-horizontal-track {
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
       transform: translateZ(0);
@@ -2297,7 +2524,7 @@ async function fetchKmaRealtimeObservation(lat, lng) {
   return null;
 }
 
-// [실시간 레이더 에코 픽셀 직판독 센서: 백그라운드 비동기 실행으로 초기 로딩 지연 제로화]
+// [실시간 레이더 에코 픽셀 직판독 센서]
 let currentMountainRadarEcho = { hasEcho: false, estRainMm: 0.0 };
 
 async function scanRealtimeRadarEchoAtPeak(lat, lng) {
@@ -3273,7 +3500,6 @@ function render7DayWeeklyTrack(data) {
   track.innerHTML = '';
   track.appendChild(frag);
 }
-
 // =========================================================================
 // [상용화 100% 합법 자체 기상 레이더 엔진: 배경 지도 가시성 & 투명 캔버스 완벽 패치]
 // =========================================================================
@@ -3800,7 +4026,6 @@ window.refreshCurrentMountain = function() {
   selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
 };
 
-// [초기 0.01초 즉시 렌더링 및 백그라운드 비동기 병합으로 버벅임 원천 차단]
 window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = null, dK = null) {
   const fetchId = ++currentFetchId;
 
@@ -3821,7 +4046,6 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
   setTxt('card-peak-title', n);
   setTxt('card-peak-desc', `해발 ${e}m · 정상부 분석`);
 
-  // 캐시된 동일 산 데이터가 있으면 0.01초 만에 먼저 화면에 표시하여 빈 화면 대기 제거
   const cached = loadOfflineWeatherCache();
   if (cached && cached.mt && cached.mt.name === n && cached.primData && cached.primData.hourly) {
     liveWeatherData = cached.primData;
@@ -3833,7 +4057,6 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
 
   setTxt('clock-live', `실시간 산악 기상 동기화 중... ↻`);
 
-  // 1단계: 가장 빠른 위성 수치예보(0.2초)만 먼저 받아 즉시 화면 갱신 (레이더 이미지 대기 병목 제거)
   const primData = await fetchPrimaryAlpineWeather(lt, lg);
   if (fetchId !== currentFetchId) return;
 
@@ -3857,7 +4080,6 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
     return;
   }
 
-  // 2단계: 대기질(PM2.5), 레이더 픽셀 스캔, 기상청 실황을 백그라운드에서 비동기로 조용히 병합
   fetchAirQualityData(lt, lg).then(aqData => {
     if (fetchId !== currentFetchId || !aqData || !liveWeatherData) return;
     liveAirQualityData = aqData;
@@ -3890,220 +4112,40 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
   });
 };
 
-// [초기 부팅 시 이중 렌더링 충돌 방지: 캐시 즉시 부팅 후 GPS 1회 부드러운 연동]
-window.onload = () => {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  }
-  renderFavoritesChips();
-  const cached = loadOfflineWeatherCache();
-  if (cached && cached.mt) {
-    currentMt = cached.mt;
-  }
-  selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng);
-  setTimeout(() => {
-    if (!userHasManuallySelected) triggerGPSMatching(true);
-  }, 600);
-  setInterval(() => {
-    if (navigator.onLine) selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
-  }, 300000);
-};
-</script>
-  <!-- ========================================================================= -->
-<!-- [STATLAB 공식 애드온: 전국 비 안 오는 명산·일반산 & 최적 산행 시간대 추천 엔진] -->
-<!-- ========================================================================= -->
-<style>
-  .sunny-rec-card {
-    background: linear-gradient(145deg, rgba(22, 28, 40, 0.92) 0%, rgba(14, 18, 26, 0.96) 100%);
-    border: 0.5px solid rgba(44, 229, 255, 0.32);
-    border-radius: 18px;
-    padding: 13px 14px;
-    margin-bottom: 10px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  }
-  .sunny-rec-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-  }
-  .sunny-rec-title-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .sunny-rec-title {
-    font-size: 13px;
-    font-weight: 800;
-    color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .sunny-rec-sub {
-    font-size: 10.5px;
-    color: var(--text-secondary);
-    font-weight: 500;
-  }
-  .sunny-scan-btn {
-    background: rgba(10, 132, 255, 0.22);
-    border: 0.5px solid var(--accent-cyan);
-    color: var(--accent-cyan);
-    font-size: 11px;
-    font-weight: 800;
-    padding: 5px 10px;
-    border-radius: 10px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-  }
-  .sunny-scan-btn:active {
-    transform: scale(0.95);
-    background: rgba(10, 132, 255, 0.45);
-  }
-  .sunny-filter-row {
-    display: flex;
-    gap: 5px;
-    overflow-x: auto;
-    padding: 8px 0 6px 0;
-    scrollbar-width: none;
-  }
-  .sunny-filter-row::-webkit-scrollbar { display: none; }
-  .sunny-chip {
-    flex-shrink: 0;
-    padding: 4px 10px;
-    border-radius: 14px;
-    font-size: 10.5px;
-    font-weight: 700;
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.5px solid rgba(255, 255, 255, 0.12);
-    color: var(--text-secondary);
-    cursor: pointer;
-  }
-  .sunny-chip.active {
-    background: rgba(44, 229, 255, 0.2);
-    border-color: var(--accent-cyan);
-    color: #FFFFFF;
-  }
-  .sunny-day-chip {
-    flex-shrink: 0;
-    padding: 4px 9px;
-    border-radius: 8px;
-    font-size: 10.5px;
-    font-weight: 800;
-    background: rgba(0, 0, 0, 0.4);
-    border: 0.5px solid rgba(255, 255, 255, 0.12);
-    color: var(--text-secondary);
-    cursor: pointer;
-  }
-  .sunny-day-chip.active {
-    background: var(--accent-blue);
-    border-color: var(--accent-cyan);
-    color: #FFFFFF;
-  }
-  .sunny-horizontal-track {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    margin-top: 4px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .sunny-horizontal-track::-webkit-scrollbar { display: none; }
-  .sunny-mt-item {
-    flex-shrink: 0;
-    width: 215px;
-    background: rgba(12, 14, 20, 0.85);
-    border: 0.5px solid rgba(255, 255, 255, 0.14);
-    border-radius: 14px;
-    padding: 10px 11px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .sunny-mt-item:active {
-    transform: scale(0.97);
-    border-color: var(--accent-cyan);
-  }
-  .sunny-mt-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 4px;
-  }
-  .sunny-mt-name {
-    font-size: 12.5px;
-    font-weight: 800;
-    color: #FFFFFF;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .sunny-type-badge {
-    font-size: 9px;
-    font-weight: 800;
-    padding: 1.5px 6px;
-    border-radius: 6px;
-    flex-shrink: 0;
-  }
-  .sunny-type-famous {
-    background: rgba(255, 214, 10, 0.16);
-    color: var(--accent-gold);
-    border: 0.5px solid rgba(255, 214, 10, 0.4);
-  }
-  .sunny-type-normal {
-    background: rgba(48, 209, 88, 0.16);
-    color: var(--accent-green);
-    border: 0.5px solid rgba(48, 209, 88, 0.4);
-  }
-  .sunny-mt-meta {
-    font-size: 10px;
-    color: var(--text-secondary);
-    display: flex;
-    justify-content: space-between;
-  }
-  .sunny-time-box {
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 9px;
-    padding: 6px 8px;
-    font-size: 10.5px;
-    line-height: 1.45;
-    color: #E2E8F0;
-  }
-</style>
-
-<script>
+// =========================================================================
+// [업그레이드 완료: 전국 무강수(0.0mm) 산행지 & 명확한 입·하산 골든타임 추천 엔진]
+// =========================================================================
 (function initStatlabSunnyRecommender() {
-  // 전국 권역별 대표 100대 명산 및 일반·근교·섬산 24선 (기존 mountainDB 좌표·고도 100% 호환)
+  // 전국 권역별 대표 100대 명산 및 일반·근교·섬산 28선 (산행 소요시간 수치화하여 입·하산 시각 자동 역산)
   const REC_MOUNTAINS = [
-    { name: '금정산 고당봉', region: '부산 금정', area: '영남', cat: '명산', ele: 801, lat: 35.2846, lng: 129.0565, dur: '3시간 30분~4시간', course: '범어사~북문~고당봉' },
-    { name: '황령산 봉수대', region: '부산 남구/수영', area: '영남', cat: '일반산', ele: 427, lat: 35.1578, lng: 129.0825, dur: '2시간~2시간 30분', course: '경성대~사자봉~봉수대' },
-    { name: '해운대 장산 정상', region: '부산 해운대', area: '영남', cat: '일반산', ele: 634, lat: 35.1942, lng: 129.1444, dur: '3시간~3시간 30분', course: '대천공원~옥녀봉~정상' },
-    { name: '영도 봉래산 조봉', region: '부산 영도', area: '영남', cat: '일반산', ele: 395, lat: 35.0841, lng: 129.0556, dur: '2시간 30분', course: '목장원~자봉~조봉~손봉' },
-    { name: '가덕도 연대봉', region: '부산 강서', area: '영남', cat: '일반산', ele: 459, lat: 35.0264, lng: 128.8342, dur: '2시간 30분~3시간', course: '지양곡~연대봉~어음포' },
-    { name: '영남알프스 간월산', region: '울산 울주', area: '영남', cat: '명산', ele: 1069, lat: 35.5517, lng: 129.0489, dur: '4시간~5시간', course: '웰컴센터~간월재~간월산' },
-    { name: '영남알프스 가지산', region: '울산/밀양/청도', area: '영남', cat: '명산', ele: 1241, lat: 35.6219, lng: 129.0118, dur: '4시간 30분~5시간', course: '석남터널~중봉~가지산' },
-    { name: '영남알프스 천황산 (사자봉)', region: '밀양/울산', area: '영남', cat: '명산', ele: 1189, lat: 35.5562, lng: 128.9778, dur: '3시간 30분~4시간', course: '케이블카~천황산~재약산' },
-    { name: '양산 천성산 원효봉 (천성산1봉)', region: '경남 양산', area: '영남', cat: '명산', ele: 922, lat: 35.4185, lng: 129.1385, dur: '3시간 30분~4시간', course: '홍룡사~화엄벌~원효봉' },
-    { name: '밀양 백운산', region: '경남 밀양', area: '영남', cat: '일반산', ele: 885, lat: 35.6012, lng: 128.9985, dur: '3시간 30분~4시간', course: '호박소~백운산~제일농원' },
-    { name: '사량도 지리산 (지리망산)', region: '경남 통영', area: '영남', cat: '명산', ele: 398, lat: 34.8425, lng: 128.1812, dur: '4시간~4시간 30분', course: '돈지~지리산~달바위~옥녀봉' },
-    { name: '거창 우두산 (의상봉/Y자출렁다리)', region: '경남 거창', area: '영남', cat: '명산', ele: 1046, lat: 35.7385, lng: 128.0285, dur: '3시간 30분~4시간', course: '고견사~출렁다리~의상봉' },
-    { name: '지리산 천왕봉', region: '산청/함양', area: '영남', cat: '명산', ele: 1915, lat: 35.3371, lng: 127.7306, dur: '7시간~8시간', course: '중산리~칼바위~천왕봉' },
-    { name: '대구 팔공산 비로봉', region: '대구/군위', area: '영남', cat: '명산', ele: 1193, lat: 35.9875, lng: 128.6942, dur: '4시간~4시간 30분', course: '수태골~서봉~비로봉' },
-    { name: '구미 금오산 현월봉', region: '경북 구미', area: '영남', cat: '명산', ele: 976, lat: 36.0812, lng: 128.3012, dur: '4시간', course: '금오산주차장~할딱고개~현월봉' },
-    { name: '단양 소백산 비로봉', region: '단양/영주', area: '중부', cat: '명산', ele: 1439, lat: 36.9575, lng: 128.4878, dur: '4시간 30분~5시간', course: '천동/어의곡~비로봉' },
-    { name: '서울 북한산 백운대', region: '서울/고양', area: '중부', cat: '명산', ele: 836, lat: 37.6587, lng: 126.9780, dur: '3시간 30분~4시간', course: '백운대지원센터~위문~백운대' },
-    { name: '서울 관악산 연주대', region: '서울/과천', area: '중부', cat: '일반산', ele: 629, lat: 37.4442, lng: 126.9639, dur: '2시간 30분~3시간', course: '과천향교/사당~연주대' },
-    { name: '서울 청계산 망경대 (매봉)', region: '서울/성남', area: '중부', cat: '일반산', ele: 618, lat: 37.4112, lng: 127.0512, dur: '2시간 30분', course: '원터골~옥녀봉~매봉' },
-    { name: '설악산 대청봉', region: '강원 양양/속초', area: '중부', cat: '명산', ele: 1708, lat: 38.1192, lng: 128.4652, dur: '7시간~8시간', course: '오색~설악폭포~대청봉' },
-    { name: '평창 선자령 (대관령 풍력단지)', region: '강원 평창', area: '중부', cat: '일반산', ele: 1157, lat: 37.7185, lng: 128.7285, dur: '3시간 30분~4시간', course: '대관령휴게소~선자령 순환' },
-    { name: '공주 계룡산 천황봉', region: '충남 공주', area: '중부', cat: '명산', ele: 845, lat: 36.3556, lng: 127.2089, dur: '4시간', course: '동학사~남매탑~관음봉' },
-    { name: '무주 덕유산 향적봉', region: '전북 무주', area: '중부', cat: '명산', ele: 1614, lat: 35.8617, lng: 127.7472, dur: '3시간~3시간 30분', course: '설천봉~향적봉~중봉' },
-    { name: '광주 무등산 천왕봉 (서석대)', region: '광주/화순', area: '중부', cat: '명산', ele: 1187, lat: 35.1355, lng: 126.9885, dur: '4시간~5시간', course: '증심사~중머리재~서석대' }
+    { name: '금정산 고당봉', region: '부산 금정', area: '영남', cat: '명산', ele: 801, lat: 35.2846, lng: 129.0565, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '범어사~북문~고당봉' },
+    { name: '황령산 봉수대', region: '부산 남구/수영', area: '영남', cat: '일반산', ele: 427, lat: 35.1578, lng: 129.0825, durHours: 2.5, durTxt: '약 2시간~2시간 30분', course: '경성대~사자봉~봉수대' },
+    { name: '해운대 장산 정상', region: '부산 해운대', area: '영남', cat: '일반산', ele: 634, lat: 35.1942, lng: 129.1444, durHours: 3.5, durTxt: '약 3시간~3시간 30분', course: '대천공원~옥녀봉~장산 정상' },
+    { name: '백양산 정상', region: '부산 진구/사상', area: '영남', cat: '일반산', ele: 642, lat: 35.1837, lng: 129.0273, durHours: 3.5, durTxt: '약 3시간~3시간 30분', course: '선암사~애진봉~백양산' },
+    { name: '영도 봉래산 조봉', region: '부산 영도', area: '영남', cat: '일반산', ele: 395, lat: 35.0841, lng: 129.0556, durHours: 2.5, durTxt: '약 2시간 30분', course: '목장원~자봉~조봉~손봉' },
+    { name: '가덕도 연대봉', region: '부산 강서', area: '영남', cat: '일반산', ele: 459, lat: 35.0264, lng: 128.8342, durHours: 3, durTxt: '약 2시간 30분~3시간', course: '지양곡~연대봉~어음포' },
+    { name: '기장 달음산 (취정봉)', region: '부산 기장', area: '영남', cat: '일반산', ele: 588, lat: 35.3085, lng: 129.2285, durHours: 3, durTxt: '약 2시간 30분~3시간', course: '옥정사~취정봉~천마산' },
+    { name: '영남알프스 간월산', region: '울산 울주', area: '영남', cat: '명산', ele: 1069, lat: 35.5517, lng: 129.0489, durHours: 4.5, durTxt: '약 4시간~4시간 30분', course: '웰컴센터~간월재~간월산' },
+    { name: '영남알프스 신불산', region: '울산 울주', area: '영남', cat: '명산', ele: 1159, lat: 35.5332, lng: 129.0554, durHours: 4.5, durTxt: '약 4시간~5시간', course: '간월재~신불산~신불재' },
+    { name: '영남알프스 가지산', region: '울산/밀양/청도', area: '영남', cat: '명산', ele: 1241, lat: 35.6219, lng: 129.0118, durHours: 4.5, durTxt: '약 4시간 30분', course: '석남터널~중봉~가지산' },
+    { name: '영남알프스 천황산 (사자봉)', region: '밀양/울산', area: '영남', cat: '명산', ele: 1189, lat: 35.5562, lng: 128.9778, durHours: 3.5, durTxt: '약 3시간 30분', course: '케이블카~천황산~재약산' },
+    { name: '양산 천성산 원효봉 (천성산1봉)', region: '경남 양산', area: '영남', cat: '명산', ele: 922, lat: 35.4185, lng: 129.1385, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '홍룡사~화엄벌~원효봉' },
+    { name: '밀양 백운산', region: '경남 밀양', area: '영남', cat: '일반산', ele: 885, lat: 35.6012, lng: 128.9985, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '호박소~백운산~제일농원' },
+    { name: '창원 마산 무학산', region: '경남 창원', area: '영남', cat: '명산', ele: 761, lat: 35.2078, lng: 128.5375, durHours: 3.5, durTxt: '약 3시간~3시간 30분', course: '서원곡~학봉~무학산 정상' },
+    { name: '사량도 지리산 (지리망산)', region: '경남 통영', area: '영남', cat: '명산', ele: 398, lat: 34.8425, lng: 128.1812, durHours: 4, durTxt: '약 4시간', course: '돈지~지리산~달바위~옥녀봉' },
+    { name: '거창 우두산 (의상봉/Y자출렁다리)', region: '경남 거창', area: '영남', cat: '명산', ele: 1046, lat: 35.7385, lng: 128.0285, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '고견사~출렁다리~의상봉' },
+    { name: '지리산 천왕봉', region: '산청/함양', area: '영남', cat: '명산', ele: 1915, lat: 35.3371, lng: 127.7306, durHours: 7, durTxt: '약 7시간~8시간', course: '중산리~칼바위~천왕봉' },
+    { name: '대구 팔공산 비로봉', region: '대구/군위', area: '영남', cat: '명산', ele: 1193, lat: 35.9875, lng: 128.6942, durHours: 4, durTxt: '약 4시간', course: '수태골~서봉~비로봉' },
+    { name: '구미 금오산 현월봉', region: '경북 구미', area: '영남', cat: '명산', ele: 976, lat: 36.0812, lng: 128.3012, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '주차장~할딱고개~현월봉' },
+    { name: '청송 주왕산 주봉', region: '경북 청송', area: '영남', cat: '명산', ele: 721, lat: 36.3985, lng: 129.1585, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '대전사~주봉~용추폭포' },
+    { name: '단양 소백산 비로봉', region: '단양/영주', area: '중부', cat: '명산', ele: 1439, lat: 36.9575, lng: 128.4878, durHours: 4.5, durTxt: '약 4시간 30분', course: '천동/어의곡~비로봉' },
+    { name: '서울 북한산 백운대', region: '서울/고양', area: '중부', cat: '명산', ele: 836, lat: 37.6587, lng: 126.9780, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '백운대지원센터~위문~백운대' },
+    { name: '서울 도봉산 자운봉', region: '서울/의정부', area: '중부', cat: '명산', ele: 740, lat: 37.6989, lng: 127.0156, durHours: 4, durTxt: '약 3시간 30분~4시간', course: '도봉탐방지원센터~신선대' },
+    { name: '서울 관악산 연주대', region: '서울/과천', area: '중부', cat: '일반산', ele: 629, lat: 37.4442, lng: 126.9639, durHours: 3, durTxt: '약 2시간 30분~3시간', course: '과천향교/사당~연주대' },
+    { name: '서울 청계산 망경대 (매봉)', region: '서울/성남', area: '중부', cat: '일반산', ele: 618, lat: 37.4112, lng: 127.0512, durHours: 2.5, durTxt: '약 2시간 30분', course: '원터골~옥녀봉~매봉' },
+    { name: '설악산 대청봉', region: '강원 양양/속초', area: '중부', cat: '명산', ele: 1708, lat: 38.1192, lng: 128.4652, durHours: 7, durTxt: '약 7시간~8시간', course: '오색~설악폭포~대청봉' },
+    { name: '평창 선자령 (대관령 풍력단지)', region: '강원 평창', area: '중부', cat: '일반산', ele: 1157, lat: 37.7185, lng: 128.7285, durHours: 3.5, durTxt: '약 3시간 30분', course: '대관령휴게소~선자령 순환' },
+    { name: '무주 덕유산 향적봉', region: '전북 무주', area: '중부', cat: '명산', ele: 1614, lat: 35.8617, lng: 127.7472, durHours: 3, durTxt: '약 3시간', course: '설천봉~향적봉~중봉' }
   ];
 
   let sunnyRawData = null;
@@ -4111,55 +4153,15 @@ window.onload = () => {
   let selectedDayIdx = 0; // 0: 오늘, 1: 내일, 2: 모레
   let selectedCatFilter = 'ALL';
 
-  function mountSunnyCard() {
-    const alertBanner = document.getElementById('alert-banner');
-    if (!alertBanner || document.getElementById('statlab-sunny-recommender')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.id = 'statlab-sunny-recommender';
-    wrapper.className = 'sunny-rec-card';
-    wrapper.innerHTML = `
-      <div class="sunny-rec-header">
-        <div class="sunny-rec-title-wrap">
-          <div class="sunny-rec-title">
-            <span>🌤️ 전국 비 안 오는 산행지 & 골든타임 추천</span>
-            <span class="pro-badge-free">실시간 강수 회피</span>
-          </div>
-          <div class="sunny-rec-sub">일기예보상 강수 없는 명산·일반산 및 추천 입산 시간대·소요시간 자동 분석</div>
-        </div>
-        <button class="sunny-scan-btn" onclick="window.scanStatlabSunnyMountains()">🔄 재스캔</button>
-      </div>
-
-      <div class="sunny-filter-row">
-        <button class="sunny-day-chip active" id="sday-0" onclick="window.setStatlabSunnyDay(0)">오늘</button>
-        <button class="sunny-day-chip" id="sday-1" onclick="window.setStatlabSunnyDay(1)">내일</button>
-        <button class="sunny-day-chip" id="sday-2" onclick="window.setStatlabSunnyDay(2)">모레</button>
-        <span style="opacity:0.25; align-self:center;">|</span>
-        <button class="sunny-chip active" id="scat-ALL" onclick="window.setStatlabSunnyFilter('ALL')">전체</button>
-        <button class="sunny-chip" id="scat-명산" onclick="window.setStatlabSunnyFilter('명산')">🏆 100대 명산</button>
-        <button class="sunny-chip" id="scat-일반산" onclick="window.setStatlabSunnyFilter('일반산')">🥾 일반·근교·섬산</button>
-        <button class="sunny-chip" id="scat-영남" onclick="window.setStatlabSunnyFilter('영남')">📍 부울경·영남</button>
-        <button class="sunny-chip" id="scat-중부" onclick="window.setStatlabSunnyFilter('중부')">📍 수도권·강원·충청·호남</button>
-      </div>
-
-      <div id="sunny-rec-track" class="sunny-horizontal-track">
-        <div style="padding:14px; font-size:11.5px; color:var(--text-secondary);">⏳ 전국 24개 주요 명산·일반산 강수 예보를 스캔 중입니다...</div>
-      </div>
-    `;
-
-    alertBanner.insertAdjacentElement('afterend', wrapper);
-    window.scanStatlabSunnyMountains();
-  }
-
   window.scanStatlabSunnyMountains = async function() {
     const track = document.getElementById('sunny-rec-track');
     if (track) {
-      track.innerHTML = `<div style="padding:14px; font-size:11.5px; color:var(--accent-cyan);">📡 전국 주요 산악 시간대별(06~18시) 비구름 회피 코스를 연산하고 있습니다...</div>`;
+      track.innerHTML = `<div style="padding:14px; font-size:11.5px; color:var(--accent-cyan);">📡 전국 28개 주요 명산·일반산의 시간대별 무강수(0.0mm) 구간을 정밀 스캔 중입니다...</div>`;
     }
     try {
       const lats = REC_MOUNTAINS.map(m => m.lat).join(',');
       const lngs = REC_MOUNTAINS.map(m => m.lng).join(',');
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lngs}&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&timezone=Asia%2FSeoul&wind_speed_unit=ms&forecast_days=3`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lngs}&hourly=temperature_2m,precipitation_probability,precipitation,rain,showers,weather_code,wind_speed_10m,cloud_cover&timezone=Asia%2FSeoul&wind_speed_unit=ms&forecast_days=3`;
       const res = await fetch(url);
       if (!res.ok) throw new Error('API Error');
       sunnyRawData = await res.json();
@@ -4176,53 +4178,111 @@ window.onload = () => {
     sunnyFilteredList = [];
     const dayOffset = selectedDayIdx * 24;
     const nowHour = new Date().getHours();
+    // 오늘 산행 선택 시 이미 지난 시간은 제외하되, 저녁(16시 이후)에는 내일처럼 전 시간대(06~18시) 미리보기 제공
     const startScanHour = (selectedDayIdx === 0 && nowHour >= 6 && nowHour <= 14) ? nowHour : 6;
-    const hikeHours = [];
-    for (let h = startScanHour; h <= 17; h++) hikeHours.push(h);
+    const endScanHour = 18;
+
+    let allDayClearCount = 0;
+    let windowClearCount = 0;
 
     sunnyRawData.forEach((w, idx) => {
       const m = REC_MOUNTAINS[idx];
       if (!w || !w.hourly) return;
       const hr = w.hourly;
 
-      let rainSlotCount = 0;
-      let goodHours = [];
+      let totalDayRainSlots = 0;
+      let firstRainHour = null;
+      let currentBlock = [];
+      let longestDryBlock = [];
       let sumSummitTemp = 0;
-      let maxPop = 0;
+      let sumCloud = 0;
+      let scannedCount = 0;
 
-      hikeHours.forEach(h => {
+      for (let h = startScanHour; h <= endScanHour; h++) {
         const i = dayOffset + h;
-        const precip = hr.precipitation?.[i] ?? 0;
-        const pop = hr.precipitation_probability?.[i] ?? 0;
-        const baseTemp = hr.temperature_2m?.[i] ?? 15;
-        const windMs = hr.wind_speed_10m?.[i] ?? 2;
+        const pVal = Math.max(hr.precipitation?.[i] ?? 0, hr.rain?.[i] ?? 0, hr.showers?.[i] ?? 0);
+        const wCode = hr.weather_code?.[i] ?? 0;
+        const isRainCode = (wCode >= 51 && wCode <= 69) || (wCode >= 80 && wCode <= 99);
+        const windMs = hr.wind_speed_10m?.[i] ?? 2.0;
+        const baseTemp = hr.temperature_2m?.[i] ?? 15.0;
+        const cloud = hr.cloud_cover?.[i] ?? 20;
 
-        // 고도별 정상 기온 보정 (-0.65°C / 100m)
         const summitTemp = baseTemp - ((m.ele * 0.8) / 100) * 0.65;
         sumSummitTemp += summitTemp;
-        if (pop > maxPop) maxPop = pop;
+        sumCloud += cloud;
+        scannedCount++;
 
-        if (precip >= 0.2 || pop >= 45) {
-          rainSlotCount++;
-        } else if (windMs < 11.0) {
-          goodHours.push(h);
+        // 엄격한 무강수 판정: 실제 강수량 0.1mm 미만이면서 우천 코드가 아니고 강풍(12m/s 이상)이 아닐 때만 안전 시간대로 인정
+        const isStrictlyDryAndSafe = (pVal < 0.1 && !isRainCode && windMs < 12.0);
+
+        if (isStrictlyDryAndSafe) {
+          currentBlock.push(h);
+          if (currentBlock.length > longestDryBlock.length) {
+            longestDryBlock = [...currentBlock];
+          }
+        } else {
+          totalDayRainSlots++;
+          if (firstRainHour === null && (pVal >= 0.1 || isRainCode)) {
+            firstRainHour = h;
+          }
+          currentBlock = [];
         }
-      });
+      }
 
-      // 산행 시간대 비 예보가 없고 최소 3시간 이상 연속 쾌적한 산만 추천
-      if (rainSlotCount === 0 && goodHours.length >= 3) {
-        const bestStart = String(goodHours[0]).padStart(2, '0') + ':00';
-        const bestEnd = String(Math.min(18, goodHours[goodHours.length - 1] + 1)).padStart(2, '0') + ':00';
-        const avgSummitT = (sumSummitTemp / Math.max(1, hikeHours.length)).toFixed(1);
+      const requiredHours = Math.max(3, Math.ceil(m.durHours));
+      // 연속된 무강수(0.0mm) 시간이 해당 산의 왕복 산행 소요시간 이상 확보된 경우만 추천 목록에 등록
+      if (longestDryBlock.length >= requiredHours) {
+        const winStart = longestDryBlock[0];
+        const winEnd = longestDryBlock[longestDryBlock.length - 1] + 1;
+        const latestEntryHour = Math.max(winStart, winEnd - Math.ceil(m.durHours));
+
+        const isAllDayClear = (totalDayRainSlots === 0);
+        if (isAllDayClear) allDayClearCount++;
+        else windowClearCount++;
+
+        const avgTemp = (sumSummitTemp / Math.max(1, scannedCount)).toFixed(1);
+        const avgCloud = Math.round(sumCloud / Math.max(1, scannedCount));
+        const skyTxt = avgCloud < 30 ? '☀️ 쾌청' : (avgCloud < 65 ? '⛅ 구름조금' : '☁️ 흐리나 비없음');
+
+        let verdictLabel = '';
+        let verdictClass = '';
+        let rainCautionNote = '';
+
+        if (isAllDayClear) {
+          verdictLabel = '🟢 종일 비 없음 · 강수 0.0mm 확정';
+          verdictClass = 'verdict-allday';
+          rainCautionNote = `일몰 전(${winEnd}:00)까지 우천 예보 전혀 없음`;
+        } else {
+          verdictLabel = `🌤️ 시간제 산행 가능 (구간 내 0.0mm)`;
+          verdictClass = 'verdict-window';
+          rainCautionNote = firstRainHour
+            ? `⚠️ ${String(firstRainHour).padStart(2, '0')}:00경 비 예보 · ${String(winEnd).padStart(2, '0')}:00 전 하산 필수`
+            : `권장 시간대(${String(winStart).padStart(2, '0')}~${String(winEnd).padStart(2, '0')}시) 내 강수 0.0mm`;
+        }
 
         sunnyFilteredList.push({
           ...m,
-          bestWindow: `${bestStart} ~ ${bestEnd}`,
-          avgSummitT,
-          maxPop
+          isAllDayClear,
+          verdictLabel,
+          verdictClass,
+          skyTxt,
+          avgTemp,
+          bestWindow: `${String(winStart).padStart(2, '0')}:00 ~ ${String(winEnd).padStart(2, '0')}:00`,
+          entryGuide: `${String(winStart).padStart(2, '0')}:00 ~ ${String(latestEntryHour).padStart(2, '0')}:00 사이 입산`,
+          descentLimit: `${String(winEnd).padStart(2, '0')}:00 전 하산 완료`,
+          rainCautionNote
         });
       }
     });
+
+    // 종일 비 없는 산을 최우선 정렬
+    sunnyFilteredList.sort((a, b) => (b.isAllDayClear ? 1 : 0) - (a.isAllDayClear ? 1 : 0));
+
+    const bannerEl = document.getElementById('sunny-summary-banner');
+    if (bannerEl) {
+      const dayTitle = selectedDayIdx === 0 ? '오늘' : (selectedDayIdx === 1 ? '내일' : '모레');
+      bannerEl.innerHTML = `📊 <strong>${dayTitle} 전국 스캔 결과:</strong> 종일 비 없는 산 <strong style="color:var(--accent-green);">${allDayClearCount}곳</strong> · 비 오기 전 산행 가능한 산 <strong style="color:var(--accent-amber);">${windowClearCount}곳</strong> (모두 산행 구간 내 <strong>강수량 0.0mm</strong> 검증 완료)`;
+    }
 
     renderSunnyCards();
   }
@@ -4265,35 +4325,60 @@ window.onload = () => {
     });
 
     if (list.length === 0) {
-      track.innerHTML = `<div style="padding:14px; font-size:11.5px; color:var(--text-secondary);">선택한 날짜·권역에 우천 없는 추천 산행지가 없습니다. 다른 권역이나 날짜를 선택해 보세요.</div>`;
+      track.innerHTML = `<div style="padding:14px; font-size:11.5px; color:var(--text-secondary);">선택한 날짜·권역에 연속 무강수(0.0mm) 산행 시간을 확보할 수 있는 산이 없습니다. 다른 권역이나 날짜를 선택해 보세요.</div>`;
       return;
     }
 
     track.innerHTML = list.map(m => `
-      <div class="sunny-mt-item" onclick="window.pickStatlabSunnyMountain('${m.name}', ${m.ele}, ${m.lat}, ${m.lng})">
+      <div class="sunny-mt-item ${m.isAllDayClear ? 'allday-clear' : ''}" onclick="window.pickStatlabSunnyMountain('${m.name}', ${m.ele}, ${m.lat}, ${m.lng})">
         <div class="sunny-mt-top">
           <span class="sunny-mt-name">⛰️ ${m.name}</span>
           <span class="sunny-type-badge ${m.cat === '명산' ? 'sunny-type-famous' : 'sunny-type-normal'}">${m.cat}</span>
         </div>
+
+        <div class="sunny-verdict-bar ${m.verdictClass}">
+          <span>${m.verdictLabel}</span>
+        </div>
+
         <div class="sunny-mt-meta">
           <span>📍 ${m.region} (${m.ele}m)</span>
-          <span style="color:var(--accent-cyan); font-weight:700;">💧강수 ${m.maxPop}% · ${m.avgSummitT}°C</span>
+          <span style="color:var(--accent-cyan); font-weight:700;">${m.skyTxt} · 정상 ${m.avgTemp}°C</span>
         </div>
+
         <div class="sunny-time-box">
-          <div>⏰ <strong>추천 시간대:</strong> <span style="color:var(--accent-green); font-weight:800;">${m.bestWindow}</span></div>
-          <div>🥾 <strong>소요시간:</strong> 약 ${m.dur}</div>
-          <div style="font-size:9.5px; color:var(--text-secondary); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">🚩 ${m.course}</div>
+          <div>⏰ <strong>무강수 골든타임:</strong> <span style="color:var(--accent-green); font-weight:800;">${m.bestWindow}</span></div>
+          <div>🎯 <strong>권장 출발:</strong> <span style="color:#FFFFFF; font-weight:700;">${m.entryGuide}</span></div>
+          <div>🥾 <strong>소요시간:</strong> ${m.durTxt} (${m.descentLimit})</div>
+          <div style="font-size:9.5px; color:${m.isAllDayClear ? 'var(--text-secondary)' : 'var(--accent-amber)'}; margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            ${m.isAllDayClear ? '🚩 코스: ' + m.course : m.rainCautionNote}
+          </div>
         </div>
       </div>
     `).join('');
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mountSunnyCard);
-  } else {
-    mountSunnyCard();
-  }
 })();
+
+// [초기 부팅 시 이중 렌더링 충돌 방지: 캐시 즉시 부팅 후 무강수 추천 스캔 & GPS 연동]
+window.onload = () => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+  renderFavoritesChips();
+  const cached = loadOfflineWeatherCache();
+  if (cached && cached.mt) {
+    currentMt = cached.mt;
+  }
+  selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng);
+  if (typeof window.scanStatlabSunnyMountains === 'function') {
+    window.scanStatlabSunnyMountains();
+  }
+  setTimeout(() => {
+    if (!userHasManuallySelected) triggerGPSMatching(true);
+  }, 600);
+  setInterval(() => {
+    if (navigator.onLine) selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
+  }, 300000);
+};
 </script>
 </body>
 </html>
