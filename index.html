@@ -4822,5 +4822,185 @@ window.onload = () => {
   }, 300000);
 };
 </script>
+<!-- ========================================================================= -->
+<!-- [STATLAB 가독성 업그레이드: 기본 폰트·명암비 상향 & 3단계 글자크기 조절기] -->
+<!-- ========================================================================= -->
+<style>
+  /* 1. 야외 햇빛에서도 잘 보이도록 보조 텍스트 명암비(밝기) 선명하게 보정 */
+  :root {
+    --text-secondary: rgba(242, 242, 250, 0.85) !important;
+    --text-tertiary: rgba(235, 235, 245, 0.62) !important;
+  }
+
+  /* 상단 헤더 글자크기 조절 버튼 스타일 */
+  .font-scale-btn {
+    background: rgba(44, 229, 255, 0.16);
+    border: 1px solid rgba(44, 229, 255, 0.45);
+    color: var(--accent-cyan);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.15s ease;
+  }
+  .font-scale-btn:active {
+    transform: scale(0.93);
+    background: rgba(44, 229, 255, 0.35);
+  }
+
+  /* 2. [기본 모드(scale-1)] 너무 작았던 9~11px 글씨들을 읽기 편한 크기로 기본 상향 */
+  body.statlab-scale-1 .section-title,
+  body.statlab-scale-1 .section-sub,
+  body.statlab-scale-1 .alert-banner,
+  body.statlab-scale-1 .weekly-ai-banner,
+  body.statlab-scale-1 .tile-title,
+  body.statlab-scale-1 .tile-data-row,
+  body.statlab-scale-1 .scrubber-title,
+  body.statlab-scale-1 .meter-label-left,
+  body.statlab-scale-1 .meter-label-right,
+  body.statlab-scale-1 .sun-time-labels,
+  body.statlab-scale-1 .sunny-rec-sub,
+  body.statlab-scale-1 .sunny-guide-notice,
+  body.statlab-scale-1 .sunny-mt-meta,
+  body.statlab-scale-1 .sunny-time-box {
+    font-size: 12px !important;
+  }
+  body.statlab-scale-1 .toggle-tab-btn,
+  body.statlab-scale-1 .mt-chip,
+  body.statlab-scale-1 .gear-chip,
+  body.statlab-scale-1 .gear-layer-desc,
+  body.statlab-scale-1 .sun-safety-desc,
+  body.statlab-scale-1 .cb-card-desc,
+  body.statlab-scale-1 .winter-desc {
+    font-size: 12.5px !important;
+  }
+  body.statlab-scale-1 .spec-label,
+  body.statlab-scale-1 .slot-label,
+  body.statlab-scale-1 .w-sub-info-row,
+  body.statlab-scale-1 .cs-sub-row {
+    font-size: 11px !important;
+  }
+  body.statlab-scale-1 .spec-val { font-size: 14px !important; }
+
+  /* 3. [크게 모드(scale-2)] 중장년층 및 야외 산행 시 가장 보기 편한 115% 확대 */
+  body.statlab-scale-2 { zoom: 1.08; }
+  body.statlab-scale-2 .hero-mt-name { font-size: 23px !important; }
+  body.statlab-scale-2 .hero-temp { font-size: 40px !important; }
+  body.statlab-scale-2 .spec-label,
+  body.statlab-scale-2 .slot-label,
+  body.statlab-scale-2 .w-sub-info-row,
+  body.statlab-scale-2 .cs-sub-row,
+  body.statlab-scale-2 .scrubber-ticks {
+    font-size: 11.5px !important;
+  }
+  body.statlab-scale-2 .spec-val { font-size: 15px !important; }
+  body.statlab-scale-2 .tile-data-row,
+  body.statlab-scale-2 .gear-layer-desc,
+  body.statlab-scale-2 .sun-safety-desc,
+  body.statlab-scale-2 .cb-card-desc,
+  body.statlab-scale-2 .sunny-time-box,
+  body.statlab-scale-2 .trail-action-row {
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+  }
+  body.statlab-scale-2 .time-slot { width: 68px !important; }
+  body.statlab-scale-2 .slot-time,
+  body.statlab-scale-2 .slot-temp { font-size: 13px !important; }
+  body.statlab-scale-2 .weekly-slot { width: 138px !important; }
+  body.statlab-scale-2 .sunny-mt-item { width: 272px !important; }
+  body.statlab-scale-2 .sunny-mt-name { font-size: 14.5px !important; }
+
+  /* 4. [특대 모드(scale-3)] 돋보기 없이도 한눈에 들어오는 125% 큰글씨 모드 */
+  body.statlab-scale-3 { zoom: 1.16; }
+  body.statlab-scale-3 .hero-mt-name { font-size: 24px !important; }
+  body.statlab-scale-3 .hero-temp { font-size: 42px !important; }
+  body.statlab-scale-3 .spec-label,
+  body.statlab-scale-3 .slot-label,
+  body.statlab-scale-3 .w-sub-info-row,
+  body.statlab-scale-3 .cs-sub-row,
+  body.statlab-scale-3 .scrubber-ticks {
+    font-size: 12px !important;
+  }
+  body.statlab-scale-3 .spec-val { font-size: 16px !important; }
+  body.statlab-scale-3 .tile-data-row,
+  body.statlab-scale-3 .gear-layer-desc,
+  body.statlab-scale-3 .sun-safety-desc,
+  body.statlab-scale-3 .cb-card-desc,
+  body.statlab-scale-3 .sunny-time-box,
+  body.statlab-scale-3 .trail-action-row {
+    font-size: 13.5px !important;
+    line-height: 1.6 !important;
+  }
+  body.statlab-scale-3 .time-slot { width: 72px !important; }
+  body.statlab-scale-3 .slot-time,
+  body.statlab-scale-3 .slot-temp { font-size: 13.5px !important; }
+  body.statlab-scale-3 .weekly-slot { width: 146px !important; }
+  body.statlab-scale-3 .sunny-mt-item { width: 286px !important; }
+  body.statlab-scale-3 .sunny-mt-name { font-size: 15px !important; }
+</style>
+
+<script>
+(function initStatlabFontScaler() {
+  const FONT_SCALE_KEY = 'STATLAB_FONT_SCALE_LEVEL';
+  // 첫 방문자도 글자가 작다고 느끼지 않도록 기본값을 '2(크게)'로 설정 (원하면 버튼으로 기본/크게/특대 전환)
+  let currentScale = parseInt(localStorage.getItem(FONT_SCALE_KEY) || '2', 10);
+  if (![1, 2, 3].includes(currentScale)) currentScale = 2;
+
+  const scaleLabels = {
+    1: '가+ 보통',
+    2: '가+ 크게',
+    3: '가+ 특대'
+  };
+
+  function applyFontScale(level) {
+    document.body.classList.remove('statlab-scale-1', 'statlab-scale-2', 'statlab-scale-3');
+    document.body.classList.add('statlab-scale-' + level);
+    const btn = document.getElementById('statlab-font-btn');
+    if (btn) {
+      btn.innerText = scaleLabels[level];
+      btn.style.background = level === 3
+        ? 'rgba(255, 214, 10, 0.25)'
+        : (level === 2 ? 'rgba(48, 209, 88, 0.22)' : 'rgba(44, 229, 255, 0.16)');
+      btn.style.color = level === 3
+        ? 'var(--accent-gold)'
+        : (level === 2 ? '#82F5A0' : 'var(--accent-cyan)');
+      btn.style.borderColor = level === 3
+        ? 'rgba(255, 214, 10, 0.5)'
+        : (level === 2 ? 'rgba(48, 209, 88, 0.5)' : 'rgba(44, 229, 255, 0.45)');
+    }
+  }
+
+  window.cycleStatlabFontScale = function() {
+    currentScale = currentScale === 1 ? 2 : (currentScale === 2 ? 3 : 1);
+    try { localStorage.setItem(FONT_SCALE_KEY, String(currentScale)); } catch (e) {}
+    if (navigator.vibrate) navigator.vibrate(10);
+    applyFontScale(currentScale);
+  };
+
+  function mountFontButton() {
+    const brandTitle = document.querySelector('.brand-title');
+    if (brandTitle && !document.getElementById('statlab-font-btn')) {
+      const btn = document.createElement('button');
+      btn.id = 'statlab-font-btn';
+      btn.className = 'font-scale-btn';
+      btn.title = '터치하여 글자 크기 변경 (보통 / 크게 / 특대)';
+      btn.onclick = window.cycleStatlabFontScale;
+      brandTitle.appendChild(btn);
+    }
+    applyFontScale(currentScale);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountFontButton);
+  } else {
+    mountFontButton();
+  }
+})();
+</script>
 </body>
 </html>
