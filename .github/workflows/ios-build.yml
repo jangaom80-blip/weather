@@ -89,12 +89,23 @@ jobs:
 
       - name: Build and Export IPA
         run: |
-          ruby -e '
-            pbx = File.read("ios/App/App.xcodeproj/project.pbxproj")
-            pbx.gsub!("ProvisioningStyle = Automatic;", "ProvisioningStyle = Manual;")
-            pbx.gsub!("CODE_SIGN_STYLE = Automatic;", "CODE_SIGN_STYLE = Manual;\n\t\t\t\tCODE_SIGN_IDENTITY = \"Apple Distribution\";\n\t\t\t\tDEVELOPMENT_TEAM = WPV54CTPYA;\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"#{ENV[\"PP_UUID\"]}\";")
-            File.write("ios/App/App.xcodeproj/project.pbxproj", pbx)
-          '
+          cat << 'EOF' > set_signing.rb
+          pbx = File.read("ios/App/App.xcodeproj/project.pbxproj")
+          uuid = ENV["PP_UUID"]
+          pbx.gsub!(/ProvisioningStyle = Automatic;/, "ProvisioningStyle = Manual;")
+          pbx.gsub!(/DEVELOPMENT_TEAM = [^;]*;/, "")
+          pbx.gsub!(/CODE_SIGN_IDENTITY = [^;]*;/, "")
+          pbx.gsub!(/PROVISIONING_PROFILE_SPECIFIER = [^;]*;/, "")
+          replacement = [
+            "CODE_SIGN_STYLE = Manual;",
+            "CODE_SIGN_IDENTITY = \"Apple Distribution\";",
+            "DEVELOPMENT_TEAM = WPV54CTPYA;",
+            "PROVISIONING_PROFILE_SPECIFIER = \"#{uuid}\";"
+          ].join("\n\t\t\t\t")
+          pbx.gsub!(/CODE_SIGN_STYLE = Automatic;/, replacement)
+          File.write("ios/App/App.xcodeproj/project.pbxproj", pbx)
+          EOF
+          ruby set_signing.rb
 
           if [ -d "ios/App/App.xcworkspace" ]; then
             BUILD_TARGET="-workspace ios/App/App.xcworkspace"
