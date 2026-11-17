@@ -89,6 +89,13 @@ jobs:
 
       - name: Build and Export IPA
         run: |
+          ruby -e '
+            pbx = File.read("ios/App/App.xcodeproj/project.pbxproj")
+            pbx.gsub!("ProvisioningStyle = Automatic;", "ProvisioningStyle = Manual;")
+            pbx.gsub!("CODE_SIGN_STYLE = Automatic;", "CODE_SIGN_STYLE = Manual;\n\t\t\t\tCODE_SIGN_IDENTITY = \"Apple Distribution\";\n\t\t\t\tDEVELOPMENT_TEAM = WPV54CTPYA;\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"#{ENV[\"PP_UUID\"]}\";")
+            File.write("ios/App/App.xcodeproj/project.pbxproj", pbx)
+          '
+
           if [ -d "ios/App/App.xcworkspace" ]; then
             BUILD_TARGET="-workspace ios/App/App.xcworkspace"
           else
@@ -100,10 +107,6 @@ jobs:
             -configuration Release \
             -sdk iphoneos \
             -archivePath "$RUNNER_TEMP/STATLAB.xcarchive" \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM=WPV54CTPYA \
-            PROVISIONING_PROFILE_SPECIFIER="$PP_UUID" \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
             archive
 
           cat << EOF > "$RUNNER_TEMP/ExportOptions.plist"
