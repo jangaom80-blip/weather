@@ -5002,5 +5002,1286 @@ window.onload = () => {
   }
 })();
 </script>
+  <!-- ========================================================================= -->
+<!-- [STATLAB v1.1 통합 업그레이드 패치: 정밀GPS / 고속캐시·재시도 / 쿠팡 / 기상정확도 / FAB제거] -->
+<!-- ========================================================================= -->
+<style>
+  /* 5. 우측 하단 플로팅 실시간 기상 레이더 버튼 완전 제거 */
+  #statlab-radar-fab {
+    display: none !important;
+    pointer-events: none !important;
+  }
+  body {
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 16px)) !important;
+  }
+
+  /* 3. 대한초밥 하단 쿠팡 파트너스 맞춤 장비 추천 카드 스타일 */
+  .coupang-gear-section {
+    background: linear-gradient(145deg, rgba(22, 26, 36, 0.94) 0%, rgba(14, 16, 22, 0.98) 100%);
+    border: 0.5px solid rgba(44, 229, 255, 0.28);
+    border-radius: 16px;
+    padding: 13px 14px 11px 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  }
+  .coupang-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .coupang-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .coupang-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #FFFFFF;
+  }
+  .coupang-ad-tag {
+    font-size: 9px;
+    font-weight: 800;
+    color: #FFE299;
+    background: rgba(255, 159, 10, 0.2);
+    border: 0.5px solid rgba(255, 159, 10, 0.45);
+    padding: 1.5px 6px;
+    border-radius: 5px;
+  }
+  .coupang-kw-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    white-space: nowrap;
+  }
+  .coupang-cat-row {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .coupang-cat-row::-webkit-scrollbar { display: none; }
+  .coupang-cat-btn {
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.5px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-secondary);
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .coupang-cat-btn.active {
+    background: rgba(10, 132, 255, 0.28);
+    border-color: var(--accent-cyan);
+    color: #FFFFFF;
+  }
+  .coupang-track {
+    display: flex;
+    gap: 9px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .coupang-track::-webkit-scrollbar { display: none; }
+  .coupang-card {
+    flex-shrink: 0;
+    width: 138px;
+    background: rgba(12, 14, 20, 0.92);
+    border: 0.5px solid rgba(255, 255, 255, 0.14);
+    border-radius: 13px;
+    overflow: hidden;
+    text-decoration: none;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .coupang-card:active {
+    transform: scale(0.96);
+    border-color: var(--accent-cyan);
+  }
+  .coupang-thumb-wrap {
+    position: relative;
+    width: 100%;
+    height: 112px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .coupang-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .coupang-rocket {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 9px;
+    font-weight: 800;
+    background: rgba(0, 116, 233, 0.92);
+    color: #FFFFFF;
+    padding: 1.5px 5px;
+    border-radius: 5px;
+  }
+  .coupang-info {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    gap: 5px;
+  }
+  .coupang-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #F1F5F9;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 30px;
+  }
+  .coupang-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+  }
+  .coupang-price {
+    font-size: 12px;
+    font-weight: 800;
+    color: #FFD60A;
+  }
+  .coupang-go {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+  }
+  .coupang-notice {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+    font-size: 9.5px;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+  }
+  .coupang-status-box {
+    width: 100%;
+    padding: 14px 8px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+</style>
+
+<script>
+(function initStatlabV11Upgrade() {
+  const MULTI_CACHE_KEY = 'STATLAB_MULTI_CACHE_V2';
+  const KMA_FCST_CACHE_KEY = 'STATLAB_KMA_FCST_CACHE_V1';
+  const COUPANG_WORKER_URL = 'https://coupang-api.aom100.workers.dev';
+  const COUPANG_MEM_CACHE = {};
+
+  let latestKmaFcstMap = null;
+  let lastLiveFetchMeta = { name: '', ts: 0 };
+  let userPickedCoupangTab = false;
+  let currentCoupangKeyword = '등산용품 추천';
+
+  // [5] 우측 하단 플로팅 레이더 버튼 DOM 자체 제거
+  function removeFloatingRadarFab() {
+    const fab = document.getElementById('statlab-radar-fab');
+    if (fab && fab.parentNode) fab.parentNode.removeChild(fab);
+  }
+  removeFloatingRadarFab();
+
+  // [1] 금정산 등 주요 인접 봉우리 정밀 좌표 보정 (DB 500여 개는 그대로 보존)
+  const PEAK_COORD_FIXES = {
+    '금정산 고당봉': { lat: 35.2847, lng: 129.0566, ele: 801 },
+    '금정산 장군봉': { lat: 35.3042, lng: 129.0539, ele: 735 },
+    '금정산 원효봉': { lat: 35.2756, lng: 129.0617, ele: 687 },
+    '금정산 의상봉': { lat: 35.2689, lng: 129.0635, ele: 640 },
+    '금정산 미륵봉': { lat: 35.2784, lng: 129.0537, ele: 712 },
+    '금정산 대륙봉': { lat: 35.2528, lng: 129.0626, ele: 520 },
+    '금정산 계명봉': { lat: 35.2914, lng: 129.0719, ele: 601 },
+    '금정산 상계봉': { lat: 35.2389, lng: 129.0454, ele: 640 },
+    '금정산 파리봉': { lat: 35.2611, lng: 129.0489, ele: 615 }
+  };
+  if (Array.isArray(mountainDB)) {
+    mountainDB.forEach(m => {
+      const fix = PEAK_COORD_FIXES[m.name];
+      if (fix) {
+        m.lat = fix.lat;
+        m.lng = fix.lng;
+        m.ele = fix.ele;
+      }
+    });
+  }
+
+  // [2] 공용 타임아웃 + 자동 재시도 JSON Fetch 유틸
+  async function fetchJsonWithRetry(url, timeoutMs = 6500, retries = 1) {
+    let lastErr = null;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(tid);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        clearTimeout(tid);
+        lastErr = err;
+        if (attempt < retries) {
+          await new Promise(r => setTimeout(r, 450 * (attempt + 1)));
+        }
+      }
+    }
+    throw lastErr || new Error('Fetch failed');
+  }
+
+  // [2] 다중 산(최대 15개) 로컬 스토리지 캐시
+  function getMultiCacheMap() {
+    try {
+      const raw = localStorage.getItem(MULTI_CACHE_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return (parsed && typeof parsed === 'object') ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveMultiMountainCache(mt, primData, kmaObs = null, kmaFcst = null, aqData = null) {
+    if (!mt || !mt.name || !primData || !primData.hourly) return;
+    const nw = new Date();
+    const savedTime = `${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')}`;
+    const entry = { mt, primData, kmaObs, kmaFcst, aqData, savedTime, ts: Date.now() };
+    try {
+      const map = getMultiCacheMap();
+      map[mt.name] = entry;
+      const keys = Object.keys(map);
+      if (keys.length > 15) {
+        keys.sort((a, b) => (map[a].ts || 0) - (map[b].ts || 0));
+        while (keys.length > 15) {
+          delete map[keys.shift()];
+        }
+      }
+      localStorage.setItem(MULTI_CACHE_KEY, JSON.stringify(map));
+    } catch (e) {
+      // 용량 초과 시 현재 산만 보존
+      try {
+        localStorage.setItem(MULTI_CACHE_KEY, JSON.stringify({ [mt.name]: entry }));
+      } catch (_) {}
+    }
+    try {
+      localStorage.setItem(OFFLINE_CACHE_KEY, JSON.stringify({ mt, primData, kmaObs, savedTime, ts: Date.now() }));
+    } catch (e) {}
+  }
+
+  function loadMultiMountainCache(name) {
+    const map = getMultiCacheMap();
+    if (name && map[name]) return map[name];
+    try {
+      const legacy = localStorage.getItem(OFFLINE_CACHE_KEY);
+      if (legacy) {
+        const parsed = JSON.parse(legacy);
+        if (!name || (parsed.mt && parsed.mt.name === name)) return parsed;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  // [1] 하버사인 정밀 거리 + 고도 보조 매칭 (고당봉↔의상봉 혼동 방지)
+  window.findNearestMountainsFromDb = function(uLat, uLng, topCount = 3, uAlt = null, altAcc = null) {
+    const useAltTieBreak = (uAlt !== null && !isNaN(uAlt) && uAlt > 80 && (altAcc === null || altAcc <= 65));
+    const mapped = mountainDB.map(m => {
+      const dKm = calculateDistanceKm(uLat, uLng, m.lat, m.lng);
+      let score = dKm;
+      // 1.5km 이내 근접 봉우리가 여러 개일 때만 고도 차이를 미세 가중치로 반영
+      if (useAltTieBreak && dKm <= 1.5) {
+        score += Math.abs(m.ele - uAlt) * 0.00035;
+      }
+      return {
+        ...m,
+        distanceKm: dKm < 1 ? dKm.toFixed(2) : dKm.toFixed(1),
+        rawDist: dKm,
+        matchScore: score
+      };
+    });
+    mapped.sort((a, b) => a.matchScore - b.matchScore);
+    return mapped.slice(0, topCount);
+  };
+
+  // [1] 위성 GPS 정밀 잠금 (watchPosition으로 오차 35m 이하 도달까지 최대 3.8초 정밀 수집)
+  function acquireBestGPSPosition() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('No geolocation'));
+        return;
+      }
+      let bestPos = null;
+      let settled = false;
+      let watchId = null;
+
+      const finish = (pos, err) => {
+        if (settled) return;
+        settled = true;
+        if (watchId !== null) {
+          try { navigator.geolocation.clearWatch(watchId); } catch (e) {}
+        }
+        if (pos) resolve(pos);
+        else reject(err || new Error('GPS timeout'));
+      };
+
+      const maxWaitTimer = setTimeout(() => {
+        if (bestPos) {
+          finish(bestPos);
+        } else {
+          // 고정밀 위성 신호 미수신 시 1회 네트워크 위치 폴백
+          navigator.geolocation.getCurrentPosition(
+            p => finish(p),
+            e => finish(null, e),
+            { enableHighAccuracy: false, maximumAge: 60000, timeout: 4500 }
+          );
+        }
+      }, 3800);
+
+      watchId = navigator.geolocation.watchPosition(
+        pos => {
+          const acc = pos.coords.accuracy ?? 9999;
+          if (!bestPos || acc < (bestPos.coords.accuracy ?? 9999)) {
+            bestPos = pos;
+          }
+          // 실제 위성 GPS 수준(±35m 이내) 확보 시 즉시 확정
+          if (acc <= 35) {
+            clearTimeout(maxWaitTimer);
+            finish(bestPos);
+          }
+        },
+        err => {
+          if (bestPos) {
+            clearTimeout(maxWaitTimer);
+            finish(bestPos);
+          } else if (err && err.code === 1) {
+            // 위치 권한 거부 시 즉시 종료
+            clearTimeout(maxWaitTimer);
+            finish(null, err);
+          }
+        },
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+      );
+    });
+  }
+
+  window.triggerGPSMatching = async function(isAuto = false) {
+    const btn = document.getElementById('gps-action-btn');
+    const liveDot = document.getElementById('brand-live-dot');
+
+    if (btn) btn.classList.add('scanning');
+    if (liveDot) liveDot.className = 'brand-dot searching';
+    if (!isAuto) setTxt('clock-live', '🛰️ 고정밀 GPS 위성 좌표 잠금 중...');
+
+    try {
+      const p = await acquireBestGPSPosition();
+      if (btn) btn.classList.remove('scanning');
+      if (liveDot) liveDot.className = 'brand-dot';
+
+      const uLat = p.coords.latitude;
+      const uLng = p.coords.longitude;
+      const uAcc = Math.round(p.coords.accuracy || 0);
+      const rawAlt = p.coords.altitude;
+      const altAcc = p.coords.altitudeAccuracy;
+
+      if (rawAlt !== null && !isNaN(rawAlt) && rawAlt > 0) {
+        currentUserAltitude = Math.round(rawAlt);
+        setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
+      } else {
+        try {
+          const eleData = await fetchJsonWithRetry(
+            `https://api.open-meteo.com/v1/elevation?latitude=${uLat.toFixed(5)}&longitude=${uLng.toFixed(5)}`,
+            3500, 0
+          );
+          if (eleData && Array.isArray(eleData.elevation) && eleData.elevation.length > 0) {
+            currentUserAltitude = Math.max(0, Math.round(eleData.elevation[0]));
+          }
+        } catch (e) {}
+        setTxt('user-gps-alt-pill', `📍 내 고도 ${currentUserAltitude}m`);
+      }
+
+      const nearestList = window.findNearestMountainsFromDb(uLat, uLng, 3, currentUserAltitude, altAcc);
+      if (nearestList && nearestList.length > 0) {
+        cachedNearestList = nearestList;
+        renderFavoritesChips(nearestList);
+
+        if (!isAuto || !userHasManuallySelected) {
+          const primary = nearestList[0];
+          const isSameAndFresh = (currentMt.name === primary.name && (Date.now() - lastLiveFetchMeta.ts < 60000));
+          const accLabel = uAcc > 0 ? ` · GPS ±${uAcc}m` : '';
+          if (!isSameAndFresh) {
+            await window.selectMountain(primary.name, primary.ele, null, primary.type, primary.lat, primary.lng, primary.distanceKm);
+          }
+          setTxt('clock-live', `📍 ${primary.name} (${primary.distanceKm}km${accLabel}) ↻`);
+        }
+      }
+    } catch (err) {
+      if (btn) btn.classList.remove('scanning');
+      if (liveDot) liveDot.className = 'brand-dot';
+      if (!isAuto) {
+        setTxt('clock-live', '⚠️ GPS 신호 미약 · 기본 산 유지 (실외에서 재시도) ↻');
+      }
+    }
+  };
+
+  // [2] 타임아웃 + 자동 재시도 + 비상 3일 폴백이 적용된 메인 날씨 수신
+  window.fetchPrimaryAlpineWeather = async function(lat, lng) {
+    const buildUrl = (days) => {
+      const params = new URLSearchParams({
+        latitude: lat,
+        longitude: lng,
+        current: 'temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain,showers,snowfall,weather_code,cloud_cover',
+        hourly: 'temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,rain,showers,precipitation_probability,weather_code,cloud_cover,dew_point_2m',
+        daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,sunrise,sunset',
+        timezone: 'Asia/Seoul',
+        wind_speed_unit: 'ms',
+        precipitation_unit: 'mm',
+        forecast_days: String(days)
+      });
+      return `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+    };
+
+    try {
+      return await fetchJsonWithRetry(buildUrl(8), 6500, 1);
+    } catch (e) {
+      try {
+        return await fetchJsonWithRetry(buildUrl(3), 5500, 0);
+      } catch (e2) {
+        return null;
+      }
+    }
+  };
+
+  window.fetchAirQualityData = async function(lat, lng) {
+    try {
+      const params = new URLSearchParams({
+        latitude: lat,
+        longitude: lng,
+        current: 'pm10,pm2_5',
+        hourly: 'pm10,pm2_5',
+        timezone: 'Asia/Seoul',
+        forecast_days: '2'
+      });
+      return await fetchJsonWithRetry(`https://air-quality-api.open-meteo.com/v1/air-quality?${params.toString()}`, 4500, 0);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  window.fetchEnsembleDailyWeather = async function(lat, lng) {
+    try {
+      const params = new URLSearchParams({
+        latitude: lat,
+        longitude: lng,
+        daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max',
+        models: 'ecmwf_ifs025,gfs_seamless,icon_seamless',
+        timezone: 'Asia/Seoul',
+        wind_speed_unit: 'ms',
+        forecast_days: '8'
+      });
+      return await fetchJsonWithRetry(`https://api.open-meteo.com/v1/forecast?${params.toString()}`, 6000, 0);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  // [4] 기상청 초단기예보(getUltraSrtFcst, 향후 5~6시간) 병렬 수신
+  function getKmaUltraFcstBaseDateTime() {
+    const now = new Date();
+    if (now.getMinutes() < 45) now.setHours(now.getHours() - 1);
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const h = String(now.getHours()).padStart(2, '0');
+    return { base_date: `${y}${m}${d}`, base_time: `${h}30` };
+  }
+
+  function parseKmaRainString(raw) {
+    if (raw === undefined || raw === null) return 0;
+    const s = String(raw).trim();
+    if (!s || s === '강수없음' || s === '-' || s === '0') return 0;
+    if (s.includes('미만')) return 0.5;
+    if (s.includes('50.0mm 이상')) return 50.0;
+    if (s.includes('30.0~50.0')) return 35.0;
+    const num = parseFloat(s.replace(/[^0-9.]/g, ''));
+    return isNaN(num) ? 0 : num;
+  }
+
+  async function fetchKmaUltraShortForecast(lat, lng) {
+    if (!KMA_SERVICE_KEY || !KMA_SERVICE_KEY.trim()) return null;
+    const grid = convertLatLonToKmaGrid(lat, lng);
+    const dt = getKmaUltraFcstBaseDateTime();
+    const cacheId = `${grid.x}_${grid.y}_${dt.base_date}_${dt.base_time}`;
+
+    try {
+      const rawCache = localStorage.getItem(KMA_FCST_CACHE_KEY);
+      if (rawCache) {
+        const parsed = JSON.parse(rawCache);
+        if (parsed && parsed.id === cacheId && (Date.now() - parsed.ts < 600000)) {
+          return parsed.map;
+        }
+      }
+    } catch (e) {}
+
+    const key = decodeURIComponent(KMA_SERVICE_KEY.trim());
+    const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst?serviceKey=${encodeURIComponent(key)}&pageNo=1&numOfRows=120&dataType=JSON&base_date=${dt.base_date}&base_time=${dt.base_time}&nx=${grid.x}&ny=${grid.y}`;
+
+    const tryFetch = async (target, timeoutMs = 3500) => {
+      const data = await fetchJsonWithRetry(target, timeoutMs, 0);
+      const items = data?.response?.body?.items?.item;
+      if (!Array.isArray(items)) throw new Error('Invalid KMA Fcst');
+      return items;
+    };
+
+    try {
+      const items = await Promise.any([
+        tryFetch(url, 3200),
+        tryFetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, 4000),
+        tryFetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, 4000)
+      ]);
+      const map = {};
+      items.forEach(it => {
+        const k = `${it.fcstDate}_${it.fcstTime}`;
+        if (!map[k]) map[k] = {};
+        if (it.category === 'RN1') {
+          map[k].RN1 = parseKmaRainString(it.fcstValue);
+        } else {
+          const v = parseFloat(it.fcstValue);
+          if (!isNaN(v)) map[k][it.category] = v;
+        }
+      });
+      try {
+        localStorage.setItem(KMA_FCST_CACHE_KEY, JSON.stringify({ id: cacheId, ts: Date.now(), map }));
+      } catch (e) {}
+      return map;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getKmaFcstSlotForDate(dateObj) {
+    if (!latestKmaFcstMap || !dateObj || isNaN(dateObj.getTime())) return null;
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const d = String(dateObj.getDate()).padStart(2, '0');
+    const h = String(dateObj.getHours()).padStart(2, '0');
+    return latestKmaFcstMap[`${y}${m}${d}_${h}00`] || null;
+  }
+
+  // [4] 마그누스-테텐스 정밀 이슬점 계산 (KMA 실측 습도·기온과 운저고도 완벽 일치)
+  function calcMagnusDewPoint(tempC, rhPercent) {
+    const r = Math.max(5, Math.min(100, rhPercent));
+    const gamma = (17.625 * tempC) / (243.04 + tempC) + Math.log(r / 100);
+    return parseFloat(((243.04 * gamma) / (17.625 - gamma)).toFixed(1));
+  }
+
+  // [4] 실제 해발고도 비례 지형성 강수 보정 (저산 과대증폭 해결)
+  window.calculateSummitPrecipitation = function(rawRain, summitAlt, targetAlt, lclHeight, rh, windSpeed, rawCode = 0) {
+    const isRainCode = (rawCode >= 50 && rawCode <= 69) || (rawCode >= 80 && rawCode <= 82) || (rawCode >= 95 && rawCode <= 99);
+    if (rawRain <= 0.0 && !isRainCode) return 0.0;
+    const effectiveBaseRain = rawRain > 0 ? rawRain : 0.2;
+    const elevFactor = Math.min(1.0, Math.max(0, targetAlt) / 1500);
+    const windBoost = Math.min(1.5, 1.0 + Math.max(0, windSpeed - 2.0) * 0.035);
+    const boosted = effectiveBaseRain * (1.0 + elevFactor * 0.45 * windBoost);
+    return parseFloat(Math.max(0.1, boosted).toFixed(1));
+  };
+
+  // [4] 동적 기온 감률 + 기상청 공식 동/하절기 체감온도 + 실제 돌풍 모델 반영
+  window.evaluateAltitudePhysics = function(targetAlt, summitAlt, baseParams, lclHeight, isSummit = false, isNight = false) {
+    const p = baseParams;
+    const z0 = p.trailheadEle !== undefined ? p.trailheadEle : Math.min(300, Math.round(summitAlt * 0.15));
+    const hour = p.slotHour !== undefined ? p.slotHour : 12;
+
+    // 맑은 낮(건조단열 근접) vs 흐림/우천(습윤단열 근접) 동적 기온 감률
+    let lapseEnv = 0.0065;
+    if (p.rawRain > 0 || p.baseGroundRH >= 85 || p.totalCloud >= 80) {
+      lapseEnv = 0.0054;
+    } else if (hour >= 10 && hour <= 16 && p.totalCloud < 35 && !isNight) {
+      lapseEnv = 0.0072;
+    }
+
+    const isDawnInversion = (hour >= 4 && hour <= 8) && (p.totalCloud < 35) && (p.baseGroundWind <= 2.5);
+    const inversionBonus = isDawnInversion ? Math.min(1.6, (Math.max(0, targetAlt - z0) / 380) * 1.1) : 0;
+
+    let t;
+    if (targetAlt <= z0) {
+      t = p.baseGroundTemp;
+    } else if (targetAlt <= lclHeight) {
+      t = p.baseGroundTemp - ((targetAlt - z0) * lapseEnv) + inversionBonus;
+    } else {
+      const tempAtLCL = p.baseGroundTemp - (Math.max(0, lclHeight - z0) * lapseEnv) + inversionBonus;
+      const lapseMoist = Math.max(0.0045, 0.0053 - 0.00005 * (tempAtLCL - 10));
+      t = tempAtLCL - ((targetAlt - lclHeight) * lapseMoist);
+    }
+    t = parseFloat(t.toFixed(1));
+
+    let rh;
+    if (targetAlt >= lclHeight) {
+      rh = Math.min(100, Math.round(92 + Math.min(8, (targetAlt - lclHeight) * 0.015)));
+    } else {
+      rh = Math.min(93, Math.max(15, Math.round(p.baseGroundRH + (Math.max(0, targetAlt - z0) / 100) * 1.5)));
+    }
+
+    const windDirInfo = getWindDirectionInfo(p.windDir ?? 270);
+    const zRatio = Math.max(0, Math.min(1.0, targetAlt / Math.max(1, summitAlt)));
+    const elevWindScale = Math.min(0.85, (summitAlt / 1600) * 0.85);
+    const currentDeltaS = elevWindScale * (0.25 + 0.75 * zRatio) * windDirInfo.factor;
+    const w = parseFloat(Math.max(0.5, p.baseGroundWind * (1 + currentDeltaS)).toFixed(1));
+    const modelGustScaled = (p.rawGust || (w * 1.5)) * (0.78 + 0.32 * zRatio);
+    const g = parseFloat(Math.max(w * 1.4, modelGustScaled).toFixed(1));
+
+    const wetBulb = calculateWetBulbTemp(t, rh);
+    const vKmh = w * 3.6;
+    let feel = t;
+    if (t <= 10.0) {
+      // 기상청 동절기 체감온도 공식 (10°C 이하)
+      if (vKmh > 4.8) {
+        feel = 13.12 + 0.6215 * t - 11.37 * Math.pow(vKmh, 0.16) + 0.3965 * t * Math.pow(vKmh, 0.16);
+      }
+    } else {
+      // 기상청 하절기/온난기 체감온도 공식 (습구온도 기반 + 능선 바람 냉각 보정)
+      feel = -0.2442 + 0.55399 * wetBulb + 0.45535 * t - 0.0022 * Math.pow(wetBulb, 2) + 0.00278 * wetBulb * t + 3.0;
+      if (w >= 2.5) {
+        feel -= Math.min(2.8, (w - 2.0) * 0.28);
+      }
+    }
+    feel = parseFloat(feel.toFixed(1));
+
+    const calculatedRain = window.calculateSummitPrecipitation(p.rawRain, summitAlt, targetAlt, lclHeight, rh, w, p.rawCode);
+    const isRainCode = (p.rawCode >= 50 && p.rawCode <= 69) || (p.rawCode >= 80 && p.rawCode <= 82) || (p.rawCode >= 95 && p.rawCode <= 99);
+    const isRealRain = (calculatedRain >= 0.1 || isRainCode);
+    const isSnow = ((p.rawCode >= 70 && p.rawCode <= 79) || (p.rawCode >= 85 && p.rawCode <= 86)) || (isRealRain && wetBulb <= 0.0);
+    const isFogCode = (p.rawCode >= 45 && p.rawCode <= 48);
+    const isGomtang = (targetAlt >= lclHeight) && (p.totalCloud >= 60 || p.rawCode >= 3 || isRealRain || rh >= 95);
+    const isScatteredCloud = (p.totalCloud >= 20 && p.totalCloud < 60) || p.rawCode === 1 || p.rawCode === 2;
+    const aq = p.airQuality || getAirQualityState(0);
+
+    let statusText = isNight ? '시야 쾌청 (야간 🌙)' : '시야 쾌청 ☀️';
+    let statusBg = 'rgba(48, 209, 88, 0.2)';
+    let statusBorder = 'rgba(48, 209, 88, 0.35)';
+    let statusColor = 'var(--accent-green)';
+    let sceneMode = isNight ? 'scene-clear-night' : 'scene-clear-day';
+    let slotIcon = isNight ? '🌙' : '☀️';
+
+    if (isSnow) {
+      statusText = `강설/눈 (${calculatedRain}mm ❄️)`;
+      statusBg = 'rgba(174, 232, 255, 0.25)';
+      statusBorder = 'rgba(174, 232, 255, 0.5)';
+      statusColor = 'var(--accent-ice)';
+      sceneMode = 'scene-cloudy';
+      slotIcon = '❄️';
+    } else if (isRealRain) {
+      statusText = calculatedRain <= 0.3 ? `약한 비/빗방울 (${calculatedRain}mm 🌦️)` : `산악 강우 (${calculatedRain}mm 🌧️)`;
+      statusBg = 'rgba(255, 69, 58, 0.25)';
+      statusBorder = 'rgba(255, 69, 58, 0.5)';
+      statusColor = 'var(--accent-red)';
+      sceneMode = 'scene-rain';
+      slotIcon = '🌧️';
+    } else if (isGomtang || isFogCode) {
+      statusText = '사방 곰탕 (운무 갇힘 🌫️)';
+      statusBg = 'rgba(165, 180, 252, 0.22)';
+      statusBorder = 'rgba(165, 180, 252, 0.45)';
+      statusColor = 'var(--accent-gomtang)';
+      sceneMode = 'scene-gomtang';
+      slotIcon = '🌫️';
+    } else if (g >= 13.0) {
+      statusText = '능선 강풍 주의 💨';
+      statusBg = 'rgba(255, 159, 10, 0.25)';
+      statusBorder = 'rgba(255, 159, 10, 0.5)';
+      statusColor = 'var(--accent-amber)';
+      sceneMode = isNight ? 'scene-clear-night' : 'scene-clear-day';
+      slotIcon = '💨';
+    } else if (p.totalCloud >= 60 || p.rawCode === 3) {
+      statusText = isNight ? '구름 많음 (야간 ☁️)' : '구름 많음 (흐림 ☁️)';
+      statusBg = 'rgba(255, 255, 255, 0.08)';
+      statusBorder = 'rgba(255, 255, 255, 0.18)';
+      statusColor = 'rgba(235, 235, 245, 0.9)';
+      sceneMode = 'scene-cloudy';
+      slotIcon = '☁️';
+    } else if (isScatteredCloud) {
+      if (Math.abs(lclHeight - targetAlt) <= 200) {
+        statusText = '운무 스침 (시야 변동 ⛅)';
+        statusBg = 'rgba(165, 180, 252, 0.18)';
+        statusBorder = 'rgba(165, 180, 252, 0.35)';
+        statusColor = 'var(--accent-gomtang)';
+        sceneMode = 'scene-cloudy';
+        slotIcon = '⛅';
+      } else {
+        statusText = isNight ? '시야 양호 (구름 사이 달빛 🌙⛅)' : (aq.isHaze ? '구름 조금 · 미세먼지 연무 😷' : '조망 양호 (뜬구름 ⛅)');
+        statusBg = aq.isHaze ? 'rgba(255, 159, 10, 0.2)' : 'rgba(44, 229, 255, 0.15)';
+        statusBorder = aq.isHaze ? 'rgba(255, 159, 10, 0.4)' : 'rgba(44, 229, 255, 0.35)';
+        statusColor = aq.isHaze ? 'var(--accent-amber)' : 'var(--accent-cyan)';
+        sceneMode = isNight ? 'scene-clear-night' : 'scene-cloudy';
+        slotIcon = isNight ? '🌙' : '⛅';
+      }
+    } else if (aq.isHaze && !isNight) {
+      statusText = '맑으나 미세먼지 연무 😷';
+      statusBg = 'rgba(255, 159, 10, 0.2)';
+      statusBorder = 'rgba(255, 159, 10, 0.45)';
+      statusColor = 'var(--accent-amber)';
+    }
+
+    const baseOptical = isRealRain ? 20 : (isGomtang ? 42 : 98);
+    const opticalTransmittance = Math.max(15, baseOptical - aq.opticalPenalty);
+
+    return {
+      alt: targetAlt, z0, temp: t, feel, wetBulb, humidity: Math.max(isRealRain ? 90 : 25, rh), wind: w, gust: g,
+      windDir: p.windDir ?? 270,
+      windDirName: windDirInfo.name, windDirArrow: windDirInfo.arrow,
+      rain: calculatedRain, statusText, statusBg, statusBorder, statusColor,
+      sceneMode, slotIcon, isRealRain, isSnow, isGomtang, isScatteredCloud, isDawnInversion,
+      aq, opticalTransmittance
+    };
+  };
+
+  // [4] KMA 실황 + KMA 초단기예보 + 레이더 에코 정밀 융합 (현재 시간대 다음시간 비 오탐 제거)
+  window.resolveSlotRainAndCode = function(o, dI, h, kmaObs, slotDate = null) {
+    const codeArr = extractModelArray(h, 'weather_code');
+    const precipArr = extractModelArray(h, 'precipitation');
+    const rainArr = extractModelArray(h, 'rain');
+    const showersArr = extractModelArray(h, 'showers');
+    const cloudArr = extractModelArray(h, 'cloud_cover');
+
+    let wC = codeArr[dI] ?? 0;
+    let pVal = Math.max(precipArr[dI] ?? 0, rainArr[dI] ?? 0, showersArr[dI] ?? 0);
+    let cVal = cloudArr[dI] ?? 20;
+
+    if (o === 0) {
+      const cur = liveWeatherData?.current;
+      if (cur) {
+        const curPrecip = Math.max(cur.precipitation ?? 0, cur.rain ?? 0, cur.showers ?? 0);
+        if (curPrecip > pVal) pVal = curPrecip;
+        if ((cur.weather_code >= 50 && cur.weather_code <= 99) && wC < 50) wC = cur.weather_code;
+        if (cur.cloud_cover !== undefined) cVal = cur.cloud_cover;
+      }
+
+      if (currentMountainRadarEcho && currentMountainRadarEcho.hasEcho) {
+        pVal = Math.max(pVal, currentMountainRadarEcho.estRainMm);
+        if (wC < 50) wC = 61;
+      }
+
+      if (kmaObs) {
+        const kmaPty = kmaObs.PTY ?? 0;
+        const kmaRn1 = kmaObs.RN1 ?? 0;
+        if (kmaPty > 0 || kmaRn1 > 0) {
+          wC = (kmaPty === 3 || kmaPty === 7) ? 71 : 61;
+          pVal = Math.max(pVal, kmaRn1 > 0 ? kmaRn1 : (kmaPty === 5 ? 0.2 : 0.5));
+        } else if (kmaPty === 0 && kmaRn1 === 0 && (!currentMountainRadarEcho || !currentMountainRadarEcho.hasEcho)) {
+          // 기상청 실측 무강수 + 레이더 에코 없음 시 모델 미세 이슬비 노이즈 제거
+          if (pVal < 0.45) {
+            pVal = 0.0;
+            if (wC >= 50 && wC <= 69) wC = cVal >= 60 ? 3 : (cVal >= 25 ? 2 : 0);
+          }
+        }
+      }
+    } else if (slotDate) {
+      const kFcst = getKmaFcstSlotForDate(slotDate);
+      if (kFcst) {
+        if (kFcst.SKY === 1) cVal = Math.min(cVal, 15);
+        else if (kFcst.SKY === 3) cVal = Math.max(45, Math.min(72, Math.round((cVal + 62) / 2)));
+        else if (kFcst.SKY === 4) cVal = Math.max(cVal, 85);
+
+        const fPty = kFcst.PTY ?? 0;
+        const fRn1 = kFcst.RN1 ?? 0;
+        if (fPty > 0 || fRn1 > 0) {
+          wC = (fPty === 3 || fPty === 7) ? 71 : 61;
+          pVal = Math.max(pVal, fRn1 > 0 ? fRn1 : 0.3);
+        } else if (fPty === 0 && fRn1 === 0 && pVal < 0.4) {
+          pVal = 0.0;
+          if (wC >= 50 && wC <= 69) wC = cVal >= 60 ? 3 : (cVal >= 25 ? 2 : 0);
+        }
+      }
+    }
+
+    return { wC, pVal, cVal };
+  };
+
+  function buildFusedGroundParams(o, dI, h, kmaObs, slotDate) {
+    const tempArr = extractModelArray(h, 'temperature_2m');
+    const rhArr = extractModelArray(h, 'relative_humidity_2m');
+    const dpArr = extractModelArray(h, 'dew_point_2m');
+    const windArr = extractModelArray(h, 'wind_speed_10m');
+    const gustArr = extractModelArray(h, 'wind_gusts_10m');
+    const windDirArr = extractModelArray(h, 'wind_direction_10m');
+
+    const { gridEle, trailheadEle } = getTerrainReferenceElevations(currentMt.ele);
+    const rawTemp = tempArr[dI] ?? 14.0;
+    const rawRH = rhArr[dI] ?? 65;
+    const rawDP = dpArr[dI] ?? calcMagnusDewPoint(rawTemp, rawRH);
+    const rawWind = windArr[dI] ?? 2.5;
+    const rawGust = gustArr[dI] ?? (rawWind * 1.55);
+    let wDir = windDirArr[dI] ?? 270;
+
+    let baseGroundTemp = rawTemp + ((gridEle - trailheadEle) * 0.0065);
+    let baseGroundRH = Math.max(20, Math.min(100, Math.round(rawRH)));
+    let baseGroundWind = Math.max(0.8, parseFloat((rawWind * 0.85).toFixed(1)));
+    let usedKmaHumidityOrTemp = false;
+
+    const curIdx = findCurrentHourIndex(h);
+    let kmaBiasT = 0;
+    if (kmaObs && kmaObs.T1H !== undefined && tempArr[curIdx] !== undefined) {
+      const modelCurTrailT = tempArr[curIdx] + ((gridEle - trailheadEle) * 0.0065);
+      kmaBiasT = Math.max(-4.5, Math.min(4.5, kmaObs.T1H - modelCurTrailT));
+    }
+
+    if (o === 0 && kmaObs) {
+      if (kmaObs.T1H !== undefined) {
+        baseGroundTemp += kmaBiasT;
+        usedKmaHumidityOrTemp = true;
+      }
+      if (kmaObs.REH !== undefined) {
+        baseGroundRH = Math.max(15, Math.min(100, Math.round(kmaObs.REH)));
+        usedKmaHumidityOrTemp = true;
+      }
+      if (kmaObs.WSD !== undefined) {
+        baseGroundWind = Math.max(0.8, parseFloat(kmaObs.WSD.toFixed(1)));
+      }
+      if (kmaObs.VEC !== undefined) wDir = kmaObs.VEC;
+    } else {
+      const kFcst = getKmaFcstSlotForDate(slotDate);
+      if (kFcst) {
+        if (kFcst.T1H !== undefined) {
+          const fcstBias = Math.max(-4.5, Math.min(4.5, kFcst.T1H - baseGroundTemp));
+          baseGroundTemp += fcstBias * 0.85;
+          usedKmaHumidityOrTemp = true;
+        }
+        if (kFcst.REH !== undefined) {
+          baseGroundRH = Math.max(15, Math.min(100, Math.round(kFcst.REH * 0.8 + baseGroundRH * 0.2)));
+          usedKmaHumidityOrTemp = true;
+        }
+        if (kFcst.WSD !== undefined) {
+          baseGroundWind = Math.max(0.8, parseFloat((kFcst.WSD * 0.75 + baseGroundWind * 0.25).toFixed(1)));
+        }
+        if (kFcst.VEC !== undefined) wDir = kFcst.VEC;
+      } else if (kmaBiasT !== 0) {
+        const decayWeight = Math.max(0, 1 - (o * 0.25));
+        baseGroundTemp += kmaBiasT * decayWeight;
+        usedKmaHumidityOrTemp = true;
+      }
+    }
+
+    const baseDewPoint = usedKmaHumidityOrTemp
+      ? calcMagnusDewPoint(baseGroundTemp, baseGroundRH)
+      : (rawDP + ((gridEle - trailheadEle) * 0.0020));
+
+    const { wC, pVal, cVal } = window.resolveSlotRainAndCode(o, dI, h, kmaObs, slotDate);
+
+    return {
+      trailheadEle, gridEle,
+      slotHour: slotDate ? slotDate.getHours() : 12,
+      windDir: wDir,
+      baseGroundTemp, baseDewPoint, baseGroundRH, baseGroundWind,
+      rawTemp, rawRH, rawWind, rawGust,
+      rawRain: pVal, rawCode: wC, totalCloud: cVal,
+      airQuality: getAirQualityState(o)
+    };
+  }
+
+  window.renderLiveForecastTrack = function(h, kmaObs = null) {
+    const t = document.getElementById('forecast-track');
+    if (!t || !h) return;
+    const frag = document.createDocumentFragment();
+    const curIdx = findCurrentHourIndex(h);
+
+    let sR_hour = 6, sS_hour = 18;
+    if (liveWeatherData?.daily?.sunrise?.[0]) sR_hour = parseIsoDateSafe(liveWeatherData.daily.sunrise[0], new Date()).getHours();
+    if (liveWeatherData?.daily?.sunset?.[0]) sS_hour = parseIsoDateSafe(liveWeatherData.daily.sunset[0], new Date()).getHours();
+
+    for (let o = 0; o < 12; o++) {
+      const dI = curIdx + o;
+      const tT = h?.time?.[dI] ? parseIsoDateSafe(h.time[dI], new Date(Date.now() + o * 3600000)) : new Date(Date.now() + o * 3600000);
+      const tH = tT.getHours();
+      const hS = `${tH < 10 ? '0' : ''}${tH}:00`;
+      const lb = (o === 0) ? '현재' : `+${o}h`;
+
+      const fused = buildFusedGroundParams(o, dI, h, kmaObs, tT);
+      const slotLCL = calculateOrographicLCL(fused.baseGroundTemp, fused.baseDewPoint, currentMt.ele, fused.trailheadEle);
+      const isNightSlot = (tH < sR_hour || tH >= sS_hour);
+      const slotState = window.evaluateAltitudePhysics(currentMt.ele, currentMt.ele, fused, slotLCL, true, isNightSlot);
+
+      const sl = document.createElement('div');
+      sl.className = `time-slot ${o === selectedHourOffset ? 'active' : ''}`;
+      sl.innerHTML = `<div class="slot-label">${lb}</div><div class="slot-time">${hS}</div><div class="slot-icon">${slotState.slotIcon}</div><div class="slot-temp">${Math.round(slotState.temp)}°</div>`;
+      sl.onclick = () => window.selectForecastHour(o, dI, tH, hS, tT, kmaObs);
+      frag.appendChild(sl);
+    }
+    t.innerHTML = '';
+    t.appendChild(frag);
+  };
+
+  window.selectForecastHour = function(o, dI, tH, hS, tT, kmaObs = null) {
+    selectedHourOffset = o;
+    document.querySelectorAll('.time-slot').forEach((s, i) => s.classList.toggle('active', i === o));
+
+    let sR_hour = 6, sS_hour = 18;
+    if (liveWeatherData?.daily?.sunrise?.[0]) sR_hour = parseIsoDateSafe(liveWeatherData.daily.sunrise[0], new Date()).getHours();
+    if (liveWeatherData?.daily?.sunset?.[0]) sS_hour = parseIsoDateSafe(liveWeatherData.daily.sunset[0], new Date()).getHours();
+    const iN = (tH >= sS_hour || tH < sR_hour);
+
+    if (!liveWeatherData || !liveWeatherData.hourly) return;
+    const h = liveWeatherData.hourly;
+    const fused = buildFusedGroundParams(o, dI, h, kmaObs, tT);
+    const effectiveLCL = calculateOrographicLCL(fused.baseGroundTemp, fused.baseDewPoint, currentMt.ele, fused.trailheadEle);
+    const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, tT);
+    const summitState = window.evaluateAltitudePhysics(currentMt.ele, currentMt.ele, fused, effectiveLCL, true, iN);
+
+    activeForecastRes = {
+      _summitState: summitState,
+      _rawParams: fused,
+      effectiveCloudBase: effectiveLCL,
+      sunSafety: sunInfo
+    };
+    if (o === 0) baseLiveCurrentRes = activeForecastRes;
+    updateAlpineWeatherHUD(activeForecastRes, hS, iN);
+
+    // 현재 산 날씨에 맞춰 쿠팡 추천 키워드 자동 동기화 (사용자가 직접 탭을 고르지 않은 경우)
+    if (o === 0 && !userPickedCoupangTab) {
+      const autoKw = pickWeatherAdaptiveCoupangKeyword(summitState);
+      if (autoKw !== currentCoupangKeyword) {
+        currentCoupangKeyword = autoKw;
+        loadCoupangProducts(autoKw, false);
+      }
+    }
+  };
+
+  // [2+4] 고속 다중캐시 + 재시도 + KMA 실황/초단기예보 통합 selectMountain
+  window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = null, dK = null) {
+    const fetchId = ++currentFetchId;
+
+    if (!lt || !lg || isNaN(lt) || isNaN(lg)) {
+      const dbMatch = mountainDB.find(m => m.name === n || m.peak === n || n.includes(m.name) || m.name.includes(n));
+      if (dbMatch) {
+        lt = dbMatch.lat; lg = dbMatch.lng; e = dbMatch.ele || e;
+      } else {
+        lt = 35.2847; lg = 129.0566;
+      }
+    }
+
+    currentMt = { name: n, ele: e, type: t, lat: lt, lng: lg, distanceKm: dK };
+    selectedHourOffset = 0;
+    currentMountainRadarEcho = { hasEcho: false, estRainMm: 0.0 };
+    latestKmaFcstMap = null;
+
+    renderFavoritesChips(cachedNearestList);
+    setTxt('card-peak-title', n);
+    setTxt('card-peak-desc', `해발 ${e}m · 정상부 분석`);
+
+    const cached = loadMultiMountainCache(n);
+    if (cached && cached.primData && cached.primData.hourly) {
+      liveWeatherData = cached.primData;
+      if (cached.aqData) liveAirQualityData = cached.aqData;
+      if (cached.kmaFcst) latestKmaFcstMap = cached.kmaFcst;
+      renderFullAlpineWeather(liveWeatherData, e, cached.kmaObs || null);
+      if (currentForecastView === 'weekly') render7DayWeeklyTrack(liveWeatherData);
+      setTxt('clock-live', `⚡ 캐시 즉시 표시 (${cached.savedTime}) · 갱신 중... ↻`);
+    } else {
+      setTxt('brief-temp', '--°');
+      setTxt('card-status-pill', '기상 수신 중...');
+      setTxt('clock-live', '실시간 산악 기상 동기화 중... ↻');
+    }
+
+    const primData = await window.fetchPrimaryAlpineWeather(lt, lg);
+    if (fetchId !== currentFetchId) return;
+
+    const liveDot = document.getElementById('brand-live-dot');
+    let latestKmaObs = cached?.kmaObs || null;
+
+    if (primData && primData.hourly) {
+      if (liveDot) liveDot.className = 'brand-dot';
+      liveWeatherData = primData;
+      lastLiveFetchMeta = { name: n, ts: Date.now() };
+      renderFullAlpineWeather(liveWeatherData, e, latestKmaObs);
+      if (currentForecastView === 'weekly') render7DayWeeklyTrack(liveWeatherData);
+      saveMultiMountainCache(currentMt, liveWeatherData, latestKmaObs, latestKmaFcstMap, liveAirQualityData);
+      const nw = new Date();
+      setTxt('clock-live', `실시간 위성 연동 · ${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')} ↻`);
+    } else if (cached && cached.primData && cached.primData.hourly) {
+      if (liveDot) liveDot.className = 'brand-dot offline';
+      liveWeatherData = cached.primData;
+      renderFullAlpineWeather(liveWeatherData, e, cached.kmaObs || null);
+      setTxt('clock-live', `📡 통신 지연 · 캐시 표시 (${cached.savedTime}) · 터치 재시도 ↻`);
+      return;
+    } else {
+      if (liveDot) liveDot.className = 'brand-dot offline';
+      setTxt('card-status-pill', '통신 지연 (터치 재시도)');
+      setTxt('clock-live', '⚠️ 수신 실패 · 여기를 터치해 재시도 ↻');
+      return;
+    }
+
+    // 보조 센서들은 메인 기상 표출 완료 후 비동기 병렬 수신
+    window.fetchAirQualityData(lt, lg).then(aqData => {
+      if (fetchId !== currentFetchId || !aqData || !liveWeatherData) return;
+      liveAirQualityData = aqData;
+      renderFullAlpineWeather(liveWeatherData, e, latestKmaObs);
+      saveMultiMountainCache(currentMt, liveWeatherData, latestKmaObs, latestKmaFcstMap, liveAirQualityData);
+    });
+
+    scanRealtimeRadarEchoAtPeak(lt, lg).then(radarEcho => {
+      if (fetchId !== currentFetchId || !radarEcho || !liveWeatherData) return;
+      currentMountainRadarEcho = radarEcho;
+      if (radarEcho.hasEcho) {
+        renderFullAlpineWeather(liveWeatherData, e, latestKmaObs);
+      }
+    });
+
+    // 기상청 실황 + 초단기예보 동시 수신
+    Promise.allSettled([
+      fetchKmaRealtimeObservation(lt, lg),
+      fetchKmaUltraShortForecast(lt, lg)
+    ]).then(([ncstRes, fcstRes]) => {
+      if (fetchId !== currentFetchId || !liveWeatherData) return;
+      let updated = false;
+      if (ncstRes.status === 'fulfilled' && ncstRes.value) {
+        latestKmaObs = ncstRes.value;
+        updated = true;
+      }
+      if (fcstRes.status === 'fulfilled' && fcstRes.value) {
+        latestKmaFcstMap = fcstRes.value;
+        updated = true;
+      }
+      if (updated) {
+        renderFullAlpineWeather(liveWeatherData, e, latestKmaObs);
+        saveMultiMountainCache(currentMt, liveWeatherData, latestKmaObs, latestKmaFcstMap, liveAirQualityData);
+        const nw = new Date();
+        setTxt('clock-live', `기상청·레이더 실시간 연동 · ${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')} ↻`);
+      }
+    });
+
+    window.fetchEnsembleDailyWeather(lt, lg).then(ensData => {
+      if (fetchId !== currentFetchId) return;
+      if (ensData && ensData.daily && liveWeatherData) {
+        liveWeatherData.daily = { ...liveWeatherData.daily, ...ensData.daily };
+        if (currentForecastView === 'weekly') render7DayWeeklyTrack(liveWeatherData);
+      }
+    });
+  };
+
+  window.refreshCurrentMountain = function() {
+    if (navigator.vibrate) navigator.vibrate(10);
+    try {
+      localStorage.removeItem(KMA_GRID_CACHE_KEY);
+      localStorage.removeItem(KMA_FCST_CACHE_KEY);
+    } catch (e) {}
+    window.selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
+  };
+
+  // =========================================================================
+  // [3] 대한초밥 바로 아래 쿠팡 파트너스 맞춤 장비 추천 위젯
+  // =========================================================================
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function pickWeatherAdaptiveCoupangKeyword(st) {
+    if (!st) return '등산용품 추천';
+    if (st.isSnow || st.wetBulb <= 0.0) return '등산 아이젠 방한장갑';
+    if (st.isRealRain) return '등산 우비 레인커버';
+    if (st.feel <= 5) return '등산 경량패딩 방한용품';
+    if (st.gust >= 11.0) return '등산 바람막이 자켓';
+    if (st.feel >= 23) return '등산 쿨토시 기능성티셔츠';
+    if (st.aq && st.aq.isHaze) return '등산 미세먼지 마스크';
+    return '등산용품 추천';
+  }
+
+  function extractCoupangProducts(raw) {
+    let list = [];
+    if (Array.isArray(raw)) list = raw;
+    else if (Array.isArray(raw?.data?.productData)) list = raw.data.productData;
+    else if (Array.isArray(raw?.productData)) list = raw.productData;
+    else if (Array.isArray(raw?.data)) list = raw.data;
+    else if (Array.isArray(raw?.products)) list = raw.products;
+    else if (Array.isArray(raw?.items)) list = raw.items;
+
+    return list.map(p => ({
+      name: p.productName || p.title || p.name || '추천 등산 장비',
+      price: Number(p.productPrice ?? p.price ?? 0),
+      image: p.productImage || p.image || p.imageUrl || p.thumbnail || '',
+      url: p.productUrl || p.url || p.link || '',
+      isRocket: Boolean(p.isRocket || p.rocket || p.rocketDelivery)
+    })).filter(p => p.url);
+  }
+
+  function mountCoupangWidgetBelowAd() {
+    if (document.getElementById('statlab-coupang-box')) return;
+    const adBanner = document.querySelector('.ad-banner-container');
+    if (!adBanner) return;
+
+    const cats = [
+      { id: 'auto', label: '🎯 날씨맞춤' },
+      { id: '등산화', label: '🥾 등산화' },
+      { id: '등산스틱', label: '🦯 등산스틱' },
+      { id: '등산 바람막이', label: '🧥 바람막이' },
+      { id: '등산배낭', label: '🎒 등산배낭' },
+      { id: '등산 행동식', label: '🍫 행동식' }
+    ];
+
+    const html = `
+      <div id="statlab-coupang-box" class="coupang-gear-section">
+        <div class="coupang-header">
+          <div class="coupang-title-wrap">
+            <span class="coupang-title">🛒 오늘 산행 맞춤 장비 추천</span>
+            <span class="coupang-ad-tag">쿠팡 파트너스</span>
+          </div>
+          <span id="coupang-active-kw" class="coupang-kw-badge">#등산용품 추천</span>
+        </div>
+        <div class="coupang-cat-row" id="coupang-cat-row">
+          ${cats.map((c, idx) => `<button class="coupang-cat-btn ${idx === 0 ? 'active' : ''}" data-kw="${c.id}" onclick="window.selectStatlabCoupangCat('${c.id}', this)">${c.label}</button>`).join('')}
+        </div>
+        <div id="coupang-product-track" class="coupang-track">
+          <div class="coupang-status-box">⏳ 산행 맞춤 장비를 불러오는 중입니다...</div>
+        </div>
+        <div class="coupang-notice">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</div>
+      </div>
+    `;
+    adBanner.insertAdjacentHTML('afterend', html);
+  }
+
+  async function loadCoupangProducts(keyword, forceRefresh = false) {
+    mountCoupangWidgetBelowAd();
+    const track = document.getElementById('coupang-product-track');
+    const kwEl = document.getElementById('coupang-active-kw');
+    if (kwEl) kwEl.innerText = `#${keyword}`;
+    if (!track) return;
+
+    const cached = COUPANG_MEM_CACHE[keyword];
+    if (!forceRefresh && cached && (Date.now() - cached.ts < 1800000)) {
+      renderCoupangCards(cached.items, keyword);
+      return;
+    }
+
+    track.innerHTML = `<div class="coupang-status-box">⏳ '${escapeHtml(keyword)}' 인기 상품 조회 중...</div>`;
+
+    try {
+      const url = `${COUPANG_WORKER_URL}/?keyword=${encodeURIComponent(keyword)}&limit=6`;
+      const data = await fetchJsonWithRetry(url, 6000, 1);
+      const items = extractCoupangProducts(data).slice(0, 6);
+      if (items.length > 0) {
+        COUPANG_MEM_CACHE[keyword] = { items, ts: Date.now() };
+      }
+      renderCoupangCards(items, keyword);
+    } catch (e) {
+      track.innerHTML = `
+        <div class="coupang-status-box">
+          상품을 불러오지 못했습니다.
+          <button onclick="window.reloadStatlabCoupang()" style="margin-left:6px; background:rgba(44,229,255,0.2); border:0.5px solid var(--accent-cyan); color:var(--accent-cyan); border-radius:8px; padding:3px 8px; font-size:10.5px; font-weight:700; cursor:pointer;">다시 불러오기 ↻</button>
+        </div>
+      `;
+    }
+  }
+
+  function renderCoupangCards(items, keyword) {
+    const track = document.getElementById('coupang-product-track');
+    if (!track) return;
+    if (!items || items.length === 0) {
+      track.innerHTML = `<div class="coupang-status-box">'${escapeHtml(keyword)}' 추천 상품이 없습니다. 다른 카테고리를 눌러보세요.</div>`;
+      return;
+    }
+    track.innerHTML = items.map(item => {
+      const priceText = item.price > 0 ? `${item.price.toLocaleString('ko-KR')}원` : '가격 확인';
+      const imgHtml = item.image
+        ? `<img class="coupang-thumb" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" loading="lazy" />`
+        : `<span style="font-size:28px;">🎒</span>`;
+      const rocketHtml = item.isRocket ? `<span class="coupang-rocket">🚀 로켓</span>` : '';
+      return `
+        <a class="coupang-card" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">
+          <div class="coupang-thumb-wrap">
+            ${imgHtml}
+            ${rocketHtml}
+          </div>
+          <div class="coupang-info">
+            <div class="coupang-name">${escapeHtml(item.name)}</div>
+            <div class="coupang-price-row">
+              <span class="coupang-price">${priceText}</span>
+              <span class="coupang-go">보기 ❯</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }).join('');
+  }
+
+  window.selectStatlabCoupangCat = function(catKey, btnEl) {
+    document.querySelectorAll('#coupang-cat-row .coupang-cat-btn').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+
+    if (catKey === 'auto') {
+      userPickedCoupangTab = false;
+      const st = (activeForecastRes || baseLiveCurrentRes)?._summitState;
+      currentCoupangKeyword = pickWeatherAdaptiveCoupangKeyword(st);
+    } else {
+      userPickedCoupangTab = true;
+      currentCoupangKeyword = catKey;
+    }
+    loadCoupangProducts(currentCoupangKeyword, false);
+  };
+
+  window.reloadStatlabCoupang = function() {
+    loadCoupangProducts(currentCoupangKeyword, true);
+  };
+
+  // [2] 부팅 시 트래픽 분산 (메인 산 날씨 최우선 -> 1.2초 후 쿠팡 -> 1.8초 후 전국 28개 산 스캔)
+  window.onload = () => {
+    removeFloatingRadarFab();
+    mountCoupangWidgetBelowAd();
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+    renderFavoritesChips();
+
+    const cached = loadMultiMountainCache();
+    if (cached && cached.mt) {
+      currentMt = cached.mt;
+    }
+
+    window.selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng);
+
+    setTimeout(() => {
+      const st = (activeForecastRes || baseLiveCurrentRes)?._summitState;
+      currentCoupangKeyword = pickWeatherAdaptiveCoupangKeyword(st);
+      loadCoupangProducts(currentCoupangKeyword, false);
+    }, 1200);
+
+    setTimeout(() => {
+      if (typeof window.scanStatlabSunnyMountains === 'function') {
+        window.scanStatlabSunnyMountains();
+      }
+    }, 1800);
+
+    setTimeout(() => {
+      if (!userHasManuallySelected) window.triggerGPSMatching(true);
+    }, 800);
+
+    setInterval(() => {
+      if (navigator.onLine) {
+        window.selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm);
+      }
+    }, 300000);
+  };
+})();
+</script>
 </body>
 </html>
