@@ -3,6 +3,9 @@ name: Build and Upload iOS App
 on:
   workflow_dispatch:
 
+env:
+  APP_VERSION: '1.1'
+
 jobs:
   build-ios:
     runs-on: macos-latest
@@ -58,6 +61,8 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :NSLocationWhenInUseUsageDescription '현재 위치 기반 산악 기상 예보 및 등산 경로 안내를 위해 위치 정보가 필요합니다.'" "$INFO_PLIST"
           /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" "$INFO_PLIST" || \
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" "$INFO_PLIST"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $APP_VERSION" "$INFO_PLIST"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $GITHUB_RUN_NUMBER" "$INFO_PLIST"
 
       - name: Install Apple Certificate and Provisioning Profile
         env:
@@ -92,10 +97,14 @@ jobs:
           cat << 'EOF' > set_signing.rb
           pbx = File.read("ios/App/App.xcodeproj/project.pbxproj")
           uuid = ENV["PP_UUID"]
+          app_ver = ENV["APP_VERSION"] || "1.1"
+          build_num = ENV["GITHUB_RUN_NUMBER"] || "2"
           pbx.gsub!(/ProvisioningStyle = Automatic;/, "ProvisioningStyle = Manual;")
           pbx.gsub!(/DEVELOPMENT_TEAM = [^;]*;/, "")
           pbx.gsub!(/CODE_SIGN_IDENTITY = [^;]*;/, "")
           pbx.gsub!(/PROVISIONING_PROFILE_SPECIFIER = [^;]*;/, "")
+          pbx.gsub!(/MARKETING_VERSION = [^;]*;/, "MARKETING_VERSION = #{app_ver};")
+          pbx.gsub!(/CURRENT_PROJECT_VERSION = [^;]*;/, "CURRENT_PROJECT_VERSION = #{build_num};")
           replacement = [
             "CODE_SIGN_STYLE = Manual;",
             "CODE_SIGN_IDENTITY = \"Apple Distribution\";",
@@ -117,6 +126,8 @@ jobs:
             -scheme App \
             -configuration Release \
             -sdk iphoneos \
+            MARKETING_VERSION="$APP_VERSION" \
+            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
             -archivePath "$RUNNER_TEMP/STATLAB.xcarchive" \
             archive
 
