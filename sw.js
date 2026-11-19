@@ -1,4 +1,4 @@
-const CACHE_NAME = 'statlab-commercial-v1';
+const CACHE_NAME = 'statlab-commercial-v2';
 const ASSETS = [
   './',
   './index.html',
