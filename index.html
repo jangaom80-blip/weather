@@ -4232,6 +4232,55 @@ function analyzeHourlyRainScheduleForDay(hourly, dayIdx, ele, gridEle, hasEnsemb
   };
 }
 
+// [v1.3 운해 동기화] 7일 주간 예보에서도 시간 예보와 동일한 v1.3 3중 교차 운해 엔진 직접 호출
+function computeDailyCloudSeaSummary(hourly, dateIso, dayIdx, ele, kmaObs, hasDailyRainSignal) {
+  if (!hourly || !Array.isArray(hourly.time) || !hourly.time.length) {
+    return { score: hasDailyRainSignal ? 8 : 15, state: hasDailyRainSignal ? 'rain' : 'low', peakLabel: '새벽' };
+  }
+
+  const datePrefix = String(dateIso || '').slice(0, 10);
+  let dayStartIdx = datePrefix ? hourly.time.findIndex(t => String(t).startsWith(datePrefix)) : -1;
+  if (dayStartIdx === -1) dayStartIdx = dayIdx * 24;
+
+  const curIdx = findCurrentHourIndex(hourly);
+  const startH = (dayIdx === 0) ? Math.max(5, Math.min(18, curIdx - dayStartIdx)) : 5;
+  const endH = 17;
+
+  let best = null;
+  const evalHourIdx = (dI, hr) => {
+    if (dI < 0 || dI >= hourly.time.length) return;
+    const tT = parseIsoDateSafe(hourly.time[dI], new Date());
+    const offset = Math.max(0, dI - curIdx);
+    const fused = buildFusedGroundParams(offset, dI, hourly, offset === 0 ? kmaObs : null, tT);
+    const lcl = calculateOrographicLCL(fused.kmaTemp, fused.kmaDewPoint, ele, fused.estKmaEle);
+    const isNightSlot = (hr < 6 || hr >= 18);
+    const st = evaluateAltitudePhysics(ele, ele, fused, lcl, true, isNightSlot);
+    const cs = evaluateCloudSeaPhysics(st, fused, lcl, ele);
+    if (!best || cs.score > best.score) {
+      best = {
+        score: cs.score,
+        state: cs.state,
+        peakLabel: (dayIdx === 0 && offset === 0) ? '현재' : `${String(hr).padStart(2, '0')}시`
+      };
+    }
+  };
+
+  if (dayIdx === 0 && (curIdx - dayStartIdx) > endH) {
+    // 오늘 저녁(18시 이후)이면 현재 시각의 실시간 운해 점수와 100% 일치시킴
+    const curHour = parseIsoDateSafe(hourly.time[curIdx], new Date()).getHours();
+    evalHourIdx(curIdx, curHour);
+  } else {
+    for (let hr = startH; hr <= endH; hr++) {
+      evalHourIdx(dayStartIdx + hr, hr);
+    }
+  }
+
+  if (!best) {
+    return { score: hasDailyRainSignal ? 8 : 15, state: hasDailyRainSignal ? 'rain' : 'low', peakLabel: '새벽' };
+  }
+  return best;
+}
+
 function compute7DayAlpineForecast(data, ele) {
   if (!data || !data.daily || !data.daily.time) return [];
   const daily = data.daily, hourly = data.hourly, results = [];
@@ -4272,9 +4321,10 @@ function compute7DayAlpineForecast(data, ele) {
     const hasAnyRain = (hasDailyRainSignal || rainSched.firstRainHour !== null);
     const isWindowHikeableRainDay = (hasAnyRain && rainSched.hasGoodDaytimeWindow);
 
-    const csScore = (!hasAnyRain)
-      ? Math.min(92, Math.max(18, Math.round(80 - ensemblePop + (summitMaxGust <= 8.0 ? 15 : 0))))
-      : (rainSched.stopHourOnSameDay && rainSched.stopHourOnSameDay <= 9 ? 76 : 15);
+    const csSummary = computeDailyCloudSeaSummary(hourly, daily.time[i], i, ele, latestKmaObsGlobal, hasDailyRainSignal);
+    const csScore = csSummary.score;
+    const csState = csSummary.state;
+    const csPeakLabel = csSummary.peakLabel;
 
     let safeScore = 92;
     let sLabel = '🟢 최적', sStyle = 'background:rgba(48,209,88,0.2); color:var(--accent-green);';
@@ -4283,9 +4333,13 @@ function compute7DayAlpineForecast(data, ele) {
     if (!hasAnyRain) {
       safeScore = summitMaxGust >= 14 ? 62 : 94;
       if (safeScore < 75) { sLabel = '🟡 강풍주의'; sStyle = 'background:rgba(255,159,10,0.2); color:var(--accent-amber);'; }
-      plainTitle = csScore >= 75 ? '종일 비 없음 · 특급 운해 기대' : '종일 비 없음 (강수 0.0mm 쾌청)';
+      plainTitle = csScore >= 70
+        ? `종일 비 없음 · 특급 운해 (${csPeakLabel} ${csScore}%)`
+        : (csScore >= 52 ? `종일 비 없음 · 부분 운무 (${csPeakLabel} ${csScore}%)` : '종일 비 없음 (강수 0.0mm 쾌청)');
       plainAction = '🥾 종일 무강수(0.0mm) · 전 시간대 안전 산행 최적';
-      cardMiniBadge = csScore >= 75 ? '🌊 운해+쾌청' : '☀️ 종일 0.0mm';
+      cardMiniBadge = csScore >= 70
+        ? `🌊 운해 ${csScore}% (${csPeakLabel})`
+        : (csScore >= 52 ? `☁️ 운무 ${csScore}% (${csPeakLabel})` : '☀️ 종일 0.0mm');
     } else if (isWindowHikeableRainDay) {
       safeScore = 76;
       sLabel = '🟡 시간제가능';
@@ -4317,7 +4371,7 @@ function compute7DayAlpineForecast(data, ele) {
     results.push({
       idx: i, dayName: i === 0 ? '오늘' : (i === 1 ? '내일' : `${dayName}요일`),
       dateStr, isWeekend: (dateObj.getDay() === 0 || dateObj.getDay() === 6),
-      icon: !hasAnyRain ? (csScore >= 75 ? '🌊' : '☀️') : (isWindowHikeableRainDay ? '🌦️' : (summitPrecip >= 10 ? '⛈️' : '🌧️')),
+      icon: !hasAnyRain ? (csScore >= 70 ? '🌊' : '☀️') : (isWindowHikeableRainDay ? '🌦️' : (summitPrecip >= 10 ? '⛈️' : '🌧️')),
       statusText: !hasAnyRain ? '쾌청' : (isWindowHikeableRainDay ? '시간제 산행' : '우천 위험'),
       summitMin, summitMax, summitPrecip, rainProb: ensemblePop, maxGust: summitMaxGust,
       hasRain: hasAnyRain, isWindowHikeableRainDay, rainSched, plainTitle, plainAction,
@@ -4326,7 +4380,7 @@ function compute7DayAlpineForecast(data, ele) {
       cardMiniBadge,
       amIcon: rainSched.amHasRain ? '🌧️' : '☀️',
       pmIcon: rainSched.pmHasRain ? '🌧️' : (rainSched.eveHasRain ? '🌦️' : '⛅'),
-      csScore, safetyScore: safeScore, safetyLabel: sLabel, safetyStyle: sStyle,
+      csScore, csState, csPeakLabel, safetyScore: safeScore, safetyLabel: sLabel, safetyStyle: sStyle,
       ecmwfPop, gfsPop, iconPop, ecmwfPrecip, gfsPrecip, iconPrecip, rainVoteCount,
       confidence: Math.round(100 - Math.abs(ecmwfPop - gfsPop) * 0.4)
     });
@@ -4672,7 +4726,7 @@ window.openDayDetailModal = function(idx) {
 
   const rs = item.rainSched || {};
   const heroTheme = !item.hasRain
-    ? (item.csScore >= 75
+    ? (item.csScore >= 70
         ? 'background: linear-gradient(135deg, rgba(88, 28, 135, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(191, 90, 242, 0.45);'
         : 'background: linear-gradient(135deg, rgba(22, 56, 44, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%); border-color: rgba(48, 209, 88, 0.45);')
     : (item.isWindowHikeableRainDay
@@ -4744,7 +4798,7 @@ window.openDayDetailModal = function(idx) {
           </div>
           <div class="gauge-label-col">
             <span class="gauge-title">운해 조망 확률</span>
-            <span class="gauge-desc">${item.csScore >= 75 ? '구름바다 기대' : (item.csScore >= 50 ? '일부 운무' : '대기 혼합')}</span>
+            <span class="gauge-desc">${item.csState === 'rain' ? '우천 시야 차단' : (item.csState === 'gomtang' ? '정상 곰탕 주의' : (item.csScore >= 70 ? `구름바다 (${item.csPeakLabel || '새벽'})` : (item.csScore >= 52 ? `부분 운무 (${item.csPeakLabel || '새벽'})` : '대기 혼합 (쾌청)')))}</span>
           </div>
         </div>
       </div>
@@ -5026,6 +5080,7 @@ window.selectMountain = async function(n, e, bE, t = 'peak', lt = null, lg = nul
     if (fcstRes.status === 'fulfilled' && fcstRes.value) { latestKmaFcstMap = fcstRes.value; updated = true; }
     if (updated) {
       renderFullAlpineWeather(liveWeatherData, e, latestKmaObsGlobal);
+      if (currentForecastView === 'weekly') render7DayWeeklyTrack(liveWeatherData);
       saveMultiMountainCache(currentMt, liveWeatherData, latestKmaObsGlobal, latestKmaFcstMap, liveAirQualityData);
       const nw = new Date();
       setTxt('clock-live', `${hasUpperAirData(liveWeatherData) ? '기상청·상층 연동' : '기상청·지상 연동'} · ${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')} ↻`);
