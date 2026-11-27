@@ -2907,10 +2907,11 @@ function computeSunAndTrailSafety(d, targetDate = null) {
 
   let sunProgress = 50, badgeText = '일조 양호', badgeColor = 'var(--accent-green)', descText = '';
   let isNight = false, orbChar = '☀️';
-  const leftLabel = `일출 ${srStr}`, midLabel = '태양 궤적 (주간)', rightLabel = `일몰 ${ssStr}`;
+  const leftLabel = `일출 ${srStr}`, rightLabel = `일몰 ${ssStr}`;
+  let midLabel = '태양 궤적 (주간)';
 
   if (n < sR) {
-    isNight = true; orbChar = '🌙';
+    isNight = true; orbChar = '🌙'; midLabel = '새벽 여명 (일출 대기)';
     const total = Math.max(1, sR.getTime() - prevSS.getTime());
     sunProgress = Math.min(94, Math.max(6, Math.round(((n.getTime() - prevSS.getTime()) / total) * 100)));
     const mins = Math.max(0, Math.floor((sR.getTime() - n.getTime()) / 60000));
@@ -2935,7 +2936,7 @@ function computeSunAndTrailSafety(d, targetDate = null) {
       descText = `<strong>☀️ [주간 일조 확보]:</strong> 일몰 시각은 ${ssStr}입니다. 안전한 주간 산행이 가능합니다.`;
     }
   } else {
-    isNight = true; orbChar = '🌙';
+    isNight = true; orbChar = '🌙'; midLabel = '야간 궤적 (일몰 완료)';
     const total = Math.max(1, nextSR.getTime() - sS.getTime());
     sunProgress = Math.min(94, Math.max(6, Math.round(((n.getTime() - sS.getTime()) / total) * 100)));
     const mins = Math.max(0, Math.floor((nextSR.getTime() - n.getTime()) / 60000));
@@ -3942,29 +3943,30 @@ function renderLiveForecastTrack(h, kmaObs = null) {
   const frag = document.createDocumentFragment();
   const curIdx = findCurrentHourIndex(h);
 
-  let sR_hour = 6, sS_hour = 18;
-  if (liveWeatherData?.daily?.sunrise?.[0]) sR_hour = parseIsoDateSafe(liveWeatherData.daily.sunrise[0], new Date()).getHours();
-  if (liveWeatherData?.daily?.sunset?.[0]) sS_hour = parseIsoDateSafe(liveWeatherData.daily.sunset[0], new Date()).getHours();
-
+  const nowReal = new Date();
   const chartPts = [];
   for (let o = 0; o < 12; o++) {
     const dI = curIdx + o;
-    const tT = h?.time?.[dI] ? parseIsoDateSafe(h.time[dI], new Date(Date.now() + o * 3600000)) : new Date(Date.now() + o * 3600000);
+    const slotBaseDate = h?.time?.[dI] ? parseIsoDateSafe(h.time[dI], new Date(Date.now() + o * 3600000)) : new Date(Date.now() + o * 3600000);
+    const tT = (o === 0) ? nowReal : slotBaseDate;
     const tH = tT.getHours();
-    const hS = `${tH < 10 ? '0' : ''}${tH}:00`;
+    const hS = (o === 0)
+      ? `${String(tH).padStart(2, '0')}:${String(tT.getMinutes()).padStart(2, '0')}`
+      : `${String(tH).padStart(2, '0')}:00`;
     const lb = (o === 0) ? '현재' : `+${o}h`;
 
     const fused = buildFusedGroundParams(o, dI, h, kmaObs, tT);
     const slotLCL = calculateOrographicLCL(fused.kmaTemp, fused.kmaDewPoint, currentMt.ele, fused.estKmaEle);
-    const isNightSlot = (tH < sR_hour || tH >= sS_hour);
+    const slotSun = computeSunAndTrailSafety(liveWeatherData?.daily, tT);
+    const isNightSlot = slotSun.isNight;
     const slotState = evaluateAltitudePhysics(currentMt.ele, currentMt.ele, fused, slotLCL, true, isNightSlot);
 
     chartPts.push({ o, dI, tH, hS, tT, temp: slotState.temp, rain: slotState.rain });
 
     const sl = document.createElement('div');
     sl.className = `time-slot ${o === selectedHourOffset ? 'active' : ''}`;
-    sl.innerHTML = `<div class="slot-label">${lb}</div><div class="slot-time">${hS}</div><div class="slot-icon">${slotState.slotIcon}</div><div class="slot-temp">${Math.round(slotState.temp)}°</div>`;
-    sl.onclick = () => selectForecastHour(o, dI, tH, hS, tT, kmaObs);
+    sl.innerHTML = `<div class="slot-label">${lb}</div><div class="slot-time"${o === 0 ? ' id="slot-now-clock"' : ''}>${hS}</div><div class="slot-icon">${slotState.slotIcon}</div><div class="slot-temp">${Math.round(slotState.temp)}°</div>`;
+    sl.onclick = () => selectForecastHour(o, dI, tH, o === 0 ? '현재' : hS, o === 0 ? new Date() : slotBaseDate, kmaObs);
     frag.appendChild(sl);
   }
   t.innerHTML = '';
@@ -4060,17 +4062,14 @@ function selectForecastHour(o, dI, tH, hS, tT, kmaObs = null) {
   document.querySelectorAll('.time-slot').forEach((s, i) => s.classList.toggle('active', i === o));
   if (window._lastHourlyChartPts) renderHourlyMiniSvgChart(window._lastHourlyChartPts, o);
 
-  let sR_hour = 6, sS_hour = 18;
-  if (liveWeatherData?.daily?.sunrise?.[0]) sR_hour = parseIsoDateSafe(liveWeatherData.daily.sunrise[0], new Date()).getHours();
-  if (liveWeatherData?.daily?.sunset?.[0]) sS_hour = parseIsoDateSafe(liveWeatherData.daily.sunset[0], new Date()).getHours();
-  const iN = (tH >= sS_hour || tH < sR_hour);
-
   if (!liveWeatherData || !liveWeatherData.hourly) return;
   const h = liveWeatherData.hourly;
   const curIdx = findCurrentHourIndex(h);
-  const fused = buildFusedGroundParams(o, dI, h, kmaObs, tT);
+  const effectiveDate = (o === 0) ? new Date() : tT;
+  const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, effectiveDate);
+  const iN = sunInfo.isNight;
+  const fused = buildFusedGroundParams(o, dI, h, kmaObs, effectiveDate);
   const effectiveLCL = calculateOrographicLCL(fused.kmaTemp, fused.kmaDewPoint, currentMt.ele, fused.estKmaEle);
-  const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, tT);
   const summitState = evaluateAltitudePhysics(currentMt.ele, currentMt.ele, fused, effectiveLCL, true, iN);
   const cloudSea = evaluateCloudSeaPhysics(summitState, fused, effectiveLCL, currentMt.ele);
   const burnoffTimer = computeCloudSeaBurnoffTimer(h, curIdx, o, kmaObs);
@@ -4972,13 +4971,44 @@ window.switchForecastView = function(mode, fromBottomNav = false) {
   }
 };
 
+let lastRenderedClockHour = -1;
 function renderFullAlpineWeather(data, ele, kmaObs) {
   if (!data || !data.hourly) return;
+  const nw = new Date();
+  lastRenderedClockHour = nw.getHours();
   const curIdx = findCurrentHourIndex(data.hourly);
   renderLiveForecastTrack(data.hourly, kmaObs);
+  selectForecastHour(0, curIdx, nw.getHours(), '현재', nw, kmaObs);
+}
+
+// 실시간 일출·일몰 잔여 시간 및 현재 시각 분 단위 동기화 (네트워크 호출 없음)
+function syncLiveSunAndClockTick() {
+  if (document.hidden || !liveWeatherData || !liveWeatherData.hourly) return;
   const nw = new Date();
-  const tT = data.hourly?.time?.[curIdx] ? parseIsoDateSafe(data.hourly.time[curIdx], nw) : nw;
-  selectForecastHour(0, curIdx, tT.getHours(), '현재', tT, kmaObs);
+  const nowStr = `${String(nw.getHours()).padStart(2, '0')}:${String(nw.getMinutes()).padStart(2, '0')}`;
+  setTxt('slot-now-clock', nowStr);
+  if (lastRenderedClockHour !== -1 && nw.getHours() !== lastRenderedClockHour) {
+    renderFullAlpineWeather(liveWeatherData, currentMt.ele, latestKmaObsGlobal);
+    return;
+  }
+  if (selectedHourOffset === 0 && liveWeatherData.daily) {
+    const sunInfo = computeSunAndTrailSafety(liveWeatherData.daily, nw);
+    const prevIsNight = activeForecastRes?.sunSafety?.isNight;
+    if (activeForecastRes) activeForecastRes.sunSafety = sunInfo;
+    if (baseLiveCurrentRes) baseLiveCurrentRes.sunSafety = sunInfo;
+    setTxt('label-sunrise', sunInfo.leftLabel);
+    setTxt('label-solar-state', sunInfo.midLabel);
+    setTxt('label-sunset', sunInfo.rightLabel);
+    setStyle('sun-track-fill', 'width', `${sunInfo.sunProgress}%`);
+    setStyle('sun-track-orb', 'left', `${sunInfo.sunProgress}%`);
+    setTxt('sun-track-orb', sunInfo.orbChar);
+    setTxt('sun-safety-badge', sunInfo.badgeText);
+    setStyle('sun-safety-badge', 'color', sunInfo.badgeColor);
+    setHtml('sun-safety-desc', sunInfo.descText);
+    if (prevIsNight !== undefined && prevIsNight !== sunInfo.isNight) {
+      renderFullAlpineWeather(liveWeatherData, currentMt.ele, latestKmaObsGlobal);
+    }
+  }
 }
 
 // =========================================================================
@@ -5557,8 +5587,11 @@ window.reloadStatlabCoupang = function() {
 // [4분할] 부팅 분산 스케줄링 & 백그라운드 배터리 보호 (visibilitychange)
 // =========================================================================
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && navigator.onLine && (Date.now() - lastLiveFetchMeta.ts >= 300000)) {
-    window.selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm, true);
+  if (!document.hidden) {
+    syncLiveSunAndClockTick();
+    if (navigator.onLine && (Date.now() - lastLiveFetchMeta.ts >= 300000)) {
+      window.selectMountain(currentMt.name, currentMt.ele, null, currentMt.type, currentMt.lat, currentMt.lng, currentMt.distanceKm, true);
+    }
   }
 });
 
@@ -5591,6 +5624,9 @@ window.onload = () => {
   setTimeout(() => {
     if (!userHasManuallySelected) window.triggerGPSMatching(true);
   }, 750);
+
+  // 30초마다 일출·일몰 잔여 분 및 현재 시각만 가볍게 동기화 (API 호출 없음)
+  setInterval(syncLiveSunAndClockTick, 30000);
 
   // 화면을 보고 있을 때만 5분 주기 자동 갱신 (포켓 대기 시 배터리/데이터 소모 차단)
   setInterval(() => {
